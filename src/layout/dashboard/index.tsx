@@ -9,7 +9,6 @@ import Container from 'layout/container';
 const DashboardLayout: React.FC = (): JSX.Element => {
   const { t } = useTranslation();
   const [navbarActive, setNavbarActive] = useState<boolean>(true);
-  console.log('rendered');
 
   const toggleSidebar = (): void => {
     setNavbarActive((prev) => !prev);
