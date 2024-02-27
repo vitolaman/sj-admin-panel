@@ -34,13 +34,17 @@ const baseQueryWithInterceptor: BaseQueryFn<
   unknown,
   FetchBaseQueryError
 > = async (args, api, extraOptions) => {
-  // console.info('[RTK Api fetch]:', args);
+  if (process.env.NODE_ENV === "development") {
+    console.info('[RTK Api fetch]:', args);
+  }
   let result = await baseQuery(args, api, extraOptions);
   if (result.error) {
     if (result.error.status === 401) {}
     // showToast((result.error.data as ApiErrorResponseI).message || 'Unknown Error');
   }
-  // console.info('[RTK Api result]:', result);
+  if (process.env.NODE_ENV === "development") {
+    console.info('[RTK Api result]:', result);
+  }
   return result;
 };
 
