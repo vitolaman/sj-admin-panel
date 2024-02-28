@@ -37,7 +37,7 @@ const protectedRoutes: RouteObject[] = [
       // }
     ],
   },
-  { path: "*", element: <Navigate to="/operating-area" /> },
+  { path: "*", element: <Navigate to="/dashboard" /> },
 ];
 
 const publicRoutes: RouteObject[] = [

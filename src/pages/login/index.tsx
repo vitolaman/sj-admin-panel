@@ -11,10 +11,6 @@ import { useLoginMutation } from "services/modules/auth";
 import { errorHandler } from "services/errorHandler";
 
 const Login = () => {
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-  });
   const [hidePassword, setHidePassword] = useState(true);
   const dispatch = useAppDispatch();
   const { register, handleSubmit, errors } = useLoginForm();
@@ -43,7 +39,7 @@ const Login = () => {
               onSubmit={handleSubmit(handleLogin)}
               className="p-[32px] font-poppins"
             >
-              <h1 className="text-xl font-semibold text-[#262626]">
+              <h1 className="text-xl font-semibold text-shark">
                 Welcome to Seeds Admin
               </h1>
               <small className="text-sm font-light text-[#7C7C7C]">
