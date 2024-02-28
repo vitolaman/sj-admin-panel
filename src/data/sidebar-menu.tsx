@@ -1,12 +1,3 @@
-import {
-  FiBookOpen,
-  FiHome,
-  FiArchive,
-  FiMapPin,
-  FiGitBranch,
-  FiMessageSquare,
-} from "react-icons/fi";
-
 interface SubMenuItem {
   name: string;
   path: string;
@@ -21,7 +12,7 @@ interface MenuItem {
 const menuItems: MenuItem[] = [
   {
     name: "User",
-    path: "/#",
+    path: "#",
     child: [
       { name: "Dashboard Monitoring", path: "/user/dashboard-monitoring" },
       { name: "Control Panel", path: "/user/control-panel" },

@@ -70,7 +70,8 @@ const Login = () => {
               </section>
               <Button
                 type="submit"
-                className="h-[44px] text-center bg-[#3AC4A0] w-full text-white rounded-full mt-5 text-base font-semibold"
+                shape="circle"
+                className="h-[44px] text-center bg-seeds hover:bg-seeds-300 w-full text-white mt-5 text-base font-semibold"
                 loading={isLoading}
               >
                 Login
