@@ -50,7 +50,6 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar, className }): JSX.Elemen
           shape='circle'
           src='https://avatars.githubusercontent.com/u/2?v=4'
         />
-        <span className='font-semibold text-black'>Management</span>
       </div>
 
       {toolbarMenuVisible && <HeaderMenu />}
