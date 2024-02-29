@@ -2,6 +2,7 @@ import { Navigate, RouteObject } from "react-router-dom";
 import DashboardLayout from "layout/dashboard";
 import Login from "pages/login";
 import DashboardHome from "pages/dashboard";
+import ControlPanel from "pages/circle/ControlPanel";
 
 const protectedRoutes: RouteObject[] = [
   { path: "", element: <Navigate to="/dashboard" /> },
@@ -9,11 +10,11 @@ const protectedRoutes: RouteObject[] = [
     path: "",
     element: <DashboardLayout />,
     children: [
-      { path: 'dashboard', element: <DashboardHome />, index: true },
-      // {
-      //   path: "operating-area",
-      //   element: <OperatingAreaIndex />,
-      // },
+      { path: "dashboard", element: <DashboardHome />, index: true },
+      {
+        path: "circle/control-panel",
+        element: <ControlPanel />,
+      },
       // {
       //   path: "branch",
       //   element: <Branch />,

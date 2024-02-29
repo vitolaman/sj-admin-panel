@@ -6,6 +6,8 @@
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@headlessui/react": "^1.7.17",
     "@hookform/resolvers": "^2.9.7",
+    "@material-tailwind/react": "^1.4.2",
+    "@heroicons/react": "^2.0.18",
     "@pathofdev/react-tag-input": "^1.0.7",
     "@reduxjs/toolkit": "^2.2.1",
     "@testing-library/jest-dom": "^5.16.4",
