@@ -92,7 +92,7 @@ const Sidebar: React.FC<SidebarProps> = ({ active }): JSX.Element => {
         </div>
       </div>
 
-      <div className="select-none mt-4 px-4">
+      <div className="select-none mt-4 px-4 mb-20">
         <ul className="flex flex-col">
           {menus.map((item, index) => {
             return (
@@ -148,8 +148,8 @@ const Sidebar: React.FC<SidebarProps> = ({ active }): JSX.Element => {
           >
             <Button
               onClick={handleShowDialog}
-              className="w-full"
-              color="accent"
+              className="w-full bg-red-500 hover:bg-red-400 border-0 text-white"
+              shape="circle"
             >
               <FiLogOut size={20} />
               Log out
