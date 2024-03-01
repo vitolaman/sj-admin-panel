@@ -7,6 +7,7 @@ import {
   DialogHeader,
   Typography,
 } from "@material-tailwind/react";
+import { Select } from "components/forms/Select";
 import React, { Fragment } from "react";
 import { IoClose } from "react-icons/io5";
 
@@ -52,7 +53,7 @@ export default function ModalChangeStatusTokenReport({
             <Typography className="text-black text-base font-semibold -mb-3">
               Status
             </Typography>
-            {/* <Select name="type" placeholder="Choose Type" options={options} /> */}
+            <Select name="type" placeholder="Choose Type" options={options} />
           </div>
         </DialogBody>
 

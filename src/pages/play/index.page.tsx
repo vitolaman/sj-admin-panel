@@ -117,8 +117,8 @@ const Play = () => {
       </div>
       <div className="flex flex-col">
         <Pagination
-          currentPage={data!.metadata!.currentPage}
-          totalPages={data!.metadata!.totalPage}
+          currentPage={data!?.metadata!.currentPage}
+          totalPages={data!?.metadata!.totalPage}
           onPageChange={handlePageChange}
         />
       </div>

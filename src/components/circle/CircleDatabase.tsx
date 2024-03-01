@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CiFilter } from "react-icons/ci";
 import { FiDownload } from "react-icons/fi";
@@ -10,52 +10,119 @@ import {
 import ModalFilterCircleDatabase from "components/modal/circle/ModalFilterCircleDatabase";
 import { Button, Input } from "react-daisyui";
 import moment from "moment";
+import { CircleList, CircleReq } from "_interfaces/circle.interface";
+import { useCircleListQuery } from "services/modules/circle";
+import { Columns, Table } from "components/table/table";
+import Pagination from "components/table/pagination";
+import { type Option } from "components/forms/Select";
 interface CircleDatabaseProps {}
-interface Circle {
-  created_at: string;
-  description: string;
-  id: string;
-  name: string;
-  total_member: number;
-  total_post: number;
-  type: string;
-  like: number;
-  share: number;
-  status: string;
-}
 
-interface Paginate {
-  total: number;
-  current_page: number;
-  limit: number;
-  total_page: number;
-}
-
-const initialFilter = {
-  search: "",
-  limit: 10,
-  page: 1,
-  sort_by: "created_at",
-  order: "asc",
-  type: "",
-  total_member_from: "",
-  total_member_to: "",
-  total_post_from: "",
-  total_post_to: "",
-  total_like_from: "",
-  total_like_to: "",
-  total_share_from: "",
-  total_share_to: "",
-  created_at_from: "",
-  created_at_to: "",
-};
 const CircleDatabase: React.FC<CircleDatabaseProps> = () => {
   const [openFilter, setOpenFilter] = useState(false);
-  const [circleData, setcircleData] = useState<Circle[]>();
-  const [filter, setFilter] = useState(initialFilter);
-  const [isLoading, setIsLoading] = useState(false);
-  const [pagination, setPagination] = useState<Paginate>();
+  const [filter, setFilter] = useState<CircleReq>({
+    search: "",
+    limit: 10,
+    page: 1,
+    sort_by: "created_at",
+    order: "asc",
+    type: "",
+    total_member_from: "",
+    total_member_to: "",
+    total_post_from: "",
+    total_post_to: "",
+    total_like_from: "",
+    total_like_to: "",
+    total_share_from: "",
+    total_share_to: "",
+    created_at_from: "",
+    created_at_to: "",
+  });
+  const { data, isLoading } = useCircleListQuery(filter);
   const router = useNavigate();
+  const header: Columns<CircleList>[] = [
+    {
+      fieldId: "index",
+      label: "No",
+    },
+    {
+      fieldId: "id",
+      label: "Circle ID",
+    },
+    {
+      fieldId: "name",
+      label: "Circle Name",
+      render: (data) => (data?.name !== undefined ? data?.name : "-"),
+    },
+    {
+      fieldId: "type",
+      label: "Type",
+      render: (data) => (data?.type !== undefined ? data?.type : "-"),
+    },
+    {
+      fieldId: "created_at",
+      label: "Created At",
+      render: (data) => (
+        <>{moment(data?.created_at).utc(true).format("DD/MM/yyyy HH:mm")}</>
+      ),
+      renderHeader: () => (
+        <>
+          {filter.order === "asc" ? (
+            <ArrowUpCircleIcon
+              className="w-5 h-5 text-[#27A590] ml-2"
+              onClick={handleOrderCircleId}
+            />
+          ) : (
+            <ArrowDownCircleIcon
+              className="w-5 h-5 text-[#27A590] ml-2"
+              onClick={handleOrderCircleId}
+            />
+          )}
+        </>
+      ),
+    },
+    {
+      fieldId: "total_member",
+      label: "Members",
+      render: (data) => (
+        <>{data?.total_member !== undefined ? data.total_member : "-"}</>
+      ),
+    },
+    {
+      fieldId: "total_post",
+      label: "Post",
+      render: (data) => (
+        <>{data?.total_post !== undefined ? data.total_post : "-"}</>
+      ),
+    },
+    {
+      fieldId: "like",
+      label: "Like",
+      render: (data) => <>{data?.like !== undefined ? data?.like : "-"}</>,
+    },
+    {
+      fieldId: "share",
+      label: "Share",
+      render: (data) => <>{data?.share !== undefined ? data.share : "-"}</>,
+    },
+    {
+      fieldId: "status",
+      label: "Status",
+      render: () => "-",
+    },
+    {
+      fieldId: "action",
+      label: "Action",
+      render: (data) => (
+        <Button
+          type="button"
+          onClick={() => moveToCircleDetail(data?.id as string)}
+          className="inline-flex items-center px-4 h-[35px] text-[16px] border border-transparent text-xs font-semibold rounded-full text-white bg-[#3AC4A0]"
+        >
+          View Detail
+        </Button>
+      ),
+    },
+  ];
 
   const handleOpenFilter = (): void => {
     setOpenFilter(!openFilter);
@@ -67,9 +134,6 @@ const CircleDatabase: React.FC<CircleDatabaseProps> = () => {
 
   const handleEnterPress = (e: any): void => {
     e.preventDefault();
-    fetchCircleData()
-      .then()
-      .catch(() => {});
   };
 
   const handleChangeFilter = (event: any): void => {
@@ -95,16 +159,12 @@ const CircleDatabase: React.FC<CircleDatabaseProps> = () => {
         order: "asc",
       }));
     }
-
-    fetchCircleData()
-      .then()
-      .catch(() => {});
   };
 
-  const handleChageFilterType = (data: any): void => {
+  const handleChageFilterType = (data: Option): void => {
     setFilter((prevState) => ({
       ...prevState,
-      type: data.value,
+      type: data.data,
     }));
   };
 
@@ -122,19 +182,12 @@ const CircleDatabase: React.FC<CircleDatabaseProps> = () => {
     }));
   };
 
-  function classNames(...classes: string[]): string {
-    return classes.filter(Boolean).join(" ");
-  }
-
   const moveToCircleDetail = (circleId: string): any => {
     return router(`/circle/circle-detail/${circleId}`);
   };
 
   const searchFilter = async (): Promise<void> => {
     setOpenFilter(!openFilter);
-    fetchCircleData()
-      .then()
-      .catch(() => {});
   };
 
   const clearFilter = (): void => {
@@ -158,31 +211,6 @@ const CircleDatabase: React.FC<CircleDatabaseProps> = () => {
     });
     setOpenFilter(!openFilter);
   };
-
-  const fetchCircleData = async (): Promise<void> => {
-    try {
-      setIsLoading(true);
-      // getCircles(filter)
-      //   .then((res) => {
-      //     setcircleData(res.data);
-      //     setPagination(res.metadata);
-      //     setIsLoading(false);
-      //   })
-      //   .catch((err) => {
-      //     console.log(err);
-      //     setIsLoading(false);
-      //   });
-    } catch (error: any) {
-      setIsLoading(false);
-      console.error("Error fetching circle data:", error.message);
-    }
-  };
-
-  useEffect(() => {
-    fetchCircleData()
-      .then()
-      .catch(() => {});
-  }, [filter.page, filter.order]);
   return (
     <>
       <ModalFilterCircleDatabase
@@ -211,6 +239,7 @@ const CircleDatabase: React.FC<CircleDatabaseProps> = () => {
                   <Input
                     name="search"
                     type="outline"
+                    className="rounded-full"
                     onChange={(e) => {
                       handleChangeFilter(e);
                     }}
@@ -235,200 +264,21 @@ const CircleDatabase: React.FC<CircleDatabaseProps> = () => {
               <div className="overflow-x-auto">
                 <div className="align-middle inline-block min-w-full">
                   <div className="overflow-hidden border border-[#BDBDBD] rounded-lg">
-                    <table className="min-w-full">
-                      <thead className="bg-[#DCFCE4]">
-                        <tr className="divide-x divide-[#BDBDBD]">
-                          <th
-                            scope="col"
-                            className="p-4 text-center whitespace-nowrap text-sm font-semibold text-[#27A590]"
-                          >
-                            No
-                          </th>
-                          <th
-                            scope="col"
-                            className="p-4 text-center whitespace-nowrap text-sm font-semibold text-[#27A590]"
-                          >
-                            <div
-                              id="circleId"
-                              className="flex flex-row justify-center"
-                            >
-                              Circle ID
-                            </div>
-                          </th>
-                          <th
-                            scope="col"
-                            className="p-4 text-center whitespace-nowrap text-sm font-semibold text-[#27A590]"
-                          >
-                            Circle Name
-                          </th>
-                          <th
-                            scope="col"
-                            className="p-4 text-center whitespace-nowrap text-sm font-semibold text-[#27A590]"
-                          >
-                            Type
-                          </th>
-                          <th
-                            scope="col"
-                            className="p-4 text-center whitespace-nowrap text-sm font-semibold text-[#27A590]"
-                          >
-                            <div
-                              id="circleId"
-                              className="flex flex-row justify-center"
-                            >
-                              Created At
-                              {filter.order === "asc" ? (
-                                <ArrowUpCircleIcon
-                                  className="w-5 h-5 text-[#27A590] ml-2"
-                                  onClick={handleOrderCircleId}
-                                />
-                              ) : (
-                                <ArrowDownCircleIcon
-                                  className="w-5 h-5 text-[#27A590] ml-2"
-                                  onClick={handleOrderCircleId}
-                                />
-                              )}
-                            </div>
-                          </th>
-                          <th
-                            scope="col"
-                            className="p-4 text-center whitespace-nowrap text-sm font-semibold text-[#27A590]"
-                          >
-                            Members
-                          </th>
-                          <th
-                            scope="col"
-                            className="p-4 text-center whitespace-nowrap text-sm font-semibold text-[#27A590]"
-                          >
-                            Post
-                          </th>
-                          <th
-                            scope="col"
-                            className="p-4 text-center whitespace-nowrap text-sm font-semibold text-[#27A590]"
-                          >
-                            Like
-                          </th>
-                          <th
-                            scope="col"
-                            className="p-4 text-center whitespace-nowrap text-sm font-semibold text-[#27A590]"
-                          >
-                            Share
-                          </th>
-                          <th
-                            scope="col"
-                            className="p-4 text-center whitespace-nowrap text-sm font-semibold text-[#27A590]"
-                          >
-                            Status
-                          </th>
-                          <th
-                            scope="col"
-                            className="p-4 text-center whitespace-nowrap text-sm font-semibold text-[#27A590]"
-                          >
-                            Action
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white">
-                        {!isLoading ? (
-                          circleData?.length ? (
-                            circleData.map((data, index) => (
-                              <tr
-                                key={index}
-                                className="divide-x divide-[#BDBDBD]"
-                              >
-                                <td className="p-4 text-center whitespace-nowrap text-sm leading-7">
-                                  {index + 1}
-                                </td>
-                                <td className="p-4 text-center whitespace-nowrap text-sm leading-7">
-                                  {data.id}
-                                </td>
-                                <td className="p-4 text-left whitespace-nowrap text-sm leading-7">
-                                  {data.name !== undefined ? data.name : "-"}
-                                </td>
-                                <td className="p-4 text-center whitespace-nowrap text-sm leading-7">
-                                  {data.type !== undefined ? data.type : "-"}
-                                </td>
-                                <td className="p-4 text-center whitespace-nowrap text-sm leading-7">
-                                  {moment(data.created_at)
-                                    .utc(true)
-                                    .format("DD/MM/yyyy HH:mm")}
-                                </td>
-                                <td className="p-4 text-center whitespace-nowrap text-sm leading-7">
-                                  {data.total_member !== undefined
-                                    ? data.total_member
-                                    : "-"}
-                                </td>
-                                <td className="p-4 text-center whitespace-nowrap text-sm leading-7">
-                                  {data.total_post !== undefined
-                                    ? data.total_post
-                                    : "-"}
-                                </td>
-                                <td className="p-4 text-center whitespace-nowrap text-sm leading-7">
-                                  {data.like !== undefined ? data.like : "-"}
-                                </td>
-                                <td className="p-4 text-center whitespace-nowrap text-sm leading-7">
-                                  {data.share !== undefined ? data.share : "-"}
-                                </td>
-                                <td className="p-4 text-center whitespace-nowrap text-sm leading-7">
-                                  {/* <span
-                                className={classNames(
-                                  "Active" === 'Active'
-                                    ? 'bg-[#DCFCE4] text-[#27A590]'
-                                    : data.status === 'Idle'
-                                    ? 'bg-[#FFF7D2] text-[#D89918]'
-                                    : 'bg-[#FFEBEB] text-[#BB1616]',
-                                  'inline-flex items-center rounded px-2 py-1 text-sm'
-                                )}
-                              >
-                                {"Active"}
-                              </span> */}
-                                  -
-                                </td>
-                                <td className="p-4 text-center whitespace-nowrap text-sm leading-7">
-                                  <button
-                                    type="button"
-                                    onClick={() => moveToCircleDetail(data.id)}
-                                    className="inline-flex items-center px-4 h-[35px] text-[16px] border border-transparent text-xs font-semibold rounded-full text-white bg-[#3AC4A0]"
-                                  >
-                                    View Detail
-                                  </button>
-                                </td>
-                              </tr>
-                            ))
-                          ) : (
-                            <tr className="divide-x divide-[#BDBDBD]">
-                              <td
-                                colSpan={10}
-                                className="p-4 text-center whitespace-nowrap text-sm text-[#201B1C]"
-                              >
-                                No Data
-                              </td>
-                            </tr>
-                          )
-                        ) : (
-                          <tr className="divide-x divide-[#BDBDBD]">
-                            <td
-                              colSpan={10}
-                              className="p-4 text-center whitespace-nowrap text-sm text-[#201B1C]"
-                            >
-                              Loading...
-                            </td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
+                    <Table<CircleList>
+                      columns={header}
+                      data={data?.data}
+                      loading={isLoading}
+                    />
                   </div>
                 </div>
               </div>
             </div>
             <div className="flex flex-col">
-              {pagination !== undefined ? (
-                <></>
-              ) : // <Pagination
-              //   currentPage={pagination.current_page}
-              //   totalPages={pagination.total_page}
-              //   onPageChange={handlePageChange}
-              // />
-              null}
+              <Pagination
+                currentPage={data!?.metadata!.current_page}
+                totalPages={data!?.metadata!.total_page}
+                onPageChange={handlePageChange}
+              />
             </div>
           </div>
         </div>

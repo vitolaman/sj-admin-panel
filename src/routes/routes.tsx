@@ -36,6 +36,16 @@ const protectedRoutes: RouteObject[] = [
         ],
       },
       { path: "dashboard", element: <DashboardHome /> },
+      {
+        path: "circle",
+        children: [
+          {
+            path: "control-panel",
+            element: <ControlPanel />,
+            index: true,
+          },
+        ],
+      },
       // {
       //   path: "operating-area",
       //   element: <OperatingAreaIndex />,

@@ -6,15 +6,13 @@ import {
   DialogHeader,
   Typography,
 } from "@material-tailwind/react";
+import type { CircleOwner } from "_interfaces/circle.interface";
+import { Select } from "components/forms/Select";
+import { Date } from "components/forms/dateTime";
 import moment from "moment";
 import React, { Fragment, useEffect, useState } from "react";
 import { IoClose } from "react-icons/io5";
-
-interface CircleOwner {
-  id: string;
-  name: string;
-  seeds_tag: string;
-}
+import { useOwnerCircleListQuery } from "services/modules/circle";
 
 export default function ModalFilterTokenReport({
   openFilter,
@@ -29,7 +27,7 @@ export default function ModalFilterTokenReport({
   changeFilterStatus,
 }: any): React.ReactElement {
   const [optionsOwner, setOptionsOwner] = useState<any[]>([]);
-
+  const { data, isLoading } = useOwnerCircleListQuery({ page: 1, limit: 200 });
   const typeTicket = [
     {
       label: "Fraud",
@@ -75,8 +73,8 @@ export default function ModalFilterTokenReport({
     }),
   ];
 
-  const handleOptionOwner = (data: CircleOwner[]): void => {
-    const newOwner: any[] = data.map((data, idx) => {
+  const handleOptionOwner = (ownerData: CircleOwner[]): void => {
+    const newOwner: any[] = ownerData?.map((data, idx) => {
       return {
         key: idx + 1,
         label: data.name,
@@ -97,17 +95,8 @@ export default function ModalFilterTokenReport({
     return data !== undefined ? data.label : "Choose Circle Owner";
   };
 
-  const fetchCircleOwner = async (): Promise<void> => {
-    try {
-    } catch (error: any) {
-      console.error("Error fetching circle data:", error.message);
-    }
-  };
-
   useEffect(() => {
-    fetchCircleOwner()
-      .then()
-      .catch(() => {});
+    handleOptionOwner(data?.data as CircleOwner[]);
   }, []);
 
   return (
@@ -136,7 +125,7 @@ export default function ModalFilterTokenReport({
                 <Typography className="text-black text-base font-semibold mb-3">
                   Ticket
                 </Typography>
-                {/* <Select
+                <Select
                   name="ticket"
                   placeholder="Choose Ticket"
                   value={{
@@ -146,7 +135,7 @@ export default function ModalFilterTokenReport({
                   }}
                   options={optionsTicket}
                   onChange={(e) => changeFilterTicket(e)}
-                /> */}
+                />
               </div>
 
               <div className="">
@@ -162,7 +151,7 @@ export default function ModalFilterTokenReport({
                   </Typography>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  {/* <Date
+                  <Date
                     name="created_at_from"
                     timeFormat="HH:mm:ss"
                     dateFormat="YYYY-MM-DD"
@@ -181,7 +170,7 @@ export default function ModalFilterTokenReport({
                     }
                     placeholder="Choose End"
                     value={filter.created_at_to}
-                  /> */}
+                  />
                 </div>
               </div>
 
@@ -189,7 +178,7 @@ export default function ModalFilterTokenReport({
                 <Typography className="text-black text-base font-semibold mb-3">
                   Circle Owner
                 </Typography>
-                {/* <Select
+                <Select
                   name="circle_owner_id"
                   placeholder="Choose Circle Owner"
                   value={{
@@ -199,7 +188,7 @@ export default function ModalFilterTokenReport({
                   }}
                   options={optionsOwner}
                   onChange={(e) => changeFilterCircleOwner(e)}
-                /> */}
+                />
               </div>
               <div>
                 <section className="flex flex-col">

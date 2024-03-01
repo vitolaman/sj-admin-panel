@@ -1,16 +1,17 @@
-// import { Date, Select } from "@/components";
 import {
+  Button,
   Dialog,
   DialogBody,
   DialogFooter,
   DialogHeader,
+  Input,
   Typography,
 } from "@material-tailwind/react";
+import { type Option, Select } from "components/forms/Select";
+import { Date } from "components/forms/dateTime";
 import moment from "moment";
 import React, { Fragment } from "react";
-import { Button, Input } from "react-daisyui";
 import { IoClose } from "react-icons/io5";
-
 export default function ModalFilterCircleDatabase({
   openFilter,
   handleOpenFilter,
@@ -37,7 +38,7 @@ export default function ModalFilterCircleDatabase({
     },
   ];
 
-  const options = [
+  const options: Option[] = [
     ...Object.values(typeFilter).map((category, idx) => {
       return {
         key: idx + 1,
@@ -56,10 +57,10 @@ export default function ModalFilterCircleDatabase({
     <Fragment>
       {filter && filter.created_at_from !== undefined && (
         <Dialog
+          placeholder={""}
           open={openFilter}
           handler={handleOpenFilter}
           className="w-[70rem]"
-          placeholder={""}
         >
           <DialogHeader
             placeholder={""}
@@ -78,7 +79,7 @@ export default function ModalFilterCircleDatabase({
               <Typography className="text-black text-base font-semibold -mb-3">
                 Type
               </Typography>
-              {/* <Select
+              <Select
                 name="type"
                 placeholder="Choose Type"
                 options={options}
@@ -88,7 +89,7 @@ export default function ModalFilterCircleDatabase({
                   data: "test",
                 }}
                 onChange={(e) => changeFilterType(e)}
-              /> */}
+              />
 
               <div className="">
                 <Typography className="mb-2 text-black text-base font-semibold">
@@ -103,7 +104,7 @@ export default function ModalFilterCircleDatabase({
                   </Typography>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  {/* <Date
+                  <Date
                     name="created_at_from"
                     timeFormat="HH:mm:ss"
                     dateFormat="YYYY-MM-DD"
@@ -122,7 +123,7 @@ export default function ModalFilterCircleDatabase({
                     }
                     placeholder="Choose End"
                     value={filter.created_at_to}
-                  /> */}
+                  />
                 </div>
               </div>
 
@@ -132,7 +133,9 @@ export default function ModalFilterCircleDatabase({
                 </Typography>
                 <div className="grid grid-cols-2 gap-4">
                   <Input
+                    crossOrigin={""}
                     placeholder="From"
+                    variant="static"
                     type="number"
                     name="total_member_from"
                     onChange={(e) => changeFilter(e)}
@@ -140,7 +143,9 @@ export default function ModalFilterCircleDatabase({
                   />
 
                   <Input
+                    crossOrigin={""}
                     placeholder="To"
+                    variant="static"
                     type="number"
                     name="total_member_to"
                     onChange={(e) => changeFilter(e)}
@@ -155,7 +160,9 @@ export default function ModalFilterCircleDatabase({
                 </Typography>
                 <div className="grid grid-cols-2 gap-4">
                   <Input
+                    crossOrigin={""}
                     placeholder="From"
+                    variant="static"
                     type="number"
                     name="total_post_from"
                     onChange={(e) => changeFilter(e)}
@@ -163,7 +170,9 @@ export default function ModalFilterCircleDatabase({
                   />
 
                   <Input
+                    crossOrigin={""}
                     placeholder="To"
+                    variant="static"
                     type="number"
                     name="total_post_to"
                     onChange={(e) => changeFilter(e)}
@@ -178,7 +187,9 @@ export default function ModalFilterCircleDatabase({
                 </Typography>
                 <div className="grid grid-cols-2 gap-4">
                   <Input
+                    crossOrigin={""}
                     placeholder="From"
+                    variant="static"
                     type="number"
                     name="total_like_from"
                     onChange={(e) => changeFilter(e)}
@@ -186,7 +197,9 @@ export default function ModalFilterCircleDatabase({
                   />
 
                   <Input
+                    crossOrigin={""}
                     placeholder="To"
+                    variant="static"
                     type="number"
                     name="total_like_to"
                     onChange={(e) => changeFilter(e)}
@@ -201,7 +214,9 @@ export default function ModalFilterCircleDatabase({
                 </Typography>
                 <div className="grid grid-cols-2 gap-4">
                   <Input
+                    crossOrigin={""}
                     placeholder="From"
+                    variant="static"
                     type="number"
                     name="total_share_from"
                     onChange={(e) => changeFilter(e)}
@@ -209,7 +224,9 @@ export default function ModalFilterCircleDatabase({
                   />
 
                   <Input
+                    crossOrigin={""}
                     placeholder="To"
+                    variant="static"
                     type="number"
                     name="total_share_to"
                     onChange={(e) => changeFilter(e)}
@@ -225,7 +242,7 @@ export default function ModalFilterCircleDatabase({
                   </Typography>
                   <section className="flex flex-row gap-3">
                     <section className="flex flex-row gap-3 border border-[#BDBDBD] px-[16px] py-[8px] rounded-lg">
-                      <Input
+                      <input
                         type="checkbox"
                         name="status"
                         id="active"
@@ -258,12 +275,14 @@ export default function ModalFilterCircleDatabase({
 
           <DialogFooter placeholder={""}>
             <Button
+              placeholder={""}
               onClick={clearFilter}
               className="mr-4 rounded-full border border-[#3AC4A0] bg-transparent text-[#3AC4A0] font-semibold"
             >
               Clear
             </Button>
             <Button
+              placeholder={""}
               onClick={search}
               className="rounded-full border bg-[#3AC4A0] text-white font-semibold"
             >

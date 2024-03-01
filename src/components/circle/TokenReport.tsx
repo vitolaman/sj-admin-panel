@@ -6,7 +6,6 @@ import {
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
 import {
-  Button,
   IconButton,
   Menu,
   MenuHandler,
@@ -19,25 +18,13 @@ import React, { useEffect, useState } from "react";
 import { CiFilter } from "react-icons/ci";
 import { FiDownload } from "react-icons/fi";
 import { IoEllipsisHorizontal } from "react-icons/io5";
-import { Input } from "react-daisyui";
+import { Input, Button } from "react-daisyui";
 import ModalFilterTokenReport from "components/modal/circle/ModalFilterTokenReport";
 import ModalChangeStatusTokenReport from "components/modal/circle/ModalChangeStatusTokenReport";
-
-interface TokenData {
-  id: string;
-  name: string;
-  owner: {
-    name: string;
-    seeds_tag: string;
-  };
-  raised_by: {
-    name: string;
-    seeds_tag: string;
-  };
-  ticket: string;
-  status: string;
-  created_at: string;
-}
+import { TokenReportData, TokenReportReq } from "_interfaces/circle.interface";
+import { useTokenReportListQuery } from "services/modules/circle";
+import Pagination from "components/table/pagination";
+import { Columns, Table } from "components/table/table";
 
 interface Paginate {
   total: number;
@@ -46,26 +33,22 @@ interface Paginate {
   total_page: number;
 }
 
-const initialFilter = {
-  search: "",
-  limit: 10,
-  page: 1,
-  sort_by: "created_at",
-  order: "asc",
-  ticket: "",
-  status: [],
-  circle_owner_id: "",
-  created_at_from: "",
-  created_at_to: "",
-};
-
 export default function TokenReport(): React.ReactElement {
   const [openFilter, setOpenFilter] = useState(false);
   const [modalChangeStatus, setModalChangeStatus] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [filter, setFilter] = useState(initialFilter);
-  const [tokenData, setTokenData] = useState<TokenData[]>();
-  const [pagination, setPagination] = useState<Paginate>();
+  const [filter, setFilter] = useState<TokenReportReq>({
+    search: "",
+    limit: 10,
+    page: 1,
+    sort_by: "created_at",
+    order: "asc",
+    ticket: "",
+    status: [],
+    circle_owner_id: "",
+    created_at_from: "",
+    created_at_to: "",
+  });
+  const { data, isLoading } = useTokenReportListQuery(filter);
 
   const handleOpenFilter = (): void => {
     setOpenFilter(!openFilter);
@@ -81,10 +64,120 @@ export default function TokenReport(): React.ReactElement {
 
   const handleEnterPress = (e: any): void => {
     e.preventDefault();
-    fetchTokenData()
-      .then()
-      .catch(() => {});
   };
+
+  const header: Columns<TokenReportData>[] = [
+    {
+      fieldId: "index",
+      label: "No",
+    },
+    {
+      fieldId: "id",
+      label: "Ticket Id",
+    },
+    {
+      fieldId: "name",
+      label: "Circle Name",
+    },
+    {
+      fieldId: "owner",
+      label: "Circle Owner",
+      render: (data) => (
+        <>
+          {data?.owner.name} <br />
+          <Typography className="text-[#7C7C7C]">
+            @{data?.owner.seeds_tag}
+          </Typography>
+        </>
+      ),
+    },
+    {
+      fieldId: "ticket",
+      label: "Ticket",
+    },
+    {
+      fieldId: "created_at",
+      label: "Reported At",
+      render: (data) => (
+        <>{moment(data?.created_at).utc(true).format("DD/MM/yyyy HH:mm")}</>
+      ),
+      renderHeader: () => (
+        <>
+          {filter.order === "asc" ? (
+            <ArrowUpCircleIcon
+              className="w-5 h-5 text-[#27A590] ml-2"
+              onClick={handleOrderCreatedAt}
+            />
+          ) : (
+            <ArrowDownCircleIcon
+              className="w-5 h-5 text-[#27A590] ml-2"
+              onClick={handleOrderCreatedAt}
+            />
+          )}
+        </>
+      ),
+    },
+    {
+      fieldId: "raised_by",
+      label: "Raised By",
+      render: (data) => (
+        <>
+          {data?.raised_by.name} <br />
+          <Typography className="text-[#7C7C7C]">
+            @{data?.raised_by.seeds_tag}
+          </Typography>
+        </>
+      ),
+    },
+    {
+      fieldId: "status",
+      label: "Status",
+      render: (data) => (
+        <span
+          className={classNames(
+            data?.status === "Solved"
+              ? "bg-[#DCFCE4] text-[#27A590]"
+              : data?.status === "Pending"
+              ? "bg-[#FFF7D2] text-[#D89918]"
+              : "bg-[#DCE1FE] text-[#2934B2]",
+            "inline-flex items-center rounded px-2 py-1 text-sm"
+          )}
+        >
+          {data?.status}
+        </span>
+      ),
+    },
+    {
+      fieldId: "action",
+      label: "Action",
+      render: () => (
+        <Menu>
+          <MenuHandler>
+            <IconButton
+              placeholder={""}
+              className="bg-transparent shadow-none hover:shadow-none"
+            >
+              <IoEllipsisHorizontal className="w-5 h-5 text-[#262626]" />
+            </IconButton>
+          </MenuHandler>
+          <MenuList placeholder={""}>
+            <MenuItem placeholder={""}>
+              <div className="flex flex-row">
+                <EyeIcon className="w-5 h-5 text-[#262626] mr-2" />
+                View Detail
+              </div>
+            </MenuItem>
+            <MenuItem placeholder={""} onClick={handleModalChangeStatus}>
+              <div className="flex flex-row">
+                <ArrowPathIcon className="w-5 h-5 text-[#262626] mr-2" />
+                Change Status
+              </div>
+            </MenuItem>
+          </MenuList>
+        </Menu>
+      ),
+    },
+  ];
 
   const handleChangeFilter = (event: any): void => {
     const target = event.target;
@@ -145,9 +238,6 @@ export default function TokenReport(): React.ReactElement {
 
   const searchFilter = async (): Promise<void> => {
     setOpenFilter(!openFilter);
-    fetchTokenData()
-      .then()
-      .catch(() => {});
   };
 
   const clearFilter = (): void => {
@@ -184,21 +274,6 @@ export default function TokenReport(): React.ReactElement {
     return classes.filter(Boolean).join(" ");
   }
 
-  const fetchTokenData = async (): Promise<void> => {
-    try {
-      setIsLoading(true);
-    } catch (error: any) {
-      setIsLoading(false);
-      console.error("Error fetching circle data:", error.message);
-    }
-  };
-
-  useEffect(() => {
-    fetchTokenData()
-      .then()
-      .catch(() => {});
-  }, [filter.page, filter.order]);
-
   return (
     <>
       <ModalFilterTokenReport
@@ -232,6 +307,7 @@ export default function TokenReport(): React.ReactElement {
                   <Input
                     name="search"
                     type="outline"
+                    className="rounded-full"
                     onChange={(e) => {
                       handleChangeFilter(e);
                     }}
@@ -239,19 +315,13 @@ export default function TokenReport(): React.ReactElement {
                     value={filter.search}
                   />
                 </form>
-                <Button
-                  placeholder={""}
-                  className="bg-transparent rounded-full p-2 w-auto border border-[#3AC4A0]"
-                >
+                <Button className="bg-transparent rounded-full py-2 px-3 w-auto border border-[#3AC4A0]">
                   <CiFilter
                     className="text-xl font-normal text-[#3AC4A0]"
                     onClick={handleOpenFilter}
                   />
                 </Button>
-                <Button
-                  placeholder={""}
-                  className="bg-transparent rounded-full p-2 w-auto border border-[#3AC4A0]"
-                >
+                <Button className="bg-transparent rounded-full py-2 px-3 w-auto border border-[#3AC4A0]">
                   <FiDownload className="text-xl font-normal text-[#3AC4A0]" />
                 </Button>
               </div>
@@ -262,200 +332,21 @@ export default function TokenReport(): React.ReactElement {
               <div className="overflow-x-auto">
                 <div className="align-middle inline-block min-w-full">
                   <div className="overflow-hidden border border-[#BDBDBD] rounded-lg">
-                    <table className="min-w-full">
-                      <thead className="bg-[#DCFCE4]">
-                        <tr className="divide-x divide-[#BDBDBD]">
-                          <th
-                            scope="col"
-                            className="p-4 text-center whitespace-nowrap text-sm font-semibold text-[#27A590]"
-                          >
-                            No
-                          </th>
-                          <th
-                            scope="col"
-                            className="p-4 text-center whitespace-nowrap text-sm font-semibold text-[#27A590]"
-                          >
-                            <div className="flex flex-row justify-center">
-                              Ticket Id
-                            </div>
-                          </th>
-                          <th
-                            scope="col"
-                            className="p-4 text-center whitespace-nowrap text-sm font-semibold text-[#27A590]"
-                          >
-                            Circle Name
-                          </th>
-                          <th
-                            scope="col"
-                            className="p-4 text-center whitespace-nowrap text-sm font-semibold text-[#27A590]"
-                          >
-                            Circle Owner
-                          </th>
-                          <th
-                            scope="col"
-                            className="p-4 text-center whitespace-nowrap text-sm font-semibold text-[#27A590]"
-                          >
-                            Ticket
-                          </th>
-                          <th
-                            scope="col"
-                            className="p-4 text-center whitespace-nowrap text-sm font-semibold text-[#27A590]"
-                          >
-                            <div
-                              id="circleId"
-                              className="flex flex-row justify-center"
-                            >
-                              Reported At
-                              {filter.order === "asc" ? (
-                                <ArrowUpCircleIcon
-                                  className="w-5 h-5 text-[#27A590] ml-2"
-                                  onClick={handleOrderCreatedAt}
-                                />
-                              ) : (
-                                <ArrowDownCircleIcon
-                                  className="w-5 h-5 text-[#27A590] ml-2"
-                                  onClick={handleOrderCreatedAt}
-                                />
-                              )}
-                            </div>
-                          </th>
-                          <th
-                            scope="col"
-                            className="p-4 text-center whitespace-nowrap text-sm font-semibold text-[#27A590]"
-                          >
-                            Raised By
-                          </th>
-                          <th
-                            scope="col"
-                            className="p-4 text-center whitespace-nowrap text-sm font-semibold text-[#27A590]"
-                          >
-                            Status
-                          </th>
-                          <th
-                            scope="col"
-                            className="p-4 text-center whitespace-nowrap text-sm font-semibold text-[#27A590]"
-                          >
-                            Action
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white">
-                        {!isLoading ? (
-                          tokenData?.length ? (
-                            tokenData.map((data, index) => (
-                              <tr
-                                key={index}
-                                className="divide-x divide-[#BDBDBD]"
-                              >
-                                <td className="p-4 text-center whitespace-nowrap text-sm leading-7">
-                                  {index + 1}
-                                </td>
-                                <td className="p-4 text-center whitespace-nowrap text-sm leading-7">
-                                  {data.id}
-                                </td>
-                                <td className="p-4 text-left whitespace-nowrap text-sm leading-7">
-                                  {data.name}
-                                </td>
-                                <td className="p-4 text-left whitespace-nowrap text-sm leading-7">
-                                  {data.owner.name} <br />
-                                  <Typography className="text-[#7C7C7C]">
-                                    @{data.owner.seeds_tag}
-                                  </Typography>
-                                </td>
-                                <td className="p-4 text-center whitespace-nowrap text-sm leading-7">
-                                  {data.ticket}
-                                </td>
-                                <td className="p-4 text-center whitespace-nowrap text-sm leading-7">
-                                  {moment(data.created_at)
-                                    .utc(true)
-                                    .format("DD/MM/yyyy HH:mm")}
-                                </td>
-                                <td className="p-4 text-left whitespace-nowrap text-sm leading-7">
-                                  {data.raised_by.name} <br />
-                                  <Typography className="text-[#7C7C7C]">
-                                    @{data.raised_by.seeds_tag}
-                                  </Typography>
-                                </td>
-                                <td className="p-4 text-center whitespace-nowrap text-sm leading-7">
-                                  <span
-                                    className={classNames(
-                                      data.status === "Solved"
-                                        ? "bg-[#DCFCE4] text-[#27A590]"
-                                        : data.status === "Pending"
-                                        ? "bg-[#FFF7D2] text-[#D89918]"
-                                        : "bg-[#DCE1FE] text-[#2934B2]",
-                                      "inline-flex items-center rounded px-2 py-1 text-sm"
-                                    )}
-                                  >
-                                    {data.status}
-                                  </span>
-                                </td>
-                                <td className="p-4 text-center whitespace-nowrap text-sm leading-7">
-                                  <Menu>
-                                    <MenuHandler>
-                                      <IconButton
-                                        placeholder={""}
-                                        className="bg-transparent shadow-none hover:shadow-none"
-                                      >
-                                        <IoEllipsisHorizontal className="w-5 h-5 text-[#262626]" />
-                                      </IconButton>
-                                    </MenuHandler>
-                                    <MenuList placeholder={""}>
-                                      <MenuItem placeholder={""}>
-                                        <div className="flex flex-row">
-                                          <EyeIcon className="w-5 h-5 text-[#262626] mr-2" />
-                                          View Detail
-                                        </div>
-                                      </MenuItem>
-                                      <MenuItem
-                                        placeholder={""}
-                                        onClick={handleModalChangeStatus}
-                                      >
-                                        <div className="flex flex-row">
-                                          <ArrowPathIcon className="w-5 h-5 text-[#262626] mr-2" />
-                                          Change Status
-                                        </div>
-                                      </MenuItem>
-                                    </MenuList>
-                                  </Menu>
-                                </td>
-                              </tr>
-                            ))
-                          ) : (
-                            <tr className="divide-x divide-[#BDBDBD]">
-                              <td
-                                colSpan={10}
-                                className="p-4 text-center whitespace-nowrap text-sm text-[#201B1C]"
-                              >
-                                No Data
-                              </td>
-                            </tr>
-                          )
-                        ) : (
-                          <tr className="divide-x divide-[#BDBDBD]">
-                            <td
-                              colSpan={10}
-                              className="p-4 text-center whitespace-nowrap text-sm text-[#201B1C]"
-                            >
-                              Loading...
-                            </td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
+                    <Table<TokenReportData>
+                      columns={header}
+                      data={data?.data}
+                      loading={isLoading}
+                    />
                   </div>
                 </div>
               </div>
             </div>
             <div className="flex flex-col">
-              {pagination !== undefined ? (
-                <></>
-              ) : // <Pagination
-              //   currentPage={pagination.current_page}
-              //   totalPages={pagination.total_page}
-              //   onPageChange={handlePageChange}
-              // />
-              null}
+              <Pagination
+                currentPage={data!?.metadata!.current_page}
+                totalPages={data!?.metadata!.total_page}
+                onPageChange={handlePageChange}
+              />
             </div>
           </div>
         </div>
