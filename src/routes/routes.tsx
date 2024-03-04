@@ -6,6 +6,7 @@ import UserControlPanel, { ucpRouteName } from "pages/user/control-panel/control
 import Play, { playRouteName } from "pages/play/index.page";
 import PlayDetail, { pdRouteName } from "pages/play/detail.page";
 import CreatePlay, { cpRouteName } from "pages/play/create.page";
+import WithdrawPlay, { wpRouteName } from "pages/play/withdraw.page";
 
 const protectedRoutes: RouteObject[] = [
   { path: "", element: <Navigate to="/user/control-panel" /> },
@@ -39,6 +40,10 @@ const protectedRoutes: RouteObject[] = [
           {
             path: cpRouteName,
             element: <CreatePlay />,
+          },
+          {
+            path: wpRouteName,
+            element: <WithdrawPlay />,
           },
         ],
       },
