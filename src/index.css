@@ -7,3 +7,15 @@
 * {
   font-family: 'Montserrat', sans-serif;;
 }
+
+input:not([type='file']) {
+  @apply !border-[#BDBDBD];
+}
+
+input:disabled {
+  @apply !bg-gray-100;
+}
+
+.checkbox:disabled {
+  @apply !border-gray-600;
+}

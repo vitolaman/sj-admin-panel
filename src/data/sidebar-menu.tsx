@@ -41,7 +41,7 @@ const menuItems: MenuItem[] = [
   },
   {
     name: "Circle",
-    path: "/#",
+    path: "#",
     child: [
       { name: "Control Panel", path: "/circle/control-panel" },
       { name: "Membership", path: "/circle/membership" },
@@ -50,7 +50,7 @@ const menuItems: MenuItem[] = [
   },
   {
     name: "Banner",
-    path: "/#",
+    path: "#",
     child: [
       { name: "Main Banner", path: "/banner/main-banner" },
       { name: "Exclusive Offers", path: "/banner/exclusive-offers" },
@@ -70,7 +70,7 @@ const menuItems: MenuItem[] = [
   },
   {
     name: "Blog",
-    path: "/#",
+    path: "#",
     child: [
       { name: "Event Highlight", path: "/blog/event-highlight" },
       { name: "Article", path: "/blog/article" },
@@ -82,7 +82,7 @@ const menuItems: MenuItem[] = [
   },
   {
     name: "Withdrawal",
-    path: "/#",
+    path: "#",
     child: [{ name: "Withdraw Quiz", path: "/withdraw-quiz" }],
   },
   {
@@ -91,7 +91,7 @@ const menuItems: MenuItem[] = [
   },
   {
     name: "Push Notification",
-    path: "/#",
+    path: "#",
     child: [
       {
         name: "Blast Push Notification",
