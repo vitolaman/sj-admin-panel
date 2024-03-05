@@ -35,6 +35,7 @@ const LogoutModal: ForwardRefRenderFunction<
       <Modal
         backdrop={true}
         ref={ref}
+        className="bg-white"
       >
         <Modal.Header className="font-bold">
           Are you sure want to log out?
@@ -45,8 +46,7 @@ const LogoutModal: ForwardRefRenderFunction<
         <Modal.Actions>
           <Button
             onClick={handleLogout}
-            color="primary"
-            className="text-white"
+            className="text-white bg-red-500"
           >
             Yes, sure
           </Button>
@@ -101,7 +101,7 @@ const Sidebar: React.FC<SidebarProps> = ({ active }): JSX.Element => {
                   key={index}
                   to={item.path}
                   className={({ isActive }) =>
-                    isActive ? "bg-seeds rounded-xl" : "rounded-xl"
+                    (isActive && item.path !== "#") ? "bg-seeds rounded-xl" : "rounded-xl"
                   }
                   onClick={() => {
                     if (item.child) {
@@ -127,9 +127,9 @@ const Sidebar: React.FC<SidebarProps> = ({ active }): JSX.Element => {
                         <NavLink
                           key={i}
                           to={child.path}
-                          className={({ isActive }) =>
-                            isActive ? "bg-seeds rounded-xl" : "rounded-xl"
-                          }
+                          className={({ isActive }) =>{
+                            return isActive ? "bg-seeds rounded-xl" : "rounded-xl"
+                          }}
                         >
                           <li className="hover:bg-seeds hover:bg-opacity-20 transition-all duration-100 p-4 cursor-pointer ml-2 rounded-l-full text-white">
                             {child.name}

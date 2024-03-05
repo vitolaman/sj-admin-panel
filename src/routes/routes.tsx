@@ -4,6 +4,9 @@ import Login from "pages/login";
 import DashboardHome from "pages/dashboard";
 import UserControlPanel, { ucpRouteName } from "pages/user/control-panel/control-panel.page";
 import Play, { playRouteName } from "pages/play/index.page";
+import PlayDetail, { pdRouteName } from "pages/play/detail.page";
+import CreatePlay, { cpRouteName } from "pages/play/create.page";
+import WithdrawPlay, { wpRouteName } from "pages/play/withdraw.page";
 
 const protectedRoutes: RouteObject[] = [
   { path: "", element: <Navigate to="/user/control-panel" /> },
@@ -29,6 +32,18 @@ const protectedRoutes: RouteObject[] = [
             path: playRouteName,
             element: <Play />,
             index: true,
+          },
+          {
+            path: pdRouteName,
+            element: <PlayDetail />,
+          },
+          {
+            path: cpRouteName,
+            element: <CreatePlay />,
+          },
+          {
+            path: wpRouteName,
+            element: <WithdrawPlay />,
           },
         ],
       },
