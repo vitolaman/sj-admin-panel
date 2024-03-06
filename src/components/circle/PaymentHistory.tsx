@@ -10,11 +10,9 @@ import ModalFilterPaymentHistory from "components/modal/circle/ModalFilterPaymen
 export default function PaymentHistory(): React.ReactElement {
   const [openFilter, setOpenFilter] = useState(false);
 
-  const handlePageChange = (page: number): void => {
-    console.log("token report");
-  };
+  const handlePageChange = (page: number): void => {};
 
-  const handleOpenFilter = (): any => {
+  const handleOpenFilter = (): void => {
     setOpenFilter(!openFilter);
   };
 

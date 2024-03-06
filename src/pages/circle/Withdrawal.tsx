@@ -10,6 +10,7 @@ import { Columns, Table } from "components/table/table";
 import React, { useState } from "react";
 import { Button } from "react-daisyui";
 import { FiDownload } from "react-icons/fi";
+import { errorHandler } from "services/errorHandler";
 import {
   useChangeStatusWithdrawMutation,
   useListWithdrawQuery,
@@ -36,7 +37,7 @@ export default function WithdrawPage(): React.ReactElement {
       });
       refetch();
     } catch (error) {
-      console.log(error);
+      errorHandler(error);
     } finally {
       setShowActionOptions(false);
     }
@@ -51,7 +52,7 @@ export default function WithdrawPage(): React.ReactElement {
       });
       refetch();
     } catch (error) {
-      console.log(error);
+      errorHandler(error);
     } finally {
       setShowActionOptions(false);
     }

@@ -170,3 +170,9 @@ export interface WithdrawChangeStatusReq {
   status: "REJECT" | "SUCCESS";
   reject_reason: "rejected" | "";
 }
+
+export interface OptionFilter {
+  key: number;
+  label: string;
+  value: string;
+}

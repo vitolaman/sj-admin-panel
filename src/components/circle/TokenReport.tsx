@@ -12,14 +12,18 @@ import {
   MenuList,
 } from "@material-tailwind/react";
 import moment from "moment";
-import React, { useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import { CiFilter } from "react-icons/ci";
 import { FiDownload } from "react-icons/fi";
 import { IoEllipsisHorizontal } from "react-icons/io5";
 import { Button } from "react-daisyui";
 import ModalFilterTokenReport from "components/modal/circle/ModalFilterTokenReport";
 import ModalChangeStatusTokenReport from "components/modal/circle/ModalChangeStatusTokenReport";
-import { TokenReportData, TokenReportReq } from "_interfaces/circle.interface";
+import {
+  OptionFilter,
+  TokenReportData,
+  TokenReportReq,
+} from "_interfaces/circle.interface";
 import { useTokenReportListQuery } from "services/modules/circle";
 import Pagination from "components/table/pagination";
 import { Columns, Table } from "components/table/table";
@@ -163,13 +167,15 @@ export default function TokenReport(): React.ReactElement {
     },
   ];
 
-  const handleChangeFilterStatus = (event: any): void => {
+  const handleChangeFilterStatus = (
+    event: ChangeEvent<HTMLInputElement>
+  ): void => {
     const target = event.target;
     const value = target.type === "checkbox" ? target.checked : target.value;
     const name = target.name;
 
     if (value === true) {
-      setFilter((prevState: any) => ({
+      setFilter((prevState) => ({
         ...prevState,
         status: [...prevState.status, name],
       }));
@@ -209,10 +215,6 @@ export default function TokenReport(): React.ReactElement {
     }
   };
 
-  const searchFilter = async (): Promise<void> => {
-    setOpenFilter(!openFilter);
-  };
-
   const clearFilter = (): void => {
     setFilter({
       search: "",
@@ -229,14 +231,14 @@ export default function TokenReport(): React.ReactElement {
     setOpenFilter(!openFilter);
   };
 
-  const handleChageFilterTikcet = (data: any): void => {
+  const handleChageFilterTikcet = (data: OptionFilter): void => {
     setFilter((prevState) => ({
       ...prevState,
       ticket: data.value,
     }));
   };
 
-  const handleChageFilterCircleOwner = (data: any): void => {
+  const handleChageFilterCircleOwner = (data: OptionFilter): void => {
     setFilter((prevState) => ({
       ...prevState,
       circle_owner_id: data.value,
@@ -256,7 +258,6 @@ export default function TokenReport(): React.ReactElement {
         changeDateFrom={handleChangeDateFrom}
         changeDateTo={handleChangeDateTo}
         clearFilter={clearFilter}
-        search={searchFilter}
         changeFilterTicket={handleChageFilterTikcet}
         changeFilterCircleOwner={handleChageFilterCircleOwner}
         changeFilterStatus={handleChangeFilterStatus}

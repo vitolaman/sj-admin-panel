@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CiFilter } from "react-icons/ci";
 import { FiDownload } from "react-icons/fi";
@@ -9,11 +9,14 @@ import {
 import ModalFilterCircleDatabase from "components/modal/circle/ModalFilterCircleDatabase";
 import { Button } from "react-daisyui";
 import moment from "moment";
-import { CircleList, CircleReq } from "_interfaces/circle.interface";
+import {
+  CircleList,
+  CircleReq,
+  OptionFilter,
+} from "_interfaces/circle.interface";
 import { useCircleListQuery } from "services/modules/circle";
 import { Columns, Table } from "components/table/table";
 import Pagination from "components/table/pagination";
-import { type Option } from "components/forms/Select";
 import SearchInput from "components/search-input";
 interface CircleDatabaseProps {}
 
@@ -118,7 +121,7 @@ const CircleDatabase: React.FC<CircleDatabaseProps> = () => {
     setFilter({ ...filter, page });
   };
 
-  const handleChangeFilter = (event: any): void => {
+  const handleChangeFilter = (event: ChangeEvent<HTMLInputElement>): void => {
     const target = event.target;
     const value = target.value;
     const name = target.name;
@@ -143,10 +146,10 @@ const CircleDatabase: React.FC<CircleDatabaseProps> = () => {
     }
   };
 
-  const handleChageFilterType = (data: Option): void => {
+  const handleChageFilterType = (data: OptionFilter): void => {
     setFilter((prevState) => ({
       ...prevState,
-      type: data.data,
+      type: data.value,
     }));
   };
 
@@ -163,7 +166,6 @@ const CircleDatabase: React.FC<CircleDatabaseProps> = () => {
       created_at_to: createdAtTo,
     }));
   };
-  console.log(filter);
 
   const moveToCircleDetail = (circleId: string) => {
     router(`/circle/circle-detail/${circleId}`);

@@ -1,15 +1,15 @@
-import { Select } from "components/forms/Select";
-import { Date } from "components/forms/dateTime";
 import React, { Fragment } from "react";
 import { Button, Modal } from "react-daisyui";
 import { IoClose } from "react-icons/io5";
 
+interface props {
+  openFilter: boolean;
+  handleOpenFilter: () => void;
+}
 export default function ModalFilterPaymentHistory({
   openFilter,
   handleOpenFilter,
-}: any): React.ReactElement {
-  const handleChangeDate = (): any => {};
-
+}: props): React.ReactElement {
   const typeMembership = [
     "Lifetime",
     "3 Month Subscription",
@@ -60,20 +60,20 @@ export default function ModalFilterPaymentHistory({
               <p className="text-black text-base font-semibold mb-3">
                 Membership
               </p>
-              <Select
+              {/* <Select
                 name="type"
                 placeholder="Choose Membership"
                 options={optionsMembership}
-              />
+              /> */}
             </div>
 
             <div>
               <p className="text-black text-base font-semibold mb-3">Method</p>
-              <Select
+              {/* <Select
                 name="type"
                 placeholder="Choose Method"
                 options={optionsMethod}
-              />
+              /> */}
             </div>
 
             <div className="">
@@ -83,7 +83,7 @@ export default function ModalFilterPaymentHistory({
                 <p className="mb-2 text-black text-base font-semibold">End</p>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <Date
+                {/* <Date
                   name="publishTime"
                   onChange={handleChangeDate}
                   placeholder="Choose Start"
@@ -92,7 +92,7 @@ export default function ModalFilterPaymentHistory({
                   name="publishTime"
                   onChange={handleChangeDate}
                   placeholder="Choose End"
-                />
+                /> */}
               </div>
             </div>
 

@@ -1,59 +1,41 @@
-import type { CircleOwner } from "_interfaces/circle.interface";
+import type {
+  CircleOwner,
+  OptionFilter,
+  TokenReportReq,
+} from "_interfaces/circle.interface";
 import CInput from "components/input";
+import { typeStatus, typeTicket } from "data/circle";
 import moment from "moment";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { ChangeEvent, Fragment, useEffect, useState } from "react";
 import { Button, Modal } from "react-daisyui";
 import { IoClose } from "react-icons/io5";
 import ReactSelect from "react-select";
 import { useOwnerCircleListQuery } from "services/modules/circle";
 
+interface props {
+  openFilter: boolean;
+  handleOpenFilter: () => void;
+  filter: TokenReportReq;
+  changeDateFrom: (createdAtFrom: string) => void;
+  changeDateTo: (createdAtTo: string) => void;
+  clearFilter: () => void;
+  changeFilterTicket: (data: OptionFilter) => void;
+  changeFilterCircleOwner: (data: OptionFilter) => void;
+  changeFilterStatus: (event: ChangeEvent<HTMLInputElement>) => void;
+}
 export default function ModalFilterTokenReport({
   openFilter,
   handleOpenFilter,
   filter,
   changeDateFrom,
   changeDateTo,
-  search,
   clearFilter,
   changeFilterTicket,
   changeFilterCircleOwner,
   changeFilterStatus,
-}: any): React.ReactElement {
-  const [optionsOwner, setOptionsOwner] = useState<any[]>([]);
+}: props): React.ReactElement {
+  const [optionsOwner, setOptionsOwner] = useState<OptionFilter[]>([]);
   const { data, isLoading } = useOwnerCircleListQuery({ page: 1, limit: 200 });
-  const typeTicket = [
-    {
-      label: "Fraud",
-      value: "fraud",
-    },
-    {
-      label: "Scam",
-      value: "scam",
-    },
-    {
-      label: "Innapropriate",
-      value: "innapropriate",
-    },
-    {
-      label: "Others",
-      value: "others",
-    },
-  ];
-
-  const typeStatus = [
-    {
-      label: "To-Do",
-      value: "to-do",
-    },
-    {
-      label: "Pending",
-      value: "pending",
-    },
-    {
-      label: "Solve",
-      value: "solve",
-    },
-  ];
 
   const optionsTicket = [
     ...Object.values(typeTicket).map((type, idx) => {
@@ -61,13 +43,12 @@ export default function ModalFilterTokenReport({
         key: idx + 1,
         label: type.label,
         value: type.value,
-        data: "test",
       };
     }),
   ];
 
   const handleOptionOwner = (ownerData: CircleOwner[]): void => {
-    const newOwner: any[] = ownerData?.map((data, idx) => {
+    const newOwner = ownerData?.map((data, idx) => {
       return {
         key: idx + 1,
         label: data.name,
@@ -108,10 +89,10 @@ export default function ModalFilterTokenReport({
                   }}
                   options={optionsTicket}
                   isSearchable={true}
-                  value={optionsTicket.find(
-                    (item) => item.data === filter.ticket
+                  value={optionsTicket?.find(
+                    (item) => item.value === filter.ticket
                   )}
-                  onChange={(e) => changeFilterTicket(e)}
+                  onChange={(e) => changeFilterTicket(e as OptionFilter)}
                 />
               </div>
 
@@ -167,10 +148,10 @@ export default function ModalFilterTokenReport({
                   }}
                   options={optionsOwner}
                   isSearchable={true}
-                  value={optionsOwner.find(
+                  value={optionsOwner?.find(
                     (item) => item.value === filter.circle_owner_id
                   )}
-                  onChange={(e) => changeFilterCircleOwner(e)}
+                  onChange={(e) => changeFilterCircleOwner(e as OptionFilter)}
                   isLoading={isLoading}
                 />
               </div>
@@ -211,7 +192,7 @@ export default function ModalFilterTokenReport({
               Clear
             </Button>
             <Button
-              onClick={search}
+              onClick={handleOpenFilter}
               className="rounded-full border bg-[#3AC4A0] text-white font-semibold hover:bg-[#3AC4A0]/90"
             >
               Submit

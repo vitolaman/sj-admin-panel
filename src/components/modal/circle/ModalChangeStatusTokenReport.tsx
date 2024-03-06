@@ -1,33 +1,36 @@
-// import { Select } from "@/components";
-import { Select } from "components/forms/Select";
+import { OptionFilter } from "_interfaces/circle.interface";
 import React, { Fragment } from "react";
 import { Button, Modal } from "react-daisyui";
 import { IoClose } from "react-icons/io5";
+import ReactSelect from "react-select";
+interface props {
+  modalStatus: boolean;
+  handleModalStatus: () => void;
+}
 
 export default function ModalChangeStatusTokenReport({
   modalStatus,
   handleModalStatus,
-}: any): React.ReactElement {
+}: props): React.ReactElement {
   const typeFilter = ["Pending", "Solved", "To-Do"];
 
-  const options = [
-    {
-      key: 0,
-      label: "Choose Type",
-      data: "test",
-    },
+  const options: OptionFilter[] = [
     ...Object.values(typeFilter).map((category, idx) => {
       return {
         key: idx + 1,
         label: category,
-        data: "test",
+        value: "test",
       };
     }),
   ];
 
   return (
     <Fragment>
-      <Modal backdrop={false} open={modalStatus} className="bg-white">
+      <Modal
+        backdrop={false}
+        open={modalStatus}
+        className="bg-white min-h-[300px]"
+      >
         <Modal.Header className="flex flex-row justify-between">
           Change Status
           <IoClose onClick={handleModalStatus} />{" "}
@@ -36,23 +39,39 @@ export default function ModalChangeStatusTokenReport({
         <Modal.Body>
           <div className="grid gap-6">
             <p className="text-black text-base font-semibold -mb-3">Status</p>
-            <Select name="type" placeholder="Choose Type" options={options} />
+            <ReactSelect
+              styles={{
+                control: (baseStyle) => ({
+                  ...baseStyle,
+                  padding: 2,
+                  margin: 2,
+                  borderColor: "#BDBDBD",
+                  borderRadius: "0.5rem",
+                }),
+              }}
+              options={options}
+              isSearchable={true}
+              // value={options?.find((item) => item.value === filter.type)}
+              // onChange={(e) => changeFilterType(e as OptionFilter)}
+            />
           </div>
         </Modal.Body>
 
-        <Modal.Actions>
-          <Button
-            onClick={handleModalStatus}
-            className="mr-4 rounded-full border border-[#3AC4A0] bg-transparent text-[#3AC4A0] font-semibold"
-          >
-            Clear
-          </Button>
-          <Button
-            onClick={handleModalStatus}
-            className="rounded-full border bg-[#3AC4A0] text-white font-semibold hover:bg-[#3AC4A0]/90"
-          >
-            Submit
-          </Button>
+        <Modal.Actions className="flex flex-col justify-end h-full">
+          <div className="flex justify-end">
+            <Button
+              onClick={handleModalStatus}
+              className="mr-4 rounded-full border border-[#3AC4A0] bg-transparent text-[#3AC4A0] font-semibold"
+            >
+              Clear
+            </Button>
+            <Button
+              onClick={handleModalStatus}
+              className="rounded-full border bg-[#3AC4A0] text-white font-semibold hover:bg-[#3AC4A0]/90"
+            >
+              Submit
+            </Button>
+          </div>
         </Modal.Actions>
       </Modal>
     </Fragment>

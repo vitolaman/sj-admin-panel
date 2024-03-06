@@ -1,7 +1,7 @@
 import React from "react";
 
 interface TagsProps {
-  message: any;
+  message: string;
   colorFont: string;
   colorBackground: string;
 }

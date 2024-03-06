@@ -1,10 +1,23 @@
-import { type Option } from "components/forms/Select";
+import { CircleReq, OptionFilter } from "_interfaces/circle.interface";
 import CInput from "components/input";
+import { typeFilter } from "data/circle";
 import moment from "moment";
-import React, { Fragment, useState } from "react";
+import React, { ChangeEvent, Fragment, useState } from "react";
 import { Button, Modal } from "react-daisyui";
 import { IoClose } from "react-icons/io5";
 import ReactSelect from "react-select";
+
+interface props {
+  openFilter: boolean;
+  handleOpenFilter: () => void;
+  filter: CircleReq;
+  changeDateFrom: (createdAtFrom: string) => void;
+  changeDateTo: (createdAtTo: string) => void;
+  clearFilter: () => void;
+  changeFilterType: (data: OptionFilter) => void;
+  changeFilter: (event: ChangeEvent<HTMLInputElement>) => void;
+}
+
 export default function ModalFilterCircleDatabase({
   openFilter,
   handleOpenFilter,
@@ -14,28 +27,13 @@ export default function ModalFilterCircleDatabase({
   changeDateFrom,
   changeDateTo,
   clearFilter,
-}: any): React.ReactElement {
-  const typeFilter = [
-    {
-      label: "Free",
-      value: "free",
-    },
-    {
-      label: "Premium Lifetime",
-      value: "lifetime",
-    },
-    {
-      label: "Premium Subscription",
-      value: "subscription",
-    },
-  ];
-
-  const options: Option[] = [
+}: props): React.ReactElement {
+  const options: OptionFilter[] = [
     ...Object.values(typeFilter).map((category, idx) => {
       return {
         key: idx + 1,
         label: category.label,
-        data: category.value,
+        value: category.value,
       };
     }),
   ];
@@ -69,8 +67,8 @@ export default function ModalFilterCircleDatabase({
                 onInputChange={(e) => {
                   setSearch(e);
                 }}
-                value={options.find((item) => item.data === filter.type)}
-                onChange={(e) => changeFilterType(e)}
+                value={options?.find((item) => item.value === filter.type)}
+                onChange={(e) => changeFilterType(e as OptionFilter)}
               />
               <div className="">
                 <p className="mb-2 text-black text-base font-semibold">
@@ -188,42 +186,6 @@ export default function ModalFilterCircleDatabase({
                     value={filter.total_share_to}
                   />
                 </div>
-              </div>
-
-              <div>
-                <section className="flex flex-col">
-                  <p className="text-black text-base font-semibold mb-3">
-                    Status
-                  </p>
-                  <section className="flex flex-row gap-3">
-                    <section className="flex flex-row gap-3 border border-[#BDBDBD] px-[16px] py-[8px] rounded-lg">
-                      <input
-                        type="checkbox"
-                        name="status"
-                        id="active"
-                        value={filter.status}
-                        onChange={(e) => changeFilter(e)}
-                      />
-                      <p className="text-[#262626] text-base font-normal">
-                        Active
-                      </p>
-                    </section>
-
-                    <section className="flex flex-row gap-3 border border-[#BDBDBD] px-[16px] py-[8px] rounded-lg">
-                      <input type="checkbox" name="status" id="" />
-                      <p className="text-[#262626] text-base font-normal">
-                        Idle
-                      </p>
-                    </section>
-
-                    <section className="flex flex-row gap-3 border border-[#BDBDBD] px-[16px] py-[8px] rounded-lg">
-                      <input type="checkbox" name="status" id="inactive" />
-                      <p className="text-[#262626] text-base font-normal">
-                        Inactive
-                      </p>
-                    </section>
-                  </section>
-                </section>
               </div>
             </div>
           </Modal.Body>
