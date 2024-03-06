@@ -24,6 +24,7 @@ const reducers = combineReducers({
 const persistConfig = {
   key: "seedsfinancestore",
   storage: new CookieStorage(Cookies, {}),
+  whitelist: ['auth'],
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);
