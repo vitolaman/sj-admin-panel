@@ -1,10 +1,10 @@
 import type { CircleOwner } from "_interfaces/circle.interface";
-import { Select } from "components/forms/Select";
-import { Date } from "components/forms/dateTime";
+import CInput from "components/input";
 import moment from "moment";
 import React, { Fragment, useEffect, useState } from "react";
 import { Button, Modal } from "react-daisyui";
 import { IoClose } from "react-icons/io5";
+import ReactSelect from "react-select";
 import { useOwnerCircleListQuery } from "services/modules/circle";
 
 export default function ModalFilterTokenReport({
@@ -78,16 +78,6 @@ export default function ModalFilterTokenReport({
     setOptionsOwner(newOwner);
   };
 
-  const getLabelTypeTicket = (type: string): string => {
-    const data = typeTicket.find((o) => o.value === type);
-    return data !== undefined ? data.label : "Choose Type";
-  };
-
-  const getLabelTypeOwner = (id: string): string => {
-    const data = optionsOwner?.find((o) => o.value === id);
-    return data !== undefined ? data.label : "Choose Circle Owner";
-  };
-
   useEffect(() => {
     handleOptionOwner(data?.data as CircleOwner[]);
   }, [data]);
@@ -106,15 +96,21 @@ export default function ModalFilterTokenReport({
                 <p className="text-black text-base font-semibold mb-3">
                   Ticket
                 </p>
-                <Select
-                  name="ticket"
-                  placeholder="Choose Ticket"
-                  value={{
-                    key: 1,
-                    label: getLabelTypeTicket(filter.ticket),
-                    data: "test",
+                <ReactSelect
+                  styles={{
+                    control: (baseStyle) => ({
+                      ...baseStyle,
+                      padding: 2,
+                      margin: 2,
+                      borderColor: "#BDBDBD",
+                      borderRadius: "0.5rem",
+                    }),
                   }}
                   options={optionsTicket}
+                  isSearchable={true}
+                  value={optionsTicket.find(
+                    (item) => item.data === filter.ticket
+                  )}
                   onChange={(e) => changeFilterTicket(e)}
                 />
               </div>
@@ -130,25 +126,27 @@ export default function ModalFilterTokenReport({
                   <p className="mb-2 text-black text-base font-semibold">End</p>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  <Date
-                    name="created_at_from"
-                    timeFormat="HH:mm:ss"
-                    dateFormat="YYYY-MM-DD"
-                    onChange={(date) =>
-                      changeDateFrom(moment(date).format("YYYY-MM-DD HH:mm:ss"))
-                    }
-                    placeholder="Choose Start"
-                    value={filter.created_at_from}
+                  <CInput
+                    type="datetime-local"
+                    onChange={(e) => {
+                      changeDateFrom(
+                        moment(e.target.value).format("YYYY-MM-DD HH:mm:ss")
+                      );
+                    }}
+                    value={moment(filter.created_at_from)
+                      .utc(true)
+                      .format("YYYY-MM-DD HH:mm")}
                   />
-                  <Date
-                    name="created_at_to"
-                    timeFormat="HH:mm:ss"
-                    dateFormat="YYYY-MM-DD"
-                    onChange={(date) =>
-                      changeDateTo(moment(date).format("YYYY-MM-DD HH:mm:ss"))
-                    }
-                    placeholder="Choose End"
-                    value={filter.created_at_to}
+                  <CInput
+                    type="datetime-local"
+                    onChange={(e) => {
+                      changeDateTo(
+                        moment(e.target.value).format("YYYY-MM-DD HH:mm:ss")
+                      );
+                    }}
+                    value={moment(filter.created_at_to)
+                      .utc(true)
+                      .format("YYYY-MM-DD HH:mm")}
                   />
                 </div>
               </div>
@@ -157,16 +155,23 @@ export default function ModalFilterTokenReport({
                 <p className="text-black text-base font-semibold mb-3">
                   Circle Owner
                 </p>
-                <Select
-                  name="circle_owner_id"
-                  placeholder="Choose Circle Owner"
-                  value={{
-                    key: 1,
-                    label: getLabelTypeOwner(filter.circle_owner_id),
-                    data: "test",
+                <ReactSelect
+                  styles={{
+                    control: (baseStyle) => ({
+                      ...baseStyle,
+                      padding: 2,
+                      margin: 2,
+                      borderColor: "#BDBDBD",
+                      borderRadius: "0.5rem",
+                    }),
                   }}
                   options={optionsOwner}
+                  isSearchable={true}
+                  value={optionsOwner.find(
+                    (item) => item.value === filter.circle_owner_id
+                  )}
                   onChange={(e) => changeFilterCircleOwner(e)}
+                  isLoading={isLoading}
                 />
               </div>
               <div>

@@ -163,13 +163,10 @@ const CircleDatabase: React.FC<CircleDatabaseProps> = () => {
       created_at_to: createdAtTo,
     }));
   };
+  console.log(filter);
 
   const moveToCircleDetail = (circleId: string) => {
     router(`/circle/circle-detail/${circleId}`);
-  };
-
-  const searchFilter = async (): Promise<void> => {
-    setOpenFilter(!openFilter);
   };
 
   const clearFilter = (): void => {
@@ -199,7 +196,6 @@ const CircleDatabase: React.FC<CircleDatabaseProps> = () => {
         openFilter={openFilter}
         handleOpenFilter={handleOpenFilter}
         changeFilter={handleChangeFilter}
-        search={searchFilter}
         filter={filter}
         changeFilterType={handleChageFilterType}
         changeDateFrom={handleChangeDateFrom}

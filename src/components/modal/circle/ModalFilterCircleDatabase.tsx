@@ -1,15 +1,14 @@
-import { Input } from "@material-tailwind/react";
-import { type Option, Select } from "components/forms/Select";
-import { Date } from "components/forms/dateTime";
+import { type Option } from "components/forms/Select";
+import CInput from "components/input";
 import moment from "moment";
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { Button, Modal } from "react-daisyui";
 import { IoClose } from "react-icons/io5";
+import ReactSelect from "react-select";
 export default function ModalFilterCircleDatabase({
   openFilter,
   handleOpenFilter,
   changeFilter,
-  search,
   filter,
   changeFilterType,
   changeDateFrom,
@@ -41,10 +40,7 @@ export default function ModalFilterCircleDatabase({
     }),
   ];
 
-  const getLabelType = (type: string): string => {
-    const data = typeFilter.find((o) => o.value === type);
-    return data !== undefined ? data.label : "Choose Type";
-  };
+  const [search, setSearch] = useState<string>("");
 
   return (
     <Fragment>
@@ -58,18 +54,24 @@ export default function ModalFilterCircleDatabase({
           <Modal.Body className="h-[25rem] overflow-scroll">
             <div className="grid gap-6">
               <p className="text-black text-base font-semibold -mb-3">Type</p>
-              <Select
-                name="type"
-                placeholder="Choose Type"
-                options={options}
-                value={{
-                  key: 1,
-                  label: getLabelType(filter.type),
-                  data: "test",
+              <ReactSelect
+                styles={{
+                  control: (baseStyle) => ({
+                    ...baseStyle,
+                    padding: 2,
+                    margin: 2,
+                    borderColor: "#BDBDBD",
+                    borderRadius: "0.5rem",
+                  }),
                 }}
+                options={options}
+                isSearchable={true}
+                onInputChange={(e) => {
+                  setSearch(e);
+                }}
+                value={options.find((item) => item.data === filter.type)}
                 onChange={(e) => changeFilterType(e)}
               />
-
               <div className="">
                 <p className="mb-2 text-black text-base font-semibold">
                   Created At
@@ -80,49 +82,48 @@ export default function ModalFilterCircleDatabase({
                   </p>
                   <p className="mb-2 text-black text-base font-semibold">End</p>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <Date
-                    name="created_at_from"
-                    timeFormat="HH:mm:ss"
-                    dateFormat="YYYY-MM-DD"
-                    onChange={(date) =>
-                      changeDateFrom(moment(date).format("YYYY-MM-DD HH:mm:ss"))
-                    }
-                    placeholder="Choose Start"
-                    value={filter.created_at_from}
+                <div className="grid grid-cols-2 gap-4 mx-1">
+                  <CInput
+                    type="datetime-local"
+                    onChange={(e) => {
+                      changeDateFrom(
+                        moment(e.target.value).format("YYYY-MM-DD HH:mm:ss")
+                      );
+                    }}
+                    value={moment(filter.created_at_from)
+                      .utc(true)
+                      .format("YYYY-MM-DD HH:mm")}
                   />
-                  <Date
-                    name="created_at_to"
-                    timeFormat="HH:mm:ss"
-                    dateFormat="YYYY-MM-DD"
-                    onChange={(date) =>
-                      changeDateTo(moment(date).format("YYYY-MM-DD HH:mm:ss"))
-                    }
-                    placeholder="Choose End"
-                    value={filter.created_at_to}
+                  <CInput
+                    type="datetime-local"
+                    onChange={(e) => {
+                      changeDateTo(
+                        moment(e.target.value).format("YYYY-MM-DD HH:mm:ss")
+                      );
+                    }}
+                    value={moment(filter.created_at_to)
+                      .utc(true)
+                      .format("YYYY-MM-DD HH:mm")}
                   />
                 </div>
               </div>
 
               <div className="">
-                <p className="text-black text-base font-semibold">Members</p>
-                <div className="grid grid-cols-2 gap-4">
-                  <Input
-                    crossOrigin={""}
-                    placeholder="From"
-                    variant="static"
+                <p className="text-black text-base font-semibold mb-2">
+                  Members
+                </p>
+                <div className="grid grid-cols-2 gap-4 m-1">
+                  <CInput
                     type="number"
                     name="total_member_from"
+                    placeholder="From"
                     onChange={(e) => changeFilter(e)}
                     value={filter.total_member_from}
                   />
-
-                  <Input
-                    crossOrigin={""}
-                    placeholder="To"
-                    variant="static"
+                  <CInput
                     type="number"
                     name="total_member_to"
+                    placeholder="To"
                     onChange={(e) => changeFilter(e)}
                     value={filter.total_member_to}
                   />
@@ -130,24 +131,19 @@ export default function ModalFilterCircleDatabase({
               </div>
 
               <div className="">
-                <p className="text-black text-base font-semibold">Post</p>
-                <div className="grid grid-cols-2 gap-4">
-                  <Input
-                    crossOrigin={""}
-                    placeholder="From"
-                    variant="static"
+                <p className="text-black text-base font-semibold mb-2">Post</p>
+                <div className="grid grid-cols-2 gap-4 mx-1">
+                  <CInput
                     type="number"
                     name="total_post_from"
+                    placeholder="From"
                     onChange={(e) => changeFilter(e)}
                     value={filter.total_post_from}
                   />
-
-                  <Input
-                    crossOrigin={""}
-                    placeholder="To"
-                    variant="static"
+                  <CInput
                     type="number"
                     name="total_post_to"
+                    placeholder="To"
                     onChange={(e) => changeFilter(e)}
                     value={filter.total_post_to}
                   />
@@ -155,24 +151,19 @@ export default function ModalFilterCircleDatabase({
               </div>
 
               <div className="">
-                <p className="text-black text-base font-semibold">Like</p>
-                <div className="grid grid-cols-2 gap-4">
-                  <Input
-                    crossOrigin={""}
-                    placeholder="From"
-                    variant="static"
+                <p className="text-black text-base font-semibold mb-2">Like</p>
+                <div className="grid grid-cols-2 gap-4 mx-1">
+                  <CInput
                     type="number"
                     name="total_like_from"
+                    placeholder="From"
                     onChange={(e) => changeFilter(e)}
                     value={filter.total_like_from}
                   />
-
-                  <Input
-                    crossOrigin={""}
-                    placeholder="To"
-                    variant="static"
+                  <CInput
                     type="number"
                     name="total_like_to"
+                    placeholder="To"
                     onChange={(e) => changeFilter(e)}
                     value={filter.total_like_to}
                   />
@@ -180,24 +171,19 @@ export default function ModalFilterCircleDatabase({
               </div>
 
               <div className="">
-                <p className="text-black text-base font-semibold">Share</p>
-                <div className="grid grid-cols-2 gap-4">
-                  <Input
-                    crossOrigin={""}
-                    placeholder="From"
-                    variant="static"
+                <p className="text-black text-base font-semibold mb-2">Share</p>
+                <div className="grid grid-cols-2 gap-4 mx-1">
+                  <CInput
                     type="number"
                     name="total_share_from"
+                    placeholder="From"
                     onChange={(e) => changeFilter(e)}
                     value={filter.total_share_from}
                   />
-
-                  <Input
-                    crossOrigin={""}
-                    placeholder="To"
-                    variant="static"
+                  <CInput
                     type="number"
                     name="total_share_to"
+                    placeholder="To"
                     onChange={(e) => changeFilter(e)}
                     value={filter.total_share_to}
                   />
@@ -250,7 +236,7 @@ export default function ModalFilterCircleDatabase({
               Clear
             </Button>
             <Button
-              onClick={search}
+              onClick={handleOpenFilter}
               className="rounded-full border bg-[#3AC4A0] text-white font-semibold hover:bg-[#3AC4A0]/90"
             >
               Submit
