@@ -36,7 +36,7 @@ export function Table<T>({
   limit = 0,
   onRowClick,
 }: Props<T>): React.ReactElement {
-  const handleRowClick = (item: any): void => {
+  const handleRowClick = (item: T): void => {
     if (onRowClick !== undefined) {
       onRowClick(item);
     }
