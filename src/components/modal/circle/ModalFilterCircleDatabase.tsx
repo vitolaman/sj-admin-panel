@@ -1,16 +1,9 @@
-import {
-  Button,
-  Dialog,
-  DialogBody,
-  DialogFooter,
-  DialogHeader,
-  Input,
-  Typography,
-} from "@material-tailwind/react";
+import { Input } from "@material-tailwind/react";
 import { type Option, Select } from "components/forms/Select";
 import { Date } from "components/forms/dateTime";
 import moment from "moment";
 import React, { Fragment } from "react";
+import { Button, Modal } from "react-daisyui";
 import { IoClose } from "react-icons/io5";
 export default function ModalFilterCircleDatabase({
   openFilter,
@@ -56,29 +49,15 @@ export default function ModalFilterCircleDatabase({
   return (
     <Fragment>
       {filter && filter.created_at_from !== undefined && (
-        <Dialog
-          placeholder={""}
-          open={openFilter}
-          handler={handleOpenFilter}
-          className="w-[70rem]"
-        >
-          <DialogHeader
-            placeholder={""}
-            className="flex flex-row justify-between"
-          >
+        <Modal backdrop={false} open={openFilter} className="bg-white">
+          <Modal.Header className="flex flex-row justify-between">
             Filter
             <IoClose onClick={handleOpenFilter} />{" "}
-          </DialogHeader>
+          </Modal.Header>
 
-          <DialogBody
-            placeholder={""}
-            divider
-            className="h-[25rem] overflow-scroll"
-          >
+          <Modal.Body className="h-[25rem] overflow-scroll">
             <div className="grid gap-6">
-              <Typography className="text-black text-base font-semibold -mb-3">
-                Type
-              </Typography>
+              <p className="text-black text-base font-semibold -mb-3">Type</p>
               <Select
                 name="type"
                 placeholder="Choose Type"
@@ -92,16 +71,14 @@ export default function ModalFilterCircleDatabase({
               />
 
               <div className="">
-                <Typography className="mb-2 text-black text-base font-semibold">
+                <p className="mb-2 text-black text-base font-semibold">
                   Created At
-                </Typography>
+                </p>
                 <div className="grid grid-cols-2 gap-4">
-                  <Typography className="mb-2 text-black text-base font-semibold">
+                  <p className="mb-2 text-black text-base font-semibold">
                     Start
-                  </Typography>
-                  <Typography className="mb-2 text-black text-base font-semibold">
-                    End
-                  </Typography>
+                  </p>
+                  <p className="mb-2 text-black text-base font-semibold">End</p>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <Date
@@ -128,9 +105,7 @@ export default function ModalFilterCircleDatabase({
               </div>
 
               <div className="">
-                <Typography className="text-black text-base font-semibold">
-                  Members
-                </Typography>
+                <p className="text-black text-base font-semibold">Members</p>
                 <div className="grid grid-cols-2 gap-4">
                   <Input
                     crossOrigin={""}
@@ -155,9 +130,7 @@ export default function ModalFilterCircleDatabase({
               </div>
 
               <div className="">
-                <Typography className="text-black text-base font-semibold">
-                  Post
-                </Typography>
+                <p className="text-black text-base font-semibold">Post</p>
                 <div className="grid grid-cols-2 gap-4">
                   <Input
                     crossOrigin={""}
@@ -182,9 +155,7 @@ export default function ModalFilterCircleDatabase({
               </div>
 
               <div className="">
-                <Typography className="text-black text-base font-semibold">
-                  Like
-                </Typography>
+                <p className="text-black text-base font-semibold">Like</p>
                 <div className="grid grid-cols-2 gap-4">
                   <Input
                     crossOrigin={""}
@@ -209,9 +180,7 @@ export default function ModalFilterCircleDatabase({
               </div>
 
               <div className="">
-                <Typography className="text-black text-base font-semibold">
-                  Share
-                </Typography>
+                <p className="text-black text-base font-semibold">Share</p>
                 <div className="grid grid-cols-2 gap-4">
                   <Input
                     crossOrigin={""}
@@ -237,9 +206,9 @@ export default function ModalFilterCircleDatabase({
 
               <div>
                 <section className="flex flex-col">
-                  <Typography className="text-black text-base font-semibold mb-3">
+                  <p className="text-black text-base font-semibold mb-3">
                     Status
-                  </Typography>
+                  </p>
                   <section className="flex flex-row gap-3">
                     <section className="flex flex-row gap-3 border border-[#BDBDBD] px-[16px] py-[8px] rounded-lg">
                       <input
@@ -271,25 +240,23 @@ export default function ModalFilterCircleDatabase({
                 </section>
               </div>
             </div>
-          </DialogBody>
+          </Modal.Body>
 
-          <DialogFooter placeholder={""}>
+          <Modal.Actions>
             <Button
-              placeholder={""}
               onClick={clearFilter}
               className="mr-4 rounded-full border border-[#3AC4A0] bg-transparent text-[#3AC4A0] font-semibold"
             >
               Clear
             </Button>
             <Button
-              placeholder={""}
               onClick={search}
-              className="rounded-full border bg-[#3AC4A0] text-white font-semibold"
+              className="rounded-full border bg-[#3AC4A0] text-white font-semibold hover:bg-[#3AC4A0]/90"
             >
               Submit
             </Button>
-          </DialogFooter>
-        </Dialog>
+          </Modal.Actions>
+        </Modal>
       )}
     </Fragment>
   );

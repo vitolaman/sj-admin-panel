@@ -3,7 +3,6 @@ import {
   ArrowPathIcon,
   ArrowUpCircleIcon,
   EyeIcon,
-  MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
 import {
   IconButton,
@@ -11,27 +10,20 @@ import {
   MenuHandler,
   MenuItem,
   MenuList,
-  Typography,
 } from "@material-tailwind/react";
 import moment from "moment";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { CiFilter } from "react-icons/ci";
 import { FiDownload } from "react-icons/fi";
 import { IoEllipsisHorizontal } from "react-icons/io5";
-import { Input, Button } from "react-daisyui";
+import { Button } from "react-daisyui";
 import ModalFilterTokenReport from "components/modal/circle/ModalFilterTokenReport";
 import ModalChangeStatusTokenReport from "components/modal/circle/ModalChangeStatusTokenReport";
 import { TokenReportData, TokenReportReq } from "_interfaces/circle.interface";
 import { useTokenReportListQuery } from "services/modules/circle";
 import Pagination from "components/table/pagination";
 import { Columns, Table } from "components/table/table";
-
-interface Paginate {
-  total: number;
-  current_page: number;
-  limit: number;
-  total_page: number;
-}
+import SearchInput from "components/search-input";
 
 export default function TokenReport(): React.ReactElement {
   const [openFilter, setOpenFilter] = useState(false);
@@ -62,10 +54,6 @@ export default function TokenReport(): React.ReactElement {
     setFilter({ ...filter, page });
   };
 
-  const handleEnterPress = (e: any): void => {
-    e.preventDefault();
-  };
-
   const header: Columns<TokenReportData>[] = [
     {
       fieldId: "index",
@@ -85,9 +73,7 @@ export default function TokenReport(): React.ReactElement {
       render: (data) => (
         <>
           {data?.owner.name} <br />
-          <Typography className="text-[#7C7C7C]">
-            @{data?.owner.seeds_tag}
-          </Typography>
+          <p className="text-[#7C7C7C]">@{data?.owner.seeds_tag}</p>
         </>
       ),
     },
@@ -123,9 +109,7 @@ export default function TokenReport(): React.ReactElement {
       render: (data) => (
         <>
           {data?.raised_by.name} <br />
-          <Typography className="text-[#7C7C7C]">
-            @{data?.raised_by.seeds_tag}
-          </Typography>
+          <p className="text-[#7C7C7C]">@{data?.raised_by.seeds_tag}</p>
         </>
       ),
     },
@@ -178,17 +162,6 @@ export default function TokenReport(): React.ReactElement {
       ),
     },
   ];
-
-  const handleChangeFilter = (event: any): void => {
-    const target = event.target;
-    const value = target.type === "checkbox" ? target.checked : target.value;
-    const name = target.name;
-
-    setFilter((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
 
   const handleChangeFilterStatus = (event: any): void => {
     const target = event.target;
@@ -300,21 +273,12 @@ export default function TokenReport(): React.ReactElement {
                 Token Report
               </h3>
               <div className="flex items-center justify-between gap-4 ml-4">
-                <form onSubmit={handleEnterPress}>
-                  <div className="flex justify-end relative">
-                    <MagnifyingGlassIcon className="w-6 h-6 text-[#262626] absolute right-4 top-3" />
-                  </div>
-                  <Input
-                    name="search"
-                    type="outline"
-                    className="rounded-full"
-                    onChange={(e) => {
-                      handleChangeFilter(e);
-                    }}
-                    placeholder="Search"
-                    value={filter.search}
-                  />
-                </form>
+                <SearchInput
+                  placeholder="Search"
+                  onSubmit={({ text }) => {
+                    setFilter((prev) => ({ ...prev, search: text }));
+                  }}
+                />
                 <Button className="bg-transparent rounded-full py-2 px-3 w-auto border border-[#3AC4A0]">
                   <CiFilter
                     className="text-xl font-normal text-[#3AC4A0]"

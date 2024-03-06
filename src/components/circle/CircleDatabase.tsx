@@ -5,16 +5,16 @@ import { FiDownload } from "react-icons/fi";
 import {
   ArrowDownCircleIcon,
   ArrowUpCircleIcon,
-  MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
 import ModalFilterCircleDatabase from "components/modal/circle/ModalFilterCircleDatabase";
-import { Button, Input } from "react-daisyui";
+import { Button } from "react-daisyui";
 import moment from "moment";
 import { CircleList, CircleReq } from "_interfaces/circle.interface";
 import { useCircleListQuery } from "services/modules/circle";
 import { Columns, Table } from "components/table/table";
 import Pagination from "components/table/pagination";
 import { type Option } from "components/forms/Select";
+import SearchInput from "components/search-input";
 interface CircleDatabaseProps {}
 
 const CircleDatabase: React.FC<CircleDatabaseProps> = () => {
@@ -37,6 +37,7 @@ const CircleDatabase: React.FC<CircleDatabaseProps> = () => {
     created_at_from: "",
     created_at_to: "",
   });
+
   const { data, isLoading } = useCircleListQuery(filter);
   const router = useNavigate();
   const header: Columns<CircleList>[] = [
@@ -95,28 +96,13 @@ const CircleDatabase: React.FC<CircleDatabaseProps> = () => {
       ),
     },
     {
-      fieldId: "like",
-      label: "Like",
-      render: (data) => <>{data?.like !== undefined ? data?.like : "-"}</>,
-    },
-    {
-      fieldId: "share",
-      label: "Share",
-      render: (data) => <>{data?.share !== undefined ? data.share : "-"}</>,
-    },
-    {
-      fieldId: "status",
-      label: "Status",
-      render: () => "-",
-    },
-    {
       fieldId: "action",
       label: "Action",
       render: (data) => (
         <Button
           type="button"
           onClick={() => moveToCircleDetail(data?.id as string)}
-          className="inline-flex items-center px-4 h-[35px] text-[16px] border border-transparent text-xs font-semibold rounded-full text-white bg-[#3AC4A0]"
+          className="inline-flex items-center px-4 h-[35px] text-[16px] border border-transparent text-xs font-semibold rounded-full text-white bg-[#3AC4A0] hover:bg-[#3AC4A0]/90"
         >
           View Detail
         </Button>
@@ -130,10 +116,6 @@ const CircleDatabase: React.FC<CircleDatabaseProps> = () => {
 
   const handlePageChange = (page: number): void => {
     setFilter({ ...filter, page });
-  };
-
-  const handleEnterPress = (e: any): void => {
-    e.preventDefault();
   };
 
   const handleChangeFilter = (event: any): void => {
@@ -182,8 +164,8 @@ const CircleDatabase: React.FC<CircleDatabaseProps> = () => {
     }));
   };
 
-  const moveToCircleDetail = (circleId: string): any => {
-    return router(`/circle/circle-detail/${circleId}`);
+  const moveToCircleDetail = (circleId: string) => {
+    router(`/circle/circle-detail/${circleId}`);
   };
 
   const searchFilter = async (): Promise<void> => {
@@ -232,21 +214,12 @@ const CircleDatabase: React.FC<CircleDatabaseProps> = () => {
                 Circle Database
               </h3>
               <div className="flex items-center justify-between gap-4 ml-4">
-                <form onSubmit={handleEnterPress}>
-                  <div className="flex justify-end relative">
-                    <MagnifyingGlassIcon className="w-6 h-6 text-[#262626] absolute right-4 top-3" />
-                  </div>
-                  <Input
-                    name="search"
-                    type="outline"
-                    className="rounded-full"
-                    onChange={(e) => {
-                      handleChangeFilter(e);
-                    }}
-                    placeholder="Search"
-                    value={filter.search}
-                  />
-                </form>
+                <SearchInput
+                  placeholder="Search"
+                  onSubmit={({ text }) => {
+                    setFilter((prev) => ({ ...prev, search: text }));
+                  }}
+                />
                 <Button
                   className="bg-transparent rounded-full py-2 px-3 border border-[#3AC4A0] h-fit"
                   onClick={handleOpenFilter}

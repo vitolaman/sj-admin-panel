@@ -1,14 +1,7 @@
 // import { Select } from "@/components";
-import {
-  Button,
-  Dialog,
-  DialogBody,
-  DialogFooter,
-  DialogHeader,
-  Typography,
-} from "@material-tailwind/react";
 import { Select } from "components/forms/Select";
 import React, { Fragment } from "react";
+import { Button, Modal } from "react-daisyui";
 import { IoClose } from "react-icons/io5";
 
 export default function ModalChangeStatusTokenReport({
@@ -34,46 +27,34 @@ export default function ModalChangeStatusTokenReport({
 
   return (
     <Fragment>
-      <Dialog
-        placeholder={""}
-        open={modalStatus}
-        handler={handleModalStatus}
-        className="w-[70rem]"
-      >
-        <DialogHeader
-          placeholder={""}
-          className="flex flex-row justify-between"
-        >
+      <Modal backdrop={false} open={modalStatus} className="bg-white">
+        <Modal.Header className="flex flex-row justify-between">
           Change Status
           <IoClose onClick={handleModalStatus} />{" "}
-        </DialogHeader>
+        </Modal.Header>
 
-        <DialogBody placeholder={""} divider>
+        <Modal.Body>
           <div className="grid gap-6">
-            <Typography className="text-black text-base font-semibold -mb-3">
-              Status
-            </Typography>
+            <p className="text-black text-base font-semibold -mb-3">Status</p>
             <Select name="type" placeholder="Choose Type" options={options} />
           </div>
-        </DialogBody>
+        </Modal.Body>
 
-        <DialogFooter placeholder={""}>
+        <Modal.Actions>
           <Button
-            placeholder={""}
             onClick={handleModalStatus}
             className="mr-4 rounded-full border border-[#3AC4A0] bg-transparent text-[#3AC4A0] font-semibold"
           >
             Clear
           </Button>
           <Button
-            placeholder={""}
             onClick={handleModalStatus}
-            className="rounded-full border bg-[#3AC4A0] text-white font-semibold"
+            className="rounded-full border bg-[#3AC4A0] text-white font-semibold hover:bg-[#3AC4A0]/90"
           >
             Submit
           </Button>
-        </DialogFooter>
-      </Dialog>
+        </Modal.Actions>
+      </Modal>
     </Fragment>
   );
 }

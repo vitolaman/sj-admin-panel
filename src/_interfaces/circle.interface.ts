@@ -79,8 +79,6 @@ export interface CircleList {
   total_post: number;
   created_at: string;
   updated_at: string;
-  like: string;
-  share: string;
 }
 
 export interface CircleOwnerRes {
@@ -92,4 +90,83 @@ export interface CircleOwner {
   id: string;
   name: string;
   seeds_tag: string;
+}
+
+export interface HashtagsProps {
+  id: string;
+  name: string;
+}
+
+export interface UserProps {
+  id: string;
+  phoneNumber: string;
+  email: string;
+  birthDate: string;
+  name: string;
+  seedsTag: string;
+  refCode: string;
+  avatar: string;
+  role: string;
+  verified: boolean;
+  bio: string;
+  badge: string;
+  preferredLanguage: string;
+  last_login_at: string;
+  followers: number;
+  following: number;
+  isFollowed: boolean;
+  isBlocked: boolean;
+}
+
+export interface CircleDetailType {
+  id: string;
+  user_id: string;
+  name: string;
+  avatar: string;
+  cover: string;
+  description: string;
+  description_rules: string;
+  type: string;
+  premium_fee: number;
+  admin_fee: number;
+  issuer_status: string;
+  issuer_role: string;
+  monthly_time: number;
+  total_rating: number;
+  total_member: number;
+  total_post: number;
+  created_at: string;
+  updated_at: string;
+  hashtags: HashtagsProps[];
+  owner: UserProps;
+}
+
+export interface ListMemberCircleReq {
+  circle_id: string;
+  limit: number;
+  page: number;
+}
+export interface CircleWithdraw {
+  id: string;
+  owner_id: string;
+  owner_name: string;
+  reference_number: string;
+  status: string;
+  description: string;
+  method: string;
+  account_name: string;
+  account_number: string;
+  amount: number;
+  created_at: string;
+  updated_at: string;
+}
+export interface CircleWithdrawRes {
+  data: CircleWithdraw[];
+  meta: CircleMetadata;
+}
+
+export interface WithdrawChangeStatusReq {
+  withdraw_id: string;
+  status: "REJECT" | "SUCCESS";
+  reject_reason: "rejected" | "";
 }

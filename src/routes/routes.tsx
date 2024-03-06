@@ -7,6 +7,9 @@ import UserControlPanel, {
 } from "pages/user/control-panel/control-panel.page";
 import Play, { playRouteName } from "pages/play/index.page";
 import ControlPanel from "pages/circle/ControlPanel";
+import CircleDetail, { circleDetailRouteName } from "pages/circle/CircleDetail";
+import Membership, { circleMembershipRouteName } from "pages/circle/Membership";
+import WithdrawPage, { circleWithdrawRouteName } from "pages/circle/Withdrawal";
 
 const protectedRoutes: RouteObject[] = [
   { path: "", element: <Navigate to="/user/control-panel" /> },
@@ -43,6 +46,18 @@ const protectedRoutes: RouteObject[] = [
             path: "control-panel",
             element: <ControlPanel />,
             index: true,
+          },
+          {
+            path: circleDetailRouteName,
+            element: <CircleDetail />,
+          },
+          {
+            path: circleMembershipRouteName,
+            element: <Membership />,
+          },
+          {
+            path: circleWithdrawRouteName,
+            element: <WithdrawPage />,
           },
         ],
       },

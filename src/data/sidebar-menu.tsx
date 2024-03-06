@@ -44,7 +44,7 @@ const menuItems: MenuItem[] = [
     path: "/#",
     child: [
       { name: "Control Panel", path: "/circle/control-panel" },
-      { name: "Membership", path: "/circle/membership" },
+      // { name: "Membership", path: "/circle/membership" },
       { name: "Withdraw", path: "/circle/withdraw" },
     ],
   },
