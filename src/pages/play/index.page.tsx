@@ -1,9 +1,12 @@
-import { PlayList, PlayReq } from "_interfaces/play.interfaces";
+import { PlayI, PlayReq } from "_interfaces/play.interfaces";
+import ContentContainer from "components/container";
 import SearchInput from "components/search-input";
 import Pagination from "components/table/pagination";
 import { Columns, Table } from "components/table/table";
 import moment from "moment";
 import { useState } from "react";
+import { Button } from "react-daisyui";
+import { useNavigate } from "react-router-dom";
 import { usePlayListQuery } from "services/modules/play";
 
 export const playRouteName = "";
@@ -16,8 +19,9 @@ const Play = () => {
     limit: 10,
   });
   const { data, isLoading } = usePlayListQuery(params);
+  const navigate = useNavigate();
 
-  const header: Columns<PlayList>[] = [
+  const header: Columns<PlayI>[] = [
     {
       fieldId: "index",
       label: "No",
@@ -96,7 +100,7 @@ const Play = () => {
   };
 
   return (
-    <div className="w-full bg-white p-4">
+    <ContentContainer>
       <div className="w-full flex flex-row justify-between items-center">
         <h1 className="font-semibold text-2xl">Play Arena List</h1>
         <div className="flex flex-row gap-3">
@@ -106,23 +110,32 @@ const Play = () => {
               setParams((prev) => ({ ...prev, search: text }));
             }}
           />
+          <Button
+            className="bg-seeds hover:bg-seeds-300 border-seeds hover:border-seeds-300 text-white rounded-full px-10"
+            onClick={() => {
+              navigate("/play/create");
+            }}
+          >
+            Create New Game
+          </Button>
         </div>
       </div>
       <div className="mt-4">
-        <Table<PlayList>
+        <Table<PlayI>
           columns={header}
           data={data?.playList}
           loading={isLoading}
+          onRowClick={(item) => navigate(`/play/${item.id}/detail`)}
         />
       </div>
       <div className="flex flex-col">
         <Pagination
-          currentPage={data!?.metadata!.currentPage}
-          totalPages={data!?.metadata!.totalPage}
+          currentPage={data?.metadata?.currentPage ?? 1}
+          totalPages={data?.metadata?.totalPage ?? 0}
           onPageChange={handlePageChange}
         />
       </div>
-    </div>
+    </ContentContainer>
   );
 };
 

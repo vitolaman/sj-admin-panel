@@ -6,6 +6,12 @@ import UserControlPanel, {
   ucpRouteName,
 } from "pages/user/control-panel/control-panel.page";
 import Play, { playRouteName } from "pages/play/index.page";
+import PlayDetail, { pdRouteName } from "pages/play/detail.page";
+import CreatePlay, { cpRouteName } from "pages/play/create.page";
+import WithdrawPlay, { wpRouteName } from "pages/play/withdraw.page";
+import QuizList, { qlRouteName } from "pages/quiz/index.page";
+import CreateQuiz, { cqRouteName } from "pages/quiz/create.page";
+import UpdateQuiz, { uqRouteName } from "pages/quiz/update.page";
 import ControlPanel from "pages/circle/ControlPanel";
 import CircleDetail, { circleDetailRouteName } from "pages/circle/CircleDetail";
 import Membership, { circleMembershipRouteName } from "pages/circle/Membership";
@@ -35,6 +41,36 @@ const protectedRoutes: RouteObject[] = [
             path: playRouteName,
             element: <Play />,
             index: true,
+          },
+          {
+            path: pdRouteName,
+            element: <PlayDetail />,
+          },
+          {
+            path: cpRouteName,
+            element: <CreatePlay />,
+          },
+          {
+            path: wpRouteName,
+            element: <WithdrawPlay />,
+          },
+        ],
+      },
+      {
+        path: "quiz",
+        children: [
+          {
+            path: qlRouteName,
+            element: <QuizList />,
+            index: true,
+          },
+          {
+            path: cqRouteName,
+            element: <CreateQuiz />,
+          },
+          {
+            path: uqRouteName,
+            element: <UpdateQuiz />,
           },
         ],
       },

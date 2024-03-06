@@ -1,11 +1,11 @@
 import Spinner from './index';
 
-const TableLoader: React.FC = (): JSX.Element => {
+const Loader: React.FC = (): JSX.Element => {
   return (
-    <div className="flex items-center justify-center w-100 h-64">
+    <div className="flex items-center justify-center w-full h-full">
       <Spinner />
     </div>
   );
 };
 
-export { TableLoader };
+export { Loader };
