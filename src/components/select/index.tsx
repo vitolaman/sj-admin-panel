@@ -6,7 +6,7 @@ import ReactSelect, {
 
 interface Props {
   options: OptionsOrGroups<any, GroupBase<any>>;
-  value: string;
+  value?: string;
   disabled?: boolean;
   onChange: (e: any) => void;
 }

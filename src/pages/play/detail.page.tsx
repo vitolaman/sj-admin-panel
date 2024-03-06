@@ -65,9 +65,17 @@ const PlayDetail = () => {
   };
 
   useEffect(() => {
-    const firstError = Object.keys(errors)[0];
+    const firstError = Object.keys(errors)[0] as keyof PlayI;
     if (firstError) {
-      setFocus(firstError as keyof PlayI);
+      setFocus(firstError);
+      const element = errors[firstError]?.ref;
+      if (element) {
+        element?.scrollIntoView?.({
+          behavior: "smooth",
+          block: "center",
+          inline: "nearest",
+        });
+      }
     }
   }, [errors, setFocus]);
 
@@ -388,11 +396,12 @@ const PlayDetail = () => {
                   />
                 )}
               />
-              <CInput
-                {...register("admission_fee")}
-                disabled={!enableEdit}
-                className="col-span-2"
-              />
+              <div className="col-span-2">
+                <CInput
+                  {...register("admission_fee")}
+                  disabled={!enableEdit}
+                />
+              </div>
             </div>
           </div>
           <div className="flex flex-col gap-2">
@@ -460,7 +469,7 @@ const PlayDetail = () => {
                 </a>
               </div>
               <div className="flex gap-2">
-                {data?.participants?.map((item: any, index: number) => (
+                {data?.participants?.map((item, index: number) => (
                   <img
                     key={index}
                     className="inline-block h-11 w-11 rounded-full"

@@ -111,8 +111,8 @@ export default function ConfirmationModal({
                           fill="#D89918"
                         />
                         <path
-                          fill-rule="evenodd"
-                          clip-rule="evenodd"
+                          fillRule="evenodd"
+                          clipRule="evenodd"
                           d="M71 47C70.996 45.8968 70.1021 45.0037 69 45.0037C70.1046 45.0037 71 44.1066 71 43C71.004 44.1032 71.8979 44.9963 73 44.9963C71.8954 44.9963 71 45.8934 71 47Z"
                           fill="#D89918"
                         />
@@ -170,8 +170,8 @@ export default function ConfirmationModal({
                           fill="#DD2525"
                         />
                         <path
-                          fill-rule="evenodd"
-                          clip-rule="evenodd"
+                          fillRule="evenodd"
+                          clipRule="evenodd"
                           d="M71 47C70.996 45.8968 70.1021 45.0037 69 45.0037C70.1046 45.0037 71 44.1066 71 43C71.004 44.1032 71.8979 44.9963 73 44.9963C71.8954 44.9963 71 45.8934 71 47Z"
                           fill="#DD2525"
                         />
@@ -229,8 +229,8 @@ export default function ConfirmationModal({
                           fill="#1A857D"
                         />
                         <path
-                          fill-rule="evenodd"
-                          clip-rule="evenodd"
+                          fillRule="evenodd"
+                          clipRule="evenodd"
                           d="M71 47C70.996 45.8968 70.1021 45.0037 69 45.0037C70.1046 45.0037 71 44.1066 71 43C71.004 44.1032 71.8979 44.9963 73 44.9963C71.8954 44.9963 71 45.8934 71 47Z"
                           fill="#1A857D"
                         />

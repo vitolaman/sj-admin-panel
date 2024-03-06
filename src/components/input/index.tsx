@@ -1,5 +1,5 @@
 import ValidationError from "components/validation/error";
-import React, { ForwardedRef, forwardRef, MouseEvent } from "react";
+import React, { ForwardedRef, forwardRef } from "react";
 import { Input } from "react-daisyui";
 import {
   ComponentColor,
