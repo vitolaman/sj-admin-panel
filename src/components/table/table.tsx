@@ -1,4 +1,4 @@
-import { isEmpty } from 'lodash';
+import { isEmpty } from "lodash";
 
 export interface Columns<T> {
   fieldId: string;
@@ -6,6 +6,7 @@ export interface Columns<T> {
   fieldId3?: string;
   label: string;
   render?: (data?: T) => React.ReactElement | string;
+  renderHeader?: () => React.ReactElement | string;
 }
 
 interface Props<T> {
@@ -21,7 +22,7 @@ interface Props<T> {
 }
 
 function classNames(...classes: string[]): string {
-  return classes.filter(Boolean).join(' ');
+  return classes.filter(Boolean).join(" ");
 }
 
 export function Table<T>({
@@ -29,13 +30,13 @@ export function Table<T>({
   columns = [],
   ranked = false,
   loading = false,
-  error = '',
+  error = "",
   action = false,
   currentPage = 1,
   limit = 0,
-  onRowClick
+  onRowClick,
 }: Props<T>): React.ReactElement {
-  const handleRowClick = (item: any): void => {
+  const handleRowClick = (item: T): void => {
     if (onRowClick !== undefined) {
       onRowClick(item);
     }
@@ -50,7 +51,10 @@ export function Table<T>({
               scope="col"
               className="p-4 text-center whitespace-nowrap text-sm font-semibold text-[#27A590]"
             >
-              {column.label}
+              <div className="flex">
+                {column.label}
+                {column?.renderHeader !== undefined && column?.renderHeader()}
+              </div>
             </th>
           ))}
         </tr>
@@ -65,36 +69,35 @@ export function Table<T>({
               className={classNames(
                 ranked
                   ? index === 0
-                    ? 'bg-[#EDFCD3]'
+                    ? "bg-[#EDFCD3]"
                     : index === 1
-                    ? 'bg-[#DCE1FE]'
+                    ? "bg-[#DCE1FE]"
                     : index === 2
-                    ? 'bg-[#FFF7D2]'
-                    : ''
-                  : '',
-                'divide-x divide-[#BDBDBD]',
-                action ? 'hover:bg-gray-200 cursor-pointer' : ''
+                    ? "bg-[#FFF7D2]"
+                    : ""
+                  : "",
+                "divide-x divide-[#BDBDBD]",
+                action ? "hover:bg-gray-200 cursor-pointer" : ""
               )}
               onClick={(): void => {
                 handleRowClick(data);
               }}
-              role={action ? 'button' : undefined}
+              role={action ? "button" : undefined}
             >
               {columns.map((column, row) => (
                 <td
                   key={row}
                   className={`p-4 text-center whitespace-nowrap text-sm leading-7 ${
-                    row === 7 || row === 8 ? 'bg-white' : ''
+                    row === 7 || row === 8 ? "bg-white" : ""
                   }`}
                 >
-                  {column.fieldId === 'index' &&
+                  {column.fieldId === "index" &&
                     index + 1 + (currentPage - 1) * limit}
                   {column?.render === undefined && data[column.fieldId]}
                   <p className="text-gray-500">
                     {column?.fieldId2 !== undefined && data[column.fieldId2]}
                   </p>
-                  {column?.render !== undefined &&
-                    column.render(data)}
+                  {column?.render !== undefined && column.render(data)}
                   <span>
                     {column?.fieldId3 !== undefined && data[column.fieldId3]}
                   </span>

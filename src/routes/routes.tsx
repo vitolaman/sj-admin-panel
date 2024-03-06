@@ -2,7 +2,9 @@ import { Navigate, RouteObject } from "react-router-dom";
 import DashboardLayout from "layout/dashboard";
 import Login from "pages/login";
 import DashboardHome from "pages/dashboard";
-import UserControlPanel, { ucpRouteName } from "pages/user/control-panel/control-panel.page";
+import UserControlPanel, {
+  ucpRouteName,
+} from "pages/user/control-panel/control-panel.page";
 import Play, { playRouteName } from "pages/play/index.page";
 import PlayDetail, { pdRouteName } from "pages/play/detail.page";
 import CreatePlay, { cpRouteName } from "pages/play/create.page";
@@ -10,6 +12,10 @@ import WithdrawPlay, { wpRouteName } from "pages/play/withdraw.page";
 import QuizList, { qlRouteName } from "pages/quiz/index.page";
 import CreateQuiz, { cqRouteName } from "pages/quiz/create.page";
 import UpdateQuiz, { uqRouteName } from "pages/quiz/update.page";
+import ControlPanel from "pages/circle/ControlPanel";
+import CircleDetail, { circleDetailRouteName } from "pages/circle/CircleDetail";
+import Membership, { circleMembershipRouteName } from "pages/circle/Membership";
+import WithdrawPage, { circleWithdrawRouteName } from "pages/circle/Withdrawal";
 
 const protectedRoutes: RouteObject[] = [
   { path: "", element: <Navigate to="/user/control-panel" /> },
@@ -66,9 +72,31 @@ const protectedRoutes: RouteObject[] = [
             path: uqRouteName,
             element: <UpdateQuiz />,
           },
-        ]
+        ],
       },
       { path: "dashboard", element: <DashboardHome /> },
+      {
+        path: "circle",
+        children: [
+          {
+            path: "control-panel",
+            element: <ControlPanel />,
+            index: true,
+          },
+          {
+            path: circleDetailRouteName,
+            element: <CircleDetail />,
+          },
+          {
+            path: circleMembershipRouteName,
+            element: <Membership />,
+          },
+          {
+            path: circleWithdrawRouteName,
+            element: <WithdrawPage />,
+          },
+        ],
+      },
       // {
       //   path: "operating-area",
       //   element: <OperatingAreaIndex />,

@@ -1,5 +1,5 @@
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { useForm } from "react-hook-form";
-import { FaSearch } from "react-icons/fa";
 
 interface SearchI {
   text: string;
@@ -23,7 +23,7 @@ const SearchInput = ({
         {...register("text")}
         placeholder={placeholder}
       />
-      <FaSearch size={20} />
+      <MagnifyingGlassIcon className="w-6 h-6 text-[#262626]" />
     </form>
   );
 };
