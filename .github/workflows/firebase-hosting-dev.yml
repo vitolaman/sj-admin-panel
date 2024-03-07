@@ -34,7 +34,7 @@ jobs:
       - name: Install firebase tools
         run: |
           sudo npm install -g firebase-tools
-          firebase use rid1-test --token ${{secrets.FIREBASE_SERVICE_ACCOUNT_SEEDS}}
+          firebase use seeds-finance-dev --token ${{secrets.FIREBASE_SERVICE_ACCOUNT_SEEDS}}
 
       - name: Build website
         run: |
