@@ -115,8 +115,8 @@ const UpdateQuiz = () => {
                     }),
                   }}
                   options={optionCategory}
-                  value={optionCategory.find((item) => item.data === value)}
-                  onChange={(e) => onChange(e?.data)}
+                  value={optionCategory.find((item) => item.value === value)}
+                  onChange={(e) => onChange(e?.value)}
                 />
               )}
             />
@@ -189,9 +189,9 @@ const UpdateQuiz = () => {
                   }}
                   options={optionQuestion}
                   value={optionQuestion.find(
-                    (item) => Number(item.data) === value,
+                    (item) => Number(item.value) === value,
                   )}
-                  onChange={(e) => onChange(Number(e?.data))}
+                  onChange={(e) => onChange(Number(e?.value))}
                 />
               )}
             />

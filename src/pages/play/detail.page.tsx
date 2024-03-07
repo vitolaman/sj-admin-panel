@@ -392,7 +392,7 @@ const PlayDetail = () => {
                     value={value}
                     options={currencyOptions}
                     disabled={!enableEdit}
-                    onChange={(e) => onChange(e.data)}
+                    onChange={(e) => onChange(e.value)}
                   />
                 )}
               />

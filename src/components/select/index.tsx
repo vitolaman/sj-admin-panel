@@ -4,17 +4,30 @@ import ReactSelect, {
   components,
 } from "react-select";
 
-interface Props {
-  options: OptionsOrGroups<any, GroupBase<any>>;
-  value?: string;
-  disabled?: boolean;
-  onChange: (e: any) => void;
+interface Option {
+  key: number;
+  label: string;
+  value: string;
 }
 
-const Select = ({ options, value, disabled = false, onChange }: Props) => {
+interface Props {
+  options: OptionsOrGroups<any, GroupBase<Option>>;
+  value?: string;
+  disabled?: boolean;
+  onChange: (e: Option) => void;
+  rounded?: boolean;
+}
+
+const Select = ({
+  options,
+  value,
+  disabled = false,
+  onChange,
+  rounded = false,
+}: Props) => {
   return (
     <ReactSelect
-      value={options.find((item) => item.data === value)}
+      value={options.find((item) => item.value === value)}
       options={options}
       isDisabled={disabled}
       onChange={onChange}
@@ -22,15 +35,15 @@ const Select = ({ options, value, disabled = false, onChange }: Props) => {
         control: (baseStyle) => ({
           ...baseStyle,
           padding: 5,
-          borderColor: '#BDBDBD',
-          borderRadius: '0.5rem'
+          borderColor: "#BDBDBD",
+          borderRadius: rounded ? "50rem" : "0.5rem",
         }),
       }}
       components={{
         Option: (props) => (
-          <components.Option {...props} className="bg-white">
+          <components.Option {...props}>
             <div className="flex flex-row gap-2 items-center">
-              {props.data.icon()}
+              {props.data?.icon ? props.data?.icon() : null}
               <div>{props.data.label}</div>
             </div>
           </components.Option>
@@ -38,7 +51,7 @@ const Select = ({ options, value, disabled = false, onChange }: Props) => {
         SingleValue: (props) => (
           <components.SingleValue {...props}>
             <div className="flex flex-row gap-2 items-center">
-              {props.data.icon()}
+              {props.data?.icon ? props.data?.icon() : null}
               <div>{props.data.label}</div>
             </div>
           </components.SingleValue>

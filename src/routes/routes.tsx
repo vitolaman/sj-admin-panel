@@ -16,6 +16,7 @@ import ControlPanel from "pages/circle/ControlPanel";
 import CircleDetail, { circleDetailRouteName } from "pages/circle/CircleDetail";
 import Membership, { circleMembershipRouteName } from "pages/circle/Membership";
 import WithdrawPage, { circleWithdrawRouteName } from "pages/circle/Withdrawal";
+import AdminFee, { afRouteName } from "pages/admin-fee/index.page";
 
 const protectedRoutes: RouteObject[] = [
   { path: "", element: <Navigate to="/user/control-panel" /> },
@@ -74,6 +75,7 @@ const protectedRoutes: RouteObject[] = [
           },
         ],
       },
+      { path: afRouteName, element: <AdminFee /> },
       { path: "dashboard", element: <DashboardHome /> },
       {
         path: "circle",

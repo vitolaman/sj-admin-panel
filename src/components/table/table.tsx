@@ -88,7 +88,7 @@ export function Table<T>({
                 <td
                   key={row}
                   className={`p-4 text-center whitespace-nowrap text-sm leading-7 ${
-                    row === 7 || row === 8 ? "bg-white" : ""
+                    row === 7 || row === 8 ? "" : ""
                   }`}
                 >
                   {column.fieldId === "index" &&
