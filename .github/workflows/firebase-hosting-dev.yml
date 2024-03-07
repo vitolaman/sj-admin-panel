@@ -43,7 +43,7 @@ jobs:
 
       - name: Deploy to dev site
         if: github.ref == 'refs/heads/dev'
-        run: firebase deploy --non-interactive --token ${{secrets.FIREBASE_SERVICE_ACCOUNT_SEEDS}} -m "RunID ${{ github.run_id }} Commit SHA ${{ github.sha }}"
+        run: firebase deploy -P default --token ${{secrets.FIREBASE_SERVICE_ACCOUNT_SEEDS}} -m "RunID ${{ github.run_id }} Commit SHA ${{ github.sha }}"
 
       - name: Archive build Artifact
         uses: actions/upload-artifact@master
