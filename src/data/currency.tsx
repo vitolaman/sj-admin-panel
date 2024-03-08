@@ -2,7 +2,7 @@ const currencyOptions = [
   {
     key: 1,
     label: "IDR",
-    data: "IDR",
+    value: "IDR",
     icon: () => (
       <svg
         width="25"
@@ -37,7 +37,7 @@ const currencyOptions = [
   {
     key: 2,
     label: "USD",
-    data: "USD",
+    value: "USD",
     icon: () => (
       <svg
         width="25"
