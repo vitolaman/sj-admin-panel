@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "default": "seeds-finance-dev",
+    "production": "seeds-finance"
+  },
+  "targets": {}
+}

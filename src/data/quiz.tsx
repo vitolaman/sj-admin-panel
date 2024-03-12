@@ -2,27 +2,27 @@ const optionQuestion = [
   {
     key: 1,
     label: "3 questions",
-    data: "3",
+    value: "3",
   },
   {
     key: 1,
     label: "6 questions",
-    data: "6",
+    value: "6",
   },
   {
     key: 1,
     label: "9 questions",
-    data: "9",
+    value: "9",
   },
   {
     key: 1,
     label: "12 questions",
-    data: "12",
+    value: "12",
   },
   {
     key: 1,
     label: "15 questions",
-    data: "15",
+    value: "15",
   },
 ];
 
@@ -30,67 +30,67 @@ const optionCategory = [
   {
     key: 1,
     label: "ALL",
-    data: "ALL",
+    value: "ALL",
   },
   {
     key: 2,
     label: "MUTUAL_FUNDS",
-    data: "MUTUAL_FUNDS",
+    value: "MUTUAL_FUNDS",
   },
   {
     key: 3,
     label: "INVESTMENT",
-    data: "INVESTMENT",
+    value: "INVESTMENT",
   },
   {
     key: 4,
     label: "US_STOCK",
-    data: "US_STOCK",
+    value: "US_STOCK",
   },
   {
     key: 5,
     label: "ID_STOCK",
-    data: "ID_STOCK",
+    value: "ID_STOCK",
   },
   {
     key: 6,
     label: "FINANCIAL",
-    data: "FINANCIAL",
+    value: "FINANCIAL",
   },
   {
     key: 7,
     label: "GOLD",
-    data: "GOLD",
+    value: "GOLD",
   },
   {
     key: 8,
     label: "CRYPTO",
-    data: "CRYPTO",
+    value: "CRYPTO",
   },
   {
     key: 9,
     label: "FOREX",
-    data: "FOREX",
+    value: "FOREX",
   },
   {
     key: 10,
     label: "P2P",
-    data: "P2P",
+    value: "P2P",
   },
   {
     key: 11,
     label: "FINANCIAL_BONDS",
-    data: "FINANCIAL_BONDS",
+    value: "FINANCIAL_BONDS",
   },
   {
     key: 12,
     label: "EVENT",
-    data: "EVENT",
+    value: "EVENT",
   },
   {
     key: 13,
     label: "EDUCATION",
-    data: "EDUCATION",
+    value: "EDUCATION",
   },
 ];
 

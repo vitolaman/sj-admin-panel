@@ -369,7 +369,7 @@ const CreatePlay = () => {
                   <Select
                     value={value}
                     options={currencyOptions}
-                    onChange={(e) => onChange(e.data)}
+                    onChange={(e) => onChange(e.value)}
                   />
                 )}
               />
