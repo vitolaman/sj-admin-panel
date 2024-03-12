@@ -16,6 +16,7 @@ import ControlPanel from "pages/circle/ControlPanel";
 import CircleDetail, { circleDetailRouteName } from "pages/circle/CircleDetail";
 import Membership, { circleMembershipRouteName } from "pages/circle/Membership";
 import WithdrawPage, { circleWithdrawRouteName } from "pages/circle/Withdrawal";
+import MainBanner, { mainBannerRouteName } from "pages/banner/MainBanner";
 import AdminFee, { afRouteName } from "pages/admin-fee/index.page";
 
 const protectedRoutes: RouteObject[] = [
@@ -96,6 +97,15 @@ const protectedRoutes: RouteObject[] = [
           {
             path: circleWithdrawRouteName,
             element: <WithdrawPage />,
+          },
+        ],
+      },
+      {
+        path: "banner",
+        children: [
+          {
+            path: mainBannerRouteName,
+            element: <MainBanner />,
           },
         ],
       },
