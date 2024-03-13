@@ -17,6 +17,7 @@ import { BannerList, MainBannerReq } from "_interfaces/banner.interface";
 import {
   useBannerListQuery,
   useChangeStatusBannerMutation,
+  useDeleteBannerMutation,
 } from "services/modules/banner";
 import { Columns, Table } from "components/table/table";
 import { MdDeleteOutline } from "react-icons/md";
@@ -40,6 +41,7 @@ export default function ExclusiveOffer(): React.ReactElement {
   });
   const { data, isLoading, refetch } = useBannerListQuery(searchParams);
   const [changeStatusBanner, { error }] = useChangeStatusBannerMutation();
+  const [deleteBanner] = useDeleteBannerMutation();
 
   const handleCreateBanner = (): void => {
     void push("/banner/exclussive-banner/create");
@@ -47,6 +49,16 @@ export default function ExclusiveOffer(): React.ReactElement {
 
   const handleEditBanner = (id: string): void => {
     void push(`/banner/exclussive-banner/update/${id}`);
+  };
+
+  const handleDeleteBanner = async (id: string): Promise<void> => {
+    try {
+      const statusUpdated = { id };
+      await deleteBanner(statusUpdated);
+      refetch();
+    } catch (error) {
+      errorHandler(error);
+    }
   };
 
   const handleClosePopup = () => {
@@ -222,7 +234,7 @@ export default function ExclusiveOffer(): React.ReactElement {
                 placeholder={""}
                 className="p-0"
                 onClick={() => {
-                  void handleEditBanner(data?.id as string);
+                  void handleDeleteBanner(data?.id as string);
                 }}
               >
                 <label
