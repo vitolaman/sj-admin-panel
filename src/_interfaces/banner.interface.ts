@@ -32,3 +32,48 @@ export interface Metadata {
   totalPage: number;
   totalRow: number;
 }
+
+export interface ChangeStatusBannerReq {
+  is_active: boolean;
+  id: string;
+}
+
+export interface MainBannerFormData {
+  name: string;
+  banner: {
+    image_url: string;
+    image_link: string | FileList;
+  };
+  external_url: string;
+  type: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ExclussiveBannerFormData {
+  name: string;
+  banner: {
+    image_url: string;
+    image_link: string | FileList;
+  };
+  external_url: string;
+  type: string;
+  created_at: string;
+  updated_at: string;
+  title: string;
+  description: string;
+  tnc: string;
+}
+
+export interface CreateBannerReq {
+  name: string;
+  image_url: string;
+  external_url: string;
+  is_active: string;
+  type: string;
+  title: string;
+  description: string;
+  tnc: string;
+  created_at: string;
+  updated_at: string;
+}

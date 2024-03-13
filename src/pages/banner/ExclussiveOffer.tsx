@@ -17,15 +17,14 @@ import { BannerList, MainBannerReq } from "_interfaces/banner.interface";
 import {
   useBannerListQuery,
   useChangeStatusBannerMutation,
-  useDeleteBannerMutation,
 } from "services/modules/banner";
 import { Columns, Table } from "components/table/table";
 import { MdDeleteOutline } from "react-icons/md";
 import { CiEdit } from "react-icons/ci";
 import { errorHandler } from "services/errorHandler";
 
-export const mainBannerRouteName = "main-banner";
-export default function MainBanner(): React.ReactElement {
+export const exclussiveBannerRouteName = "exclusive-offers";
+export default function ExclusiveOffer(): React.ReactElement {
   const push = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState<string | null>(null);
   const [isWarningPopupOpen, setIsWarningPopupOpen] = useState(false);
@@ -35,20 +34,19 @@ export default function MainBanner(): React.ReactElement {
   const [searchParams, setSearchParams] = useState<MainBannerReq>({
     search: "",
     status: "",
-    type: "main",
+    type: "exclusive",
     limit: 10,
     page: 1,
   });
   const { data, isLoading, refetch } = useBannerListQuery(searchParams);
   const [changeStatusBanner, { error }] = useChangeStatusBannerMutation();
-  const [deleteBanner] = useDeleteBannerMutation();
 
   const handleCreateBanner = (): void => {
-    void push("/banner/main-banner/create");
+    void push("/banner/exclussive-banner/create");
   };
 
   const handleEditBanner = (id: string): void => {
-    void push(`/banner/main-banner/update/${id}`);
+    void push(`/banner/exclussive-banner/update/${id}`);
   };
 
   const handleClosePopup = () => {
@@ -68,16 +66,6 @@ export default function MainBanner(): React.ReactElement {
     try {
       const statusUpdated = { id, is_active: !status };
       await changeStatusBanner(statusUpdated);
-      refetch();
-    } catch (error) {
-      errorHandler(error);
-    }
-  };
-
-  const handleDeleteBanner = async (id: string): Promise<void> => {
-    try {
-      const statusUpdated = { id };
-      await deleteBanner(statusUpdated);
       refetch();
     } catch (error) {
       errorHandler(error);
@@ -116,12 +104,34 @@ export default function MainBanner(): React.ReactElement {
       label: "Banner Name",
     },
     {
+      fieldId: "title",
+      label: "Title Banner",
+    },
+    {
+      fieldId: "description",
+      label: "Description",
+      render: (data) => (
+        <div className="w-56 text-justify whitespace-pre-wrap truncate">
+          {data?.description}
+        </div>
+      ),
+    },
+    {
       fieldId: "external_url",
       label: "External URL",
       render: (data) => (
         <a href={data?.external_url} target="_blank" rel="noopener noreferrer">
           {data?.external_url}
         </a>
+      ),
+    },
+    {
+      fieldId: "tnc",
+      label: "Terms and Conditions",
+      render: (data) => (
+        <div className="w-56 text-justify whitespace-pre-wrap truncate">
+          {data?.tnc}
+        </div>
       ),
     },
     {
@@ -212,7 +222,7 @@ export default function MainBanner(): React.ReactElement {
                 placeholder={""}
                 className="p-0"
                 onClick={() => {
-                  void handleDeleteBanner(data?.id as string);
+                  void handleEditBanner(data?.id as string);
                 }}
               >
                 <label
@@ -253,7 +263,7 @@ export default function MainBanner(): React.ReactElement {
                 onClick={() => {
                   handleCreateBanner();
                 }}
-                className="flex flex-row  items-center justify-center gap-x-1.5 rounded-full px-6 py-2 bg-seeds text-white hover:bg-seeds/90"
+                className="flex flex-row items-center justify-center gap-x-1.5 rounded-full px-6 py-2 bg-seeds text-white hover:bg-seeds/90"
               >
                 Create Banner
                 <ChevronDownIcon

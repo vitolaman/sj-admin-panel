@@ -20,7 +20,7 @@ const WarningMaxPopUp: React.FC<ErrorPopupProps> = ({
       className="bg-white flex flex-col justify-center items-center"
     >
       <Modal.Header className="flex flex-col items-center">
-        <FiXCircle className="mt-5 h-20 w-20" onClick={onClose} />
+        <FiXCircle className="mt-5 h-20 w-20" />
         <div className="font-bold text-base">Oops</div>
       </Modal.Header>
       <Modal.Body className="text-center text-sm font-medium">

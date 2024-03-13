@@ -18,6 +18,17 @@ import Membership, { circleMembershipRouteName } from "pages/circle/Membership";
 import WithdrawPage, { circleWithdrawRouteName } from "pages/circle/Withdrawal";
 import MainBanner, { mainBannerRouteName } from "pages/banner/MainBanner";
 import AdminFee, { afRouteName } from "pages/admin-fee/index.page";
+import ExclusiveOffer, {
+  exclussiveBannerRouteName,
+} from "pages/banner/ExclussiveOffer";
+import CreateMainBanner, { cmbRouteName } from "pages/banner/main/create.page";
+import UpdateMainBanner, { umbRouteName } from "pages/banner/main/update.page";
+import CreateExclussiveBanner, {
+  cebRouteName,
+} from "pages/banner/exclusive/create.page";
+import UpdateExclussiveBanner, {
+  uebRouteName,
+} from "pages/banner/exclusive/update.page";
 
 const protectedRoutes: RouteObject[] = [
   { path: "", element: <Navigate to="/user/control-panel" /> },
@@ -106,6 +117,27 @@ const protectedRoutes: RouteObject[] = [
           {
             path: mainBannerRouteName,
             element: <MainBanner />,
+            index: true,
+          },
+          {
+            path: exclussiveBannerRouteName,
+            element: <ExclusiveOffer />,
+          },
+          {
+            path: cmbRouteName,
+            element: <CreateMainBanner />,
+          },
+          {
+            path: umbRouteName,
+            element: <UpdateMainBanner />,
+          },
+          {
+            path: cebRouteName,
+            element: <CreateExclussiveBanner />,
+          },
+          {
+            path: uebRouteName,
+            element: <UpdateExclussiveBanner />,
           },
         ],
       },

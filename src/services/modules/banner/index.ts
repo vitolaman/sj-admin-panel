@@ -1,40 +1,61 @@
 import {
   BannerList,
+  ChangeStatusBannerReq,
+  CreateBannerReq,
   MainBannerReq,
   MainBannerRes,
 } from "_interfaces/banner.interface";
-import {
-  CircleWithdraw,
-  WithdrawChangeStatusReq,
-} from "_interfaces/circle.interface";
 import { Api } from "services/api";
 
 export const bannerApi = Api.injectEndpoints({
   endpoints: (build) => ({
     BannerList: build.query<MainBannerRes, MainBannerReq>({
       query: (param) =>
-        `/admin-portal/v1/banner?search=${param.search}&status=${param.status}&type=${param.type}&limit=${param.limit}&page=${param.page}`,
+        `admin-portal/v1/banner?search=${param.search}&status=${param.status}&type=${param.type}&limit=${param.limit}&page=${param.page}`,
       keepUnusedDataFor: 0,
     }),
-    changeAdminFee: build.mutation<string, { admin_fee: number; id: string }>({
+    BannerDetail: build.query<BannerList, { id: string }>({
+      query: (param) => `admin-portal/v1/banner/${param.id}`,
+      keepUnusedDataFor: 0,
+    }),
+    changeStatusBanner: build.mutation<string, ChangeStatusBannerReq>({
       query(body) {
         return {
-          url: `/admin-portal/v1/circle/admin-fee/${body.id}`,
-          method: "PUT",
+          url: `admin-portal/v1/banner/${body.id}/status`,
+          method: "PATCH",
           body: {
             ...body,
           },
         };
       },
     }),
-    changeStatusWithdraw: build.mutation<
-      CircleWithdraw,
-      WithdrawChangeStatusReq
-    >({
+    deleteBanner: build.mutation<string, { id: string }>({
       query(body) {
         return {
-          url: `/admin-circle/v1/withdraws`,
-          method: "PATCH",
+          url: `admin-portal/v1/banner/${body.id}`,
+          method: "DELETE",
+          body: {
+            ...body,
+          },
+        };
+      },
+    }),
+    updateBanner: build.mutation<string, { id: string; body: CreateBannerReq }>(
+      {
+        query({ id, body }) {
+          return {
+            url: `admin-portal/v1/banner/${id}`,
+            method: "PATCH",
+            body,
+          };
+        },
+      }
+    ),
+    createBanner: build.mutation<string, CreateBannerReq>({
+      query(body) {
+        return {
+          url: `/admin-portal/v1/banner/create`,
+          method: "POST",
           body: {
             ...body,
           },
@@ -47,6 +68,9 @@ export const bannerApi = Api.injectEndpoints({
 
 export const {
   useBannerListQuery,
-  useChangeAdminFeeMutation,
-  useChangeStatusWithdrawMutation,
+  useChangeStatusBannerMutation,
+  useCreateBannerMutation,
+  useDeleteBannerMutation,
+  useBannerDetailQuery,
+  useUpdateBannerMutation,
 } = bannerApi;
