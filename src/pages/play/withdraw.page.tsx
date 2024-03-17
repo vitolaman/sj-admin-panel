@@ -238,7 +238,7 @@ const WithdrawPlay = () => {
         <div className="w-full flex flex-row justify-between items-center">
           <h1 className="font-semibold text-2xl">Withdraw</h1>
         </div>
-        <div className="mt-4">
+        <div className="mt-4 max-w-full overflow-x-auto overflow-y-hidden border border-[#BDBDBD] rounded-lg">
           <Table<WithDrawListI>
             columns={header}
             data={data?.data}
