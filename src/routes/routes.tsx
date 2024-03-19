@@ -42,6 +42,8 @@ import UpdateWelcomeBanner, {
 import BlastPushNotification, {
   pushNotifRouteName,
 } from "pages/push-notification/blast-push-notification/index.page";
+import Article, { articleRouteName } from "pages/blog/article/index.page";
+import FormArticle, { createArticleRouteName, editArticleRouteName } from "pages/blog/article/form-article.page";
 
 const protectedRoutes: RouteObject[] = [
   { path: "", element: <Navigate to="/user/control-panel" /> },
@@ -56,6 +58,26 @@ const protectedRoutes: RouteObject[] = [
           {
             path: ucpRouteName,
             element: <UserControlPanel />,
+            index: true,
+          },
+        ],
+      },
+      {
+        path: "blog",
+        children: [
+          {
+            path: articleRouteName,
+            element: <Article />,
+            index: true,
+          },
+          {
+            path: createArticleRouteName,
+            element: <FormArticle />,
+            index: true,
+          },
+          {
+            path: editArticleRouteName,
+            element: <FormArticle />,
             index: true,
           },
         ],
