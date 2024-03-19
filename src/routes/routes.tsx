@@ -29,6 +29,7 @@ import CreateExclussiveBanner, {
 import UpdateExclussiveBanner, {
   uebRouteName,
 } from "pages/banner/exclusive/update.page";
+import PromoCode, { promoCodeRouteName } from "pages/promo-code/index.page";
 import WelcomeBanner, {
   welcomeBannerRouteName,
 } from "pages/push-notification/welcome-banner/index.page";
@@ -99,6 +100,7 @@ const protectedRoutes: RouteObject[] = [
           },
         ],
       },
+      { path: promoCodeRouteName, element: <PromoCode /> },
       { path: afRouteName, element: <AdminFee /> },
       { path: "dashboard", element: <DashboardHome /> },
       {
