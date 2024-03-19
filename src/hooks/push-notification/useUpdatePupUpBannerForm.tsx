@@ -3,13 +3,13 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { errorHandler } from "services/errorHandler";
 import { useNavigate } from "react-router-dom";
+import { uploadFile } from "services/modules/file";
 import { useState } from "react";
 import { useAppSelector } from "store";
 import { MainBannerFormData } from "_interfaces/banner.interface";
 import { useUpdateBannerMutation } from "services/modules/banner";
-import { uploadFile } from "services/modules/file";
 
-const useUpdateMainBannerForm = (id: string) => {
+const useUpdatePopUpBannerForm = (id: string) => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [updateBanner] = useUpdateBannerMutation();
@@ -54,7 +54,7 @@ const useUpdateMainBannerForm = (id: string) => {
         image_url: data.banner.image_url,
         external_url: data.external_url,
         is_active: "",
-        type: "main",
+        type: "pop_up",
         title: "",
         description: "",
         tnc: "",
@@ -91,4 +91,4 @@ const useUpdateMainBannerForm = (id: string) => {
   };
 };
 
-export default useUpdateMainBannerForm;
+export default useUpdatePopUpBannerForm;
