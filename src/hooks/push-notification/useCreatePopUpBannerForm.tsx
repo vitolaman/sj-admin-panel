@@ -3,16 +3,16 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { errorHandler } from "services/errorHandler";
 import { useNavigate } from "react-router-dom";
+import { uploadFile } from "services/modules/file";
 import { useState } from "react";
 import { useAppSelector } from "store";
 import { MainBannerFormData } from "_interfaces/banner.interface";
-import { useUpdateBannerMutation } from "services/modules/banner";
-import { uploadFile } from "services/modules/file";
+import { useCreateBannerMutation } from "services/modules/banner";
 
-const useUpdateMainBannerForm = (id: string) => {
+const useCreatePopUpBannerForm = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const [updateBanner] = useUpdateBannerMutation();
+  const [createBanner] = useCreateBannerMutation();
   const { accessToken } = useAppSelector((state) => state.auth);
 
   const schema = yup.object().shape({
@@ -34,7 +34,6 @@ const useUpdateMainBannerForm = (id: string) => {
     control,
     setFocus,
     watch,
-    reset,
   } = useForm<MainBannerFormData>({
     mode: "onSubmit",
     resolver: yupResolver(schema),
@@ -54,11 +53,11 @@ const useUpdateMainBannerForm = (id: string) => {
         image_url: data.banner.image_url,
         external_url: data.external_url,
         is_active: "",
-        type: "main",
+        type: "pop_up",
         title: "",
         description: "",
         tnc: "",
-        created_at: data.created_at,
+        created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       };
       if (data.banner.image_link !== "") {
@@ -67,8 +66,10 @@ const useUpdateMainBannerForm = (id: string) => {
           data.banner.image_link[0] as File
         );
         payload.image_url = banner;
+      } else {
+        payload.image_url = "";
       }
-      await updateBanner({ id, body: payload }).unwrap();
+      await createBanner(payload).unwrap();
       navigate(-1);
     } catch (error) {
       errorHandler(error);
@@ -85,10 +86,9 @@ const useUpdateMainBannerForm = (id: string) => {
     errors,
     setFocus,
     control,
-    isLoadingUpdate: isLoading,
+    isLoading,
     watch,
-    reset,
   };
 };
 
-export default useUpdateMainBannerForm;
+export default useCreatePopUpBannerForm;
