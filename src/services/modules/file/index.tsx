@@ -1,4 +1,5 @@
 import { Api } from "services/api";
+import { errorHandler } from "services/errorHandler";
 
 export const fileApi = Api.injectEndpoints({
   endpoints: (build) => ({
@@ -44,6 +45,22 @@ export const uploadFile = async (token: string, image: File) => {
     const data = await response.json();
     return data.path;
   } catch (error) {
-    console.error(error);
+    errorHandler(error);
   }
+};
+
+export const uploadQuizQuestions = async (token: string, file: File) => {
+  const bodyFormData = new FormData();
+  bodyFormData.append("file", file);
+  return await fetch(
+    `${process.env.REACT_APP_REST_HOST}/quiz/v1/questions/upload`,
+    {
+      method: "POST",
+      headers: {
+        Accept: "*/*",
+        Authorization: `Bearer ${token}`,
+      },
+      body: bodyFormData,
+    },
+  );
 };

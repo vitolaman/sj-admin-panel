@@ -1,9 +1,8 @@
 import MDEditor, { commands } from "@uiw/react-md-editor";
 import { CreateQuizPayload } from "_interfaces/quiz.interfaces";
 import ContentContainer from "components/container";
+import CurrencyInput from "components/currency-input";
 import CInput from "components/input";
-import Select from "components/select";
-import { currencyOptions } from "data/currency";
 import { optionCategory, optionQuestion } from "data/quiz";
 import useCreateQuizForm from "hooks/quiz/useCreateQuizForm";
 import useDebounce from "hooks/shared/useDebounce";
@@ -46,9 +45,22 @@ const CreateQuiz = () => {
   const banner = watch("banner.image_link");
   const community = watch("communities.image_link");
   const sponsor = watch("sponsors.image_link");
+  const startTime = watch("started_at");
+  const endTime = watch("ended_at");
   const [bannerPreview] = useFilePreview(banner as FileList);
   const [communityPreview] = useFilePreview(community as FileList);
   const [sponsorPreview] = useFilePreview(sponsor as FileList);
+
+  useEffect(() => {
+    const start = moment(startTime);
+    const end = moment(endTime);
+    const duration = moment.duration(end.diff(start));
+    const d = Math.trunc(duration.asDays());
+    const m = duration.asMinutes() - (d * 24 + hours) * 60;
+    setDays(d);
+    setHours(Math.trunc(duration.asHours() - d * 24));
+    setMinutes(Math.ceil(m));
+  }, [startTime, endTime]);
 
   useEffect(() => {
     if (promoCodeState.data?.data && promoCodeState.data.data.length > 0) {
@@ -321,19 +333,24 @@ const CreateQuiz = () => {
           </div>
           <div className="flex flex-col gap-2">
             <label className="font-semibold">Entrance Fee</label>
-            <div className="grid grid-cols-3 gap-4">
-              <Select
+            {/* <div className="grid grid-cols-3 gap-4"> */}
+            {/* <Select
                 options={currencyOptions}
                 onChange={(e) => {}}
+              /> */}
+            <div className="col-span-2">
+              <Controller
+                control={control}
+                name="admission_fee"
+                render={({ field: { onChange, value } }) => (
+                  <CurrencyInput
+                    value={value}
+                    onValueChange={(value) => onChange(value)}
+                  />
+                )}
               />
-              <div className="col-span-2">
-                <CInput
-                  type="number"
-                  {...register("admission_fee")}
-                  error={errors.admission_fee}
-                />
-              </div>
             </div>
+            {/* </div> */}
           </div>
           <div />
           <div className="flex flex-col gap-2">
@@ -342,16 +359,21 @@ const CreateQuiz = () => {
               <div className="grid grid-cols-3 items-center gap-4">
                 <div className="font-semibold text-sm">Lifelines {i + 1}</div>
                 <div className="text-center col-span-2">
-                  <CInput
-                    type="number"
-                    {...register(
+                  <Controller
+                    control={control}
+                    name={
                       i === 0
                         ? `lifelines.0.price`
                         : i === 1
                         ? `lifelines.1.price`
-                        : `lifelines.2.price`,
+                        : `lifelines.2.price`
+                    }
+                    render={({ field: { onChange, value } }) => (
+                      <CurrencyInput
+                        value={value}
+                        onValueChange={(value) => onChange(value)}
+                      />
                     )}
-                    error={errors.lifelines?.[i]?.price}
                   />
                 </div>
               </div>
@@ -363,10 +385,15 @@ const CreateQuiz = () => {
               <div className="grid grid-cols-3 items-center gap-4">
                 <div className="font-semibold text-sm">Rank {i + 1}</div>
                 <div className="text-center col-span-2">
-                  <CInput
-                    type="number"
-                    {...register(`prizes.${i}`)}
-                    error={errors.prizes?.[i]}
+                  <Controller
+                    control={control}
+                    name={`prizes.${i}`}
+                    render={({ field: { onChange, value } }) => (
+                      <CurrencyInput
+                        value={value}
+                        onValueChange={(value) => onChange(value)}
+                      />
+                    )}
                   />
                 </div>
               </div>
