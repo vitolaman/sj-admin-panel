@@ -102,7 +102,10 @@ const useUpdateQuizForm = (id: string) => {
   const create = async (data: EditQuizPayload) => {
     try {
       setIsLoadingUpdate(true);
-      const payload = { ...data };
+      const paymentMethodParsed = (data.payment_method as any[]).map(
+        (item) => item.value,
+      );
+      const payload = { ...data, payment_method: paymentMethodParsed };
       if (data.banner.image_link !== "") {
         const banner = await uploadFile(
           accessToken!,

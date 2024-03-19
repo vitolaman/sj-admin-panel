@@ -1,8 +1,10 @@
 import MDEditor, { commands } from "@uiw/react-md-editor";
+import { OptChild, PaymentChannelOpt } from "_interfaces/admin-fee.interfaces";
 import { CreateQuizPayload } from "_interfaces/quiz.interfaces";
 import ContentContainer from "components/container";
 import CurrencyInput from "components/currency-input";
 import CInput from "components/input";
+import ValidationError from "components/validation/error";
 import { optionCategory, optionQuestion } from "data/quiz";
 import useCreateQuizForm from "hooks/quiz/useCreateQuizForm";
 import useDebounce from "hooks/shared/useDebounce";
@@ -12,7 +14,8 @@ import { useEffect, useState } from "react";
 import { Button, FileInput } from "react-daisyui";
 import { Controller } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import ReactSelect from "react-select";
+import ReactSelect, { GroupBase } from "react-select";
+import { useGetPaymentChannelQuery } from "services/modules/admin-fee";
 import { usePromoCodeQuery } from "services/modules/play";
 
 export const cqRouteName = "create";
@@ -28,9 +31,13 @@ const CreateQuiz = () => {
     }[]
   >([]);
   const [search, setSearch] = useState<string>("");
+  const [paymentChannelOpt, setPaymentChannelOpt] = useState<
+    GroupBase<OptChild>[]
+  >([]);
 
   const debouncedSearchTerm = useDebounce(search, 500);
   const promoCodeState = usePromoCodeQuery(debouncedSearchTerm);
+  const paymentChannelState = useGetPaymentChannelQuery(undefined);
 
   const {
     handleCreate,
@@ -86,6 +93,35 @@ const CreateQuiz = () => {
       }
     }
   }, [errors, setFocus]);
+
+  useEffect(() => {
+    if (paymentChannelState.data) {
+      const tempOpt: GroupBase<OptChild>[] = [
+        {
+          label: "E-Wallet",
+          options: paymentChannelState.data.type_ewallet.map((item) => ({
+            label: item.payment_method,
+            value: item.payment_method,
+          })),
+        },
+        {
+          label: "Bank",
+          options: paymentChannelState.data.type_va.map((item) => ({
+            label: item.payment_method,
+            value: item.payment_method,
+          })),
+        },
+        {
+          label: "QRIS",
+          options: paymentChannelState.data.type_qris.map((item) => ({
+            label: item.payment_method,
+            value: item.payment_method,
+          })),
+        },
+      ];
+      setPaymentChannelOpt(tempOpt);
+    }
+  }, [paymentChannelState.data]);
 
   return (
     <ContentContainer>
@@ -333,11 +369,6 @@ const CreateQuiz = () => {
           </div>
           <div className="flex flex-col gap-2">
             <label className="font-semibold">Entrance Fee</label>
-            {/* <div className="grid grid-cols-3 gap-4"> */}
-            {/* <Select
-                options={currencyOptions}
-                onChange={(e) => {}}
-              /> */}
             <div className="col-span-2">
               <Controller
                 control={control}
@@ -350,9 +381,34 @@ const CreateQuiz = () => {
                 )}
               />
             </div>
-            {/* </div> */}
           </div>
-          <div />
+          <div className="flex flex-col gap-2">
+            <label className="font-semibold">Payment Channel</label>
+            <div className="col-span-2">
+              <Controller
+                control={control}
+                name="payment_method"
+                render={({ field: { onChange, value } }) => (
+                  <ReactSelect
+                    styles={{
+                      control: (baseStyle) => ({
+                        ...baseStyle,
+                        padding: 5,
+                        borderColor: "#BDBDBD",
+                        borderRadius: "0.5rem",
+                      }),
+                    }}
+                    isMulti
+                    options={paymentChannelOpt}
+                    value={value as GroupBase<OptChild>[]}
+                    onChange={(e) => {
+                      onChange(e);
+                    }}
+                  />
+                )}
+              />
+            </div>
+          </div>
           <div className="flex flex-col gap-2">
             <label className="font-semibold">Lifeline</label>
             {[0, 1, 2].map((item, i) => (
@@ -420,6 +476,7 @@ const CreateQuiz = () => {
                 />
               )}
             />
+            <ValidationError error={errors?.tnc?.id} />
           </div>
           <div
             data-color-mode="light"
@@ -442,6 +499,7 @@ const CreateQuiz = () => {
                 />
               )}
             />
+            <ValidationError error={errors?.tnc?.en} />
           </div>
         </div>
         <div className="flex items-center justify-end gap-4 mt-6">

@@ -1,3 +1,6 @@
+import { GroupBase } from "react-select";
+import { OptChild } from "./admin-fee.interfaces";
+
 export interface PlayRes {
   playList: PlayI[];
   metadata: Metadata;
@@ -48,7 +51,7 @@ export interface PlayI {
   invitation_code: string;
   is_need_invitation_code: boolean;
   raw_asset_sub_type?: string[];
-  payment_method?: string[];
+  payment_method: string[] | GroupBase<OptChild>[];
   is_free_voucher_claimed: boolean;
 }
 
@@ -123,6 +126,7 @@ export interface EditArenaPayloadI {
   featured_link?: string;
   promo_id?: string;
   invitation_code?: string;
+  payment_method: string[];
 }
 
 export interface CreatePlayPayload {
@@ -158,6 +162,7 @@ export interface CreatePlayPayload {
   featured_link?: string;
   promo_id?: string;
   invitation_code?: string;
+  payment_method: string[];
 }
 
 export interface CreatePlayFormI {
@@ -193,6 +198,7 @@ export interface CreatePlayFormI {
   featured_link: string;
   promo_id: string;
   invitation_code: string;
+  payment_method: GroupBase<OptChild>[];
 }
 
 export interface PromoCodeRes {
