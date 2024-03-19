@@ -15,7 +15,7 @@ export interface AdminFeeI {
   payment_type: string;
   admin_fee: number;
   service_fee: number;
-  status: 'displayed' | 'hidden';
+  status: "displayed" | "hidden";
   priority: boolean;
   promo_price: number;
   promo_start_date: string;
@@ -51,8 +51,82 @@ export interface FormAdminFeeI {
   service_fee: number;
   is_priority: boolean;
   is_active: boolean;
-  status: 'displayed' | 'hidden';
+  status: "displayed" | "hidden";
   promo_start_date?: string;
   promo_end_date?: string;
   max_promo_usage_per_month: number;
+}
+
+export interface PaymentChannelRes {
+  total: number;
+  recommendation: Recommendation[];
+  type_va: TypeVa[];
+  type_ewallet: TypeEwallet[];
+  type_qris: TypeQri[];
+}
+
+export interface Recommendation {
+  id: string;
+  payment_gateway: string;
+  payment_method: string;
+  logo_url: string;
+  payment_type: string;
+  admin_fee: number;
+  service_fee: number;
+  promo_price: number;
+  is_active: boolean;
+  is_promo_available: boolean;
+  is_priority: boolean;
+}
+
+export interface TypeVa {
+  id: string;
+  payment_gateway: string;
+  payment_method: string;
+  logo_url: string;
+  payment_type: string;
+  admin_fee: number;
+  service_fee: number;
+  promo_price: number;
+  is_active: boolean;
+  is_promo_available: boolean;
+  is_priority: boolean;
+}
+
+export interface TypeEwallet {
+  id: string;
+  payment_gateway: string;
+  payment_method: string;
+  logo_url: string;
+  payment_type: string;
+  admin_fee: number;
+  service_fee: number;
+  promo_price: number;
+  is_active: boolean;
+  is_promo_available: boolean;
+  is_priority: boolean;
+}
+
+export interface TypeQri {
+  id: string;
+  payment_gateway: string;
+  payment_method: string;
+  logo_url: string;
+  payment_type: string;
+  admin_fee: number;
+  service_fee: number;
+  promo_price: number;
+  is_active: boolean;
+  is_promo_available: boolean;
+  is_priority: boolean;
+}
+
+export interface PaymentChannelOpt {
+  label: string;
+  options: OptChild[];
+}
+
+export interface OptChild {
+  label: string;
+  value: string;
 }

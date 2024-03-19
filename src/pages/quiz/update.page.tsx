@@ -1,9 +1,11 @@
 import MDEditor, { commands } from "@uiw/react-md-editor";
+import { OptChild } from "_interfaces/admin-fee.interfaces";
 import { EditQuizPayload } from "_interfaces/quiz.interfaces";
 import ContentContainer from "components/container";
 import CurrencyInput from "components/currency-input";
 import CInput from "components/input";
 import { Loader } from "components/spinner/loader";
+import ValidationError from "components/validation/error";
 import { optionCategory, optionQuestion } from "data/quiz";
 import useUpdateQuizForm from "hooks/quiz/useUpdateQuizForm";
 import useDebounce from "hooks/shared/useDebounce";
@@ -13,7 +15,8 @@ import { useEffect, useState } from "react";
 import { Button, FileInput } from "react-daisyui";
 import { Controller } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
-import ReactSelect from "react-select";
+import ReactSelect, { GroupBase } from "react-select";
+import { useGetPaymentChannelQuery } from "services/modules/admin-fee";
 import { usePromoCodeQuery } from "services/modules/play";
 import { useGetQuizByIdQuery } from "services/modules/quiz";
 
@@ -31,10 +34,14 @@ const UpdateQuiz = () => {
     }[]
   >([]);
   const [search, setSearch] = useState<string>("");
+  const [paymentChannelOpt, setPaymentChannelOpt] = useState<
+    GroupBase<OptChild>[]
+  >([]);
 
   const debouncedSearchTerm = useDebounce(search, 500);
   const promoCodeState = usePromoCodeQuery(debouncedSearchTerm);
   const { data, isLoading } = useGetQuizByIdQuery(params.id!);
+  const paymentChannelState = useGetPaymentChannelQuery(undefined);
 
   const {
     handleUpdate,
@@ -99,7 +106,62 @@ const UpdateQuiz = () => {
   }, [errors, setFocus]);
 
   useEffect(() => {
-    if (data) reset(data);
+    if (paymentChannelState.data && data) {
+      const tempOpt: GroupBase<OptChild>[] = [
+        {
+          label: "E-Wallet",
+          options: paymentChannelState.data.type_ewallet.map((item) => ({
+            label: item.payment_method,
+            value: item.payment_method,
+          })),
+        },
+        {
+          label: "Bank",
+          options: paymentChannelState.data.type_va.map((item) => ({
+            label: item.payment_method,
+            value: item.payment_method,
+          })),
+        },
+        {
+          label: "QRIS",
+          options: paymentChannelState.data.type_qris.map((item) => ({
+            label: item.payment_method,
+            value: item.payment_method,
+          })),
+        },
+      ];
+      const selectedEWallet = paymentChannelState.data.type_ewallet.map(
+        (item) => {
+          if (data.payment_method?.includes(item.payment_method)) {
+            return {
+              label: item.payment_method,
+              value: item.payment_method,
+            };
+          }
+        },
+      );
+      const selectedBank = paymentChannelState.data.type_va.map((item) => {
+        if (data.payment_method?.includes(item.payment_method)) {
+          return {
+            label: item.payment_method,
+            value: item.payment_method,
+          };
+        }
+      });
+      const selectedQris = paymentChannelState.data.type_qris.map((item) => {
+        if (data.payment_method?.includes(item.payment_method)) {
+          return {
+            label: item.payment_method,
+            value: item.payment_method,
+          };
+        }
+      });
+      setPaymentChannelOpt(tempOpt);
+      reset({
+        ...data,
+        payment_method: [...selectedEWallet, ...selectedBank, ...selectedQris],
+      });
+    }
   }, [data]);
 
   return isLoading ? (
@@ -371,11 +433,6 @@ const UpdateQuiz = () => {
           </div>
           <div className="flex flex-col gap-2">
             <label className="font-semibold">Entrance Fee</label>
-            {/* <div className="grid grid-cols-3 gap-4"> */}
-            {/* <Select
-                options={currencyOptions}
-                onChange={(e) => {}}
-              /> */}
             <div className="col-span-2">
               <Controller
                 control={control}
@@ -388,9 +445,34 @@ const UpdateQuiz = () => {
                 )}
               />
             </div>
-            {/* </div> */}
           </div>
-          <div />
+          <div className="flex flex-col gap-2">
+            <label className="font-semibold">Payment Channel</label>
+            <div className="col-span-2">
+              <Controller
+                control={control}
+                name="payment_method"
+                render={({ field: { onChange, value } }) => (
+                  <ReactSelect
+                    styles={{
+                      control: (baseStyle) => ({
+                        ...baseStyle,
+                        padding: 5,
+                        borderColor: "#BDBDBD",
+                        borderRadius: "0.5rem",
+                      }),
+                    }}
+                    isMulti
+                    options={paymentChannelOpt}
+                    value={value as GroupBase<OptChild>[]}
+                    onChange={(e) => {
+                      onChange(e);
+                    }}
+                  />
+                )}
+              />
+            </div>
+          </div>
           <div className="flex flex-col gap-2">
             <label className="font-semibold">Lifeline</label>
             {[0, 1, 2].map((item, i) => (
@@ -458,6 +540,7 @@ const UpdateQuiz = () => {
                 />
               )}
             />
+            <ValidationError error={errors?.tnc?.id} />
           </div>
           <div
             data-color-mode="light"
@@ -480,6 +563,7 @@ const UpdateQuiz = () => {
                 />
               )}
             />
+            <ValidationError error={errors?.tnc?.en} />
           </div>
         </div>
         <div className="flex items-center justify-end gap-4 mt-6">

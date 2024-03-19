@@ -1,4 +1,8 @@
-import { AdminFeeI, AdminFeePayloadI } from "_interfaces/admin-fee.interfaces";
+import {
+  AdminFeeI,
+  AdminFeePayloadI,
+  PaymentChannelRes,
+} from "_interfaces/admin-fee.interfaces";
 import { Api } from "services/api";
 
 export const adminFeeApi = Api.injectEndpoints({
@@ -29,6 +33,10 @@ export const adminFeeApi = Api.injectEndpoints({
         };
       },
     }),
+    getPaymentChannel: build.query<PaymentChannelRes, undefined>({
+      query: () => `/payment/v1/payment/list?currency=IDR`,
+      keepUnusedDataFor: 0,
+    }),
   }),
   overrideExisting: false,
 });
@@ -38,4 +46,5 @@ export const {
   useUpdatePaymentListMutation,
   useGetWithdrawalListQuery,
   useUpdateWithdrawalListMutation,
+  useGetPaymentChannelQuery,
 } = adminFeeApi;

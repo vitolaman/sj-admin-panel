@@ -36,8 +36,14 @@ const useCreateQuizForm = () => {
       .min(dateNow, "Ended time must be greater than now"),
     banner: yup.object().required("Please input banner"),
     admission_fee: yup.number().required("Please input admission fee"),
-    min_participant: yup.number().min(0, "Min Participants = 0"),
-    max_participant: yup.number().max(999, "Max Participants = 999"),
+    min_participant: yup
+      .number()
+      .min(0, "Min Participants = 0")
+      .typeError("Must be a number"),
+    max_participant: yup
+      .number()
+      .max(999, "Max Participants = 999")
+      .typeError("Must be a number"),
     // total_questions: yup.string()
     //   .oneOf(['3', '6', '9', '12', '15'], 'Total questions must be 3, 6, 9, 12 or 15')
     //   .required('Total questions is required'),
@@ -101,7 +107,11 @@ const useCreateQuizForm = () => {
   const create = async (data: CreateQuizPayload) => {
     try {
       setIsLoading(true);
-      const payload = { ...data };
+      // NOTE: Cannot use any because of react-select plugin data type doesn't match with the data type that I give
+      const paymentMethodParsed = (data.payment_method as any[]).map(
+        (item) => item.value,
+      );
+      const payload = { ...data, payment_method: paymentMethodParsed };
       if (data.banner.image_link !== "") {
         const banner = await uploadFile(
           accessToken!,
