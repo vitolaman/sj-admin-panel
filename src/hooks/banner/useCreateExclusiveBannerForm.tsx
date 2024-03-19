@@ -3,11 +3,11 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { errorHandler } from "services/errorHandler";
 import { useNavigate } from "react-router-dom";
-import { uploadFile } from "services/modules/file";
 import { useState } from "react";
 import { useAppSelector } from "store";
 import { ExclussiveBannerFormData } from "_interfaces/banner.interface";
 import { useCreateBannerMutation } from "services/modules/banner";
+import { uploadFile } from "services/modules/file";
 
 const useCreateExclusiveBannerForm = () => {
   const navigate = useNavigate();

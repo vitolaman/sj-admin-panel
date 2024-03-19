@@ -8,10 +8,10 @@ import {
 import { useCreatePlayMutation } from "services/modules/play";
 import { errorHandler } from "services/errorHandler";
 import { useNavigate } from "react-router-dom";
-import { uploadFile } from "services/modules/file";
 import { useState } from "react";
 import { useAppSelector } from "store";
 import { OptChild } from "_interfaces/admin-fee.interfaces";
+import { uploadFile } from "services/modules/file";
 
 export const TYPE_ARENA = "ARENA";
 
@@ -131,7 +131,7 @@ const useCreatePlayForm = () => {
       if (data.sponsorship.image_url && data.sponsorship.image_url[0]) {
         const sponsorship = await uploadFile(
           accessToken!,
-          data.sponsorship.image_url[0],
+          data.sponsorship.image_url[0]
         );
         payload.sponsorship.image_url = sponsorship;
       } else {
@@ -140,7 +140,7 @@ const useCreatePlayForm = () => {
       if (data.community.image_url && data.community.image_url[0]) {
         const community = await uploadFile(
           accessToken!,
-          data.community.image_url[0],
+          data.community.image_url[0]
         );
         payload.community.image_url = community;
       } else {

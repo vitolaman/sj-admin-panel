@@ -3,11 +3,11 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { errorHandler } from "services/errorHandler";
 import { useNavigate } from "react-router-dom";
-import { uploadFile } from "services/modules/file";
 import { useState } from "react";
 import { useAppSelector } from "store";
 import { CreateQuizPayload } from "_interfaces/quiz.interfaces";
 import { useCreateQuizMutation } from "services/modules/quiz";
+import { uploadFile } from "services/modules/file";
 
 const useCreateQuizForm = () => {
   const navigate = useNavigate();
@@ -57,7 +57,7 @@ const useCreateQuizForm = () => {
         yup.object().shape({
           name: yup.string().required("Please input Lifeline Name"),
           price: yup.number().required("Please input Lifeline Price"),
-        }),
+        })
       )
       .required("Lifelines are required"),
     tnc: yup.object().shape({
@@ -115,7 +115,7 @@ const useCreateQuizForm = () => {
       if (data.banner.image_link !== "") {
         const banner = await uploadFile(
           accessToken!,
-          data.banner.image_link[0] as File,
+          data.banner.image_link[0] as File
         );
         payload.banner = {
           image_link: "",
@@ -130,7 +130,7 @@ const useCreateQuizForm = () => {
       if (data.sponsors.image_link !== "") {
         const sponsors = await uploadFile(
           accessToken!,
-          data.sponsors.image_link[0] as File,
+          data.sponsors.image_link[0] as File
         );
         payload.sponsors = {
           image_link: "",
@@ -145,7 +145,7 @@ const useCreateQuizForm = () => {
       if (data.communities.image_link !== "") {
         const communities = await uploadFile(
           accessToken!,
-          data.communities.image_link[0] as File,
+          data.communities.image_link[0] as File
         );
         payload.communities = {
           image_link: "",

@@ -219,7 +219,7 @@ export interface Daum {
   is_active: boolean;
   institution: string;
   ref_code: string;
-  feature_ids: any;
+  feature_ids: string[];
   discount_type: string;
   description: string;
   category: string;

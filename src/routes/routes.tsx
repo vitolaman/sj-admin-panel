@@ -29,6 +29,19 @@ import CreateExclussiveBanner, {
 import UpdateExclussiveBanner, {
   uebRouteName,
 } from "pages/banner/exclusive/update.page";
+import PromoCode, { promoCodeRouteName } from "pages/promo-code/index.page";
+import WelcomeBanner, {
+  welcomeBannerRouteName,
+} from "pages/push-notification/welcome-banner/index.page";
+import CreateWelcomeBanner, {
+  cwbRouteName,
+} from "pages/push-notification/welcome-banner/create.page";
+import UpdateWelcomeBanner, {
+  uwbRouteName,
+} from "pages/push-notification/welcome-banner/update.page";
+import BlastPushNotification, {
+  pushNotifRouteName,
+} from "pages/push-notification/blast-push-notification/index.page";
 
 const protectedRoutes: RouteObject[] = [
   { path: "", element: <Navigate to="/user/control-panel" /> },
@@ -87,6 +100,7 @@ const protectedRoutes: RouteObject[] = [
           },
         ],
       },
+      { path: promoCodeRouteName, element: <PromoCode /> },
       { path: afRouteName, element: <AdminFee /> },
       { path: "dashboard", element: <DashboardHome /> },
       {
@@ -138,6 +152,28 @@ const protectedRoutes: RouteObject[] = [
           {
             path: uebRouteName,
             element: <UpdateExclussiveBanner />,
+          },
+        ],
+      },
+      {
+        path: "push-notification",
+        children: [
+          {
+            path: pushNotifRouteName,
+            element: <BlastPushNotification />,
+            index: true,
+          },
+          {
+            path: welcomeBannerRouteName,
+            element: <WelcomeBanner />,
+          },
+          {
+            path: cwbRouteName,
+            element: <CreateWelcomeBanner />,
+          },
+          {
+            path: uwbRouteName,
+            element: <UpdateWelcomeBanner />,
           },
         ],
       },
