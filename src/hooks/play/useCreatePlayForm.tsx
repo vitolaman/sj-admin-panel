@@ -10,6 +10,7 @@ import { errorHandler } from "services/errorHandler";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAppSelector } from "store";
+import { OptChild } from "_interfaces/admin-fee.interfaces";
 import { uploadFile } from "services/modules/file";
 
 export const TYPE_ARENA = "ARENA";
@@ -87,6 +88,8 @@ const useCreatePlayForm = () => {
   const create = async (data: CreatePlayFormI) => {
     try {
       setIsLoading(true);
+      // NOTE: Cannot use any because of react-select plugin data type doesn't match with the data type that I give
+      const paymentMethodParsed = (data.payment_method as any[]).map(item => item.value);
       const payload: CreatePlayPayload = {
         name: data.name,
         category: data.category,
@@ -117,6 +120,7 @@ const useCreatePlayForm = () => {
         featured_link: data.featured_link,
         promo_id: data.promo_id,
         invitation_code: data.invitation_code,
+        payment_method: paymentMethodParsed,
       };
       if (data.banner && data.banner[0]) {
         const banner = await uploadFile(accessToken!, data.banner[0]);

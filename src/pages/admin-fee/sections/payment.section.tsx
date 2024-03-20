@@ -213,7 +213,7 @@ const PaymentSection = ({ filter }: { filter?: AdminFeeFilterI }) => {
 
   return (
     <>
-      <div className="border border-[#BDBDBD] rounded-lg">
+      <div className="max-w-full overflow-x-auto overflow-y-hidden border border-[#BDBDBD] rounded-lg">
         <Table<AdminFeeI>
           data={dataView}
           columns={header}

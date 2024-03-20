@@ -16,6 +16,9 @@ import useUpdatePlayForm from "hooks/play/useUpdatePlayForm";
 import { Controller } from "react-hook-form";
 import CInput from "components/input";
 import { PlayI } from "_interfaces/play.interfaces";
+import ReactSelect, { GroupBase } from "react-select";
+import { OptChild } from "_interfaces/admin-fee.interfaces";
+import { useGetPaymentChannelQuery } from "services/modules/admin-fee";
 
 export const pdRouteName = ":id/detail";
 const PlayDetail = () => {
@@ -27,6 +30,9 @@ const PlayDetail = () => {
   const [hours, setHours] = useState<number>(0);
   const [minutes, setMinutes] = useState<number>(0);
   const [enableEdit, setEnableEdit] = useState(false);
+  const [paymentChannelOpt, setPaymentChannelOpt] = useState<
+    GroupBase<OptChild>[]
+  >([]);
 
   const { data, isLoading } = usePlayByIdQuery(params.id ?? "", {
     refetchOnReconnect: true,
@@ -35,6 +41,7 @@ const PlayDetail = () => {
   const [cancelPlay, cancelPlayState] = useCancelPlayMutation();
   const { handleUpdate, register, errors, reset, control, setFocus } =
     useUpdatePlayForm(params.id!);
+  const paymentChannelState = useGetPaymentChannelQuery(undefined);
 
   useEffect(() => {
     if (data?.play_time && data?.end_time) {
@@ -50,7 +57,65 @@ const PlayDetail = () => {
       setHours(hours);
       setMinutes(minutes);
     }
-    reset({ ...data, category: data?.all_category });
+    if (paymentChannelState.data && data) {
+      const tempOpt: GroupBase<OptChild>[] = [
+        {
+          label: "E-Wallet",
+          options: paymentChannelState.data.type_ewallet.map((item) => ({
+            label: item.payment_method,
+            value: item.payment_method,
+          })),
+        },
+        {
+          label: "Bank",
+          options: paymentChannelState.data.type_va.map((item) => ({
+            label: item.payment_method,
+            value: item.payment_method,
+          })),
+        },
+        {
+          label: "QRIS",
+          options: paymentChannelState.data.type_qris.map((item) => ({
+            label: item.payment_method,
+            value: item.payment_method,
+          })),
+        },
+      ];
+      const selectedEWallet = paymentChannelState.data.type_ewallet.map(
+        (item) => {
+          if (
+            (data.payment_method as string[])?.includes(item.payment_method)
+          ) {
+            return {
+              label: item.payment_method,
+              value: item.payment_method,
+            };
+          }
+        },
+      );
+      const selectedBank = paymentChannelState.data.type_va.map((item) => {
+        if ((data.payment_method as string[])?.includes(item.payment_method)) {
+          return {
+            label: item.payment_method,
+            value: item.payment_method,
+          };
+        }
+      });
+      const selectedQris = paymentChannelState.data.type_qris.map((item) => {
+        if ((data.payment_method as string[])?.includes(item.payment_method)) {
+          return {
+            label: item.payment_method,
+            value: item.payment_method,
+          };
+        }
+      });
+      setPaymentChannelOpt(tempOpt);
+      reset({
+        ...data,
+        payment_method: [...selectedEWallet, ...selectedBank, ...selectedQris],
+        category: data?.all_category
+      });
+    }
   }, [data]);
 
   const cancel = async () => {
@@ -450,6 +515,34 @@ const PlayDetail = () => {
               </div>
             ))}
           </div>
+          <div className="flex flex-col gap-2">
+            <label className="font-semibold">Payment Channel</label>
+            <div className="col-span-2">
+              <Controller
+                control={control}
+                name="payment_method"
+                render={({ field: { onChange, value } }) => (
+                  <ReactSelect
+                    styles={{
+                      control: (baseStyle) => ({
+                        ...baseStyle,
+                        padding: 5,
+                        borderColor: "#BDBDBD",
+                        borderRadius: "0.5rem",
+                      }),
+                    }}
+                    isMulti
+                    options={paymentChannelOpt}
+                    value={value as GroupBase<OptChild>[]}
+                    onChange={(e) => {
+                      onChange(e);
+                    }}
+                  />
+                )}
+              />
+            </div>
+          </div>
+          <div />
           <div className="flex flex-col gap-2">
             <label className="font-semibold">Opening Balance</label>
             <CInput

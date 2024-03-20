@@ -11,10 +11,12 @@ import { Controller } from "react-hook-form";
 import CInput from "components/input";
 import useCreatePlayForm from "hooks/play/useCreatePlayForm";
 import { usePromoCodeQuery } from "services/modules/play";
-import ReactSelect from "react-select";
+import ReactSelect, { GroupBase } from "react-select";
 import useDebounce from "hooks/shared/useDebounce";
 import { CreatePlayFormI } from "_interfaces/play.interfaces";
 import useFilePreview from "hooks/shared/useFilePreview";
+import { OptChild } from "_interfaces/admin-fee.interfaces";
+import { useGetPaymentChannelQuery } from "services/modules/admin-fee";
 
 export const cpRouteName = "create";
 const CreatePlay = () => {
@@ -31,6 +33,10 @@ const CreatePlay = () => {
       data: string;
     }[]
   >([]);
+  const [paymentChannelOpt, setPaymentChannelOpt] = useState<
+    GroupBase<OptChild>[]
+  >([]);
+
   const {
     handleCreate,
     register,
@@ -47,6 +53,7 @@ const CreatePlay = () => {
   const [bannerPreview] = useFilePreview(banner);
   const [communityPreview] = useFilePreview(community);
   const [sponsorPreview] = useFilePreview(sponsor);
+  const paymentChannelState = useGetPaymentChannelQuery(undefined);
 
   useEffect(() => {
     const firstError = Object.keys(errors)[0] as keyof CreatePlayFormI;
@@ -72,6 +79,35 @@ const CreatePlay = () => {
       setPromoCodeList(newPromoCodeList);
     }
   }, [promoCodeState.data]);
+
+  useEffect(() => {
+    if (paymentChannelState.data) {
+      const tempOpt: GroupBase<OptChild>[] = [
+        {
+          label: "E-Wallet",
+          options: paymentChannelState.data.type_ewallet.map((item) => ({
+            label: item.payment_method,
+            value: item.payment_method,
+          })),
+        },
+        {
+          label: "Bank",
+          options: paymentChannelState.data.type_va.map((item) => ({
+            label: item.payment_method,
+            value: item.payment_method,
+          })),
+        },
+        {
+          label: "QRIS",
+          options: paymentChannelState.data.type_qris.map((item) => ({
+            label: item.payment_method,
+            value: item.payment_method,
+          })),
+        },
+      ];
+      setPaymentChannelOpt(tempOpt);
+    }
+  }, [paymentChannelState.data]);
 
   return (
     <ContentContainer>
@@ -436,7 +472,33 @@ const CreatePlay = () => {
               error={errors.opening_balance}
             />
           </div>
-          <div />
+          <div className="flex flex-col gap-2">
+            <label className="font-semibold">Payment Channel</label>
+            <div className="col-span-2">
+              <Controller
+                control={control}
+                name="payment_method"
+                render={({ field: { onChange, value } }) => (
+                  <ReactSelect
+                    styles={{
+                      control: (baseStyle) => ({
+                        ...baseStyle,
+                        padding: 5,
+                        borderColor: "#BDBDBD",
+                        borderRadius: "0.5rem",
+                      }),
+                    }}
+                    isMulti
+                    options={paymentChannelOpt}
+                    value={value as GroupBase<OptChild>[]}
+                    onChange={(e) => {
+                      onChange(e);
+                    }}
+                  />
+                )}
+              />
+            </div>
+          </div>
           <div
             data-color-mode="light"
             className="flex flex-col gap-2"

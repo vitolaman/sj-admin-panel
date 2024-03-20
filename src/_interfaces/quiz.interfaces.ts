@@ -1,3 +1,6 @@
+import { GroupBase } from "react-select";
+import { OptChild } from "./admin-fee.interfaces";
+
 export interface GetQuizQuery {
   page: number;
   limit: number;
@@ -29,6 +32,7 @@ export interface QuizI {
   started_at: string;
   ended_at: string;
   created_at: string;
+  payment_method: string[];
 }
 
 export interface Banner {
@@ -85,6 +89,7 @@ export interface CreateQuizPayload {
   promo_id: string;
   featured_link: string;
   total_questions: number;
+  payment_method: string[] | GroupBase<OptChild>[];
 }
 
 export interface EditQuizPayload {
@@ -124,7 +129,8 @@ export interface EditQuizPayload {
     {
       name: string;
       price: number;
-    }
+    },
   ];
   total_questions: number;
+  payment_method: string[] | GroupBase<OptChild>[];
 }

@@ -18,7 +18,7 @@ const DashboardLayout: React.FC = (): JSX.Element => {
   return (
     <>
       <Helmet>
-        <title>{t("Management | Dashboard")}</title>
+        <title>{t("Seeds | Admin Portal")}</title>
       </Helmet>
       <div className="flex">
         <Sidebar active={navbarActive} toggleSidebar={toggleSidebar} />

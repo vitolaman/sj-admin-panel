@@ -1,9 +1,10 @@
 import MDEditor, { commands } from "@uiw/react-md-editor";
+import { OptChild, PaymentChannelOpt } from "_interfaces/admin-fee.interfaces";
 import { CreateQuizPayload } from "_interfaces/quiz.interfaces";
 import ContentContainer from "components/container";
+import CurrencyInput from "components/currency-input";
 import CInput from "components/input";
-import Select from "components/select";
-import { currencyOptions } from "data/currency";
+import ValidationError from "components/validation/error";
 import { optionCategory, optionQuestion } from "data/quiz";
 import useCreateQuizForm from "hooks/quiz/useCreateQuizForm";
 import useDebounce from "hooks/shared/useDebounce";
@@ -13,7 +14,8 @@ import { useEffect, useState } from "react";
 import { Button, FileInput } from "react-daisyui";
 import { Controller } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import ReactSelect from "react-select";
+import ReactSelect, { GroupBase } from "react-select";
+import { useGetPaymentChannelQuery } from "services/modules/admin-fee";
 import { usePromoCodeQuery } from "services/modules/play";
 
 export const cqRouteName = "create";
@@ -29,9 +31,13 @@ const CreateQuiz = () => {
     }[]
   >([]);
   const [search, setSearch] = useState<string>("");
+  const [paymentChannelOpt, setPaymentChannelOpt] = useState<
+    GroupBase<OptChild>[]
+  >([]);
 
   const debouncedSearchTerm = useDebounce(search, 500);
   const promoCodeState = usePromoCodeQuery(debouncedSearchTerm);
+  const paymentChannelState = useGetPaymentChannelQuery(undefined);
 
   const {
     handleCreate,
@@ -46,9 +52,22 @@ const CreateQuiz = () => {
   const banner = watch("banner.image_link");
   const community = watch("communities.image_link");
   const sponsor = watch("sponsors.image_link");
+  const startTime = watch("started_at");
+  const endTime = watch("ended_at");
   const [bannerPreview] = useFilePreview(banner as FileList);
   const [communityPreview] = useFilePreview(community as FileList);
   const [sponsorPreview] = useFilePreview(sponsor as FileList);
+
+  useEffect(() => {
+    const start = moment(startTime);
+    const end = moment(endTime);
+    const duration = moment.duration(end.diff(start));
+    const d = Math.trunc(duration.asDays());
+    const m = duration.asMinutes() - (d * 24 + hours) * 60;
+    setDays(d);
+    setHours(Math.trunc(duration.asHours() - d * 24));
+    setMinutes(Math.ceil(m));
+  }, [startTime, endTime]);
 
   useEffect(() => {
     if (promoCodeState.data?.data && promoCodeState.data.data.length > 0) {
@@ -74,6 +93,35 @@ const CreateQuiz = () => {
       }
     }
   }, [errors, setFocus]);
+
+  useEffect(() => {
+    if (paymentChannelState.data) {
+      const tempOpt: GroupBase<OptChild>[] = [
+        {
+          label: "E-Wallet",
+          options: paymentChannelState.data.type_ewallet.map((item) => ({
+            label: item.payment_method,
+            value: item.payment_method,
+          })),
+        },
+        {
+          label: "Bank",
+          options: paymentChannelState.data.type_va.map((item) => ({
+            label: item.payment_method,
+            value: item.payment_method,
+          })),
+        },
+        {
+          label: "QRIS",
+          options: paymentChannelState.data.type_qris.map((item) => ({
+            label: item.payment_method,
+            value: item.payment_method,
+          })),
+        },
+      ];
+      setPaymentChannelOpt(tempOpt);
+    }
+  }, [paymentChannelState.data]);
 
   return (
     <ContentContainer>
@@ -321,37 +369,67 @@ const CreateQuiz = () => {
           </div>
           <div className="flex flex-col gap-2">
             <label className="font-semibold">Entrance Fee</label>
-            <div className="grid grid-cols-3 gap-4">
-              <Select
-                options={currencyOptions}
-                onChange={(e) => {}}
+            <div className="col-span-2">
+              <Controller
+                control={control}
+                name="admission_fee"
+                render={({ field: { onChange, value } }) => (
+                  <CurrencyInput
+                    value={value}
+                    onValueChange={(value) => onChange(value)}
+                  />
+                )}
               />
-              <div className="col-span-2">
-                <CInput
-                  type="number"
-                  {...register("admission_fee")}
-                  error={errors.admission_fee}
-                />
-              </div>
             </div>
           </div>
-          <div />
+          <div className="flex flex-col gap-2">
+            <label className="font-semibold">Payment Channel</label>
+            <div className="col-span-2">
+              <Controller
+                control={control}
+                name="payment_method"
+                render={({ field: { onChange, value } }) => (
+                  <ReactSelect
+                    styles={{
+                      control: (baseStyle) => ({
+                        ...baseStyle,
+                        padding: 5,
+                        borderColor: "#BDBDBD",
+                        borderRadius: "0.5rem",
+                      }),
+                    }}
+                    isMulti
+                    options={paymentChannelOpt}
+                    value={value as GroupBase<OptChild>[]}
+                    onChange={(e) => {
+                      onChange(e);
+                    }}
+                  />
+                )}
+              />
+            </div>
+          </div>
           <div className="flex flex-col gap-2">
             <label className="font-semibold">Lifeline</label>
             {[0, 1, 2].map((item, i) => (
               <div className="grid grid-cols-3 items-center gap-4">
                 <div className="font-semibold text-sm">Lifelines {i + 1}</div>
                 <div className="text-center col-span-2">
-                  <CInput
-                    type="number"
-                    {...register(
+                  <Controller
+                    control={control}
+                    name={
                       i === 0
                         ? `lifelines.0.price`
                         : i === 1
                         ? `lifelines.1.price`
-                        : `lifelines.2.price`,
+                        : `lifelines.2.price`
+                    }
+                    render={({ field: { onChange, value } }) => (
+                      <CurrencyInput
+                        value={value}
+                        onValueChange={(value) => onChange(value)}
+                      />
                     )}
-                    error={errors.lifelines?.[i]?.price}
                   />
                 </div>
               </div>
@@ -363,10 +441,15 @@ const CreateQuiz = () => {
               <div className="grid grid-cols-3 items-center gap-4">
                 <div className="font-semibold text-sm">Rank {i + 1}</div>
                 <div className="text-center col-span-2">
-                  <CInput
-                    type="number"
-                    {...register(`prizes.${i}`)}
-                    error={errors.prizes?.[i]}
+                  <Controller
+                    control={control}
+                    name={`prizes.${i}`}
+                    render={({ field: { onChange, value } }) => (
+                      <CurrencyInput
+                        value={value}
+                        onValueChange={(value) => onChange(value)}
+                      />
+                    )}
                   />
                 </div>
               </div>
@@ -393,6 +476,7 @@ const CreateQuiz = () => {
                 />
               )}
             />
+            <ValidationError error={errors?.tnc?.id} />
           </div>
           <div
             data-color-mode="light"
@@ -415,6 +499,7 @@ const CreateQuiz = () => {
                 />
               )}
             />
+            <ValidationError error={errors?.tnc?.en} />
           </div>
         </div>
         <div className="flex items-center justify-end gap-4 mt-6">

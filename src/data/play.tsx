@@ -1,9 +1,9 @@
 const availableCategories = [
   "ALL",
-  "ID stock",
-  "US stock",
-  "Crypto",
-  "Commodities",
+  "ID_STOCK",
+  "US_STOCK",
+  "CRYPTO",
+  "COMMODITIES",
 ];
 
 const subTypeCategories = [

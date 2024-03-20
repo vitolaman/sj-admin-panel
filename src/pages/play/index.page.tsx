@@ -120,7 +120,7 @@ const Play = () => {
           </Button>
         </div>
       </div>
-      <div className="mt-4">
+      <div className="mt-4 max-w-full overflow-x-auto overflow-y-hidden border border-[#BDBDBD] rounded-lg">
         <Table<PlayI>
           columns={header}
           data={data?.playList}

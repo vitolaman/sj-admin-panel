@@ -44,6 +44,8 @@ const useUpdatePlayForm = (id: string) => {
   });
 
   const update = async (data: PlayI) => {
+    // NOTE: Cannot use any because of react-select plugin data type doesn't match with the data type that I give
+    const paymentMethodParsed = (data.payment_method as any[]).map(item => item.value);
     const payload: EditArenaPayloadI = {
       name: data.name,
       category: data.category as string[],
@@ -67,6 +69,7 @@ const useUpdatePlayForm = (id: string) => {
       featured_link: data.featured_link,
       promo_id: data.promo_id,
       invitation_code: data.invitation_code,
+      payment_method: paymentMethodParsed,
     };
     // TODO: need upload image service configuration
     // banner: data.banner,

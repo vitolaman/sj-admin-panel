@@ -29,6 +29,7 @@ import CreateExclussiveBanner, {
 import UpdateExclussiveBanner, {
   uebRouteName,
 } from "pages/banner/exclusive/update.page";
+import PromoCode, { promoCodeRouteName } from "pages/promo-code/index.page";
 import WelcomeBanner, {
   welcomeBannerRouteName,
 } from "pages/push-notification/welcome-banner/index.page";
@@ -41,6 +42,8 @@ import UpdateWelcomeBanner, {
 import BlastPushNotification, {
   pushNotifRouteName,
 } from "pages/push-notification/blast-push-notification/index.page";
+import Article, { articleRouteName } from "pages/blog/article/index.page";
+import FormArticle, { createArticleRouteName, editArticleRouteName } from "pages/blog/article/form-article.page";
 
 const protectedRoutes: RouteObject[] = [
   { path: "", element: <Navigate to="/user/control-panel" /> },
@@ -55,6 +58,26 @@ const protectedRoutes: RouteObject[] = [
           {
             path: ucpRouteName,
             element: <UserControlPanel />,
+            index: true,
+          },
+        ],
+      },
+      {
+        path: "blog",
+        children: [
+          {
+            path: articleRouteName,
+            element: <Article />,
+            index: true,
+          },
+          {
+            path: createArticleRouteName,
+            element: <FormArticle />,
+            index: true,
+          },
+          {
+            path: editArticleRouteName,
+            element: <FormArticle />,
             index: true,
           },
         ],
@@ -99,6 +122,7 @@ const protectedRoutes: RouteObject[] = [
           },
         ],
       },
+      { path: promoCodeRouteName, element: <PromoCode /> },
       { path: afRouteName, element: <AdminFee /> },
       { path: "dashboard", element: <DashboardHome /> },
       {
