@@ -24,7 +24,7 @@ const useUpsertArticleForm = (id?: number) => {
   const loadingUpsert = createState.isLoading || updateState.isLoading;
   const schema = yup.object({
     title: yup.string().required(),
-    metaTitle: yup.string().required(),
+    metaTitle: yup.string().required().max(160),
     metaDescription: yup.string().required().min(10),
     content: yup.string().required().min(10),
   }).required();
@@ -41,6 +41,9 @@ const useUpsertArticleForm = (id?: number) => {
   } = useForm<EditArticleFormI>({
     mode: "onSubmit",
     resolver: yupResolver(schema),
+    defaultValues: {
+      status: "PUBLISED",
+    }
   });
 
   const update = async (data: EditArticleFormI) => {

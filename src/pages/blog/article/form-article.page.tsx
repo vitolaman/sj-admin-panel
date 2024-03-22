@@ -421,7 +421,7 @@ const FormArticle = () => {
           {params.id ? null : (
             <div className="flex items-center justify-end gap-4 col-span-2">
               <Button
-                type="reset"
+                type="button"
                 className="bg-seeds hover:bg-seeds-300 border-seeds hover:border-seeds-300 text-white rounded-full px-10"
                 onClick={() => setScheduleModal(true)}
                 loading={loadingUpsert}
@@ -432,7 +432,7 @@ const FormArticle = () => {
                 variant="outline"
                 className="border-seeds text-seeds rounded-full px-10"
                 loading={loadingUpsert}
-                type="reset"
+                type="button"
               >
                 Preview Article
               </Button>
@@ -463,7 +463,7 @@ const FormArticle = () => {
         </Modal.Body>
         <Modal.Actions>
           <Button
-            type="reset"
+            type="button"
             className="border-seeds text-seeds rounded-full px-10"
             onClick={() => {
               setScheduleModal(false);
