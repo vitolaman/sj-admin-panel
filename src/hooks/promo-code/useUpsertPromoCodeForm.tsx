@@ -25,7 +25,7 @@ const useUpsertPromoCodeForm = () => {
     min_transaction: 0,
     max_discount: 0,
     quantity: 0,
-    type: "",
+    type: "all",
     institution: "",
     segment_user: "",
     ref_code: "",
@@ -52,16 +52,25 @@ const useUpsertPromoCodeForm = () => {
       const endDateUtc = new Date(data?.end_date!).toISOString();
       const payload: PromoCodeFormDataI = {
         id: data?.id,
-        promo_code: data?.promo_code,
+        promo_code: data?.name_promo_code,
         name_promo_code: data?.name_promo_code,
         start_date: startDateUtc,
         end_date: endDateUtc,
         expired_date: endDateUtc,
         discount_amount: data?.discount_amount,
-        discount_percentage: data?.discount_percentage,
+        discount_percentage:
+          typeof data?.discount_percentage === "string"
+            ? Number(data?.discount_percentage)
+            : data?.discount_percentage,
         min_transaction: data?.min_transaction,
-        max_discount: data?.max_discount,
-        quantity: data?.quantity,
+        max_discount:
+          typeof data?.max_discount === "string"
+            ? Number(data?.max_discount)
+            : data?.max_discount,
+        quantity:
+          typeof data?.quantity === "string"
+            ? Number(data?.quantity)
+            : data?.quantity,
         type: data?.type,
         institution: data?.institution,
         segment_user: data?.segment_user,
@@ -78,16 +87,25 @@ const useUpsertPromoCodeForm = () => {
       const startDateUtc = new Date(data?.start_date!).toISOString();
       const endDateUtc = new Date(data?.end_date!).toISOString();
       const payload: PromoCodeFormDataI = {
-        name_promo_code: data.promo_code,
-        promo_code: data.promo_code,
+        name_promo_code: data.name_promo_code,
+        promo_code: data.name_promo_code,
         start_date: startDateUtc,
         end_date: endDateUtc,
         expired_date: endDateUtc,
         discount_amount: data.discount_amount,
-        discount_percentage: data.discount_percentage,
+        discount_percentage:
+          typeof data?.discount_percentage === "string"
+            ? Number(data?.discount_percentage)
+            : data?.discount_percentage,
         min_transaction: data.min_transaction,
-        max_discount: data.max_discount,
-        quantity: data.quantity,
+        max_discount:
+          typeof data?.max_discount === "string"
+            ? Number(data?.max_discount)
+            : data?.max_discount,
+        quantity:
+          typeof data?.quantity === "string"
+            ? Number(data?.quantity)
+            : data?.quantity,
         type: data.type,
         institution: data.institution,
         segment_user: data.segment_user,

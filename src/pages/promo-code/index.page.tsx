@@ -47,10 +47,10 @@ const PromoCode = () => {
       reset({
         ...promoCodeDetailState.data,
         start_date: moment(promoCodeDetailState.data.start_date).format(
-          "YYYY-MM-DD",
+          "YYYY-MM-DD"
         ),
         end_date: moment(promoCodeDetailState.data.start_date).format(
-          "YYYY-MM-DD",
+          "YYYY-MM-DD"
         ),
       });
     }
@@ -67,7 +67,7 @@ const PromoCode = () => {
   };
 
   const getStatusColor = (
-    is_active: boolean,
+    is_active: boolean
   ): { bgColor: string; textColor: string; status: string } => {
     if (is_active) {
       return {
@@ -179,7 +179,7 @@ const PromoCode = () => {
           <SearchInput
             placeholder="Search"
             onSubmit={({ text }) =>
-              setParams((prev) => ({ ...prev, search_query: text }))
+              setParams((prev) => ({ ...prev, search_promo_code: text }))
             }
           />
           <Button
@@ -335,14 +335,18 @@ const PromoCode = () => {
                                 const prev = value ?? [];
                                 onChange([...prev, item]);
                               } else {
-                                const temp = value.filter(val => val !== item);
+                                const temp = value.filter(
+                                  (val) => val !== item
+                                );
                                 onChange(temp);
                               }
                             }}
                           />
                         )}
                       />
-                      <label htmlFor={item} className="cursor-pointer">{item}</label>
+                      <label htmlFor={item} className="cursor-pointer">
+                        {item}
+                      </label>
                     </div>
                   ))}
                 </div>
