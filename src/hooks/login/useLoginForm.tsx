@@ -14,12 +14,13 @@ const useLoginForm = () => {
     handleSubmit,
     formState: { errors },
     register,
+    watch,
   } = useForm<LoginReqI>({
     mode: "onSubmit",
     resolver: yupResolver(schema),
   });
 
-  return { handleSubmit, register, errors };
+  return { handleSubmit, register, errors, watch };
 };
 
 export default useLoginForm;

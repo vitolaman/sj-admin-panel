@@ -6,6 +6,8 @@ import {
   fetchBaseQuery,
   FetchBaseQueryError,
 } from '@reduxjs/toolkit/query/react';
+import { toast } from 'react-toastify';
+import { deleteTokenAuth } from 'store/auth';
 
 export interface ApiResponseI<T> {
   data: T;
@@ -39,7 +41,10 @@ const baseQueryWithInterceptor: BaseQueryFn<
   }
   let result = await baseQuery(args, api, extraOptions);
   if (result.error) {
-    if (result.error.status === 401) {}
+    if (result.error.status === 401) {
+      toast('Please re-login for continue process');
+      api.dispatch(deleteTokenAuth());
+    }
     // showToast((result.error.data as ApiErrorResponseI).message || 'Unknown Error');
   }
   if (process.env.NODE_ENV === "development") {

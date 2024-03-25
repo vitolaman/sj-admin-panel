@@ -35,7 +35,7 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    saveTokenAuth: (state, { payload }: LoginInfoPayload) => {
+    saveTokenAuth: (state: AuthStateI, { payload }: LoginInfoPayload) => {
       state.accessToken = payload.accessToken;
       state.expiresAt = payload.expiresAt;
     },

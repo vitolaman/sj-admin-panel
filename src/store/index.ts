@@ -1,5 +1,5 @@
-import { configureStore, combineReducers } from '@reduxjs/toolkit';
-import { setupListeners } from '@reduxjs/toolkit/query';
+import { configureStore, combineReducers } from "@reduxjs/toolkit";
+import { setupListeners } from "@reduxjs/toolkit/query";
 import {
   persistReducer,
   persistStore,
@@ -9,12 +9,12 @@ import {
   PERSIST,
   PURGE,
   REGISTER,
-} from 'redux-persist';
+} from "redux-persist";
 import CookieStorage from "./cookieStore";
 import Cookies from "cookies-js";
-import { Api } from 'services/api';
-import auth from './auth';
-import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+import { Api } from "services/api";
+import auth from "./auth";
+import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 
 const reducers = combineReducers({
   auth,
@@ -24,20 +24,20 @@ const reducers = combineReducers({
 const persistConfig = {
   key: "seedsfinancestore",
   storage: new CookieStorage(Cookies, {}),
+  whitelist: ["auth"],
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);
 
 const store = configureStore({
   reducer: persistedReducer,
-  middleware: getDefaultMiddleware => {
+  middleware: (getDefaultMiddleware) => {
     const middlewares = getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    })
-      .concat(Api.middleware)
-      // .concat(apiPark.middleware);
+    }).concat(Api.middleware);
+    // .concat(apiPark.middleware);
 
     // if (process.env.NODE_ENV === "development") {
     //   const createDebugger = require('redux-flipper').default;
