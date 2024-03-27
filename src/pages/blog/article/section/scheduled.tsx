@@ -64,7 +64,8 @@ const Scheduled = () => {
     {
       fieldId: "publicationDate",
       label: "Posted At",
-      render: (row) => moment(row?.publicationDate).format("DD MMM YYYY HH:mm"),
+      render: (row) =>
+        moment(row?.publicationDate).utc(true).format("DD MMM YYYY HH:mm"),
     },
     {
       fieldId: "id",

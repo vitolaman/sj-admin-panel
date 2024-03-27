@@ -10,7 +10,7 @@ export const promoCodeApi = Api.injectEndpoints({
   endpoints: (build) => ({
     getPromoCodes: build.query<PromoCodeRes, GetPromoCodeQuery>({
       query: (params) => ({
-        url: `https://seeds-dev-gcp.seeds.finance/promo-code/v1/list`,
+        url: `/promo-code/v1/list`,
         params,
       }),
       keepUnusedDataFor: 0,
