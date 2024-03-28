@@ -44,6 +44,7 @@ import BlastPushNotification, {
 } from "pages/push-notification/blast-push-notification/index.page";
 import Article, { articleRouteName } from "pages/blog/article/index.page";
 import FormArticle, { createArticleRouteName, editArticleRouteName } from "pages/blog/article/form-article.page";
+import CategoryListPage, { categoryQuizRouteName } from "pages/quiz/category-list.page";
 
 const protectedRoutes: RouteObject[] = [
   { path: "", element: <Navigate to="/user/control-panel" /> },
@@ -119,6 +120,10 @@ const protectedRoutes: RouteObject[] = [
           {
             path: uqRouteName,
             element: <UpdateQuiz />,
+          },
+          {
+            path: categoryQuizRouteName,
+            element: <CategoryListPage />,
           },
         ],
       },

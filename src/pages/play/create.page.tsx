@@ -17,6 +17,7 @@ import { CreatePlayFormI } from "_interfaces/play.interfaces";
 import useFilePreview from "hooks/shared/useFilePreview";
 import { OptChild } from "_interfaces/admin-fee.interfaces";
 import { useGetPaymentChannelQuery } from "services/modules/admin-fee";
+import CurrencyInput from "components/currency-input";
 
 export const cpRouteName = "create";
 const CreatePlay = () => {
@@ -54,6 +55,19 @@ const CreatePlay = () => {
   const [communityPreview] = useFilePreview(community);
   const [sponsorPreview] = useFilePreview(sponsor);
   const paymentChannelState = useGetPaymentChannelQuery(undefined);
+  const startTime = watch("play_time");
+  const endTime = watch("end_time");
+
+  useEffect(() => {
+    const start = moment(startTime);
+    const end = moment(endTime);
+    const duration = moment.duration(end.diff(start));
+    const d = Math.trunc(duration.asDays());
+    const m = duration.asMinutes() - (d * 24 + hours) * 60;
+    setDays(d);
+    setHours(Math.trunc(duration.asHours() - d * 24));
+    setMinutes(Math.ceil(m));
+  }, [startTime, endTime]);
 
   useEffect(() => {
     const firstError = Object.keys(errors)[0] as keyof CreatePlayFormI;
@@ -410,9 +424,15 @@ const CreatePlay = () => {
                 )}
               />
               <div className="col-span-2">
-                <CInput
-                  {...register("admission_fee")}
-                  error={errors.admission_fee}
+                <Controller
+                  control={control}
+                  name="admission_fee"
+                  render={({ field: { value, onChange } }) => (
+                    <CurrencyInput
+                      value={value}
+                      onValueChange={(val) => onChange(val)}
+                    />
+                  )}
                 />
               </div>
             </div>
@@ -433,9 +453,15 @@ const CreatePlay = () => {
           </div>
           <div className="flex flex-col gap-2">
             <label className="font-semibold">Total Prize</label>
-            <CInput
-              {...register("prize_fix_amount")}
-              error={errors.prize_fix_amount}
+            <Controller
+              control={control}
+              name="prize_fix_amount"
+              render={({ field: { value, onChange } }) => (
+                <CurrencyInput
+                  value={value}
+                  onValueChange={(val) => onChange(val)}
+                />
+              )}
             />
           </div>
           <div className="flex flex-col gap-2">
@@ -449,10 +475,16 @@ const CreatePlay = () => {
               <div className="grid grid-cols-5 items-center gap-4">
                 <div className="font-semibold text-sm">Winner {i + 1}</div>
                 <div className="text-center col-span-2">
-                  <CInput
-                    type="number"
-                    {...register(`prize_fix_percentages.${i}`)}
-                    error={errors.prize_fix_percentages?.[i]}
+                  <Controller
+                    control={control}
+                    name={`prize_fix_percentages.${i}`}
+                    render={({ field: { value, onChange } }) => (
+                      <CurrencyInput
+                        value={value}
+                        onValueChange={(val) => onChange(val)}
+                        error={errors.prize_fix_percentages?.[i]}
+                      />
+                    )}
                   />
                 </div>
                 <div className="text-center col-span-2">
