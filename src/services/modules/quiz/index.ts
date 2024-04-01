@@ -1,4 +1,10 @@
 import {
+  CreateQuizCategoryI,
+  Descriptions,
+  QuizCategoryI,
+  QuizCategoryRes,
+} from "_interfaces/quiz-category.interfaces";
+import {
   CreateQuizPayload,
   EditQuizPayload,
   GetQuizQuery,
@@ -15,8 +21,7 @@ export const quizApi = Api.injectEndpoints({
       keepUnusedDataFor: 0,
     }),
     getQuizById: build.query<QuizI, string>({
-      query: (id) =>
-        `quiz/v1/${id}`,
+      query: (id) => `quiz/v1/${id}`,
       keepUnusedDataFor: 0,
     }),
     deleteQuiz: build.mutation<void, string>({
@@ -45,6 +50,43 @@ export const quizApi = Api.injectEndpoints({
         };
       },
     }),
+    getQuizCategories: build.query<QuizCategoryRes, undefined>({
+      query: () => `quiz/v1/category/list`,
+      keepUnusedDataFor: 0,
+    }),
+    getQuizCategoryById: build.query<QuizCategoryI, string>({
+      query: (id) => `quiz/v1/category/${id}`,
+      keepUnusedDataFor: 0,
+    }),
+    createQuizCategory: build.mutation<void, CreateQuizCategoryI>({
+      query(body) {
+        return {
+          url: `quiz/v1/category/create`,
+          method: "POST",
+          body,
+        };
+      },
+    }),
+    updateQuizCategory: build.mutation<
+      void,
+      { id: string; description: Descriptions }
+    >({
+      query({ id, description }) {
+        return {
+          url: `quiz/v1/category/${id}`,
+          method: "PATCH",
+          body: { description },
+        };
+      },
+    }),
+    deleteQuizCategory: build.mutation<void, string>({
+      query(id) {
+        return {
+          url: `quiz/v1/category/${id}`,
+          method: "DELETE",
+        };
+      },
+    }),
   }),
   overrideExisting: false,
 });
@@ -55,4 +97,9 @@ export const {
   useDeleteQuizMutation,
   useUpdateQuizMutation,
   useCreateQuizMutation,
+  useGetQuizCategoriesQuery,
+  useLazyGetQuizCategoryByIdQuery,
+  useCreateQuizCategoryMutation,
+  useUpdateQuizCategoryMutation,
+  useDeleteQuizCategoryMutation,
 } = quizApi;

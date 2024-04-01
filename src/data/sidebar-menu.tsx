@@ -37,7 +37,11 @@ const menuItems: MenuItem[] = [
   },
   {
     name: "Quiz",
-    path: "/quiz",
+    path: "#",
+    child: [
+      { name: "Quiz List", path: "/quiz" },
+      { name: "Quiz Category", path: "/quiz/category" },
+    ],
   },
   {
     name: "Circle",

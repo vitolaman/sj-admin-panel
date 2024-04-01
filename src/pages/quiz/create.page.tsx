@@ -5,7 +5,7 @@ import ContentContainer from "components/container";
 import CurrencyInput from "components/currency-input";
 import CInput from "components/input";
 import ValidationError from "components/validation/error";
-import { optionCategory, optionQuestion } from "data/quiz";
+import { optionQuestion } from "data/quiz";
 import useCreateQuizForm from "hooks/quiz/useCreateQuizForm";
 import useDebounce from "hooks/shared/useDebounce";
 import useFilePreview from "hooks/shared/useFilePreview";
@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 import ReactSelect, { GroupBase } from "react-select";
 import { useGetPaymentChannelQuery } from "services/modules/admin-fee";
 import { usePromoCodeQuery } from "services/modules/play";
+import { useGetQuizCategoriesQuery } from "services/modules/quiz";
 
 export const cqRouteName = "create";
 const CreateQuiz = () => {
@@ -34,10 +35,18 @@ const CreateQuiz = () => {
   const [paymentChannelOpt, setPaymentChannelOpt] = useState<
     GroupBase<OptChild>[]
   >([]);
+  const [optionCategory, setOptionCategory] = useState<
+    {
+      key: number;
+      label: string;
+      value: string;
+    }[]
+  >([]);
 
   const debouncedSearchTerm = useDebounce(search, 500);
   const promoCodeState = usePromoCodeQuery(debouncedSearchTerm);
   const paymentChannelState = useGetPaymentChannelQuery(undefined);
+  const quizCategoryState = useGetQuizCategoriesQuery(undefined);
 
   const {
     handleCreate,
@@ -57,6 +66,17 @@ const CreateQuiz = () => {
   const [bannerPreview] = useFilePreview(banner as FileList);
   const [communityPreview] = useFilePreview(community as FileList);
   const [sponsorPreview] = useFilePreview(sponsor as FileList);
+
+  useEffect(() => {
+    if (quizCategoryState.data) {
+      const tempOpt = quizCategoryState.data.data.map((item, i) => ({
+        key: i,
+        label: item.category_id,
+        value: item.category_id,
+      }));
+      setOptionCategory(tempOpt);
+    }
+  }, [quizCategoryState.data]);
 
   useEffect(() => {
     const start = moment(startTime);

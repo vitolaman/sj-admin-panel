@@ -6,7 +6,7 @@ import CurrencyInput from "components/currency-input";
 import CInput from "components/input";
 import { Loader } from "components/spinner/loader";
 import ValidationError from "components/validation/error";
-import { optionCategory, optionQuestion } from "data/quiz";
+import { optionQuestion } from "data/quiz";
 import useUpdateQuizForm from "hooks/quiz/useUpdateQuizForm";
 import useDebounce from "hooks/shared/useDebounce";
 import useFilePreview from "hooks/shared/useFilePreview";
@@ -18,7 +18,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import ReactSelect, { GroupBase } from "react-select";
 import { useGetPaymentChannelQuery } from "services/modules/admin-fee";
 import { usePromoCodeQuery } from "services/modules/play";
-import { useGetQuizByIdQuery } from "services/modules/quiz";
+import { useGetQuizByIdQuery, useGetQuizCategoriesQuery } from "services/modules/quiz";
 
 export const uqRouteName = ":id/edit";
 const UpdateQuiz = () => {
@@ -37,11 +37,19 @@ const UpdateQuiz = () => {
   const [paymentChannelOpt, setPaymentChannelOpt] = useState<
     GroupBase<OptChild>[]
   >([]);
+  const [optionCategory, setOptionCategory] = useState<
+    {
+      key: number;
+      label: string;
+      value: string;
+    }[]
+  >([]);
 
   const debouncedSearchTerm = useDebounce(search, 500);
   const promoCodeState = usePromoCodeQuery(debouncedSearchTerm);
   const { data, isLoading } = useGetQuizByIdQuery(params.id!);
   const paymentChannelState = useGetPaymentChannelQuery(undefined);
+  const quizCategoryState = useGetQuizCategoriesQuery(undefined);
 
   const {
     handleUpdate,
@@ -68,6 +76,17 @@ const UpdateQuiz = () => {
   const [sponsorPreview] = useFilePreview(
     typeof sponsor === "string" ? undefined : (sponsor as FileList),
   );
+
+  useEffect(() => {
+    if (quizCategoryState.data) {
+      const tempOpt = quizCategoryState.data.data.map((item, i) => ({
+        key: i,
+        label: item.category_id,
+        value: item.category_id,
+      }));
+      setOptionCategory(tempOpt);
+    }
+  }, [quizCategoryState.data]);
 
   useEffect(() => {
     const start = moment(startTime);
