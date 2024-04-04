@@ -52,7 +52,6 @@ const Filter = ({ open, setOpen }: PromoCodeFilter) => {
               className="border-[#BDBDBD]"
               onClick={() => {
                 setInactive(!inactive);
-                console.log(inactive);
               }}
             >
               <input type="checkbox" checked={inactive} className="w-5 h-5" />
