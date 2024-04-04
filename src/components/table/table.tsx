@@ -51,7 +51,7 @@ export function Table<T>({
               scope="col"
               className="p-4 text-center whitespace-nowrap text-sm font-semibold text-[#27A590]"
             >
-              <div className="flex">
+              <div className="flex justify-center">
                 {column.label}
                 {column?.renderHeader !== undefined && column?.renderHeader()}
               </div>
@@ -87,7 +87,7 @@ export function Table<T>({
               {columns.map((column, row) => (
                 <td
                   key={row}
-                  className={`p-4 text-center whitespace-nowrap text-sm leading-7 ${
+                  className={`p-4 text-center whitespace-nowrap leading-7 font-poppins font-normal text-sm text-[#201B1C] ${
                     row === 7 || row === 8 ? "" : ""
                   }`}
                 >

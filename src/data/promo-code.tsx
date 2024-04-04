@@ -16,3 +16,34 @@ export const listSpot = [
   'Paid Tournament',
   'Premium Content'
 ];
+
+export const labelInput = [
+  {
+    label: "Title",
+  },
+  {
+    label: "Promo Code",
+  },
+  {
+    label: "Quota",
+  },
+  {
+    label: "Discount Nominal",
+  },
+  {
+    label: "Discount Percentage",
+  },
+  {
+    label: "Max Discount",
+  },
+  {
+    label: "Max Redeem",
+  },
+  {
+    label: "Min Transaction",
+  },
+];
+
+export const categoryPromo = ["Play", "Circle", "Article"];
+
+export const statusPromo = ["Active", "Inactive"];
