@@ -1,9 +1,9 @@
 import { PromoCodeFilter } from "_interfaces/promo-code.interfaces";
-import close from "assets/svg/close.svg";
 import CInput from "components/input";
 import { categoryPromo } from "data/promo-code";
 import { useState } from "react";
 import { Button, Modal } from "react-daisyui";
+import { FiX } from "react-icons/fi";
 
 const Filter = ({ open, setOpen }: PromoCodeFilter) => {
   const [active, setActive] = useState(false);
@@ -12,12 +12,7 @@ const Filter = ({ open, setOpen }: PromoCodeFilter) => {
     <Modal open={open} className="bg-white w-2/4 max-w-[1000px]">
       <Modal.Header className="flex justify-between">
         <p className="font-semibold font-poppins text-xl text-black">Filter</p>
-        <img
-          src={close}
-          alt="close"
-          className="cursor-pointer"
-          onClick={() => setOpen(!open)}
-        />
+        <FiX className="cursor-pointer" onClick={() => setOpen(!open)} />
       </Modal.Header>
       <Modal.Body className="flex flex-col gap-5">
         <div className="flex gap-8">
@@ -83,6 +78,10 @@ const Filter = ({ open, setOpen }: PromoCodeFilter) => {
               );
             })}
           </div>
+        </div>
+        <div className="flex gap-3 self-end">
+          <Button className="rounded-full w-32 border-seeds hover:border-seeds text-seeds">Clear</Button>
+          <Button className="rounded-full w-32 bg-seeds border-seeds hover:border-seeds hover:bg-seeds text-white">Submit</Button>
         </div>
       </Modal.Body>
     </Modal>

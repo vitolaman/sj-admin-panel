@@ -2,10 +2,6 @@ import {
   GetPromoCodeQuery,
   PromoCodeI,
 } from "_interfaces/promo-code.interfaces";
-import edit from "assets/svg/edit.svg";
-import filter from "assets/svg/filter.svg";
-import moreSVG from "assets/svg/more-horizontal.svg";
-import trashDelete from "assets/svg/trash-delete.svg";
 import ContentContainer from "components/container";
 import CInput from "components/input";
 import SearchInput from "components/search-input";
@@ -24,6 +20,7 @@ import {
   useLazyGetPromoCodeByIdQuery,
 } from "services/modules/promo-code";
 import Filter from "./sections/filter.section";
+import { FiEdit, FiFilter, FiMoreHorizontal, FiTrash2 } from "react-icons/fi";
 
 export const promoCodeRouteName = "promo-code";
 const PromoCode = () => {
@@ -164,7 +161,7 @@ const PromoCode = () => {
         <Dropdown horizontal="left">
           <Dropdown.Toggle size="xs">
             <Button size="xs" className="border-none p-0">
-              <img src={moreSVG} alt="moreSVG" width={24} height={24} />
+              <FiMoreHorizontal />
             </Button>
           </Dropdown.Toggle>
           <Dropdown.Menu className="bg-white z-10 w-[107px] rounded-[10px] flex flex-col gap-2">
@@ -173,7 +170,7 @@ const PromoCode = () => {
                 fullWidth
                 size="xs"
                 className="border-none shadow-none p-0 font-normal font-poppins text-sm text-[#201B1C]"
-                startIcon={<img src={edit} alt="edit" />}
+                startIcon={<FiEdit color="#201B1C" size={20}/>}
               >
                 Edit
               </Button>
@@ -183,7 +180,9 @@ const PromoCode = () => {
                 fullWidth
                 size="xs"
                 className="border-none shadow-none p-0 font-normal font-poppins text-sm text-[#FF3838]"
-                startIcon={<img src={trashDelete} alt="trashDelete" />}
+                startIcon={
+                    <FiTrash2 color="#FF3838" size={20}/>
+                }
               >
                 Delete
               </Button>
@@ -213,7 +212,7 @@ const PromoCode = () => {
               setOpen(!open);
             }}
           >
-            <img src={filter} alt="filter" />
+            <FiFilter color="#3ac4a0" size={20}/>            
           </Button>
           <Button
             className="bg-seeds hover:bg-seeds-300 border-seeds hover:border-seeds-300 text-white rounded-full px-10"
