@@ -64,7 +64,9 @@ const Posted = () => {
       fieldId: "publicationDate",
       label: "Date Posted",
       render: (row) => (
-        <div>{moment(row?.publicationDate).format("DD MMM YYYY HH:mm")}</div>
+        <div>
+          {moment(row?.publicationDate).utc(true).format("DD MMM YYYY HH:mm")}
+        </div>
       ),
     },
 
@@ -73,7 +75,10 @@ const Posted = () => {
       label: "Action",
       render: (row) => (
         <Dropdown horizontal="left">
-          <Dropdown.Toggle button={false} className="cursor-pointer">
+          <Dropdown.Toggle
+            button={false}
+            className="cursor-pointer"
+          >
             <IoEllipsisHorizontal />
           </Dropdown.Toggle>
           <Dropdown.Menu className="bg-white">

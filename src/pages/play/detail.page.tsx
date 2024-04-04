@@ -19,6 +19,8 @@ import { PlayI } from "_interfaces/play.interfaces";
 import ReactSelect, { GroupBase } from "react-select";
 import { OptChild } from "_interfaces/admin-fee.interfaces";
 import { useGetPaymentChannelQuery } from "services/modules/admin-fee";
+import ValidationError from "components/validation/error";
+import CurrencyInput from "components/currency-input";
 
 export const pdRouteName = ":id/detail";
 const PlayDetail = () => {
@@ -113,7 +115,7 @@ const PlayDetail = () => {
       reset({
         ...data,
         payment_method: [...selectedEWallet, ...selectedBank, ...selectedQris],
-        category: data?.all_category
+        category: data?.all_category,
       });
     }
   }, [data]);
@@ -462,9 +464,16 @@ const PlayDetail = () => {
                 )}
               />
               <div className="col-span-2">
-                <CInput
-                  {...register("admission_fee")}
-                  disabled={!enableEdit}
+                <Controller
+                  control={control}
+                  name="admission_fee"
+                  render={({ field: { value, onChange } }) => (
+                    <CurrencyInput
+                      value={value}
+                      onValueChange={(val) => onChange(val)}
+                      disabled={!enableEdit}
+                    />
+                  )}
                 />
               </div>
             </div>
@@ -485,9 +494,16 @@ const PlayDetail = () => {
           </div>
           <div className="flex flex-col gap-2">
             <label className="font-semibold">Total Prize</label>
-            <CInput
-              {...register("prize_fix_amount")}
-              disabled={!enableEdit}
+            <Controller
+              control={control}
+              name="prize_fix_amount"
+              render={({ field: { value, onChange } }) => (
+                <CurrencyInput
+                  value={value}
+                  onValueChange={(val) => onChange(val)}
+                  disabled={!enableEdit}
+                />
+              )}
             />
           </div>
           <div className="flex flex-col gap-2">
@@ -501,9 +517,17 @@ const PlayDetail = () => {
               <div className="grid grid-cols-5 items-center gap-4">
                 <div className="font-semibold text-sm">Winner {i + 1}</div>
                 <div className="text-center col-span-2">
-                  <CInput
-                    {...register(`prize_fix_percentages.${i}`)}
-                    disabled={!enableEdit}
+                  <Controller
+                    control={control}
+                    name={`prize_fix_percentages.${i}`}
+                    render={({ field: { value, onChange } }) => (
+                      <CurrencyInput
+                        value={value}
+                        onValueChange={(val) => onChange(val)}
+                        disabled={!enableEdit}
+                        error={errors.prize_fix_percentages?.[i]}
+                      />
+                    )}
                   />
                 </div>
                 <div className="text-center col-span-2">
