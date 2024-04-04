@@ -1,8 +1,7 @@
-import React from "react";
-import { Modal, Radio, Form } from "react-daisyui";
 import { PromoCodeModal } from "_interfaces/promo-code.interfaces";
 import CInput from "components/input";
 import { labelInput } from "data/promo-code";
+import { Form, Modal, Radio } from "react-daisyui";
 
 const PromoCodeForm = ({ open, type }: PromoCodeModal) => {
   const textInputStyling = {
@@ -21,9 +20,9 @@ const PromoCodeForm = ({ open, type }: PromoCodeModal) => {
       </Modal.Header>
       <Modal.Body className="flex justify-between gap-10">
         <div className="flex flex-col gap-4 w-full">
-          {labelInput.slice(0, 3).map((value: any, index: number) => {
+          {labelInput.slice(0, 3).map((value, index: number) => {
             return (
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2" key={index}>
                 <label
                   className="font-semibold font-poppins text-base text-[#262626]"
                   htmlFor={value.label}
@@ -59,9 +58,9 @@ const PromoCodeForm = ({ open, type }: PromoCodeModal) => {
             </div>
           </div>
 
-          {labelInput.slice(6).map((value: any, index: number) => {
+          {labelInput.slice(6).map((value, index: number) => {
             return (
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2" key={index}>
                 <label
                   className="font-semibold font-poppins text-base text-[#262626]"
                   htmlFor={value.label}
