@@ -2,6 +2,10 @@ import {
   GetPromoCodeQuery,
   PromoCodeI,
 } from "_interfaces/promo-code.interfaces";
+import edit from "assets/svg/edit.svg";
+import filter from "assets/svg/filter.svg";
+import moreSVG from "assets/svg/more-horizontal.svg";
+import trashDelete from "assets/svg/trash-delete.svg";
 import ContentContainer from "components/container";
 import CInput from "components/input";
 import SearchInput from "components/search-input";
@@ -12,13 +16,14 @@ import { listSpot, segmentUserOptions } from "data/promo-code";
 import useUpsertPromoCodeForm from "hooks/promo-code/useUpsertPromoCodeForm";
 import moment from "moment";
 import { useEffect, useState } from "react";
-import { Button, Modal } from "react-daisyui";
+import { Button, Dropdown, Modal } from "react-daisyui";
 import { Controller } from "react-hook-form";
-import { IoClose, IoPencil, IoTrash } from "react-icons/io5";
+import { IoClose } from "react-icons/io5";
 import {
   useGetPromoCodesQuery,
   useLazyGetPromoCodeByIdQuery,
 } from "services/modules/promo-code";
+import Filter from "./sections/filter.section";
 
 export const promoCodeRouteName = "promo-code";
 const PromoCode = () => {
@@ -27,6 +32,7 @@ const PromoCode = () => {
     limit: 10,
     search_promo_code: "",
   });
+  const [open, setOpen] = useState<boolean>(false);
   const [showEdit, setShowEdit] = useState(false);
   const [showCreate, setShowCreate] = useState(false);
   const { data, isLoading } = useGetPromoCodesQuery(params);
@@ -71,14 +77,14 @@ const PromoCode = () => {
   ): { bgColor: string; textColor: string; status: string } => {
     if (is_active) {
       return {
-        bgColor: "bg-green-100",
-        textColor: "text-green-800",
+        bgColor: "bg-[#DCFCE4]",
+        textColor: "text-persian-green",
         status: "Active",
       };
     } else {
       return {
-        bgColor: "bg-orange-200",
-        textColor: "text-orange-800",
+        bgColor: "bg-[#FFF7D2]",
+        textColor: "text-[#D89918]",
         status: "Inactive",
       };
     }
@@ -108,12 +114,20 @@ const PromoCode = () => {
     {
       fieldId: "min_exp",
       label: "Level",
-      render: (item) => <>Level {item?.min_exp}</>,
+      render: (item) => (
+        <p className="font-poppins font-normal text-sm text-[#201B1C]">
+          Level {item?.min_exp}
+        </p>
+      ),
     },
     {
       fieldId: "discount_percentage",
       label: "Discount",
-      render: (item) => <span>{item?.discount_percentage}%</span>,
+      render: (item) => (
+        <span className="font-poppins font-normal text-sm text-[#4DA81C]">
+          {item?.discount_percentage}%
+        </span>
+      ),
     },
     {
       fieldId: "start_date",
@@ -136,7 +150,7 @@ const PromoCode = () => {
         const { bgColor, textColor, status } = getStatusColor(item?.is_active!);
         return (
           <span
-            className={`px-4 inline-flex text-xs leading-5 font-semibold rounded-2xl ${bgColor} ${textColor}`}
+            className={`px-2 py-1 font-poppins rounded-[4px] ${bgColor} ${textColor}`}
           >
             {status}
           </span>
@@ -147,32 +161,42 @@ const PromoCode = () => {
       fieldId: "id",
       label: "Action",
       render: (item) => (
-        <div className="flex flex-row item-center justify-center gap-2">
-          <Button
-            shape="circle"
-            className="hover:bg-gray-100"
-            onClick={() => {
-              // void handleEditButtonClick(row);
-            }}
-          >
-            <IoPencil />
-          </Button>
-          <Button
-            shape="circle"
-            className="text-red-800 hover:bg-gray-100"
-            onClick={() => {
-              // handleDeleteButtonClick(row);
-            }}
-          >
-            <IoTrash />
-          </Button>
-        </div>
+        <Dropdown horizontal="left">
+          <Dropdown.Toggle size="xs">
+            <Button size="xs" className="border-none p-0">
+              <img src={moreSVG} alt="moreSVG" width={24} height={24} />
+            </Button>
+          </Dropdown.Toggle>
+          <Dropdown.Menu className="bg-white z-10 w-[107px] rounded-[10px] flex flex-col gap-2">
+            <Dropdown.Item className="p-0">
+              <Button
+                fullWidth
+                size="xs"
+                className="border-none shadow-none p-0 font-normal font-poppins text-sm text-[#201B1C]"
+                startIcon={<img src={edit} alt="edit" />}
+              >
+                Edit
+              </Button>
+            </Dropdown.Item>
+            <Dropdown.Item className="p-0">
+              <Button
+                fullWidth
+                size="xs"
+                className="border-none shadow-none p-0 font-normal font-poppins text-sm text-[#FF3838]"
+                startIcon={<img src={trashDelete} alt="trashDelete" />}
+              >
+                Delete
+              </Button>
+            </Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
       ),
     },
   ];
 
   return (
     <ContentContainer>
+      <Filter open={open} setOpen={setOpen} />
       <div className="w-full flex flex-row justify-between items-center">
         <h1 className="font-semibold text-2xl">Promo Code List</h1>
         <div className="flex flex-row gap-3">
@@ -182,6 +206,15 @@ const PromoCode = () => {
               setParams((prev) => ({ ...prev, search_promo_code: text }))
             }
           />
+          <Button
+            shape="circle"
+            className="border-seeds hover:border-seeds"
+            onClick={() => {
+              setOpen(!open);
+            }}
+          >
+            <img src={filter} alt="filter" />
+          </Button>
           <Button
             className="bg-seeds hover:bg-seeds-300 border-seeds hover:border-seeds-300 text-white rounded-full px-10"
             onClick={() => {
@@ -197,10 +230,10 @@ const PromoCode = () => {
           columns={header}
           loading={isLoading}
           data={data?.data}
-          onRowClick={(user) => {
-            getPromoCode(user.id);
-            setShowEdit(true);
-          }}
+          // onRowClick={(user) => {
+          //   getPromoCode(user.id);
+          //   setShowEdit(true);
+          // }}
         />
       </div>
       <div className="flex flex-col">
@@ -212,6 +245,7 @@ const PromoCode = () => {
           onPageChange={handlePageChange}
         />
       </div>
+      {/* <PromoCodeForm open={true} type="Edit" /> */}
       <Modal
         className="bg-white w-2/3 max-w-[900px]"
         open={showEdit || showCreate}
