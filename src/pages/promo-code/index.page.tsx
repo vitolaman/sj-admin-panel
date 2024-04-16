@@ -69,6 +69,8 @@ const PromoCode = () => {
     setParams((prev) => ({ ...prev, page }));
   };
 
+
+
   const getStatusColor = (
     is_active: boolean
   ): { bgColor: string; textColor: string; status: string } => {
@@ -213,7 +215,7 @@ const PromoCode = () => {
             }}
           >
             <FiFilter color="#3ac4a0" size={20}/>            
-          </Button>
+          </Button>          
           <Button
             className="bg-seeds hover:bg-seeds-300 border-seeds hover:border-seeds-300 text-white rounded-full px-10"
             onClick={() => {

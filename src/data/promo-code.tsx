@@ -47,3 +47,10 @@ export const labelInput = [
 export const categoryPromo = ["Play", "Circle", "Article"];
 
 export const statusPromo = ["Active", "Inactive"];
+
+export const customMonth=[
+  "January", "February", "March",
+  "April", "May", "June", "July",
+  "August", "September", "October",
+  "November", "December"
+];
