@@ -3,6 +3,23 @@ export interface PromoCodeModal {
   type: string;
 }
 
+export interface PromoCodeInput{
+  label:string
+  type?:string
+  maxLength?:number
+  placeholder?:string
+  extraElement?: React.ReactNode
+
+}
+
+export interface PromoCodeRadio{
+  label:string
+  name:string
+  mapping:string[]
+  select:string
+  setSelect:React.Dispatch<React.SetStateAction<string>>
+}
+
 export interface PromoCodeFilter {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;

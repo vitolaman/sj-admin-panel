@@ -21,6 +21,7 @@ import {
 } from "services/modules/promo-code";
 import Filter from "./sections/filter.section";
 import { FiEdit, FiFilter, FiMoreHorizontal, FiTrash2 } from "react-icons/fi";
+import PromoCodeForm from "./sections/form.section";
 
 export const promoCodeRouteName = "promo-code";
 const PromoCode = () => {
@@ -246,7 +247,7 @@ const PromoCode = () => {
           onPageChange={handlePageChange}
         />
       </div>
-      {/* <PromoCodeForm open={true} type="Edit" /> */}
+      <PromoCodeForm open={false} type="Edit" />
       <Modal
         className="bg-white w-2/3 max-w-[900px]"
         open={showEdit || showCreate}
