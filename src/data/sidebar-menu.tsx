@@ -33,7 +33,6 @@ const menuItems: MenuItem[] = [
   {
     name: "Play",
     path: "/play",
-    child: [{ name: "Withdraw", path: "/play/withdraw" }],
   },
   {
     name: "Quiz",
@@ -49,7 +48,6 @@ const menuItems: MenuItem[] = [
     child: [
       { name: "Control Panel", path: "/circle/control-panel" },
       // { name: "Membership", path: "/circle/membership" },
-      { name: "Withdraw", path: "/circle/withdraw" },
     ],
   },
   {
@@ -87,7 +85,11 @@ const menuItems: MenuItem[] = [
   {
     name: "Withdrawal",
     path: "#",
-    child: [{ name: "Withdraw Quiz", path: "/withdraw-quiz" }],
+    child: [
+      { name: "Withdraw Quiz", path: "/withdraw-quiz" },
+      { name: "Withdraw Play", path: "/play/withdraw" },
+      { name: "Withdraw Circle", path: "/circle/withdraw" },
+    ],
   },
   {
     name: "Referral Code",
