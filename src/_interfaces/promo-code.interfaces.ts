@@ -1,3 +1,12 @@
+export interface PromoCodeModal {
+  open: boolean;
+  type: string;
+}
+
+export interface PromoCodeFilter {
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
 export interface PromoCodeRes {
   data: PromoCodeI[];
   metadata: Metadata;

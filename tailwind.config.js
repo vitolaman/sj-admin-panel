@@ -154,6 +154,9 @@ module.exports = withMT({
         },
       },
     },
+    fontFamily: {
+      poppins: ['Poppins', 'sans-serif']
+    }
   },
   plugins: [require('daisyui')],
   daisyui: {
