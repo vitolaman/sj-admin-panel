@@ -16,6 +16,7 @@ import { uploadQuizQuestions } from "services/modules/file";
 import {
   useDeleteQuizMutation,
   useGetQuizListQuery,
+  usePriorityQuizMutation,
 } from "services/modules/quiz";
 import { useAppSelector } from "store";
 
@@ -36,9 +37,20 @@ const QuizList = () => {
   const [questionsFile, setQuestionsFile] = useState<FileList | null>(null);
   const [loadingUplaod, setLoadingUpload] = useState(false);
   const { data, isLoading, refetch } = useGetQuizListQuery(params);
-  const [deleteQuiz, deleteQuizState] = useDeleteQuizMutation();
+  const [deleteQuiz] = useDeleteQuizMutation();
+  const [setPrioritQuiz] = usePriorityQuizMutation();
   const { accessToken } = useAppSelector((state) => state.auth);
-
+  const updatePriority = async (
+    id: string,
+    priority: boolean
+  ): Promise<void> => {
+    try {
+      await setPrioritQuiz({ id, priority: !priority });
+      refetch();
+    } catch (error) {
+      errorHandler(error);
+    }
+  };
   const header: Columns<QuizI>[] = [
     {
       fieldId: "index",
@@ -51,7 +63,10 @@ const QuizList = () => {
         <>
           <div
             onClick={async () => {
-              // await updatePriority(data.id, isRecommend);
+              await updatePriority(
+                data?.id as string,
+                data?.is_recommended as boolean
+              );
             }}
           >
             <input
@@ -224,10 +239,7 @@ const QuizList = () => {
       />
 
       {/* Upload Questions Modal */}
-      <Modal
-        className="bg-white w-2/3 max-w-[900px]"
-        open={uploadModal}
-      >
+      <Modal className="bg-white w-2/3 max-w-[900px]" open={uploadModal}>
         <Modal.Header className="flex flex-row justify-between">
           Upload Questions
           <IoClose

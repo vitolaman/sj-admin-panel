@@ -87,6 +87,15 @@ export const quizApi = Api.injectEndpoints({
         };
       },
     }),
+    priorityQuiz: build.mutation<void, { id: string; priority: boolean }>({
+      query({ id, priority }) {
+        return {
+          url: `quiz/v1/${id}/priority`,
+          method: "PATCH",
+          body: { priority },
+        };
+      },
+    }),
   }),
   overrideExisting: false,
 });
@@ -102,4 +111,5 @@ export const {
   useCreateQuizCategoryMutation,
   useUpdateQuizCategoryMutation,
   useDeleteQuizCategoryMutation,
+  usePriorityQuizMutation,
 } = quizApi;
