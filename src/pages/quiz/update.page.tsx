@@ -210,6 +210,7 @@ const UpdateQuiz = () => {
                 />
               )}
             />
+            <ValidationError error={errors?.category} />
           </div>
           <div className="flex flex-col gap-2">
             <label className="font-semibold">ID Quiz</label>
@@ -514,6 +515,7 @@ const UpdateQuiz = () => {
                       />
                     )}
                   />
+                  <ValidationError error={errors?.lifelines?.[i]?.price} />
                 </div>
               </div>
             ))}
@@ -534,6 +536,7 @@ const UpdateQuiz = () => {
                       />
                     )}
                   />
+                  <ValidationError error={errors?.prizes?.[i]} />
                 </div>
               </div>
             ))}
