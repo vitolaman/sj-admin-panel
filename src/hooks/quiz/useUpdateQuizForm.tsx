@@ -51,7 +51,7 @@ const useUpdateQuizForm = (id: string) => {
         yup.object().shape({
           name: yup.string().required("Please input Lifeline Name"),
           price: yup.number().required("Please input Lifeline Price"),
-        })
+        }),
       )
       .required("Lifelines are required"),
     tnc: yup.object().shape({
@@ -102,9 +102,11 @@ const useUpdateQuizForm = (id: string) => {
   const create = async (data: EditQuizPayload) => {
     try {
       setIsLoadingUpdate(true);
-      const paymentMethodParsed = (data.payment_method as any[]).map(
-        (item) => item.value,
-      );
+      const paymentMethodParsed = (data.payment_method as any[]).map((item) => {
+        if (item) {
+          return item.value;
+        }
+      });
       const payload = { ...data, payment_method: paymentMethodParsed };
       if (data.banner.image_link !== "") {
         const banner = await uploadFile(
