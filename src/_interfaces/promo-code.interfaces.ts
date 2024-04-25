@@ -70,7 +70,7 @@ export interface PromoCodeRadioI {
 export interface PromoCodeTabData {
   id: string;
   name: string;
-  type:string
+  type: string;
 }
 export interface PromoCodeTabI {
   data: PromoCodeTabData[] | undefined;
@@ -87,7 +87,7 @@ export interface FeatureIdI {
   indexId: number;
   id: string;
   name: string;
-  type: string
+  type: string;
   logic: string;
 }
 
