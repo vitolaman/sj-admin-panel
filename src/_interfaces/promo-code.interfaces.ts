@@ -1,11 +1,11 @@
-export interface PromoCodeModal {
+export interface PromoCodeModalFormI {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   id?: string;
   setPromoCodeId: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export interface PromoCodeInput {
+export interface PromoCodeCustomInputI {
   label: string;
   registerName:
     | "name_promo_code"
@@ -33,12 +33,12 @@ export interface PromoCodeInput {
   extraElement?: React.ReactNode;
 }
 
-export interface MappingRadioInput {
+export interface PromoCodeRadioInputData {
   label: string;
   value: string;
 }
 
-export interface PromoCodeRadio {
+export interface PromoCodeRadioI {
   label: string;
   registerName:
     | "name_promo_code"
@@ -62,12 +62,17 @@ export interface PromoCodeRadio {
     | "min_exp";
   name: string;
   disabled?: boolean;
-  mapping: MappingRadioInput[];
+  data: PromoCodeRadioInputData[];
   select: string;
   setSelect: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export interface PromoCodeTab {
+export interface PromoCodeTabData {
+  id: string;
+  name: string;
+  type:string
+}
+export interface PromoCodeTabI {
   data: PromoCodeTabData[] | undefined;
   onSubmit: (formData: { text: string }) => void;
   onClick: () => void;
@@ -77,13 +82,7 @@ export interface PromoCodeTab {
   typePromoCategory: string;
 }
 
-export interface PromoCodeTabData {
-  id: string;
-  name: string;
-  type:string
-}
-
-export interface ListIdI {
+export interface FeatureIdI {
   index: number;
   indexId: number;
   id: string;

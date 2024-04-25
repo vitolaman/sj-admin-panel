@@ -1,12 +1,12 @@
 import {
-  ListIdI,
-  PromoCodeInput,
-  PromoCodeModal,
-  PromoCodeRadio,
-  PromoCodeTab,
+  FeatureIdI,
+  PromoCodeCustomInputI,
+  PromoCodeModalFormI,
+  PromoCodeRadioI,
+  PromoCodeTabI,
 } from "_interfaces/promo-code.interfaces";
 import { Button, Modal, Tabs } from "react-daisyui";
-import useUpsertCodeForm from "hooks/promo-code/useUpsertPromoCodeForm";
+import useUpsertPromoCodeForm from "hooks/promo-code/useUpsertPromoCodeForm";
 import CInput from "components/input";
 import { useEffect, useState } from "react";
 import {
@@ -32,12 +32,12 @@ import {
   useQuizSelection,
 } from "hooks/promo-code/useCategoryState";
 
-const PromoCodeForm = ({
+const PromoCodeModalForm = ({
   open,
   setOpen,
   id,
   setPromoCodeId,
-}: PromoCodeModal) => {
+}: PromoCodeModalFormI) => {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [openTab, setOpenTab] = useState<string>("circle");
   const [discountSelect, setDiscountSelect] = useState<string>("");
@@ -115,7 +115,7 @@ const PromoCodeForm = ({
     getValues,
     setValue,
     trigger,
-  } = useUpsertCodeForm();
+  } = useUpsertPromoCodeForm();
 
   const validModal =
     getValues().name_promo_code !== "" &&
@@ -289,7 +289,7 @@ const PromoCodeForm = ({
     maxLength,
     placeholder,
     extraElement,
-  }: PromoCodeInput) => {
+  }: PromoCodeCustomInputI) => {
     return (
       <div className="flex flex-col gap-2 w-full">
         <label
@@ -335,17 +335,17 @@ const PromoCodeForm = ({
     registerName,
     name,
     disabled,
-    mapping,
+    data,
     select,
     setSelect,
-  }: PromoCodeRadio) => {
+  }: PromoCodeRadioI) => {
     return (
       <div className="flex flex-col gap-2">
         <label className="font-semibold font-poppins text-base text-[#262626]">
           {label}
         </label>
         <div className="flex gap-7 flex-wrap">
-          {mapping.map((value, index) => {
+          {data.map((value, index) => {
             return (
               <label
                 key={index}
@@ -383,7 +383,7 @@ const PromoCodeForm = ({
     );
   };
 
-  const ListId = ({ index, indexId, id, name, type, logic }: ListIdI) => {
+  const FeatureId = ({ index, indexId, id, name, type, logic }: FeatureIdI) => {
     return (
       <div
         key={index}
@@ -425,7 +425,7 @@ const PromoCodeForm = ({
     isLoading,
     typePromoCategory,
     extraElement,
-  }: PromoCodeTab) => {
+  }: PromoCodeTabI) => {
     return (
       <>
         {isLoading ? (
@@ -484,7 +484,7 @@ const PromoCodeForm = ({
                       (item) => item.id === value.id
                     );
                     return (
-                      <ListId
+                      <FeatureId
                         index={index}
                         indexId={indexId}
                         id={value.id}
@@ -504,7 +504,7 @@ const PromoCodeForm = ({
                       (item) => item.id === value.id
                     );
                     return (
-                      <ListId
+                      <FeatureId
                         index={index}
                         indexId={indexId}
                         id={value.id}
@@ -731,7 +731,7 @@ const PromoCodeForm = ({
                   registerName="discount_type"
                   name="discount"
                   disabled={id !== ""}
-                  mapping={discountType}
+                  data={discountType}
                   select={discountSelect}
                   setSelect={setDiscountSelect}
                 />
@@ -777,7 +777,7 @@ const PromoCodeForm = ({
     // this registerName should change if endpoint already updated 
     registerName=""
     name="status"
-    mapping={statusPromo}
+    data={statusPromo}
     select={statusSelect}
     setSelect={setStatusSelect}
   /> */}
@@ -839,7 +839,7 @@ const PromoCodeForm = ({
                   <RadioInput
                     label="Choose Level"
                     name="level"
-                    mapping={levelExpOptions}
+                    data={levelExpOptions}
                     registerName="min_exp"
                     select={levelSelect}
                     setSelect={setLevelSelect}
@@ -918,4 +918,4 @@ const PromoCodeForm = ({
   );
 };
 
-export default PromoCodeForm;
+export default PromoCodeModalForm;
