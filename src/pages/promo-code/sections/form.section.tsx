@@ -1,9 +1,7 @@
 import {
-  FeatureIdI,
   PromoCodeCustomInputI,
   PromoCodeModalFormI,
   PromoCodeRadioI,
-  PromoCodeTabI,
 } from "_interfaces/promo-code.interfaces";
 import { Button, Modal, Tabs } from "react-daisyui";
 import useUpsertPromoCodeForm from "hooks/promo-code/useUpsertPromoCodeForm";
@@ -18,7 +16,6 @@ import {
 import { Controller } from "react-hook-form";
 import { useGetReferralCodesQuery } from "services/modules/referral-code";
 import ReactSelect from "react-select";
-import SearchInput from "components/search-input";
 import { useFilterRef } from "../../../hooks/promo-code/useFilterState";
 import { PlayReq } from "_interfaces/play.interfaces";
 import { GetQuizQuery } from "_interfaces/quiz.interfaces";
@@ -31,6 +28,7 @@ import {
   usePlaySelection,
   useQuizSelection,
 } from "hooks/promo-code/useCategoryState";
+import TabRadio from "./tabRadio.section";
 
 const PromoCodeModalForm = ({
   open,
@@ -116,7 +114,6 @@ const PromoCodeModalForm = ({
     setValue,
     trigger,
   } = useUpsertPromoCodeForm();
-
   const validModal =
     getValues().name_promo_code !== "" &&
     getValues().promo_code !== "" &&
@@ -154,21 +151,21 @@ const PromoCodeModalForm = ({
     }
   };
 
-  const handleSelectedIdType=(category:string)=>{if (
-    checkedFeature.find((item) => {
-      item.type === category;
-    }) === undefined
-  ) {
-    setSelectIdType((prev) =>
-      prev.filter((item) => item !== category)
-    );
-  }}
+  const handleSelectedIdType = (category: string) => {
+    if (
+      checkedFeature.find((item) => {
+        item.type === category;
+      }) === undefined
+    ) {
+      setSelectIdType((prev) => prev.filter((item) => item !== category));
+    }
+  };
   //TODO:UseEffect
   useEffect(() => {
-    handleSelectedIdType("Premium Circle")
-    handleSelectedIdType("Paid Tournament")
-    handleSelectedIdType("Paid Quiz")
-    handleSelectedIdType("Premium Content")
+    handleSelectedIdType("Premium Circle");
+    handleSelectedIdType("Paid Tournament");
+    handleSelectedIdType("Paid Quiz");
+    handleSelectedIdType("Premium Content");
   }, [checkedFeature]);
   useEffect(() => {
     const filteredTypeCategoryPromo = [...selectAll, ...selectIdType].filter(
@@ -383,151 +380,9 @@ const PromoCodeModalForm = ({
     );
   };
 
-  const FeatureId = ({ index, indexId, id, name, type, logic }: FeatureIdI) => {
-    return (
-      <div
-        key={index}
-        className={`${logic} items-center gap-3 py-3 border-b border-[#E9E9E9] cursor-pointer`}
-        onClick={() => {
-          if (indexId === -1) {
-            setCheckedFeature((prev) => [
-              ...prev,
-              { id: id, name: name, type: type },
-            ]);
-            setSelectIdType((prev) => [...prev, type]);
-          } else {
-            setCheckedFeature((prev) => prev.filter((item) => item.id !== id));
-          }
-        }}
-      >
-        <input
-          type="checkbox"
-          className="w-4 h-4 m-3"
-          checked={checkedFeature.find((item) => item.id === id) !== undefined}
-        />
-        <div>
-          <p className="font-normal font-poppins text-sm text-[#7C7C7C]">
-            ID : {id}
-          </p>
-          <p className="uppercase font-normal font-poppins text-base text-[#262626]">
-            {name}
-          </p>
-        </div>
-      </div>
-    );
-  };
-
-  const TabRadio = ({
-    data,
-    onSubmit,
-    onClick,
-    label,
-    isLoading,
-    typePromoCategory,
-    extraElement,
-  }: PromoCodeTabI) => {
-    return (
-      <>
-        {isLoading ? (
-          <p>Loading...</p>
-        ) : (
-          <Tabs.RadioTab
-            name="modal2"
-            label={label}
-            active={openTab === label}
-            onClick={() => {
-              setOpenTab(label);
-              handleResetFilter();
-            }}
-            className={`!w-[390px] capitalize text-center font-semibold font-poppins text-base ${
-              openTab === label
-                ? "border-b-4 border-[#27A590] text-[#27A590]"
-                : "border-b border-[#BDBDBD] text-[#7C7C7C]"
-            }`}
-          >
-            {extraElement}
-            <SearchInput
-              onSubmit={onSubmit}
-              placeholder="Search"
-              formClassName="w-full my-4 border-[#7C7C7C]"
-              className="w-full"
-            />
-            <div className="flex flex-col gap-1">
-              <div
-                className="flex items-center gap-3 cursor-pointer"
-                onClick={onClick}
-              >
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 m-3"
-                  checked={
-                    selectAll.find((item) => item === typePromoCategory) !==
-                    undefined
-                  }
-                />
-                <p className="font-semibold font-poppins text-sm text-[#262626]">
-                  Select All
-                </p>
-              </div>
-              <div
-                className={`${
-                  checkedFeature.length === 0
-                    ? "hidden"
-                    : checkedFeature.length <= 2
-                    ? "h-[100px]"
-                    : "h-[200px]"
-                } overflow-auto`}
-              >
-                {checkedFeature.length !== 0 &&
-                  checkedFeature?.map((value, index) => {
-                    const indexId = checkedFeature.findIndex(
-                      (item) => item.id === value.id
-                    );
-                    return (
-                      <FeatureId
-                        index={index}
-                        indexId={indexId}
-                        id={value.id}
-                        name={value.name}
-                        type={value.type}
-                        logic={indexId !== -1 ? "flex" : "hidden"}
-                      />
-                    );
-                  })}
-              </div>
-              <div className="overflow-auto h-[200px]">
-                {data !== null &&
-                  selectAll.find((item) => item === typePromoCategory) ===
-                    undefined &&
-                  data?.map((value, index) => {
-                    const indexId = checkedFeature.findIndex(
-                      (item) => item.id === value.id
-                    );
-                    return (
-                      <FeatureId
-                        index={index}
-                        indexId={indexId}
-                        id={value.id}
-                        name={value.name}
-                        type={value.type}
-                        logic={indexId !== -1 ? "hidden" : "flex"}
-                      />
-                    );
-                  })}
-              </div>
-            </div>
-          </Tabs.RadioTab>
-        )}
-      </>
-    );
-  };
-
   //TODO:Parent Element
   return (
-    <Modal
-      open={open}
-      className="bg-white w-11/12 max-w-[2000px] p-8"
-    >
+    <Modal open={open} className="bg-white w-11/12 max-w-[2000px] p-8">
       <Modal.Header className="flex justify-between">
         <p className="font-semibold font-poppins text-xl text-black w-fit">
           {open && openModal
@@ -563,11 +418,20 @@ const PromoCodeModalForm = ({
                     }));
                   }}
                   onClick={() => {
+                    setOpenTab('circle');
+                    handleResetFilter();
+                  }}
+                  onClickSelectAll={() => {
                     handleCategoryPromo("Premium Circle");
                   }}
                   label="circle"
                   isLoading={isLoadingCircle}
                   typePromoCategory="Premium Circle"
+                  openTab={openTab}
+                  selectAll={selectAll}
+                  checkedFeature={checkedFeature}
+                  setCheckedFeature={setCheckedFeature}
+                  setSelectIdType={setSelectIdType}
                 />
               )}
               {playSelection !== undefined && (
@@ -591,6 +455,10 @@ const PromoCodeModalForm = ({
                     }
                   }}
                   onClick={() => {
+                    setOpenTab('play');
+                    handleResetFilter();
+                  }}
+                  onClickSelectAll={() => {
                     if (playCategory === "Tournament") {
                       handleCategoryPromo("Paid Tournament");
                     } else {
@@ -608,6 +476,11 @@ const PromoCodeModalForm = ({
                       ? "Paid Tournament"
                       : "Paid Quiz"
                   }
+                  openTab={openTab}
+                  selectAll={selectAll}
+                  checkedFeature={checkedFeature}
+                  setCheckedFeature={setCheckedFeature}
+                  setSelectIdType={setSelectIdType}
                   extraElement={
                     <div className="flex gap-5 items-center my-4">
                       <p className="font-semibold font-poppins text-lg text-[#201B1C]">
@@ -659,11 +532,20 @@ const PromoCodeModalForm = ({
                     }));
                   }}
                   onClick={() => {
+                    setOpenTab('article');
+                    handleResetFilter();
+                  }}
+                  onClickSelectAll={() => {
                     handleCategoryPromo("Premium Content");
                   }}
                   label="article"
                   isLoading={isLoadingArticle}
                   typePromoCategory="Premium Content"
+                  openTab={openTab}
+                  selectAll={selectAll}
+                  checkedFeature={checkedFeature}
+                  setCheckedFeature={setCheckedFeature}
+                  setSelectIdType={setSelectIdType}
                 />
               )}
             </Tabs>
