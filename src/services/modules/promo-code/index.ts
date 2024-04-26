@@ -42,7 +42,7 @@ export const promoCodeApi = Api.injectEndpoints({
         return {
           url: `/promo-code/v1/delete`,
           method: "DELETE",
-          data: { id },
+          body:{id},
         };
       },
     }),

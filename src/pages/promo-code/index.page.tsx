@@ -10,6 +10,7 @@ import moment from "moment";
 import { useState } from "react";
 import { Button, Dropdown } from "react-daisyui";
 import {
+  useDeletePromoCodeMutation,
   useGetPromoCodesQuery,
 } from "services/modules/promo-code";
 import Filter from "./sections/filter.section";
@@ -28,8 +29,7 @@ const PromoCode = () => {
   const [openFilter, setOpenFilter] = useState<boolean>(false);
 
   const { data, isLoading } = useGetPromoCodesQuery(params);
-  // const dataPromoCodeById = useGetPromoCodeByIdQuery(promoCodeId).data;
-  // console.log(dataPromoCodeById);
+  const [deletePromoCodeById]= useDeletePromoCodeMutation()
 
   const handlePageChange = (page: number): void => {
     setParams((prev) => ({ ...prev, page }));
@@ -155,6 +155,7 @@ const PromoCode = () => {
                 size="xs"
                 className="border-none shadow-none p-0 font-normal font-poppins text-sm text-[#FF3838]"
                 startIcon={<FiTrash2 color="#FF3838" size={20} />}
+                onClick={()=>{if (item?.id !== undefined) {deletePromoCodeById(item?.id)}}}
               >
                 Delete
               </Button>
