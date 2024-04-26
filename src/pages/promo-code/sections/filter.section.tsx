@@ -4,10 +4,13 @@ import { categoryPromo } from "data/promo-code";
 import { useState } from "react";
 import { Button, Modal } from "react-daisyui";
 import { FiX } from "react-icons/fi";
+import { customMonth } from "data/promo-code";
 
 const Filter = ({ open, setOpen }: PromoCodeFilter) => {
   const [active, setActive] = useState(false);
   const [inactive, setInactive] = useState(false);
+  const [endDate, setEndDate] = useState<string>("");
+  const [startDate, setStartDate] = useState<string>("");
   return (
     <Modal open={open} className="bg-white w-2/4 max-w-[1000px]">
       <Modal.Header className="flex justify-between">
@@ -16,17 +19,55 @@ const Filter = ({ open, setOpen }: PromoCodeFilter) => {
       </Modal.Header>
       <Modal.Body className="flex flex-col gap-5">
         <div className="flex gap-8">
-          <div>
+          <div className="w-52">
             <label className="font-semibold font-poppins text-base text-[#262626]">
               Start
             </label>
-            <CInput type="datetime-local" />
+            <div className="relative">
+              <CInput
+                type="date"
+                onChange={(e) => setStartDate(e.target.value)}
+              />
+              <div
+                className={`${
+                  startDate === "" ? "hidden" : ""
+                } absolute top-1 flex items-center left-0 ms-4 h-10 bg-white`}
+              >
+                <p className=" font-poppins font-normal text-base text-[#262626]">
+                  {`${startDate?.split("-")[2]} ${
+                    customMonth[
+                      parseInt(startDate?.split("-")[1]?.replace("0", "")) - 1
+                    ]
+                  } ${startDate?.split("-")[0]}`}
+                </p>
+              </div>
+            </div>
           </div>
-          <div>
+          <div className="w-52">
             <label className="font-semibold font-poppins text-base text-[#262626]">
               End
             </label>
-            <CInput type="datetime-local" />
+            <div className="relative">
+              <CInput
+                type="date"
+                onChange={(e) => {
+                  setEndDate(e.target.value);
+                }}
+              />
+              <div
+                className={`${
+                  endDate === "" ? "hidden" : ""
+                } absolute top-1 flex items-center left-0 ms-4 h-10 bg-white`}
+              >
+                <p className="w-full font-poppins font-normal text-base text-[#262626]">
+                  {`${endDate?.split("-")[2]} ${
+                    customMonth[
+                      parseInt(endDate?.split("-")[1]?.replace("0", "")) - 1
+                    ]
+                  } ${endDate?.split("-")[0]}`}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
         <div>
@@ -80,8 +121,12 @@ const Filter = ({ open, setOpen }: PromoCodeFilter) => {
           </div>
         </div>
         <div className="flex gap-3 self-end">
-          <Button className="rounded-full w-32 border-seeds hover:border-seeds text-seeds">Clear</Button>
-          <Button className="rounded-full w-32 bg-seeds border-seeds hover:border-seeds hover:bg-seeds text-white">Submit</Button>
+          <Button className="rounded-full w-32 border-seeds hover:border-seeds text-seeds">
+            Clear
+          </Button>
+          <Button className="rounded-full w-32 bg-seeds border-seeds hover:border-seeds hover:bg-seeds text-white">
+            Submit
+          </Button>
         </div>
       </Modal.Body>
     </Modal>
