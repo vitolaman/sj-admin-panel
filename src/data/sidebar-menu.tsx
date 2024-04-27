@@ -40,6 +40,7 @@ const menuItems: MenuItem[] = [
     child: [
       { name: "Quiz List", path: "/quiz" },
       { name: "Quiz Category", path: "/quiz/category" },
+      { name: "Quiz Gallery", path: "/quiz/gallery" },
     ],
   },
   {
