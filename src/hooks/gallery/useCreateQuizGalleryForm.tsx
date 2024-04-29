@@ -2,16 +2,16 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { errorHandler } from "services/errorHandler";
-// import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-// import { useAppSelector } from "store";
+import { useAppSelector } from "store";
 import { CreateQuizGalleryPayload } from "_interfaces/quiz-gallery.interfaces";
-import { useCreateQuizGalleryMutation } from "services/modules/quiz";
-// import { uploadFile } from "services/modules/file";
+import { useCreateQuizGalleryMutation } from "services/modules/gallery";
+import { uploadFileGallery } from "services/modules/file-gallery";
 
 const useCreateQuizGalleryForm = () => {
   const [upsertLoading, setIsLoading] = useState(false);
   const [createQuizGallery] = useCreateQuizGalleryMutation();
+  const { accessToken } = useAppSelector((state) => state.auth);
 
   const schema = yup.object().shape({
     title: yup.string().required("Title is required"),
@@ -19,32 +19,54 @@ const useCreateQuizGalleryForm = () => {
       .string()
       .oneOf(["video", "image"], "Invalid type file")
       .required("Type is required"),
-    url: yup.string().required("Please input file url"),
+    gallery: yup.object().required("Please input file to gallery"),
   });
-
-  const defaultValues = {
-    title: "",
-    type: "",
-    url:""
-  };
 
   const {
     handleSubmit,
     register,
     formState: { errors },
     control,
+    setFocus,
+    watch,
     reset,
-    watch
   } = useForm<CreateQuizGalleryPayload>({
     mode: "onSubmit",
     resolver: yupResolver(schema),
-    defaultValues,
-  })
+    defaultValues: {
+      title: "",
+      type: "",
+      url: "",
+      gallery: {
+        file_link: "",
+        file_url: "",
+      },
+    },
+  });
 
   const create = async (data: CreateQuizGalleryPayload) => {
     try {
       setIsLoading(true);
-      await createQuizGallery(data).unwrap();
+      const payload = {
+        title: data.title,
+        type: data.type,
+        url: data.url,
+        gallery: {
+          file_link: data.gallery.file_link,
+          file_url: data.gallery.file_url,
+        },
+      };
+      if (data.gallery.file_link !== "") {
+        const gallery = await uploadFileGallery(
+          accessToken!,
+          data.gallery.file_link[0] as File
+        );
+        payload.url = gallery;
+      } else {
+        payload.url = "";
+      }
+      await createQuizGallery(payload).unwrap();
+      reset();
     } catch (error) {
       errorHandler(error);
     } finally {
@@ -60,9 +82,9 @@ const useCreateQuizGalleryForm = () => {
     errors,
     control,
     upsertLoading,
-    defaultValues,
+    watch,
+    setFocus,
     reset,
-    watch
   };
 };
 

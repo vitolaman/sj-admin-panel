@@ -8,8 +8,12 @@ export interface QuizGalleryI {
 
 export interface CreateQuizGalleryPayload {
   title: string;
-  type: string;
+  gallery: {
+    file_url: string;
+    file_link: string | FileList;
+  };
   url: string;
+  type: string;
 }
 
 export interface QuizGalleryRes {

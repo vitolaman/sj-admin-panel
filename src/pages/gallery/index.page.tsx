@@ -4,35 +4,29 @@ import { Button, FileInput, Modal } from "react-daisyui";
 import { QuizGalleryI } from "_interfaces/quiz-gallery.interfaces";
 import { Columns, Table } from "components/table/table";
 import { IoClose } from "react-icons/io5";
-import { Controller, useForm } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import Select from "components/select";
-// import moment from "moment";
-import { useGetQuizGalleryListQuery } from "services/modules/quiz";
-import useCreateQuizGalleryForm from "hooks/quiz/useCreateQuizGalleryForm";
+import { useGetQuizGalleryListQuery } from "services/modules/gallery";
+import useCreateQuizGalleryForm from "hooks/gallery/useCreateQuizGalleryForm";
 import CInput from "components/input";
 import ConfirmationModal from "components/confirmation-modal";
 import { errorHandler } from "services/errorHandler";
-// import useFilePreview from "hooks/shared/useFilePreview";
+import useFilePreview from "hooks/shared/useFilePreview";
 
 export const galleryRouteName = "";
 const QuizGallery = () => {
-  const [uploadModal, setUploadModal] = useState(false);
+  const [uploadModal, setUploadModal] = useState<boolean>(false);
   const [confirmationModal, setConfirmationModal] = useState<{
     id?: string;
     open: boolean;
   }>({ open: false });
   const { isLoading, data, refetch } = useGetQuizGalleryListQuery(undefined);
-  const {
-    handleCreate,
-    register,
-    errors,
-    upsertLoading,
-    defaultValues,
-    reset,
-    watch,
-    control
-  } = useCreateQuizGalleryForm();
-  // const fileupload = 'https://i.ibb.co/fDjKSpW/WIN-20240426-21-23-09-Pro.jpg'
+  const { handleCreate, register, errors, upsertLoading, control, watch } =
+    useCreateQuizGalleryForm();
+  const gallery = watch("gallery.file_link");
+  const extensionFile = watch("type");
+  const [galleryPreview] = useFilePreview(gallery as FileList);
+
   const header: Columns<QuizGalleryI>[] = [
     {
       fieldId: "index",
@@ -58,6 +52,9 @@ const QuizGallery = () => {
           onClick={() => {
             setConfirmationModal({ id: "1", open: true });
           }}
+          // note
+          // remove disabled and set logic for this feature when api's ready
+          disabled
         >
           Delete
         </Button>
@@ -80,7 +77,7 @@ const QuizGallery = () => {
 
   const handleDelete = async () => {
     try {
-      // await deleteCategory(confirmationModal.id!).unwrap();
+      // await deleteFunctionLater(confirmationModal.id!).unwrap();
       setConfirmationModal({ open: false });
       refetch();
     } catch (error) {
@@ -89,7 +86,6 @@ const QuizGallery = () => {
   };
 
   const hideModal = () => {
-    reset(defaultValues);
     setUploadModal(false);
   };
 
@@ -146,10 +142,6 @@ const QuizGallery = () => {
                 />
               </div>
               <div className="flex flex-col gap-2">
-                <label className="font-semibold">Url</label>
-                <CInput type="string" {...register("url")} error={errors.url} />
-              </div>
-              <div className="flex flex-col gap-2">
                 <label className="font-semibold">Type</label>
                 <Controller
                   control={control}
@@ -166,21 +158,50 @@ const QuizGallery = () => {
                 />
               </div>
               <h1 className="font-semibold text-base">Upload File</h1>
-              <div className="w-full border-[#BDBDBD] border rounded-lg flex flex-col text-center items-center justify-center p-10 gap-3">
-                {undefined ? (
-                  <img
-                    className="flex mx-auto w-[500px] h-[166px] object-fill"
-                    src={undefined}
-                    alt="file-preview"
+              {extensionFile === "video" && (
+                <div className="w-full border-[#BDBDBD] border rounded-lg flex flex-col text-center items-center justify-center p-10 gap-3">
+                  {galleryPreview ? (
+                    <video
+                      className="flex mx-auto w-[500px] h-[166px] object-fill"
+                      controls
+                    >
+                      <source src={galleryPreview} type="video/mp4" /> Your
+                      browser does not support the video tag.{" "}
+                    </video>
+                  ) : (
+                    <div className="text-seeds">
+                      Choose your file video here
+                    </div>
+                  )}
+                  <FileInput
+                    {...register("gallery.file_link")}
+                    size="sm"
+                    accept=".mp4"
                   />
-                ) : (
-                  <div className="text-seeds">Choose your file here</div>
-                )}
-                {/* <FileInput
-                  {...register("url")}
-                  size="sm"
-                  accept="image/*,video/*"
-                /> */}
+                </div>
+              )}
+              {extensionFile === "image" && (
+                <div className="w-full border-[#BDBDBD] border rounded-lg flex flex-col text-center items-center justify-center p-10 gap-3">
+                  {galleryPreview ? (
+                    <img
+                      className="flex mx-auto w-[500px] h-[166px] object-fill"
+                      src={galleryPreview}
+                      alt=""
+                    />
+                  ) : (
+                    <div className="text-seeds">
+                      Choose your file image here
+                    </div>
+                  )}
+                  <FileInput
+                    {...register("gallery.file_link")}
+                    size="sm"
+                    accept=".png, .jpeg, .jpg"
+                  />
+                </div>
+              )}
+              <div className="text-sm text-[#3C49D6] font-normal my-2">
+                *Max File Size: 3 MB
               </div>
             </div>
           </Modal.Body>
