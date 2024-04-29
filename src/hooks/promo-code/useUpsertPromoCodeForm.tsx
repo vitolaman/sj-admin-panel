@@ -12,7 +12,6 @@ const useUpsertCodeForm = () => {
   const [updatePromoCode, updateState] = useUpdatePromoCodeMutation();
   const [createPromoCode, createState] = useCreatePromoCodeMutation();
   const loadingUpsert = createState.isLoading || updateState.isLoading
-  const errorUpsert=createState.error||updateState.error
   const dateNow=new Date()
   const schema = yup.object()
   .shape({
@@ -31,14 +30,14 @@ const useUpsertCodeForm = () => {
     expired_date: yup
     .string()
     .notRequired(),
-    discount_amount: yup.number().notRequired(),
-    discount_percentage: yup.number().notRequired(),
+    discount_amount: yup.number().max(9000000000000000000, 'Discount Amount value over max limit').notRequired(),
+    discount_percentage: yup.number().max(9000000000000000000, 'Discount Percentage value over max limit').notRequired(),
     min_transaction: yup.number().min(1,'Min Transaction cannot empty'),
-    max_discount: yup.number().notRequired(),
-    quantity: yup.number().required('Quota cannot empty'),
+    max_discount: yup.number().max(9000000000000000000, 'Max Discount value over max limit').notRequired(),
+    quantity: yup.number().max(9000000000000000000, 'Quantity value over max limit').required('Quota cannot empty'),
     type: yup.string().notRequired(),
     institution: yup.string().notRequired(),
-    segment_user: yup.string().notRequired(),
+    segment_user: yup.string().required("Segment User cannot empty"),
     ref_code: yup.string().notRequired(),
     discount_type: yup.string().required("Discount Type cannot empty"),
     description: yup.string().required("Description name cannot empty"),
@@ -193,7 +192,6 @@ const useUpsertCodeForm = () => {
     setFocus,
     reset,
     control,
-    errorUpsert,
     loadingUpsert,
     defaultValues,
     getValues,
