@@ -14,7 +14,7 @@ import ConfirmationModal from "components/confirmation-modal";
 import { errorHandler } from "services/errorHandler";
 // import useFilePreview from "hooks/shared/useFilePreview";
 
-export const qgRouteName = "gallery";
+export const galleryRouteName = "";
 const QuizGallery = () => {
   const [uploadModal, setUploadModal] = useState(false);
   const [confirmationModal, setConfirmationModal] = useState<{
