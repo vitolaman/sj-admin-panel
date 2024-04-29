@@ -81,18 +81,17 @@ export interface PromoCodeTabI {
   isLoading: boolean;
   extraElement?: React.ReactNode;
   typePromoCategory: string;
-  openTab:string
-  selectAll:string[]
-  checkedFeature:checkedFeatureI[]
+  openTab: string;
+  selectAll: string[];
+  checkedFeature: checkedFeatureI[];
   setCheckedFeature: React.Dispatch<React.SetStateAction<checkedFeatureI[]>>;
-  setSelectIdType:React.Dispatch<React.SetStateAction<string[]>>
-
+  setSelectIdType: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
-export interface checkedFeatureI{
+export interface checkedFeatureI {
   id: string;
-      name: string;
-      type: string;
+  name: string;
+  type: string;
 }
 
 export interface FeatureIdI {
@@ -102,9 +101,9 @@ export interface FeatureIdI {
   name: string;
   type: string;
   logic: string;
-  checkedFeature:checkedFeatureI[]
+  checkedFeature: checkedFeatureI[];
   setCheckedFeature: React.Dispatch<React.SetStateAction<checkedFeatureI[]>>;
-  setSelectIdType:React.Dispatch<React.SetStateAction<string[]>>
+  setSelectIdType: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 export interface PromoCodeFilter {

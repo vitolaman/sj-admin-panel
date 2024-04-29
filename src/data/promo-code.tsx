@@ -1,16 +1,14 @@
 export const segmentUserOptions = [
   {
-    key: 1,
     label: "New User",
     value: "New User",
   },
   {
-    key: 2,
     label: "All User",
     value: "All User",
   },
-  { key: 3, label: "User based on referral", value: "Refferral Code" },
-  { key: 4, label: "Tier Level (Xp Management)", value: "" },
+  {  label: "User based on referral", value: "Refferral Code" },
+  {  label: "Tier Level (Xp Management)", value: "" },
 ];
 
 export const levelExpOptions = [

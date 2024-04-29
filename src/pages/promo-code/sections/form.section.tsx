@@ -15,7 +15,7 @@ import {
 } from "data/promo-code";
 import { Controller } from "react-hook-form";
 import { useGetReferralCodesQuery } from "services/modules/referral-code";
-import ReactSelect from "react-select";
+import Select from "react-select";
 import { useFilterRef } from "../../../hooks/promo-code/useFilterState";
 import { PlayReq } from "_interfaces/play.interfaces";
 import { GetQuizQuery } from "_interfaces/quiz.interfaces";
@@ -43,7 +43,11 @@ const PromoCodeModalForm = ({
   // hide until endpoint updated
   // const [statusSelect, setStatusSelect] = useState<string>("");
   // const [richValue, setRichValue] = useState("");
-  const [segmentUser, setSegmentUser] = useState("");
+  const [segmentUser, setSegmentUser] = useState<string | null>(null);
+  const [defaultValueSegmentUser, setDefaultValueSegmentUser] = useState<{
+    label: string;
+    value: string;
+  } | null>(null);
   const [playCategory, setPlayCategory] = useState<string>("Tournament");
   const [selectAll, setSelectAll] = useState<string[]>([]);
   const [selectIdType, setSelectIdType] = useState<string[]>([]);
@@ -107,21 +111,12 @@ const PromoCodeModalForm = ({
     errors,
     reset,
     control,
-    errorUpsert,
     loadingUpsert,
     defaultValues,
     getValues,
     setValue,
     trigger,
   } = useUpsertPromoCodeForm();
-  const validModal =
-    getValues().name_promo_code !== "" &&
-    getValues().promo_code !== "" &&
-    getValues().discount_type !== "" &&
-    getValues().min_transaction !== 0 &&
-    getValues().start_date !== "" &&
-    getValues().end_date !== "" &&
-    getValues().description !== "";
 
   //TODO: Handling
   const handleResetFilter = () => {
@@ -160,6 +155,20 @@ const PromoCodeModalForm = ({
       setSelectIdType((prev) => prev.filter((item) => item !== category));
     }
   };
+  const handleResetForm = () => {
+    reset({ ...defaultValues });
+    setPromoCodeId("");
+    setDiscountSelect("");
+    setSegmentUser(null);
+    setLevelSelect("");
+    setDefaultValueSegmentUser(null);
+    setSelectAll([]);
+    setSelectIdType([]);
+    setTypeCategoryPromo([]);
+    setCheckedFeature([]);
+    setRefCodeSelection([]);
+    handleResetFilter();
+  };
   //TODO:UseEffect
   useEffect(() => {
     handleSelectedIdType("Premium Circle");
@@ -167,6 +176,15 @@ const PromoCodeModalForm = ({
     handleSelectedIdType("Paid Quiz");
     handleSelectedIdType("Premium Content");
   }, [checkedFeature]);
+
+  useEffect(() => {
+    if (discountSelect === "Nominal") {
+      setValue("discount_percentage", 0);
+      setValue("max_discount", 0);
+    } else if (discountSelect === "Percentage") {
+      setValue("discount_amount", 0);
+    }
+  }, [discountSelect]);
   useEffect(() => {
     const filteredTypeCategoryPromo = [...selectAll, ...selectIdType].filter(
       (value, index, self) => {
@@ -274,8 +292,14 @@ const PromoCodeModalForm = ({
     }
     if (id !== undefined && id !== "") {
       getPromoCode(id);
-      setSegmentUser(promoCodeDetailState.data?.segment_user as string);
+      if (promoCodeDetailState.data?.min_exp !== 0) {
+        setSegmentUser("");
+      } else {
+        setSegmentUser(promoCodeDetailState.data?.segment_user as string);
+      }
+
       setDiscountSelect(promoCodeDetailState.data?.discount_type as string);
+      setLevelSelect(`${promoCodeDetailState.data?.min_exp}`);
     }
   }, [promoCodeDetailState.data, id]);
 
@@ -296,6 +320,14 @@ const PromoCodeModalForm = ({
           {label}
         </label>
         <CInput
+          onWheel={(e) => {
+            const target = e.target as HTMLInputElement;
+            target.blur();
+            e.stopPropagation();
+            setTimeout(() => {
+              target.focus();
+            }, 0);
+          }}
           type={type}
           maxLength={maxLength}
           min={0}
@@ -347,16 +379,16 @@ const PromoCodeModalForm = ({
               <label
                 key={index}
                 onClick={() => {
-                  if (id === "") {
-                    setSelect(value.label);
+                  if (!disabled) {
+                    setSelect(value.value);
                     setValue(registerName, value.value);
                   }
                 }}
                 htmlFor={value.label}
                 className={`flex gap-5 font-normal font-poppins text-base ${
-                  id !== ""
+                  disabled
                     ? "text-[#727272] cursor-not-allowed"
-                    : select === value.label
+                    : select === value.value
                     ? "text-[#007bff] cursor-pointer"
                     : "text-[#262626] cursor-pointer"
                 }`}
@@ -369,7 +401,7 @@ const PromoCodeModalForm = ({
                   }`}
                   id={value.label}
                   disabled={disabled}
-                  checked={select === value.label}
+                  checked={select === value.value}
                 />
                 {value.label}
               </label>
@@ -382,7 +414,10 @@ const PromoCodeModalForm = ({
 
   //TODO:Parent Element
   return (
-    <Modal open={open} className="bg-white w-11/12 max-w-[2000px] p-8">
+    <Modal
+      open={open}
+      className="bg-white w-11/12 max-w-[2000px] p-8"
+    >
       <Modal.Header className="flex justify-between">
         <p className="font-semibold font-poppins text-xl text-black w-fit">
           {open && openModal
@@ -391,11 +426,7 @@ const PromoCodeModalForm = ({
         </p>
         <FiX
           onClick={() => {
-            reset({ ...defaultValues });
-            setPromoCodeId("");
-            setDiscountSelect("");
-            setSegmentUser("");
-            handleResetFilter();
+            handleResetForm();
             setOpen(!open);
             if (openModal === true) {
               setOpenModal(!openModal);
@@ -418,7 +449,7 @@ const PromoCodeModalForm = ({
                     }));
                   }}
                   onClick={() => {
-                    setOpenTab('circle');
+                    setOpenTab("circle");
                     handleResetFilter();
                   }}
                   onClickSelectAll={() => {
@@ -455,7 +486,7 @@ const PromoCodeModalForm = ({
                     }
                   }}
                   onClick={() => {
-                    setOpenTab('play');
+                    setOpenTab("play");
                     handleResetFilter();
                   }}
                   onClickSelectAll={() => {
@@ -532,7 +563,7 @@ const PromoCodeModalForm = ({
                     }));
                   }}
                   onClick={() => {
-                    setOpenTab('article');
+                    setOpenTab("article");
                     handleResetFilter();
                   }}
                   onClickSelectAll={() => {
@@ -573,6 +604,7 @@ const PromoCodeModalForm = ({
                     } else {
                       await handleCreate(e);
                     }
+                    handleResetForm();
                     setOpen(!open);
                     setOpenModal(!openModal);
                   }}
@@ -589,17 +621,17 @@ const PromoCodeModalForm = ({
               <div className="flex flex-col gap-4 w-5/12">
                 <CustomInput
                   label="Title"
-                  type="string"
+                  type="text"
                   registerName="name_promo_code"
                 />
                 <CustomInput
                   label="Promo Code"
                   registerName="promo_code"
-                  type="string"
-                  maxLength={10}
+                  type="text"
+                  maxLength={20}
                   extraElement={
                     <p className="font-light font-poppins text-sm text-[#7C7C7C]">
-                      Max 10 character
+                      Max 20 character
                     </p>
                   }
                 />
@@ -678,7 +710,7 @@ const PromoCodeModalForm = ({
                 <CustomInput
                   label="Description"
                   registerName="description"
-                  type="string"
+                  type="text"
                 />
                 <div className="flex flex-col gap-2 w-full">
                   <label className="font-semibold font-poppins text-base text-[#262626] cursor-pointer">
@@ -688,32 +720,49 @@ const PromoCodeModalForm = ({
                     control={control}
                     name="segment_user"
                     render={({ field: { value, onChange } }) => (
-                      <ReactSelect
-                        styles={{
-                          control: (baseStyle) => ({
-                            ...baseStyle,
-                            padding: 5,
-                            borderColor: "#BDBDBD",
-                            borderRadius: "0.5rem",
-                          }),
-                        }}
-                        options={segmentUserOptions}
-                        value={segmentUserOptions.find(
-                          (item) => item.value === value
-                        )}
-                        isDisabled={id !== ""}
-                        onChange={(e) => {
-                          onChange(e?.value);
-                          if (e?.label !== "Tier Level (Xp Management)") {
-                            setLevelSelect("");
-                            setValue("min_exp", 0);
+                      <>
+                        <Select
+                          styles={{
+                            control: (baseStyle) => ({
+                              ...baseStyle,
+                              padding: 5,
+                              borderColor: "#BDBDBD",
+                              borderRadius: "0.5rem",
+                            }),
+                          }}
+                          options={segmentUserOptions}
+                          value={
+                            id !== "" && levelSelect !== "0"
+                              ? segmentUserOptions.find(
+                                  (item) => item.value === ""
+                                )
+                              : id !== ""
+                              ? segmentUserOptions.find(
+                                  (item) => item.value === value
+                                )
+                              : defaultValueSegmentUser
                           }
-                          if (e?.label !== "User based on referral") {
-                            setValue("ref_code", "");
-                          }
-                          setSegmentUser(e?.value ?? "");
-                        }}
-                      />
+                          isSearchable={false}
+                          isDisabled={id !== ""}
+                          onChange={(e) => {
+                            onChange(e?.value);
+                            if (e?.label !== "Tier Level (Xp Management)") {
+                              setLevelSelect("");
+                              setValue("min_exp", 0);
+                            } else {
+                              setValue("segment_user", "All User");
+                            }
+                            if (e?.label !== "User based on referral") {
+                              setValue("ref_code", "");
+                            }
+                            setDefaultValueSegmentUser(e);
+                            setSegmentUser(e?.value ?? null);
+                          }}
+                        />{" "}
+                        <p className="font-poppins font-normal text-sm text-[#EF5350] text-right">
+                          {errors.segment_user?.message}
+                        </p>
+                      </>
                     )}
                   />
                 </div>
@@ -736,7 +785,7 @@ const PromoCodeModalForm = ({
                       control={control}
                       name="ref_code"
                       render={({ field: { value, onChange } }) => (
-                        <ReactSelect
+                        <Select
                           styles={{
                             control: (baseStyle) => ({
                               ...baseStyle,
@@ -750,6 +799,7 @@ const PromoCodeModalForm = ({
                               return { ...prev, search: e };
                             });
                           }}
+                          isClearable={true}
                           options={refCodeSelection}
                           value={refCodeSelection.find(
                             (item) => item.value === value
@@ -783,9 +833,9 @@ const PromoCodeModalForm = ({
               </div>
             </div>
             <Button
-              onClick={() => {
+              onClick={async () => {
                 trigger();
-                if (validModal) {
+                if (await trigger()) {
                   setOpenModal(!openModal);
                 }
               }}
