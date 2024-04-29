@@ -41,6 +41,7 @@ const menuItems: MenuItem[] = [
       { name: "Quiz List", path: "/quiz" },
       { name: "Quiz Category", path: "/quiz/category" },
       { name: "Quiz Gallery", path: "/quiz/gallery" },
+      { name: "Question Bank", path: "/quiz/question-bank" },
     ],
   },
   {
