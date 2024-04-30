@@ -1,5 +1,6 @@
 export interface FilterQuestionBankI {
     category: string;
+    language: string;
 }
 
 export interface QuestionBankI {
@@ -10,8 +11,4 @@ export interface QuestionBankI {
     difficulty: string;
     language: string;
     published_at: string;
-}
-
-export interface QuestionBankLangI {
-    language:string;
 }

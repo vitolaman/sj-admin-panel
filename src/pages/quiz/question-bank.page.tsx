@@ -1,8 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   FilterQuestionBankI,
   QuestionBankI,
-  QuestionBankLangI,
 } from "_interfaces/question-bank.interfaces";
 import ContentContainer from "components/container";
 import { Columns, Table } from "components/table/table";
@@ -89,61 +88,71 @@ const QuestionBank = () => {
     },
   ];
 
-  const [filter, setFilter] = useState<FilterQuestionBankI>({ category: "" });
-  const [lang, setLang] = useState<QuestionBankLangI>({ language: "" });
+  const [dataView, setDataView] = useState<QuestionBankI[]>([]);
+  const [filter, setFilter] = useState<FilterQuestionBankI>({
+    category: "",
+    language: "",
+  });
+  const [categoryOptions] = useState([
+    { key: 1, label: "All", value: "" },
+    { key: 2, label: "INVEST", value: "invest" },
+    { key: 3, label: "CRYPTO", value: "crypto" },
+  ]);
 
-  const categoryOptions = [
-    {
-      key: 1,
-      label: "All",
-      value: "",
-    },
-    {
-      key: 2,
-      label: "INVEST",
-      value: "invest",
-    },
-    {
-      key: 3,
-      label: "CRYPTO",
-      value: "crypto",
-    },
-  ];
-
-  const langOptions = [
-    {
-      key: 1,
-      label: "All",
-      value: "",
-    },
-    {
-      key: 2,
-      label: "ID",
-      value: "indonesian",
-    },
-    {
-      key: 3,
-      label: "EN",
-      value: "english",
-    },
-  ];
+  const [langOptions] = useState([
+    { key: 1, label: "All", value: "" },
+    { key: 2, label: "ID", value: "id" },
+    { key: 3, label: "EN", value: "en" },
+  ]);
 
   const mockData: QuestionBankI[] = [
     {
       is_selected: true,
       question_id: "1",
       question: "Ini question",
-      category: "INVEST",
-      difficulty: "Medium",
+      category: "invest",
+      difficulty: "medium",
       language: "id",
       published_at: "29/04/2024",
     },
+    {
+      is_selected: true,
+      question_id: "2",
+      question: "Ini question crypto",
+      category: "crypto",
+      difficulty: "hard",
+      language: "id",
+      published_at: "29/04/2024",
+    },
+    {
+      is_selected: true,
+      question_id: "3",
+      question: "this is about economic based crypto",
+      category: "crypto",
+      difficulty: "hard",
+      language: "en",
+      published_at: "29/04/2024",
+    },
   ];
+
+  console.log("ini filter", filter);
+
+  useEffect(() => {
+    const temp = mockData.filter((item) => {
+      return (
+        item.category.includes(filter.category) &&
+        item.language.includes(filter.language)
+      );
+    });
+    setDataView(temp);
+  }, [filter]);
+
+  console.log(dataView);
+
   return (
-    <>
-      <ContentContainer>
-        <div className="w-full flex flex-row justify-between items-end">
-          <div className="w-full flex flex-row gap-8">
+    <ContentContainer>
+      <div className="w-full flex flex-row justify-between items-end">
+        <div className="w-full flex flex-row gap-8">
           <div className="w-40">
             <label
               htmlFor="category-question-bank"
@@ -152,13 +161,10 @@ const QuestionBank = () => {
               Category Question
             </label>
             <Select
-              value={
-                categoryOptions.find((item) => item.value === filter?.category)
-                  ?.value
+              value={filter.category}
+              onChange={(e) =>
+                setFilter((prev) => ({ ...prev, category: e.value }))
               }
-              onChange={(e): void => {
-                setFilter((prev) => ({ ...prev, category: e.value }));
-              }}
               options={categoryOptions}
               rounded={true}
             />
@@ -171,37 +177,29 @@ const QuestionBank = () => {
               Language
             </label>
             <Select
-              value={
-                langOptions.find((item) => item.value === lang?.language)?.value
+              value={filter.language}
+              onChange={(e) =>
+                setFilter((prev) => ({ ...prev, language: e.value }))
               }
-              onChange={(e): void => {
-                setLang((prev) => ({ ...prev, language: e.value }));
-              }}
               options={langOptions}
               rounded={true}
             />
           </div>
-          </div>
-          <div className="w-full flex flex-row justify-end gap-4">
-          <Button
-            className="border-seeds text-seeds rounded-full px-10"
-            // onClick={() => {
-            //   setUploadModal(true);
-            // }}
-          >
-            Upload File
+        </div>
+        <div className="w-full flex flex-row justify-end gap-4">
+          <Button className="border-seeds text-seeds rounded-full px-10">
+            Upload Question
           </Button>
-          </div>
         </div>
-        <div className="mt-4 max-w-full overflow-x-auto overflow-y-hidden border border-[#BDBDBD] rounded-lg">
-          <Table<QuestionBankI>
-            columns={header}
-            data={mockData}
-            loading={false}
-          />
-        </div>
-      </ContentContainer>
-    </>
+      </div>
+      <div className="mt-4 max-w-full overflow-x-auto overflow-y-hidden border border-[#BDBDBD] rounded-lg">
+        <Table<QuestionBankI>
+          columns={header}
+          data={dataView}
+          loading={false}
+        />
+      </div>
+    </ContentContainer>
   );
 };
 
