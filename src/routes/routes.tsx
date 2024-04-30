@@ -12,8 +12,8 @@ import WithdrawPlay, { wpRouteName } from "pages/play/withdraw.page";
 import QuizList, { qlRouteName } from "pages/quiz/index.page";
 import CreateQuiz, { cqRouteName } from "pages/quiz/create.page";
 import UpdateQuiz, { uqRouteName } from "pages/quiz/update.page";
-import QuizGallery, {qgRouteName} from "pages/quiz/gallery.page";
 import QuestionBank, {qbRouteName} from "pages/quiz/question-bank.page";
+import QuizGallery from "pages/gallery/index.page";
 import ControlPanel from "pages/circle/ControlPanel";
 import CircleDetail, { circleDetailRouteName } from "pages/circle/CircleDetail";
 import Membership, { circleMembershipRouteName } from "pages/circle/Membership";
@@ -128,10 +128,6 @@ const protectedRoutes: RouteObject[] = [
             element: <CategoryListPage />,
           },
           {
-            path: qgRouteName,
-            element: <QuizGallery />,
-          },
-          {
             path: qbRouteName,
             element: <QuestionBank />,
           },
@@ -239,6 +235,7 @@ const protectedRoutes: RouteObject[] = [
       //     },
       //   ]
       // }
+      { path: "quiz-gallery", element: <QuizGallery/> },
     ],
   },
   { path: "*", element: <Navigate to="/not-found" /> },

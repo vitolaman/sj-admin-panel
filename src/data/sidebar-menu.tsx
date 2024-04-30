@@ -40,7 +40,6 @@ const menuItems: MenuItem[] = [
     child: [
       { name: "Quiz List", path: "/quiz" },
       { name: "Quiz Category", path: "/quiz/category" },
-      { name: "Quiz Gallery", path: "/quiz/gallery" },
       { name: "Question Bank", path: "/quiz/question-bank" },
     ],
   },
@@ -107,6 +106,10 @@ const menuItems: MenuItem[] = [
       },
       { name: "Welcome Banner", path: "/push-notification/welcome-banner" },
     ],
+  },
+  {
+    name: "Gallery",
+    path: "/quiz-gallery",
   },
 ];
 

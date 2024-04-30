@@ -12,7 +12,7 @@ import {
   QuizRes,
 } from "_interfaces/quiz.interfaces";
 
-import { CreateQuizGalleryPayload, QuizGalleryRes } from "_interfaces/quiz-gallery.interfaces";
+// import { CreateQuizGalleryPayload, QuizGalleryRes } from "_interfaces/quiz-gallery.interfaces";
 import { Api } from "services/api";
 
 export const quizApi = Api.injectEndpoints({
@@ -98,20 +98,20 @@ export const quizApi = Api.injectEndpoints({
         };
       },
     }),
-    createQuizGallery: build.mutation<void, CreateQuizGalleryPayload>({
-      query(body) {
-        return {
-          url: `quiz/v1/gallery/create`,
-          method: "POST",
-          body,
-        };
-      },
-    }),
-    getQuizGalleryList: build.query<QuizGalleryRes, undefined>({
-      query: () =>
-        `quiz/v1/gallery/list`,
-      keepUnusedDataFor: 0,
-    }),
+    // createQuizGallery: build.mutation<void, CreateQuizGalleryPayload>({
+    //   query(body) {
+    //     return {
+    //       url: `quiz/v1/gallery/create`,
+    //       method: "POST",
+    //       body,
+    //     };
+    //   },
+    // }),
+    // getQuizGalleryList: build.query<QuizGalleryRes, undefined>({
+    //   query: () =>
+    //     `quiz/v1/gallery/list`,
+    //   keepUnusedDataFor: 0,
+    // }),
   }),
   overrideExisting: false,
 });
@@ -128,6 +128,6 @@ export const {
   useUpdateQuizCategoryMutation,
   useDeleteQuizCategoryMutation,
   usePriorityQuizMutation,
-  useCreateQuizGalleryMutation,
-  useGetQuizGalleryListQuery
+  // useCreateQuizGalleryMutation,
+  // useGetQuizGalleryListQuery
 } = quizApi;
