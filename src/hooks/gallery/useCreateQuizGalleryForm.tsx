@@ -66,11 +66,9 @@ const useCreateQuizGalleryForm = () => {
           payload.url = gallery;
         } catch (error) {
           errorHandler(error)
-          return
         }
       } else {
-        errorHandler('URL is required.')
-        return
+        throw new Error('URL is required.')
       }
       await createQuizGallery(payload).unwrap();
       reset();
