@@ -12,8 +12,11 @@ import CInput from "components/input";
 import ConfirmationModal from "components/confirmation-modal";
 import { errorHandler } from "services/errorHandler";
 import useFilePreview from "hooks/shared/useFilePreview";
+import { toast } from "react-toastify";
 
 export const galleryRouteName = "";
+const MAX_FILE_SIZE_MB = 3;
+
 const QuizGallery = () => {
   const [uploadModal, setUploadModal] = useState<boolean>(false);
   const [confirmationModal, setConfirmationModal] = useState<{
@@ -89,6 +92,23 @@ const QuizGallery = () => {
     setUploadModal(false);
   };
 
+  const handleUpload = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const file = (e.target as HTMLFormElement).querySelector(
+      'input[name="gallery.file_link"]'
+    ) as HTMLInputElement;
+    if (file.files && file.files[0]) {
+      const fileSizeMB = file.files[0].size / (1024 * 1024);
+      if (fileSizeMB > MAX_FILE_SIZE_MB) {
+        toast.error(`File size exceeds ${MAX_FILE_SIZE_MB} MB.`);
+        return;
+      }
+    }
+    await handleCreate(e);
+    hideModal();
+    refetch();
+  };
+
   return (
     <>
       {/* Start of UI Gallery Quiz */}
@@ -119,13 +139,7 @@ const QuizGallery = () => {
       {/* Start of Upload File Modal */}
       <Modal className="bg-white w-2/3 max-w-[900px]" open={uploadModal}>
         <form
-          onSubmit={async (e) => {
-            if (uploadModal) {
-              await handleCreate(e);
-            }
-            hideModal();
-            refetch();
-          }}
+          onSubmit={handleUpload}
         >
           <Modal.Header className="flex flex-row justify-between">
             Upload File

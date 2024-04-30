@@ -56,14 +56,21 @@ const useCreateQuizGalleryForm = () => {
           file_url: data.gallery.file_url,
         },
       };
+
       if (data.gallery.file_link !== "") {
-        const gallery = await uploadFileGallery(
-          accessToken!,
-          data.gallery.file_link[0] as File
-        );
-        payload.url = gallery;
+        try {
+          const gallery = await uploadFileGallery(
+            accessToken!,
+            data.gallery.file_link[0] as File
+          );
+          payload.url = gallery;
+        } catch (error) {
+          errorHandler(error)
+          return
+        }
       } else {
-        payload.url = "";
+        errorHandler('URL is required.')
+        return
       }
       await createQuizGallery(payload).unwrap();
       reset();
