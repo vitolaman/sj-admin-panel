@@ -6,7 +6,7 @@ import { Columns, Table } from "components/table/table";
 import { IoClose } from "react-icons/io5";
 import { Controller } from "react-hook-form";
 import Select from "components/select";
-import { useGetQuizGalleryListQuery } from "services/modules/gallery";
+import { useGetQuizGalleryListQuery, useDeleteQuizGalleryMutation } from "services/modules/gallery";
 import useCreateQuizGalleryForm from "hooks/gallery/useCreateQuizGalleryForm";
 import CInput from "components/input";
 import ConfirmationModal from "components/confirmation-modal";
@@ -29,6 +29,7 @@ const QuizGallery = () => {
   const gallery = watch("gallery.file_link");
   const extensionFile = watch("type");
   const [galleryPreview] = useFilePreview(gallery as FileList);
+  const [deleteGallery] = useDeleteQuizGalleryMutation();
 
   const header: Columns<QuizGalleryI>[] = [
     {
@@ -53,11 +54,8 @@ const QuizGallery = () => {
       render: (data) => (
         <Button
           onClick={() => {
-            setConfirmationModal({ id: "1", open: true });
+            setConfirmationModal({ id: data?.gallery_id, open: true });
           }}
-          // note
-          // remove disabled and set logic for this feature when api's ready
-          disabled
         >
           Delete
         </Button>
@@ -80,7 +78,7 @@ const QuizGallery = () => {
 
   const handleDelete = async () => {
     try {
-      // await deleteFunctionLater(confirmationModal.id!).unwrap();
+      await deleteGallery(confirmationModal.id!).unwrap();
       setConfirmationModal({ open: false });
       refetch();
     } catch (error) {
