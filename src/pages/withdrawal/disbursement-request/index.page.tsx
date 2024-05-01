@@ -21,16 +21,17 @@ const DisbursementRequest = () => {
     search: "",
   });
   const { data, isLoading, refetch } = useGetDisbursementRequestQuery(params);
-  const [updateDisbursementRequestById, { isSuccess }] = useUpdateDisbursementRequestMutation();
+  const [updateDisbursementRequestById, updateState] =
+    useUpdateDisbursementRequestMutation();
   const handlePageChange = (page: number): void => {
     setParams((prev) => ({ ...prev, page }));
   };
 
   useEffect(() => {
-    if (isSuccess) {
+    if (updateState.isSuccess) {
       refetch();
     }
-  }, [isSuccess]);
+  }, [updateState.isSuccess]);
 
   const getStatusColor = (
     status: string
@@ -102,10 +103,9 @@ const DisbursementRequest = () => {
       render: (item) => (
         <div className="flex gap-2">
           <Button
+            loading={updateState.isLoading}
             disabled={
               item?.status === "Approved" || item?.status === "Rejected"
-                ? true
-                : false
             }
             size="xs"
             className="disabled:bg-[#BDBDBD] disabled:text-white disabled:border-[#BDBDBD] hover:bg-[#3AC4A0] border-[#3AC4A0] rounded-full font-semibold font-poppins text-sm text-white bg-[#3AC4A0]"
@@ -119,10 +119,9 @@ const DisbursementRequest = () => {
             Approve
           </Button>
           <Button
+            loading={updateState.isLoading}
             disabled={
               item?.status === "Approved" || item?.status === "Rejected"
-                ? true
-                : false
             }
             size="xs"
             className="disabled:bg-[#BDBDBD] disabled:text-white disabled:border-[#BDBDBD] border-[#DD2525] rounded-full font-semibold font-poppins text-sm text-[#DD2525]"
