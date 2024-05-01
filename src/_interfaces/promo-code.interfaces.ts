@@ -1,8 +1,24 @@
+import { BaseQueryFn, FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import {
+  FetchArgs,
+  QueryActionCreatorResult,
+  QueryDefinition,
+} from "@reduxjs/toolkit/query";
+
 export interface PromoCodeModalFormI {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   id?: string;
   setPromoCodeId: React.Dispatch<React.SetStateAction<string>>;
+  refetch: () => QueryActionCreatorResult<
+    QueryDefinition<
+      GetPromoCodeQuery,
+      BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError>,
+      never,
+      PromoCodeRes,
+      "api"
+    >
+  >;
 }
 
 export interface PromoCodeCustomInputI {

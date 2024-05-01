@@ -35,6 +35,7 @@ const PromoCodeModalForm = ({
   setOpen,
   id,
   setPromoCodeId,
+  refetch,
 }: PromoCodeModalFormI) => {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [openTab, setOpenTab] = useState<string>("circle");
@@ -113,9 +114,9 @@ const PromoCodeModalForm = ({
     control,
     loadingUpsert,
     defaultValues,
-    getValues,
     setValue,
     trigger,
+    isSuccess,
   } = useUpsertPromoCodeForm();
 
   //TODO: Handling
@@ -170,6 +171,11 @@ const PromoCodeModalForm = ({
     handleResetFilter();
   };
   //TODO:UseEffect
+  useEffect(() => {
+    if (isSuccess) {
+      refetch();
+    }
+  }, [isSuccess]);
   useEffect(() => {
     handleSelectedIdType("Premium Circle");
     handleSelectedIdType("Paid Tournament");
@@ -414,10 +420,7 @@ const PromoCodeModalForm = ({
 
   //TODO:Parent Element
   return (
-    <Modal
-      open={open}
-      className="bg-white w-11/12 max-w-[2000px] p-8"
-    >
+    <Modal open={open} className="bg-white w-11/12 max-w-[2000px] p-8">
       <Modal.Header className="flex justify-between">
         <p className="font-semibold font-poppins text-xl text-black w-fit">
           {open && openModal
