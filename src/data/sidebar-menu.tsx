@@ -107,6 +107,10 @@ const menuItems: MenuItem[] = [
       { name: "Welcome Banner", path: "/push-notification/welcome-banner" },
     ],
   },
+  {
+    name: "Gallery",
+    path: "/quiz-gallery",
+  },
 ];
 
 export { menuItems };

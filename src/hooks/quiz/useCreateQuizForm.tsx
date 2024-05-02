@@ -107,10 +107,12 @@ const useCreateQuizForm = () => {
   const create = async (data: CreateQuizPayload) => {
     try {
       setIsLoading(true);
-      // NOTE: Cannot use any because of react-select plugin data type doesn't match with the data type that I give
-      const paymentMethodParsed = (data.payment_method as any[]).map(
-        (item) => item.value,
-      );
+      let paymentMethodParsed = (data.payment_method as any[]).map((item) => {
+        if (item) {
+          return item.value;
+        }
+      });
+      paymentMethodParsed = paymentMethodParsed.filter((item) => item != null);
       const payload = { ...data, payment_method: paymentMethodParsed };
       if (data.banner.image_link !== "") {
         const banner = await uploadFile(
