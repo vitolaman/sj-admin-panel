@@ -89,6 +89,7 @@ const menuItems: MenuItem[] = [
       { name: "Withdraw Quiz", path: "/withdraw-quiz" },
       { name: "Withdraw Play", path: "/play/withdraw" },
       { name: "Withdraw Circle", path: "/circle/withdraw" },
+      { name: "Disbursement Request", path: "/withdrawal/disbursement-request" },
     ],
   },
   {
