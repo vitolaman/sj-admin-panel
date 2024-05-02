@@ -231,10 +231,6 @@ const PromoCode = () => {
           columns={header}
           loading={isLoading}
           data={data?.data}
-          // onRowClick={(user) => {
-          //   getPromoCode(user.id);
-          //   setShowEdit(true);
-          // }}
         />
       </div>
       <div className="flex flex-col">
