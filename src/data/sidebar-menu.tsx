@@ -71,6 +71,10 @@ const menuItems: MenuItem[] = [
     path: "/seeds-coin-management",
   },
   {
+    name: "XP Management",
+    path: "/xp-management",
+  },
+  {
     name: "Blog",
     path: "#",
     child: [

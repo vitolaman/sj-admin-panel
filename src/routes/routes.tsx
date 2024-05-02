@@ -45,6 +45,7 @@ import BlastPushNotification, {
 import Article, { articleRouteName } from "pages/blog/article/index.page";
 import FormArticle, { createArticleRouteName, editArticleRouteName } from "pages/blog/article/form-article.page";
 import CategoryListPage, { categoryQuizRouteName } from "pages/quiz/category-list.page";
+import XPManagement, { xpRouteName } from "pages/xp-management/index.page";
 
 const protectedRoutes: RouteObject[] = [
   { path: "", element: <Navigate to="/user/control-panel" /> },
@@ -128,6 +129,7 @@ const protectedRoutes: RouteObject[] = [
         ],
       },
       { path: promoCodeRouteName, element: <PromoCode /> },
+      { path: xpRouteName, element: <XPManagement /> },
       { path: afRouteName, element: <AdminFee /> },
       { path: "dashboard", element: <DashboardHome /> },
       {
