@@ -125,6 +125,8 @@ export interface FeatureIdI {
 export interface PromoCodeFilter {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setParams:React.Dispatch<React.SetStateAction<GetPromoCodeQuery>>;
+  defaultValue:GetPromoCodeQuery
 }
 export interface PromoCodeRes {
   data: PromoCodeI[];
@@ -168,6 +170,8 @@ export interface GetPromoCodeQuery {
   page: number;
   limit: number;
   search_promo_code: string;
+  start_date_from: string;
+  start_date_until: string;
 }
 
 export interface PromoCodeFormDataI {

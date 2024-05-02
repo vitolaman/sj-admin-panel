@@ -20,12 +20,15 @@ import ConfirmationModal from "components/confirmation-modal";
 import { errorHandler } from "services/errorHandler";
 
 export const promoCodeRouteName = "promo-code";
+const defaultValueParams={
+  page: 1,
+  limit: 10,
+  search_promo_code: "",
+  start_date_from: "",
+  start_date_until: "",
+}
 const PromoCode = () => {
-  const [params, setParams] = useState<GetPromoCodeQuery>({
-    page: 1,
-    limit: 10,
-    search_promo_code: "",
-  });
+  const [params, setParams] = useState<GetPromoCodeQuery>(defaultValueParams);
   const [promoCodeId, setPromoCodeId] = useState<string>("");
   const [open, setOpen] = useState<boolean>(false);
   const [confirmationModal, setConfirmationModal] = useState<{
@@ -99,11 +102,11 @@ const PromoCode = () => {
       ),
     },
     {
-      fieldId: "discount_percentage",
+      fieldId: "",
       label: "Discount",
       render: (item) => (
         <span className="font-poppins font-normal text-sm text-[#4DA81C]">
-          {item?.discount_percentage}%
+          {item?.discount_amount ?? `${item?.discount_percentage}%`}
         </span>
       ),
     },
@@ -197,7 +200,7 @@ const PromoCode = () => {
         yesText="Delete"
         noText="Cancel"
       />
-      <Filter open={openFilter} setOpen={setOpenFilter} />
+      <Filter open={openFilter} setOpen={setOpenFilter} setParams={setParams} defaultValue={defaultValueParams} />
       <div className="w-full flex flex-row justify-between items-center">
         <h1 className="font-semibold text-2xl">Promo Code List</h1>
         <div className="flex flex-row gap-3">
