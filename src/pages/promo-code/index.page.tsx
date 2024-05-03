@@ -81,7 +81,7 @@ const PromoCode = () => {
       label: "Promo Code",
     },
     {
-      fieldId: "category",
+      fieldId: "type",
       label: "Category",
     },
     {
@@ -106,7 +106,7 @@ const PromoCode = () => {
       label: "Discount",
       render: (item) => (
         <span className="font-poppins font-normal text-sm text-[#4DA81C]">
-          {item?.discount_amount ?? `${item?.discount_percentage}%`}
+          {`Rp. ${item?.discount_amount?.toLocaleString()?.split(',')?.join('.')}` ?? `${item?.discount_percentage}%`}
         </span>
       ),
     },

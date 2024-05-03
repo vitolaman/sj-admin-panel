@@ -54,6 +54,7 @@ const useUpsertCodeForm = () => {
     description: yup.string().required("Description name cannot empty"),
     category: yup.string().notRequired(),
     min_exp: yup.number().notRequired(),
+    tnc: yup.string().required('T&C cannot empty'),
   });
   const defaultValues = {
     name_promo_code: "",
@@ -75,6 +76,7 @@ const useUpsertCodeForm = () => {
     description: "",
     category: "",
     min_exp: 0,
+    tnc: "",
   };
 
   const {
@@ -135,6 +137,7 @@ const useUpsertCodeForm = () => {
           typeof data?.min_exp === "string"
             ? Number(data?.min_exp)
             : data?.min_exp,
+        tnc: data?.tnc,
       };
       await updatePromoCode(payload).unwrap();
       toast.success("Updating a promo code was successful");
@@ -185,6 +188,7 @@ const useUpsertCodeForm = () => {
           typeof data?.min_exp === "string"
             ? Number(data?.min_exp)
             : data?.min_exp,
+        tnc: data.tnc,
       };
       await createPromoCode(payload).unwrap();
       toast.success("Creating a promo code was successful");

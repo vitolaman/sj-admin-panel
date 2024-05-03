@@ -157,6 +157,7 @@ export interface PromoCodeI {
   description: string;
   category: string;
   min_exp: number;
+  tnc:string
 }
 
 export interface Metadata {
@@ -195,4 +196,5 @@ export interface PromoCodeFormDataI {
   description: string;
   category: string;
   min_exp: number;
+  tnc:string
 }

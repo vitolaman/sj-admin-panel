@@ -29,6 +29,7 @@ import {
   useQuizSelection,
 } from "hooks/promo-code/useCategoryState";
 import TabRadio from "./tabRadio.section";
+import ReactQuill from "react-quill";
 
 const PromoCodeModalForm = ({
   open,
@@ -43,7 +44,7 @@ const PromoCodeModalForm = ({
   const [levelSelect, setLevelSelect] = useState<string>("");
   // hide until endpoint updated
   // const [statusSelect, setStatusSelect] = useState<string>("");
-  // const [richValue, setRichValue] = useState("");
+  const [richValue, setRichValue] = useState<string>();
   const [segmentUser, setSegmentUser] = useState<string | null>(null);
   const [defaultValueSegmentUser, setDefaultValueSegmentUser] = useState<{
     label: string;
@@ -298,12 +299,8 @@ const PromoCodeModalForm = ({
     }
     if (id !== undefined && id !== "") {
       getPromoCode(id);
-      if (promoCodeDetailState.data?.min_exp !== 0) {
-        setSegmentUser("");
-      } else {
-        setSegmentUser(promoCodeDetailState.data?.segment_user as string);
-      }
-
+      setRichValue(promoCodeDetailState.data?.tnc as string);
+      setSegmentUser(promoCodeDetailState.data?.segment_user as string);
       setDiscountSelect(promoCodeDetailState.data?.discount_type as string);
       setLevelSelect(`${promoCodeDetailState.data?.min_exp}`);
     }
@@ -761,7 +758,7 @@ const PromoCodeModalForm = ({
                             setDefaultValueSegmentUser(e);
                             setSegmentUser(e?.value ?? null);
                           }}
-                        />{" "}
+                        />
                         <p className="font-poppins font-normal text-sm text-[#EF5350] text-right">
                           {errors.segment_user?.message}
                         </p>
@@ -821,18 +818,22 @@ const PromoCodeModalForm = ({
                     />
                   </div>
                 )}
-                {/* Input setValue if endpoint already updated */}
-                {/* <div className="flex flex-col gap-2 w-full">
-    <label className="font-semibold font-poppins text-base text-[#262626] cursor-pointer">
-      Term & Conditions
-    </label>
-    
-    <ReactQuill
-      theme="snow"
-      value={richValue}
-      onChange={setRichValue}
-    />
-  </div> */}
+                <div className="flex flex-col gap-2 w-full">
+                  <label className="font-semibold font-poppins text-base text-[#262626] cursor-pointer">
+                    Term & Conditions
+                  </label>
+                  <ReactQuill
+                    theme="snow"
+                    value={richValue}
+                    onChange={(e) => {
+                      setRichValue(e);
+                      setValue("tnc", e);
+                    }}
+                  />
+                  <p className="font-poppins font-normal text-sm text-[#EF5350] text-right mt-10">
+                    {errors.tnc?.message}
+                  </p>
+                </div>
               </div>
             </div>
             <Button
