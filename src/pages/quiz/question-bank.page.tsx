@@ -8,9 +8,18 @@ import { Columns, Table } from "components/table/table";
 import { Button, Dropdown, FileInput, Modal } from "react-daisyui";
 import { FaEllipsisH } from "react-icons/fa";
 import Select from "components/select";
+import { IoClose } from "react-icons/io5";
+import { uploadQuizQuestions } from "services/modules/file";
+import { toast } from "react-toastify";
+import { errorHandler } from "services/errorHandler";
+import { useAppSelector } from "store";
 
 export const qbRouteName = "question-bank";
 const QuestionBank = () => {
+  const [uploadModal, setUploadModal] = useState(false);
+  const [questionsFile, setQuestionsFile] = useState<FileList | null>(null);
+  const [loadingUpload, setLoadingUpload] = useState(false);
+  const { accessToken } = useAppSelector((state) => state.auth);
   const header: Columns<QuestionBankI>[] = [
     {
       fieldId: "is_selected",
@@ -51,6 +60,10 @@ const QuestionBank = () => {
     {
       fieldId: "difficulty",
       label: "Difficulty",
+    },
+    {
+      fieldId: "language",
+      label: "Language",
     },
     {
       fieldId: "published_at",
@@ -137,6 +150,22 @@ const QuestionBank = () => {
 
   console.log("ini filter", filter);
 
+  const uploadQuestions = async () => {
+    try {
+      setLoadingUpload(true);
+      if (questionsFile) {
+        await uploadQuizQuestions(accessToken!, questionsFile[0]);
+        setUploadModal(false);
+      } else {
+        toast.error("Please choose questions file");
+      }
+    } catch (error) {
+      errorHandler(error);
+    } finally {
+      setLoadingUpload(false);
+    }
+  };
+
   useEffect(() => {
     const temp = mockData.filter((item) => {
       return (
@@ -150,56 +179,105 @@ const QuestionBank = () => {
   console.log(dataView);
 
   return (
-    <ContentContainer>
-      <div className="w-full flex flex-row justify-between items-end">
-        <div className="w-full flex flex-row gap-8">
-          <div className="w-40">
-            <label
-              htmlFor="category-question-bank"
-              className="font-semibold text-[#7C7C7C] mb-3"
-            >
-              Category Question
-            </label>
-            <Select
-              value={filter.category}
-              onChange={(e) =>
-                setFilter((prev) => ({ ...prev, category: e.value }))
-              }
-              options={categoryOptions}
-              rounded={true}
-            />
+    <>
+      <ContentContainer>
+        <div className="w-full flex flex-row justify-between items-end">
+          <div className="w-full flex flex-row gap-8">
+            <div className="w-40">
+              <label
+                htmlFor="category-question-bank"
+                className="font-semibold text-[#7C7C7C] mb-3"
+              >
+                Category Question
+              </label>
+              <Select
+                value={filter.category}
+                onChange={(e) =>
+                  setFilter((prev) => ({ ...prev, category: e.value }))
+                }
+                options={categoryOptions}
+                rounded={true}
+              />
+            </div>
+            <div className="w-40">
+              <label
+                htmlFor="category-question-bank"
+                className="font-semibold text-[#7C7C7C] mb-3"
+              >
+                Language
+              </label>
+              <Select
+                value={filter.language}
+                onChange={(e) =>
+                  setFilter((prev) => ({ ...prev, language: e.value }))
+                }
+                options={langOptions}
+                rounded={true}
+              />
+            </div>
           </div>
-          <div className="w-40">
-            <label
-              htmlFor="category-question-bank"
-              className="font-semibold text-[#7C7C7C] mb-3"
+          <div className="w-full flex flex-row justify-end gap-4">
+            <Button
+              className="border-seeds text-seeds rounded-full px-10"
+              onClick={() => {
+                setUploadModal(true);
+              }}
             >
-              Language
-            </label>
-            <Select
-              value={filter.language}
-              onChange={(e) =>
-                setFilter((prev) => ({ ...prev, language: e.value }))
-              }
-              options={langOptions}
-              rounded={true}
-            />
+              Upload Question
+            </Button>
           </div>
         </div>
-        <div className="w-full flex flex-row justify-end gap-4">
-          <Button className="border-seeds text-seeds rounded-full px-10">
-            Upload Question
+        <div className="mt-4 max-w-full overflow-x-auto overflow-y-hidden border border-[#BDBDBD] rounded-lg">
+          <Table<QuestionBankI>
+            columns={header}
+            data={dataView}
+            loading={false}
+          />
+        </div>
+      </ContentContainer>
+
+      <Modal className="bg-white w-2/3 max-w-[900px]" open={uploadModal}>
+        <Modal.Header className="flex flex-row justify-between">
+          Upload Questions
+          <IoClose
+            onClick={() => {
+              setUploadModal(false);
+            }}
+          />
+        </Modal.Header>
+        <Modal.Body className="overflow-scroll">
+          <div className="w-full border-seeds rounded-xl border py-40 flex items-center justify-center">
+            <FileInput
+              onChange={(e) => setQuestionsFile(e.target.files)}
+              className="border-seeds"
+              size="sm"
+              accept=".csv"
+            />
+          </div>
+        </Modal.Body>
+        <Modal.Actions>
+          <Button
+            type="reset"
+            className="border-seeds text-seeds rounded-full px-10"
+            onClick={() => {
+              setUploadModal(false);
+            }}
+            loading={loadingUpload}
+            disabled={loadingUpload}
+          >
+            Cancel
           </Button>
-        </div>
-      </div>
-      <div className="mt-4 max-w-full overflow-x-auto overflow-y-hidden border border-[#BDBDBD] rounded-lg">
-        <Table<QuestionBankI>
-          columns={header}
-          data={dataView}
-          loading={false}
-        />
-      </div>
-    </ContentContainer>
+          <Button
+            onClick={uploadQuestions}
+            className="bg-seeds hover:bg-seeds-300 border-seeds hover:border-seeds-300 text-white rounded-full px-10"
+            loading={loadingUpload}
+            disabled={loadingUpload}
+          >
+            Upload
+          </Button>
+        </Modal.Actions>
+      </Modal>
+    </>
   );
 };
 
