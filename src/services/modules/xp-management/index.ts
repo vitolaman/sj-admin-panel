@@ -1,4 +1,4 @@
-import { GetXPManagementQuery, XPManagementRes } from "_interfaces/xp-management.interface";
+import { GetXPManagementQuery, XPManagementI, XPManagementRes } from "_interfaces/xp-management.interface";
 import { Api } from "services/api";
   
   export const withdrawalApi = Api.injectEndpoints({
@@ -10,9 +10,22 @@ import { Api } from "services/api";
         }),
         keepUnusedDataFor: 0,
       }),
+      getXPManagementById: build.query<XPManagementI, string>({
+        query: (id) => `/admin-portal/v1/gain-exp/${id}`,
+        keepUnusedDataFor: 0,
+      }),
+      updateXPManagement: build.mutation<void,XPManagementI >({
+        query(body) {
+          return {
+            url: `/admin-portal/v1/gain-exp/${body.task_code}`,
+            method: "PUT",
+            body,
+          };
+        },
+      }),
     }),
     overrideExisting: false,
   });
   
-  export const { useGetXPManagementQuery } = withdrawalApi;
+  export const { useGetXPManagementQuery,useLazyGetXPManagementByIdQuery, useUpdateXPManagementMutation } = withdrawalApi;
   

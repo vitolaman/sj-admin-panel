@@ -11,9 +11,12 @@ import { useState } from "react";
 import { Button, Dropdown } from "react-daisyui";
 import { FiEdit, FiMoreHorizontal } from "react-icons/fi";
 import { useGetXPManagementQuery } from "services/modules/xp-management";
+import XPForm from "./sections/form.section";
 
 export const xpRouteName = "xp-management";
 const XPManagement = () => {
+  const [open, setOpen] = useState<boolean>(false);
+  const [id, setId] = useState<string>("");
   const [params, setParams] = useState<GetXPManagementQuery>({
     page: 1,
     limit: 10,
@@ -53,29 +56,33 @@ const XPManagement = () => {
       fieldId: "description",
       label: "Description",
       render: (item) => (
-        <>
-          {item?.description.length! > 20
-            ? `${item?.description.substring(0, 20)} ...`
-            : item?.description}
-        </>
+        <span className="font-poppins font-normal text-sm text-[#201B1C]"
+          dangerouslySetInnerHTML={{
+            __html: `          ${
+              item?.description.length! > 20
+                ? `${item?.description.substring(0, 20)} ...`
+                : item?.description
+            }`,
+          }}
+        ></span>
       ),
     },
     {
       fieldId: "started_at",
       label: "Start Date",
       render: (item) => (
-        <>{moment(item?.started_at).utc(true).format("DD/MM/yyyy HH:mm")}</>
+        <>{moment(item?.started_at).format("DD/MM/yyyy hh:mm")}</>
       ),
     },
     {
       fieldId: "expired_at",
       label: "End Date",
       render: (item) => (
-        <>{moment(item?.expired_at).utc(true).format("DD/MM/yyyy HH:mm")}</>
+        <>{moment(item?.expired_at).utc(true).format("DD/MM/yyyy hh:mm")}</>
       ),
     },
     {
-      fieldId: "",
+      fieldId: "max_exp",
       label: "Max Activity",
     },
     {
@@ -106,8 +113,14 @@ const XPManagement = () => {
               <FiMoreHorizontal />
             </Button>
           </Dropdown.Toggle>
-          <Dropdown.Menu className="bg-white z-10 w-[107px] rounded-[10px] flex flex-col gap-2">
-            <Dropdown.Item className="p-0">
+          <Dropdown.Menu className="bg-white z-10 w-[90px] rounded-[10px] flex flex-col gap-2">
+            <Dropdown.Item
+              className="p-0"
+              onClick={() => {
+                setId(item?.task_code!);
+                setOpen(!open);
+              }}
+            >
               <Button
                 fullWidth
                 size="xs"
@@ -124,6 +137,13 @@ const XPManagement = () => {
   ];
   return (
     <ContentContainer>
+      <XPForm
+        open={open}
+        setOpen={setOpen}
+        refetch={refetch}
+        id={id}
+        setId={setId}
+      />
       <div className="w-full flex flex-row justify-between items-center">
         <h1 className="font-semibold text-2xl">XP Management</h1>
         <div className="flex flex-row gap-3">

@@ -1,15 +1,23 @@
+import {
+  BaseQueryFn,
+  FetchArgs,
+  FetchBaseQueryError,
+  QueryActionCreatorResult,
+  QueryDefinition,
+} from "@reduxjs/toolkit/query";
+
 export interface GetXPManagementQuery {
   page: number;
   limit: number;
-  search:string
+  search: string;
 }
 
 export interface Metadata {
-    total: number;
-    current_page: number;
-    limit: number;
-    total_page: number;
-  }
+  total: number;
+  current_page: number;
+  limit: number;
+  total_page: number;
+}
 
 export interface XPManagementI {
   task_code: string;
@@ -28,4 +36,20 @@ export interface XPManagementI {
 export interface XPManagementRes {
   data: XPManagementI[];
   metadata: Metadata;
+}
+
+export interface XPManagementModal {
+  id: string;
+  setId: React.Dispatch<React.SetStateAction<string>>;
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  refetch: () => QueryActionCreatorResult<
+    QueryDefinition<
+      GetXPManagementQuery,
+      BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError>,
+      never,
+      XPManagementRes,
+      "api"
+    >
+  >;
 }
