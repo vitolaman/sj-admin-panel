@@ -12,6 +12,7 @@ import WithdrawPlay, { wpRouteName } from "pages/play/withdraw.page";
 import QuizList, { qlRouteName } from "pages/quiz/index.page";
 import CreateQuiz, { cqRouteName } from "pages/quiz/create.page";
 import UpdateQuiz, { uqRouteName } from "pages/quiz/update.page";
+import QuizGallery from "pages/gallery/index.page";
 import ControlPanel from "pages/circle/ControlPanel";
 import CircleDetail, { circleDetailRouteName } from "pages/circle/CircleDetail";
 import Membership, { circleMembershipRouteName } from "pages/circle/Membership";
@@ -43,9 +44,17 @@ import BlastPushNotification, {
   pushNotifRouteName,
 } from "pages/push-notification/blast-push-notification/index.page";
 import Article, { articleRouteName } from "pages/blog/article/index.page";
-import FormArticle, { createArticleRouteName, editArticleRouteName } from "pages/blog/article/form-article.page";
-import CategoryListPage, { categoryQuizRouteName } from "pages/quiz/category-list.page";
 import XPManagement, { xpRouteName } from "pages/xp-management/index.page";
+import FormArticle, {
+  createArticleRouteName,
+  editArticleRouteName,
+} from "pages/blog/article/form-article.page";
+import CategoryListPage, {
+  categoryQuizRouteName,
+} from "pages/quiz/category-list.page";
+import DisbursementRequest, {
+  dRequestRouteName,
+} from "pages/withdrawal/disbursement-request/index.page";
 
 const protectedRoutes: RouteObject[] = [
   { path: "", element: <Navigate to="/user/control-panel" /> },
@@ -206,6 +215,16 @@ const protectedRoutes: RouteObject[] = [
           },
         ],
       },
+      {
+        path: "withdrawal",
+        children: [
+          {
+            path: dRequestRouteName,
+            element: <DisbursementRequest />,
+            index: true,
+          },
+        ],
+      },
       // {
       //   path: "operating-area",
       //   element: <OperatingAreaIndex />,
@@ -231,6 +250,7 @@ const protectedRoutes: RouteObject[] = [
       //     },
       //   ]
       // }
+      { path: "quiz-gallery", element: <QuizGallery /> },
     ],
   },
   { path: "*", element: <Navigate to="/not-found" /> },

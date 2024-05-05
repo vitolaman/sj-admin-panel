@@ -113,7 +113,6 @@ const PromoCodeModalForm = ({
     control,
     loadingUpsert,
     defaultValues,
-    getValues,
     setValue,
     trigger,
   } = useUpsertPromoCodeForm();

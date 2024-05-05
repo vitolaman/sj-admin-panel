@@ -80,7 +80,7 @@ const Sidebar: React.FC<SidebarProps> = ({ active }): JSX.Element => {
   return (
     <aside
       className={`z-[999] max-h-screen h-screen overflow-auto relative top-0 bg-persian-green transition-all ${
-        active ? "left-0 w-[20%]" : "-left-[20%] w-[0%]"
+        active ? "left-0 w-[25%]" : "-left-[20%] w-[0%]"
       }`}
     >
       <div className="pl-4 pr-2">
