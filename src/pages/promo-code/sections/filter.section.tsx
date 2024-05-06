@@ -6,7 +6,12 @@ import { Button, Modal } from "react-daisyui";
 import { FiX } from "react-icons/fi";
 import { customMonth } from "data/promo-code";
 
-const Filter = ({ open, setOpen }: PromoCodeFilter) => {
+const Filter = ({
+  open,
+  setOpen,
+  setParams,
+  defaultValue,
+}: PromoCodeFilter) => {
   const [active, setActive] = useState(false);
   const [inactive, setInactive] = useState(false);
   const [endDate, setEndDate] = useState<string>("");
@@ -27,6 +32,7 @@ const Filter = ({ open, setOpen }: PromoCodeFilter) => {
               <CInput
                 type="date"
                 onChange={(e) => setStartDate(e.target.value)}
+                value={startDate}
               />
               <div
                 className={`${
@@ -53,6 +59,7 @@ const Filter = ({ open, setOpen }: PromoCodeFilter) => {
                 onChange={(e) => {
                   setEndDate(e.target.value);
                 }}
+                value={endDate}
               />
               <div
                 className={`${
@@ -121,10 +128,28 @@ const Filter = ({ open, setOpen }: PromoCodeFilter) => {
           </div>
         </div>
         <div className="flex gap-3 self-end">
-          <Button className="rounded-full w-32 border-seeds hover:border-seeds text-seeds">
+          <Button
+            className="rounded-full w-32 border-seeds hover:border-seeds text-seeds"
+            onClick={() => {
+              setStartDate("");
+              setEndDate("");
+              setParams(defaultValue);
+              setOpen(!open);
+            }}
+          >
             Clear
           </Button>
-          <Button className="rounded-full w-32 bg-seeds border-seeds hover:border-seeds hover:bg-seeds text-white">
+          <Button
+            className="rounded-full w-32 bg-seeds border-seeds hover:border-seeds hover:bg-seeds text-white"
+            onClick={() => {
+              setParams((prev) => ({
+                ...prev,
+                start_date_from: startDate,
+                start_date_until: endDate,
+              }));
+              setOpen(!open);
+            }}
+          >
             Submit
           </Button>
         </div>

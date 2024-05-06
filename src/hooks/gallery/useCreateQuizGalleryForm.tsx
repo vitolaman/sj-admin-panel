@@ -22,6 +22,16 @@ const useCreateQuizGalleryForm = () => {
     gallery: yup.object().required("Please input file to gallery"),
   });
 
+  const defaultValues = {
+    title: "",
+    type: "",
+    url: "",
+    gallery: {
+      file_link: "",
+      file_url: "",
+    },
+  }
+
   const {
     handleSubmit,
     register,
@@ -33,15 +43,7 @@ const useCreateQuizGalleryForm = () => {
   } = useForm<CreateQuizGalleryPayload>({
     mode: "onSubmit",
     resolver: yupResolver(schema),
-    defaultValues: {
-      title: "",
-      type: "",
-      url: "",
-      gallery: {
-        file_link: "",
-        file_url: "",
-      },
-    },
+    defaultValues
   });
 
   const create = async (data: CreateQuizGalleryPayload) => {
@@ -56,17 +58,21 @@ const useCreateQuizGalleryForm = () => {
           file_url: data.gallery.file_url,
         },
       };
+
       if (data.gallery.file_link !== "") {
-        const gallery = await uploadFileGallery(
-          accessToken!,
-          data.gallery.file_link[0] as File
-        );
-        payload.url = gallery;
+        try {
+          const gallery = await uploadFileGallery(
+            accessToken!,
+            data.gallery.file_link[0] as File
+          );
+          payload.url = gallery;
+        } catch (error) {
+          errorHandler(error)
+        }
       } else {
-        payload.url = "";
+        throw new Error('URL is required.')
       }
       await createQuizGallery(payload).unwrap();
-      reset();
     } catch (error) {
       errorHandler(error);
     } finally {
@@ -85,6 +91,7 @@ const useCreateQuizGalleryForm = () => {
     watch,
     setFocus,
     reset,
+    defaultValues
   };
 };
 

@@ -6,14 +6,20 @@ import { Columns, Table } from "components/table/table";
 import { IoClose } from "react-icons/io5";
 import { Controller } from "react-hook-form";
 import Select from "components/select";
-import { useGetQuizGalleryListQuery } from "services/modules/gallery";
+import {
+  useGetQuizGalleryListQuery,
+  useDeleteQuizGalleryMutation,
+} from "services/modules/gallery";
 import useCreateQuizGalleryForm from "hooks/gallery/useCreateQuizGalleryForm";
 import CInput from "components/input";
 import ConfirmationModal from "components/confirmation-modal";
 import { errorHandler } from "services/errorHandler";
 import useFilePreview from "hooks/shared/useFilePreview";
+import { toast } from "react-toastify";
 
 export const galleryRouteName = "";
+const MAX_FILE_SIZE_MB = 3;
+
 const QuizGallery = () => {
   const [uploadModal, setUploadModal] = useState<boolean>(false);
   const [confirmationModal, setConfirmationModal] = useState<{
@@ -21,11 +27,20 @@ const QuizGallery = () => {
     open: boolean;
   }>({ open: false });
   const { isLoading, data, refetch } = useGetQuizGalleryListQuery(undefined);
-  const { handleCreate, register, errors, upsertLoading, control, watch } =
-    useCreateQuizGalleryForm();
+  const {
+    handleCreate,
+    register,
+    errors,
+    upsertLoading,
+    control,
+    watch,
+    defaultValues,
+    reset,
+  } = useCreateQuizGalleryForm();
   const gallery = watch("gallery.file_link");
   const extensionFile = watch("type");
   const [galleryPreview] = useFilePreview(gallery as FileList);
+  const [deleteGallery] = useDeleteQuizGalleryMutation();
 
   const header: Columns<QuizGalleryI>[] = [
     {
@@ -50,11 +65,8 @@ const QuizGallery = () => {
       render: (data) => (
         <Button
           onClick={() => {
-            setConfirmationModal({ id: "1", open: true });
+            setConfirmationModal({ id: data?.gallery_id, open: true });
           }}
-          // note
-          // remove disabled and set logic for this feature when api's ready
-          disabled
         >
           Delete
         </Button>
@@ -63,6 +75,12 @@ const QuizGallery = () => {
   ];
 
   const typeFile = [
+    {
+      key: 0,
+      label: "Select...",
+      value: "",
+      isDisabled: true,
+    },
     {
       key: 1,
       label: "image",
@@ -77,7 +95,7 @@ const QuizGallery = () => {
 
   const handleDelete = async () => {
     try {
-      // await deleteFunctionLater(confirmationModal.id!).unwrap();
+      await deleteGallery(confirmationModal.id!).unwrap();
       setConfirmationModal({ open: false });
       refetch();
     } catch (error) {
@@ -86,7 +104,36 @@ const QuizGallery = () => {
   };
 
   const hideModal = () => {
-    setUploadModal(false);
+    refetch();
+    reset(defaultValues);
+    setUploadModal(!uploadModal);
+  };
+
+  const handleUpload = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const file = (e.target as HTMLFormElement).querySelector(
+      'input[name="gallery.file_link"]'
+    ) as HTMLInputElement;
+    if (!file) {
+      toast.error("Please select a file.");
+      hideModal()
+      return
+    }
+    if (file.files && file.files[0]) {
+      const fileSizeMB = file.files[0].size / (1024 * 1024);
+      if (fileSizeMB > MAX_FILE_SIZE_MB) {
+        toast.error(`File size exceeds ${MAX_FILE_SIZE_MB} MB.`);
+        hideModal();
+        return
+      }
+    }
+    try {
+      await handleCreate(e);
+      hideModal();
+    } catch (error) {
+      errorHandler(error);
+      hideModal();
+    }
   };
 
   return (
@@ -118,20 +165,12 @@ const QuizGallery = () => {
 
       {/* Start of Upload File Modal */}
       <Modal className="bg-white w-2/3 max-w-[900px]" open={uploadModal}>
-        <form
-          onSubmit={async (e) => {
-            if (uploadModal) {
-              await handleCreate(e);
-            }
-            hideModal();
-            refetch();
-          }}
-        >
+        <form onSubmit={handleUpload}>
           <Modal.Header className="flex flex-row justify-between">
             Upload File
             <IoClose onClick={() => hideModal()} />
           </Modal.Header>
-          <Modal.Body className="overflow-scroll">
+          <Modal.Body className="overflow-scroll px-2">
             <div className="flex flex-col gap-5">
               <div className="flex flex-col gap-2">
                 <label className="font-semibold">Title</label>
@@ -160,7 +199,7 @@ const QuizGallery = () => {
               <h1 className="font-semibold text-base">Upload File</h1>
               {extensionFile === "video" && (
                 <div className="w-full border-[#BDBDBD] border rounded-lg flex flex-col text-center items-center justify-center p-10 gap-3">
-                  {galleryPreview ? (
+                  {gallery ? (
                     <video
                       className="flex mx-auto w-[500px] h-[166px] object-fill"
                       controls
@@ -182,7 +221,7 @@ const QuizGallery = () => {
               )}
               {extensionFile === "image" && (
                 <div className="w-full border-[#BDBDBD] border rounded-lg flex flex-col text-center items-center justify-center p-10 gap-3">
-                  {galleryPreview ? (
+                  {gallery ? (
                     <img
                       className="flex mx-auto w-[500px] h-[166px] object-fill"
                       src={galleryPreview}

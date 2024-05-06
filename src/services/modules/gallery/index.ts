@@ -17,6 +17,14 @@ export const quizApi = Api.injectEndpoints({
         `quiz/v1/gallery/list`,
       keepUnusedDataFor: 0,
     }),
+    deleteQuizGallery: build.mutation<void, string>({
+      query(id) {
+        return {
+          url: `/quiz/v1/gallery/${id}`,
+          method: "DELETE",
+        };
+      },
+    }),
   }),
   overrideExisting: false,
 });
@@ -24,4 +32,5 @@ export const quizApi = Api.injectEndpoints({
 export const {
   useCreateQuizGalleryMutation,
   useGetQuizGalleryListQuery,
+  useDeleteQuizGalleryMutation
 } = quizApi;

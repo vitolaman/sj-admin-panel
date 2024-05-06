@@ -1,8 +1,24 @@
+import { BaseQueryFn, FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import {
+  FetchArgs,
+  QueryActionCreatorResult,
+  QueryDefinition,
+} from "@reduxjs/toolkit/query";
+
 export interface PromoCodeModalFormI {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   id?: string;
   setPromoCodeId: React.Dispatch<React.SetStateAction<string>>;
+  refetch: () => QueryActionCreatorResult<
+    QueryDefinition<
+      GetPromoCodeQuery,
+      BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError>,
+      never,
+      PromoCodeRes,
+      "api"
+    >
+  >;
 }
 
 export interface PromoCodeCustomInputI {
@@ -81,18 +97,17 @@ export interface PromoCodeTabI {
   isLoading: boolean;
   extraElement?: React.ReactNode;
   typePromoCategory: string;
-  openTab:string
-  selectAll:string[]
-  checkedFeature:checkedFeatureI[]
+  openTab: string;
+  selectAll: string[];
+  checkedFeature: checkedFeatureI[];
   setCheckedFeature: React.Dispatch<React.SetStateAction<checkedFeatureI[]>>;
-  setSelectIdType:React.Dispatch<React.SetStateAction<string[]>>
-
+  setSelectIdType: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
-export interface checkedFeatureI{
+export interface checkedFeatureI {
   id: string;
-      name: string;
-      type: string;
+  name: string;
+  type: string;
 }
 
 export interface FeatureIdI {
@@ -102,14 +117,16 @@ export interface FeatureIdI {
   name: string;
   type: string;
   logic: string;
-  checkedFeature:checkedFeatureI[]
+  checkedFeature: checkedFeatureI[];
   setCheckedFeature: React.Dispatch<React.SetStateAction<checkedFeatureI[]>>;
-  setSelectIdType:React.Dispatch<React.SetStateAction<string[]>>
+  setSelectIdType: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 export interface PromoCodeFilter {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setParams:React.Dispatch<React.SetStateAction<GetPromoCodeQuery>>;
+  defaultValue:GetPromoCodeQuery
 }
 export interface PromoCodeRes {
   data: PromoCodeI[];
@@ -140,6 +157,7 @@ export interface PromoCodeI {
   description: string;
   category: string;
   min_exp: number;
+  tnc:string
 }
 
 export interface Metadata {
@@ -153,6 +171,8 @@ export interface GetPromoCodeQuery {
   page: number;
   limit: number;
   search_promo_code: string;
+  start_date_from: string;
+  start_date_until: string;
 }
 
 export interface PromoCodeFormDataI {
@@ -176,4 +196,5 @@ export interface PromoCodeFormDataI {
   description: string;
   category: string;
   min_exp: number;
+  tnc:string
 }
