@@ -33,6 +33,10 @@ export interface QuizI {
   ended_at: string;
   created_at: string;
   payment_method: string[];
+  tnc: {
+    en: string;
+    id: string;
+  };
 }
 
 export interface Banner {
@@ -83,7 +87,7 @@ export interface CreateQuizPayload {
     {
       name: string;
       price: number;
-    },
+    }
   ];
   invitation_code: string;
   promo_id: string;
@@ -129,7 +133,7 @@ export interface EditQuizPayload {
     {
       name: string;
       price: number;
-    },
+    }
   ];
   total_questions: number;
   payment_method: string[] | GroupBase<OptChild>[];
