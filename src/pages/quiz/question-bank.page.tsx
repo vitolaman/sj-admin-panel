@@ -1,45 +1,84 @@
 import { useState, useEffect } from "react";
 import {
   FilterQuestionBankI,
+  GetQuestionBankQuery,
   QuestionBankI,
+  QuestionData,
 } from "_interfaces/question-bank.interfaces";
 import ContentContainer from "components/container";
+import ConfirmationModal from "components/confirmation-modal";
 import { Columns, Table } from "components/table/table";
-import { Button, Dropdown, FileInput, Modal } from "react-daisyui";
-import { FaEllipsisH } from "react-icons/fa";
+import { Button, FileInput, Modal } from "react-daisyui";
 import Select from "components/select";
 import { IoClose } from "react-icons/io5";
 import { uploadQuizQuestions } from "services/modules/file";
 import { toast } from "react-toastify";
 import { errorHandler } from "services/errorHandler";
 import { useAppSelector } from "store";
+import { useGetQuizCategoriesQuery } from "services/modules/quiz";
+import {
+  useGetQuestionBankListQuery,
+  useDeleteQuestionBankMutation,
+} from "services/modules/quiz";
+import Pagination from "components/table/pagination";
+import moment from "moment";
 
 export const qbRouteName = "question-bank";
 const QuestionBank = () => {
+  const [params, setParams] = useState<GetQuestionBankQuery>({
+    page: 1,
+    limit: 10,
+    difficulty: "",
+    search: "",
+    category:"",
+  });
   const [uploadModal, setUploadModal] = useState(false);
   const [questionsFile, setQuestionsFile] = useState<FileList | null>(null);
   const [loadingUpload, setLoadingUpload] = useState(false);
   const { accessToken } = useAppSelector((state) => state.auth);
+  const { data: dataCategory } = useGetQuizCategoriesQuery(undefined);
+  const {
+    data: dataQuestion,
+    isLoading: loadingQuestion,
+    refetch,
+  } = useGetQuestionBankListQuery(params);
+  const [confirmationModal, setConfirmationModal] = useState<{
+    id?: string;
+    open: boolean;
+  }>({ open: false });
+  const [confirmationSelectedModal, setConfirmationSelectedModal] = useState<{
+    id?: string;
+    open: boolean;
+  }>({ open: false });
+  const [deleteQuestionBank] = useDeleteQuestionBankMutation();
+  const [filter, setFilter] = useState<FilterQuestionBankI>({
+    data: "id",
+  });
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
   const header: Columns<QuestionBankI>[] = [
     {
-      fieldId: "is_selected",
+      fieldId: "id",
       label: "Select",
       render: (data) => (
         <>
-          <div
-          // onClick={async () => {
-          //   await updatePriority(
-          //     data?.id as string,
-          //     data?.is_recommended as boolean
-          //   );
-          // }}
-          >
+          <div>
             <input
-              // id={mockData?.question_id}
               type="checkbox"
               className="scale-150"
-              // checked={mockData?.is_selected}
               color="primary"
+              onClick={() => {
+                if (data?.id) {
+                  const isSelected = selectedIds.includes(data.id);
+                  if (!isSelected) {
+                    setSelectedIds((prevIds) => [...prevIds, data.id]);
+                  } else {
+                    setSelectedIds((prevIds) =>
+                      prevIds.filter((id) => id !== data.id)
+                    );
+                  }
+                }
+              }}
             />
           </div>
         </>
@@ -52,6 +91,7 @@ const QuestionBank = () => {
     {
       fieldId: "question",
       label: "Question",
+      render: (item) => <>{item?.data[filter.data]?.question}</>,
     },
     {
       fieldId: "category",
@@ -64,97 +104,65 @@ const QuestionBank = () => {
     {
       fieldId: "language",
       label: "Language",
+      render: () => <>{filter.data}</>,
     },
     {
-      fieldId: "published_at",
+      fieldId: "created_at",
       label: "Uploaded Date",
-      // render: (data) => (
-      //   <>{moment(data?.started_at!).utc(true).format("DD/MM/yyyy HH:mm")}</>
-      // ),
+      render: (item) => (
+        <>{moment(item?.created_at!).utc(true).format("DD/MM/yyyy HH:mm")}</>
+      ),
     },
     {
-      fieldId: "question_id",
+      fieldId: "id",
       label: "Action",
-      render: (data) => (
-        <Dropdown horizontal="left">
-          <Dropdown.Toggle>
-            <FaEllipsisH />
-          </Dropdown.Toggle>
-          <Dropdown.Menu className="w-52 bg-white z-50">
-            <Dropdown.Item
-            // onClick={() => {
-            //   navigate(`/quiz/${data?.id}/edit`);
-            // }}
-            >
-              Edit
-            </Dropdown.Item>
-            <Dropdown.Item
-            // onClick={() => {
-            //   setConfirmationModal({ id: data?.id, open: true });
-            // }}
-            >
-              Delete
-            </Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-      ),
+      render: (data) =>
+        selectedIds.length > 1 ? (
+          <Button
+            onClick={() => {
+              setConfirmationSelectedModal({ id: data?.id, open: true });
+            }}
+          >
+            Delete Selected
+          </Button>
+        ) : (
+          <Button
+            onClick={() => {
+              setConfirmationModal({ id: data?.id, open: true });
+            }}
+          >
+            Delete
+          </Button>
+        ),
     },
   ];
 
   const [dataView, setDataView] = useState<QuestionBankI[]>([]);
-  const [filter, setFilter] = useState<FilterQuestionBankI>({
-    category: "",
-    language: "",
-  });
-  const [categoryOptions] = useState([
-    { key: 1, label: "All", value: "" },
-    { key: 2, label: "INVEST", value: "invest" },
-    { key: 3, label: "CRYPTO", value: "crypto" },
-  ]);
 
-  const [langOptions] = useState([
-    { key: 1, label: "All", value: "" },
-    { key: 2, label: "ID", value: "id" },
-    { key: 3, label: "EN", value: "en" },
-  ]);
-
-  const mockData: QuestionBankI[] = [
+  const categoryOptions = [
     {
-      is_selected: true,
-      question_id: "1",
-      question: "Ini question",
-      category: "invest",
-      difficulty: "medium",
-      language: "id",
-      published_at: "29/04/2024",
+      key: 0,
+      label: "All Question",
+      value: "",
     },
-    {
-      is_selected: true,
-      question_id: "2",
-      question: "Ini question crypto",
-      category: "crypto",
-      difficulty: "hard",
-      language: "id",
-      published_at: "29/04/2024",
-    },
-    {
-      is_selected: true,
-      question_id: "3",
-      question: "this is about economic based crypto",
-      category: "crypto",
-      difficulty: "hard",
-      language: "en",
-      published_at: "29/04/2024",
-    },
+    ...(dataCategory?.data?.map((item, index) => ({
+      key: index,
+      label: item.name,
+      value: item.category_id,
+    })) || []),
   ];
 
-  console.log("ini filter", filter);
+  const [langOptions] = useState([
+    { key: 0, label: "ID", value: "id" },
+    { key: 1, label: "EN", value: "en" },
+  ]);
 
   const uploadQuestions = async () => {
     try {
       setLoadingUpload(true);
       if (questionsFile) {
         await uploadQuizQuestions(accessToken!, questionsFile[0]);
+        toast.success("Upload questions success!")
         setUploadModal(false);
       } else {
         toast.error("Please choose questions file");
@@ -166,24 +174,71 @@ const QuestionBank = () => {
     }
   };
 
-  useEffect(() => {
-    const temp = mockData.filter((item) => {
-      return (
-        item.category.includes(filter.category) &&
-        item.language.includes(filter.language)
-      );
-    });
-    setDataView(temp);
-  }, [filter]);
+  const handlePageChange = (page: number): void => {
+    setParams((prev) => ({ ...prev, page }));
+  };
 
-  console.log(dataView);
+  const handleDelete = async () => {
+    try {
+      await deleteQuestionBank(confirmationModal.id!).unwrap();
+      setConfirmationModal({ open: false });
+      refetch();
+      setDataView((prevDataView) =>
+        prevDataView.filter((item) => item.id !== confirmationModal.id)
+      );
+    } catch (error) {
+      errorHandler(error);
+    }
+  };
+
+  const handleDeleteSelectedId = async () => {
+    try {
+      if (selectedIds.length === 0) {
+        toast.error("Please select at least one question to delete");
+        return;
+      }
+      await Promise.all(
+        selectedIds.map(async (id) => {
+          await deleteQuestionBank(id).unwrap();
+        })
+      );
+      setConfirmationSelectedModal({ open: false });
+      setSelectedIds([]);
+      await refetch();
+    } catch (error) {
+      errorHandler(error);
+    } finally {
+      if (dataQuestion && dataQuestion.data) {
+        const temp = dataQuestion.data.filter((item) => {
+          return (
+            item.data[filter.data].question
+          );
+        });
+        setDataView(temp);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (dataQuestion && dataQuestion.data) {
+      let temp;
+      if (params.category === "") {
+        temp = dataQuestion.data;
+      } else {
+        temp = dataQuestion.data.filter((item) => {
+          return item.category === params.category;
+        });
+      }
+      setDataView(temp);
+    }
+  }, [dataQuestion, params.category]);
 
   return (
     <>
       <ContentContainer>
         <div className="w-full flex flex-row justify-between items-end">
-          <div className="w-full flex flex-row gap-8">
-            <div className="w-40">
+          <div className="w-full flex flex-row gap-8 items-end">
+            <div className="min-w-40">
               <label
                 htmlFor="category-question-bank"
                 className="font-semibold text-[#7C7C7C] mb-3"
@@ -191,15 +246,15 @@ const QuestionBank = () => {
                 Category Question
               </label>
               <Select
-                value={filter.category}
+                value={params.category}
                 onChange={(e) =>
-                  setFilter((prev) => ({ ...prev, category: e.value }))
+                  setParams((prev) => ({ ...prev, category: e.value }))
                 }
                 options={categoryOptions}
                 rounded={true}
               />
             </div>
-            <div className="w-40">
+            <div className="min-w-40">
               <label
                 htmlFor="category-question-bank"
                 className="font-semibold text-[#7C7C7C] mb-3"
@@ -207,16 +262,19 @@ const QuestionBank = () => {
                 Language
               </label>
               <Select
-                value={filter.language}
+                value={filter.data}
                 onChange={(e) =>
-                  setFilter((prev) => ({ ...prev, language: e.value }))
+                  setFilter((prev) => ({
+                    ...prev,
+                    data: e.value as keyof QuestionData,
+                  }))
                 }
                 options={langOptions}
                 rounded={true}
               />
             </div>
           </div>
-          <div className="w-full flex flex-row justify-end gap-4">
+          <div className="flex justify-end min-w-56">
             <Button
               className="border-seeds text-seeds rounded-full px-10"
               onClick={() => {
@@ -231,10 +289,41 @@ const QuestionBank = () => {
           <Table<QuestionBankI>
             columns={header}
             data={dataView}
-            loading={false}
+            loading={loadingQuestion}
+          />
+        </div>
+        <div className="flex flex-col">
+          <Pagination
+            currentPage={dataQuestion?.metadata?.current_page ?? 1}
+            totalPages={
+              Math.ceil((dataQuestion?.metadata?.total ?? 0) / params.limit) ??
+              0
+            }
+            onPageChange={handlePageChange}
           />
         </div>
       </ContentContainer>
+
+      <ConfirmationModal
+        isOpen={confirmationModal.open}
+        onClose={() => {
+          setConfirmationModal({ open: false });
+        }}
+        onConfirm={handleDelete}
+        alertType="danger"
+        title="Delete Question Bank"
+        subTitle="Are you sure want to delete this Question?"
+      />
+      <ConfirmationModal
+        isOpen={confirmationSelectedModal.open}
+        onClose={() => {
+          setConfirmationSelectedModal({ open: false });
+        }}
+        onConfirm={handleDeleteSelectedId}
+        alertType="danger"
+        title="Delete Selected Question Bank"
+        subTitle="Are you sure want to delete this Selected Question?"
+      />
 
       <Modal className="bg-white w-2/3 max-w-[900px]" open={uploadModal}>
         <Modal.Header className="flex flex-row justify-between">
