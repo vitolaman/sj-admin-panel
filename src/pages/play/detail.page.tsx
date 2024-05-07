@@ -13,11 +13,11 @@ import { useCancelPlayMutation, usePlayByIdQuery } from "services/modules/play";
 import MDEditor, { commands } from "@uiw/react-md-editor";
 import { errorHandler } from "services/errorHandler";
 import useUpdatePlayForm from "hooks/play/useUpdatePlayForm";
-import { Controller } from "react-hook-form";
+import { Controller, useFieldArray } from "react-hook-form";
 import CInput from "components/input";
 import { PlayI } from "_interfaces/play.interfaces";
 import ReactSelect, { GroupBase } from "react-select";
-import { OptChild } from "_interfaces/admin-fee.interfaces";
+import { OptChild, PaymentChannelOpt } from "_interfaces/admin-fee.interfaces";
 import { useGetPaymentChannelQuery } from "services/modules/admin-fee";
 import ValidationError from "components/validation/error";
 import CurrencyInput from "components/currency-input";
@@ -33,7 +33,7 @@ const PlayDetail = () => {
   const [minutes, setMinutes] = useState<number>(0);
   const [enableEdit, setEnableEdit] = useState(false);
   const [paymentChannelOpt, setPaymentChannelOpt] = useState<
-    GroupBase<OptChild>[]
+    PaymentChannelOpt[]
   >([]);
 
   const { data, isLoading } = usePlayByIdQuery(params.id ?? "", {
@@ -43,6 +43,14 @@ const PlayDetail = () => {
   const [cancelPlay, cancelPlayState] = useCancelPlayMutation();
   const { handleUpdate, register, errors, reset, control, setFocus } =
     useUpdatePlayForm(params.id!);
+  const { fields, append } = useFieldArray({
+    control,
+    name: "prizes",
+  });
+  const { fields: fieldsPayment, append: appendPayment } = useFieldArray({
+    control,
+    name: "payment_method",
+  });
   const paymentChannelState = useGetPaymentChannelQuery(undefined);
 
   useEffect(() => {
@@ -60,30 +68,75 @@ const PlayDetail = () => {
       setMinutes(minutes);
     }
     if (paymentChannelState.data && data) {
-      const tempOpt: GroupBase<OptChild>[] = [
+      const tempOpt: PaymentChannelOpt[] = [
         {
-          label: "E-Wallet",
+          label: (() => {
+            return (
+              <div
+                onClick={() => {
+                  const ewallet =
+                    paymentChannelState?.data?.type_ewallet?.map((item) => ({
+                      label: item.payment_method,
+                      value: item.payment_method,
+                    })) ?? [];
+                  appendPayment(ewallet);
+                }}
+              >
+                E-Wallet
+              </div>
+            );
+          })(),
           options: paymentChannelState.data.type_ewallet.map((item) => ({
             label: item.payment_method,
             value: item.payment_method,
           })),
         },
         {
-          label: "Bank",
+          label: (() => {
+            return (
+              <div
+                onClick={() => {
+                  const bank =
+                    paymentChannelState?.data?.type_va?.map((item) => ({
+                      label: item.payment_method,
+                      value: item.payment_method,
+                    })) ?? [];
+                  appendPayment(bank);
+                }}
+              >
+                Bank
+              </div>
+            );
+          })(),
           options: paymentChannelState.data.type_va.map((item) => ({
             label: item.payment_method,
             value: item.payment_method,
           })),
         },
         {
-          label: "QRIS",
+          label: (() => {
+            return (
+              <div
+                onClick={() => {
+                  const qris =
+                    paymentChannelState?.data?.type_qris?.map((item) => ({
+                      label: item.payment_method,
+                      value: item.payment_method,
+                    })) ?? [];
+                  appendPayment(qris);
+                }}
+              >
+                QRIS
+              </div>
+            );
+          })(),
           options: paymentChannelState.data.type_qris.map((item) => ({
             label: item.payment_method,
             value: item.payment_method,
           })),
         },
       ];
-      const selectedEWallet = paymentChannelState.data.type_ewallet.map(
+      let selectedEWallet = paymentChannelState.data.type_ewallet.map(
         (item) => {
           if (
             (data.payment_method as string[])?.includes(item.payment_method)
@@ -95,7 +148,7 @@ const PlayDetail = () => {
           }
         },
       );
-      const selectedBank = paymentChannelState.data.type_va.map((item) => {
+      let selectedBank = paymentChannelState.data.type_va.map((item) => {
         if ((data.payment_method as string[])?.includes(item.payment_method)) {
           return {
             label: item.payment_method,
@@ -103,7 +156,7 @@ const PlayDetail = () => {
           };
         }
       });
-      const selectedQris = paymentChannelState.data.type_qris.map((item) => {
+      let selectedQris = paymentChannelState.data.type_qris.map((item) => {
         if ((data.payment_method as string[])?.includes(item.payment_method)) {
           return {
             label: item.payment_method,
@@ -112,8 +165,15 @@ const PlayDetail = () => {
         }
       });
       setPaymentChannelOpt(tempOpt);
+      selectedEWallet = selectedEWallet.filter(item => item != undefined);
+      selectedBank = selectedBank.filter(item => item != undefined);
+      selectedQris = selectedQris.filter(item => item != undefined);
       reset({
         ...data,
+        prizes: data?.prize_fix_percentages.map((item, i) => ({
+          prize_fix_percentages: item,
+          prize_pool_percentages: data?.prize_pool_percentages[i],
+        })),
         payment_method: [...selectedEWallet, ...selectedBank, ...selectedQris],
         category: data?.all_category,
       });
@@ -513,31 +573,52 @@ const PlayDetail = () => {
               <div className="text-center col-span-2">Fix Prize</div>
               <div className="text-center col-span-2">Prize Pool Money</div>
             </div>
-            {data?.prize_fix_percentages.map((item, i) => (
+            {fields.map((item, i) => (
               <div className="grid grid-cols-5 items-center gap-4">
                 <div className="font-semibold text-sm">Winner {i + 1}</div>
                 <div className="text-center col-span-2">
                   <Controller
                     control={control}
-                    name={`prize_fix_percentages.${i}`}
+                    name={`prizes.${i}.prize_fix_percentages`}
                     render={({ field: { value, onChange } }) => (
                       <CurrencyInput
                         value={value}
                         onValueChange={(val) => onChange(val)}
                         disabled={!enableEdit}
-                        error={errors.prize_fix_percentages?.[i]}
+                        error={errors.prizes?.[i]?.prize_fix_percentages}
                       />
                     )}
                   />
                 </div>
                 <div className="text-center col-span-2">
                   <CInput
-                    {...register(`prize_pool_percentages.${i}`)}
+                    {...register(`prizes.${i}.prize_pool_percentages`)}
                     disabled={!enableEdit}
                   />
                 </div>
               </div>
             ))}
+            {enableEdit && (
+              <div className="grid grid-cols-5">
+                <div className=" col-span-3" />
+                <div className=" col-span-2">
+                  <Button
+                    variant="outline"
+                    className="border-seeds text-seeds rounded-full px-10 !w-full"
+                    onClick={() => {
+                      append({
+                        prize_fix_percentages: 0,
+                        prize_pool_percentages: 0,
+                      });
+                    }}
+                    loading={isLoading}
+                    type="button"
+                  >
+                    Add More Winner
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
           <div className="flex flex-col gap-2">
             <label className="font-semibold">Payment Channel</label>
@@ -557,7 +638,8 @@ const PlayDetail = () => {
                     }}
                     isMulti
                     options={paymentChannelOpt}
-                    value={value as GroupBase<OptChild>[]}
+                    // cannot use data type causing error pluggin React Select
+                    value={value as any}
                     onChange={(e) => {
                       onChange(e);
                     }}
