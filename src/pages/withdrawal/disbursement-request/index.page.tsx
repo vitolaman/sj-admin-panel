@@ -8,6 +8,7 @@ import Pagination from "components/table/pagination";
 import { Columns, Table } from "components/table/table";
 import { useEffect, useState } from "react";
 import { Button } from "react-daisyui";
+import { FiDownload } from "react-icons/fi";
 import { toast } from "react-toastify";
 import {
   useGetDisbursementRequestQuery,
@@ -41,7 +42,7 @@ const DisbursementRequest = () => {
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "Data");
 
-      XLSX.writeFile(wb, "data.xlsx");
+      XLSX.writeFile(wb, "disbursement-request-data.xlsx");
     } else {
       toast.error("Data is undefined or not a valid array.");
     }
@@ -161,7 +162,7 @@ const DisbursementRequest = () => {
   return (
     <ContentContainer>
       <div className="w-full flex flex-row justify-between items-center">
-        <h1 className="font-semibold text-2xl" onClick={handleSheetsData}>
+        <h1 className="font-semibold text-2xl">
           Disbursement Request
         </h1>
         <div className="flex flex-row gap-3">
@@ -171,6 +172,13 @@ const DisbursementRequest = () => {
               setParams((prev) => ({ ...prev, search: text }))
             }
           />
+          <Button
+            shape="circle"
+            className="border-seeds hover:border-seeds"
+            onClick={handleSheetsData}
+          >
+            <FiDownload color="#3ac4a0" size={20} />
+          </Button>
         </div>
       </div>
       <div className="mt-4 max-w-full overflow-x-auto overflow-y-hidden border border-[#BDBDBD] rounded-lg">
