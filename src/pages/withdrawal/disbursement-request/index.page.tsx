@@ -8,10 +8,12 @@ import Pagination from "components/table/pagination";
 import { Columns, Table } from "components/table/table";
 import { useEffect, useState } from "react";
 import { Button } from "react-daisyui";
+import { toast } from "react-toastify";
 import {
   useGetDisbursementRequestQuery,
   useUpdateDisbursementRequestMutation,
 } from "services/modules/withdrawal";
+import * as XLSX from "xlsx";
 
 export const dRequestRouteName = "disbursement-request";
 const DisbursementRequest = () => {
@@ -21,10 +23,28 @@ const DisbursementRequest = () => {
     search: "",
   });
   const { data, isLoading, refetch } = useGetDisbursementRequestQuery(params);
+  const allData = useGetDisbursementRequestQuery({
+    page: 1,
+    limit: 100,
+    search: "",
+  });
   const [updateDisbursementRequestById, updateState] =
     useUpdateDisbursementRequestMutation();
   const handlePageChange = (page: number): void => {
     setParams((prev) => ({ ...prev, page }));
+  };
+
+  const handleSheetsData = () => {
+    const sheetsData = allData.data?.configurations;
+    if (sheetsData && Array.isArray(sheetsData) && sheetsData.length > 0) {
+      const ws = XLSX.utils.json_to_sheet(sheetsData);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Data");
+
+      XLSX.writeFile(wb, "data.xlsx");
+    } else {
+      toast.error("Data is undefined or not a valid array.");
+    }
   };
 
   useEffect(() => {
@@ -141,7 +161,9 @@ const DisbursementRequest = () => {
   return (
     <ContentContainer>
       <div className="w-full flex flex-row justify-between items-center">
-        <h1 className="font-semibold text-2xl">Disbursement Request</h1>
+        <h1 className="font-semibold text-2xl" onClick={handleSheetsData}>
+          Disbursement Request
+        </h1>
         <div className="flex flex-row gap-3">
           <SearchInput
             placeholder="Search"
