@@ -11,6 +11,7 @@ import {
 } from "_interfaces/quiz.interfaces";
 import { useUpdateQuizMutation } from "services/modules/quiz";
 import { uploadFile } from "services/modules/file";
+import moment from "moment";
 
 const useUpdateQuizForm = (id: string) => {
   const navigate = useNavigate();
@@ -22,21 +23,21 @@ const useUpdateQuizForm = (id: string) => {
   const schema = yup.object().shape({
     name: yup.string().required("Quiz arena name cannot empty"),
     category: yup.string().required("Please choose category"),
-    // published_at: yup
-    //   .date()
-    //   .min(dateNow, "Publish Time must be greater than now")
-    //   .required("Please input publish time")
-    //   .typeError("invalid date"),
-    // started_at: yup
-    //   .date()
-    //   .required("Please input start time")
-    //   .typeError("invalid date")
-    //   .min(dateNow, "Start time must be greater than now"),
-    // ended_at: yup
-    //   .date()
-    //   .required("Please input ended time")
-    //   .typeError("invalid date")
-    //   .min(dateNow, "Ended time must be greater than now"),
+    published_at: yup
+      .date()
+      .min(dateNow, "Publish Time must be greater than now")
+      .required("Please input publish time")
+      .typeError("invalid date"),
+    started_at: yup
+      .date()
+      .required("Please input start time")
+      .typeError("invalid date")
+      .min(dateNow, "Start time must be greater than now"),
+    ended_at: yup
+      .date()
+      .required("Please input ended time")
+      .typeError("invalid date")
+      .min(dateNow, "Ended time must be greater than now"),
     banner: yup.object().required("Please input banner"),
     admission_fee: yup.number().required("Please input admission fee"),
     min_participant: yup.number().min(0, "Min Participants = 0"),
@@ -51,7 +52,7 @@ const useUpdateQuizForm = (id: string) => {
         yup.object().shape({
           name: yup.string().required("Please input Lifeline Name"),
           price: yup.number().required("Please input Lifeline Price"),
-        })
+        }),
       )
       .required("Lifelines are required"),
     tnc: yup.object().shape({
@@ -110,7 +111,7 @@ const useUpdateQuizForm = (id: string) => {
       if (data.banner.image_link !== "") {
         const banner = await uploadFile(
           accessToken!,
-          data.banner.image_link[0] as File
+          data.banner.image_link[0] as File,
         );
         payload.banner = {
           image_link: "",
@@ -120,7 +121,7 @@ const useUpdateQuizForm = (id: string) => {
       if (data.sponsors.image_link !== "") {
         const sponsors = await uploadFile(
           accessToken!,
-          data.sponsors.image_link[0] as File
+          data.sponsors.image_link[0] as File,
         );
         payload.sponsors = {
           image_link: "",
@@ -130,7 +131,7 @@ const useUpdateQuizForm = (id: string) => {
       if (data.communities.image_link !== "") {
         const communities = await uploadFile(
           accessToken!,
-          data.communities.image_link[0] as File
+          data.communities.image_link[0] as File,
         );
         payload.communities = {
           image_link: "",

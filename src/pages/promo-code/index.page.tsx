@@ -10,29 +10,47 @@ import moment from "moment";
 import { useState } from "react";
 import { Button, Dropdown } from "react-daisyui";
 import {
+  useDeletePromoCodeMutation,
   useGetPromoCodesQuery,
 } from "services/modules/promo-code";
 import Filter from "./sections/filter.section";
 import { FiEdit, FiFilter, FiMoreHorizontal, FiTrash2 } from "react-icons/fi";
 import PromoCodeForm from "./sections/form.section";
+import ConfirmationModal from "components/confirmation-modal";
+import { errorHandler } from "services/errorHandler";
 
 export const promoCodeRouteName = "promo-code";
+const defaultValueParams={
+  page: 1,
+  limit: 10,
+  search_promo_code: "",
+  start_date_from: "",
+  start_date_until: "",
+}
 const PromoCode = () => {
-  const [params, setParams] = useState<GetPromoCodeQuery>({
-    page: 1,
-    limit: 10,
-    search_promo_code: "",
-  });
+  const [params, setParams] = useState<GetPromoCodeQuery>(defaultValueParams);
   const [promoCodeId, setPromoCodeId] = useState<string>("");
   const [open, setOpen] = useState<boolean>(false);
+  const [confirmationModal, setConfirmationModal] = useState<{
+    id?: string;
+    open: boolean;
+  }>({ open: false });
   const [openFilter, setOpenFilter] = useState<boolean>(false);
 
-  const { data, isLoading } = useGetPromoCodesQuery(params);
-  // const dataPromoCodeById = useGetPromoCodeByIdQuery(promoCodeId).data;
-  // console.log(dataPromoCodeById);
+  const { data, isLoading, refetch } = useGetPromoCodesQuery(params);
+  const [deletePromoCodeById] = useDeletePromoCodeMutation();
 
   const handlePageChange = (page: number): void => {
     setParams((prev) => ({ ...prev, page }));
+  };
+  const handleDelete = async () => {
+    try {
+      await deletePromoCodeById(confirmationModal.id!).unwrap();
+      setConfirmationModal({ open: false });
+      refetch();
+    } catch (error) {
+      errorHandler(error);
+    }
   };
 
   const getStatusColor = (
@@ -63,7 +81,7 @@ const PromoCode = () => {
       label: "Promo Code",
     },
     {
-      fieldId: "category",
+      fieldId: "type",
       label: "Category",
     },
     {
@@ -84,11 +102,11 @@ const PromoCode = () => {
       ),
     },
     {
-      fieldId: "discount_percentage",
+      fieldId: "",
       label: "Discount",
       render: (item) => (
         <span className="font-poppins font-normal text-sm text-[#4DA81C]">
-          {item?.discount_percentage}%
+          {`Rp. ${item?.discount_amount?.toLocaleString()?.split(',')?.join('.')}` ?? `${item?.discount_percentage}%`}
         </span>
       ),
     },
@@ -155,6 +173,9 @@ const PromoCode = () => {
                 size="xs"
                 className="border-none shadow-none p-0 font-normal font-poppins text-sm text-[#FF3838]"
                 startIcon={<FiTrash2 color="#FF3838" size={20} />}
+                onClick={() => {
+                  setConfirmationModal({ id: item?.id, open: true });
+                }}
               >
                 Delete
               </Button>
@@ -167,7 +188,19 @@ const PromoCode = () => {
 
   return (
     <ContentContainer>
-      <Filter open={openFilter} setOpen={setOpenFilter} />
+      <ConfirmationModal
+        isOpen={confirmationModal.open}
+        onClose={() => {
+          setConfirmationModal({ open: false });
+        }}
+        onConfirm={handleDelete}
+        alertType="danger"
+        title="Delete Promo Code?"
+        subTitle="Are you sure to delete this promo code?"
+        yesText="Delete"
+        noText="Cancel"
+      />
+      <Filter open={openFilter} setOpen={setOpenFilter} setParams={setParams} defaultValue={defaultValueParams} />
       <div className="w-full flex flex-row justify-between items-center">
         <h1 className="font-semibold text-2xl">Promo Code List</h1>
         <div className="flex flex-row gap-3">
@@ -201,10 +234,6 @@ const PromoCode = () => {
           columns={header}
           loading={isLoading}
           data={data?.data}
-          // onRowClick={(user) => {
-          //   getPromoCode(user.id);
-          //   setShowEdit(true);
-          // }}
         />
       </div>
       <div className="flex flex-col">
@@ -216,7 +245,13 @@ const PromoCode = () => {
           onPageChange={handlePageChange}
         />
       </div>
-      <PromoCodeForm open={open} id={promoCodeId} setOpen={setOpen} setPromoCodeId={setPromoCodeId} />
+      <PromoCodeForm
+        open={open}
+        id={promoCodeId}
+        setOpen={setOpen}
+        setPromoCodeId={setPromoCodeId}
+        refetch={refetch}
+      />
     </ContentContainer>
   );
 };

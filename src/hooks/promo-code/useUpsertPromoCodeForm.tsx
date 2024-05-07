@@ -7,43 +7,54 @@ import {
   useCreatePromoCodeMutation,
   useUpdatePromoCodeMutation,
 } from "services/modules/promo-code";
+import { toast } from "react-toastify";
 
 const useUpsertCodeForm = () => {
   const [updatePromoCode, updateState] = useUpdatePromoCodeMutation();
   const [createPromoCode, createState] = useCreatePromoCodeMutation();
-  const loadingUpsert = createState.isLoading || updateState.isLoading
-  const errorUpsert=createState.error||updateState.error
-  const dateNow=new Date()
-  const schema = yup.object()
-  .shape({
+  const loadingUpsert = createState.isLoading || updateState.isLoading;
+  const isSuccess = createState.isSuccess || updateState.isSuccess;
+  const dateNow = new Date();
+  const schema = yup.object().shape({
     name_promo_code: yup.string().required("Quiz arena name cannot empty"),
     promo_code: yup.string().required("Promo Code name cannot empty"),
     start_date: yup
-    .date()
-    .min(dateNow, "Start Date must be greater than now")
-    .required("Please input start date")
-    .typeError("invalid date"),
+      .date()
+      .min(dateNow, "Start Date must be greater than now")
+      .required("Please input start date")
+      .typeError("invalid date"),
     end_date: yup
-    .date()
-    .min(dateNow, "End Date must be greater than now")
-    .required("Please input end date")
-    .typeError("invalid date"),
-    expired_date: yup
-    .string()
-    .notRequired(),
-    discount_amount: yup.number().notRequired(),
-    discount_percentage: yup.number().notRequired(),
-    min_transaction: yup.number().min(1,'Min Transaction cannot empty'),
-    max_discount: yup.number().notRequired(),
-    quantity: yup.number().required('Quota cannot empty'),
+      .date()
+      .min(dateNow, "End Date must be greater than now")
+      .required("Please input end date")
+      .typeError("invalid date"),
+    expired_date: yup.string().notRequired(),
+    discount_amount: yup
+      .number()
+      .max(9000000000000000000, "Discount Amount value over max limit")
+      .notRequired(),
+    discount_percentage: yup
+      .number()
+      .max(9000000000000000000, "Discount Percentage value over max limit")
+      .notRequired(),
+    min_transaction: yup.number().min(1, "Min Transaction cannot empty"),
+    max_discount: yup
+      .number()
+      .max(9000000000000000000, "Max Discount value over max limit")
+      .notRequired(),
+    quantity: yup
+      .number()
+      .max(9000000000000000000, "Quantity value over max limit")
+      .required("Quota cannot empty"),
     type: yup.string().notRequired(),
     institution: yup.string().notRequired(),
-    segment_user: yup.string().notRequired(),
+    segment_user: yup.string().required("Segment User cannot empty"),
     ref_code: yup.string().notRequired(),
     discount_type: yup.string().required("Discount Type cannot empty"),
     description: yup.string().required("Description name cannot empty"),
     category: yup.string().notRequired(),
-    min_exp:yup.number().notRequired()
+    min_exp: yup.number().notRequired(),
+    tnc: yup.string().required('T&C cannot empty'),
   });
   const defaultValues = {
     name_promo_code: "",
@@ -65,6 +76,7 @@ const useUpsertCodeForm = () => {
     description: "",
     category: "",
     min_exp: 0,
+    tnc: "",
   };
 
   const {
@@ -74,9 +86,8 @@ const useUpsertCodeForm = () => {
     reset,
     control,
     setFocus,
-    getValues,
     setValue,
-    trigger
+    trigger,
   } = useForm<PromoCodeFormDataI>({
     mode: "onSubmit",
     resolver: yupResolver(schema),
@@ -88,7 +99,7 @@ const useUpsertCodeForm = () => {
       const startDateUtc = new Date(data?.start_date!).toISOString();
       const endDateUtc = new Date(data?.end_date!).toISOString();
       const payload: PromoCodeFormDataI = {
-        id:data?.id,
+        id: data?.id,
         name_promo_code: data?.name_promo_code,
         promo_code: data?.name_promo_code,
         start_date: startDateUtc,
@@ -126,8 +137,10 @@ const useUpsertCodeForm = () => {
           typeof data?.min_exp === "string"
             ? Number(data?.min_exp)
             : data?.min_exp,
+        tnc: data?.tnc,
       };
-      await updatePromoCode(payload);
+      await updatePromoCode(payload).unwrap();
+      toast.success("Updating a promo code was successful");
     } catch (error) {
       errorHandler(error);
     }
@@ -175,8 +188,10 @@ const useUpsertCodeForm = () => {
           typeof data?.min_exp === "string"
             ? Number(data?.min_exp)
             : data?.min_exp,
+        tnc: data.tnc,
       };
-      await createPromoCode(payload);
+      await createPromoCode(payload).unwrap();
+      toast.success("Creating a promo code was successful");
     } catch (error) {
       errorHandler(error);
     }
@@ -193,12 +208,11 @@ const useUpsertCodeForm = () => {
     setFocus,
     reset,
     control,
-    errorUpsert,
     loadingUpsert,
     defaultValues,
-    getValues,
     setValue,
-    trigger
+    trigger,
+    isSuccess,
   };
 };
 

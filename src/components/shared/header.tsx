@@ -34,7 +34,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar, className }): JSX.Elemen
   const toggleToolbarMenuVisible = () => setToolbarMenuVisible((prev) => !prev);
 
   return (
-    <nav className={`z-[998] select-none w-[80%] h-[60px] bg-white py-4 px-8 fixed right-0 top-0 flex justify-between items-center ${className}`}>
+    <nav className={`z-[998] select-none h-[60px] bg-white py-4 px-8 fixed right-0 top-0 flex justify-between items-center ${className}`}>
       <div
         onClick={toggleSidebar}
         className='cursor-pointer p-2 hover:bg-slate-500 hover:bg-opacity-50 transition-all duration-200 rounded-full'

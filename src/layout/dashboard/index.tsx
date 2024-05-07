@@ -22,9 +22,9 @@ const DashboardLayout: React.FC = (): JSX.Element => {
       </Helmet>
       <div className="flex">
         <Sidebar active={navbarActive} toggleSidebar={toggleSidebar} />
-        <Container className={`${navbarActive ? "w-[80%]" : "w-full"}`}>
+        <Container className={`${navbarActive ? "w-[75%]" : "w-full"}`}>
           <Header
-            className={`${navbarActive ? "w-[80%]" : "w-full"}`}
+            className={`${navbarActive ? "w-[75%]" : "w-full"}`}
             toggleSidebar={toggleSidebar}
           />
           <Outlet />
