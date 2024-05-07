@@ -20,13 +20,13 @@ import ConfirmationModal from "components/confirmation-modal";
 import { errorHandler } from "services/errorHandler";
 
 export const promoCodeRouteName = "promo-code";
-const defaultValueParams={
+const defaultValueParams = {
   page: 1,
   limit: 10,
   search_promo_code: "",
   start_date_from: "",
   start_date_until: "",
-}
+};
 const PromoCode = () => {
   const [params, setParams] = useState<GetPromoCodeQuery>(defaultValueParams);
   const [promoCodeId, setPromoCodeId] = useState<string>("");
@@ -83,10 +83,14 @@ const PromoCode = () => {
     {
       fieldId: "type",
       label: "Category",
+      render:(item)=>(<>{item?.type.split(',').join(', ')}</>)
     },
     {
       fieldId: "quantity",
       label: "Quota",
+      render: (item) => (
+        <>{item?.quantity?.toLocaleString().split(",").join(".")}</>
+      ),
     },
     {
       fieldId: "description",
@@ -95,18 +99,38 @@ const PromoCode = () => {
     {
       fieldId: "min_exp",
       label: "Level",
-      render: (item) => (
-        <p className="font-poppins font-normal text-sm text-[#201B1C]">
-          Level {item?.min_exp}
-        </p>
-      ),
+      render: (item) => {
+        const level = item?.min_exp;
+        return (
+          <p className="font-poppins font-normal text-sm text-[#201B1C]">
+            Level{" "}
+            {level === 175000
+              ? "4"
+              : level === 25000
+              ? "3"
+              : level === 3500
+              ? "2"
+              : level === 500
+              ? "1"
+              : "0"}
+          </p>
+        );
+      },
     },
     {
       fieldId: "",
       label: "Discount",
       render: (item) => (
         <span className="font-poppins font-normal text-sm text-[#4DA81C]">
-          {`Rp. ${item?.discount_amount?.toLocaleString()?.split(',')?.join('.')}` ?? `${item?.discount_percentage}%`}
+          {item?.discount_amount !== undefined
+            ? `Rp. ${item?.discount_amount
+                ?.toLocaleString()
+                ?.split(",")
+                ?.join(".")}`
+            : `${item?.discount_percentage
+                ?.toLocaleString()
+                ?.split(",")
+                ?.join(".")}%`}
         </span>
       ),
     },
@@ -200,7 +224,12 @@ const PromoCode = () => {
         yesText="Delete"
         noText="Cancel"
       />
-      <Filter open={openFilter} setOpen={setOpenFilter} setParams={setParams} defaultValue={defaultValueParams} />
+      <Filter
+        open={openFilter}
+        setOpen={setOpenFilter}
+        setParams={setParams}
+        defaultValue={defaultValueParams}
+      />
       <div className="w-full flex flex-row justify-between items-center">
         <h1 className="font-semibold text-2xl">Promo Code List</h1>
         <div className="flex flex-row gap-3">

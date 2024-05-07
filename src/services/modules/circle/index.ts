@@ -84,6 +84,7 @@ export const {
   useCircleListQuery,
   useOwnerCircleListQuery,
   useCircleDetailQuery,
+  useLazyCircleDetailQuery,
   useListMemberQuery,
   useChangeAdminFeeMutation,
   useChangeStatusWithdrawMutation,
