@@ -24,8 +24,6 @@ const XPForm = ({ id, setId, open, setOpen, refetch }: XPManagementModal) => {
   const [getXPManagement, XPManagementDetailState] =
     useLazyGetXPManagementByIdQuery();
 
-  console.log(XPManagementDetailState.data);
-
   const {
     handleUpdate,
     register,
