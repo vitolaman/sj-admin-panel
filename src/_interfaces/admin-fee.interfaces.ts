@@ -122,11 +122,11 @@ export interface TypeQri {
 }
 
 export interface PaymentChannelOpt {
-  label: string;
+  label: string | JSX.Element;
   options: OptChild[];
 }
 
 export interface OptChild {
-  label: string;
+  label: string | JSX.Element;
   value: string;
 }

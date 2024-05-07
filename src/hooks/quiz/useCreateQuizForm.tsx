@@ -107,7 +107,7 @@ const useCreateQuizForm = () => {
   const create = async (data: CreateQuizPayload) => {
     try {
       setIsLoading(true);
-      // NOTE: Cannot use any because of react-select plugin data type doesn't match with the data type that I give
+      // cannot use data type causing error pluggin React Select
       const paymentMethodParsed = (data.payment_method as any[]).map(
         (item) => item.value,
       );

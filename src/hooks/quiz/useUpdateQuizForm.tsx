@@ -99,9 +99,10 @@ const useUpdateQuizForm = (id: string) => {
     },
   });
 
-  const create = async (data: EditQuizPayload) => {
+  const create = async (data: CreateQuizPayload) => {
     try {
       setIsLoadingUpdate(true);
+      // cannot use data type causing error pluggin React Select
       const paymentMethodParsed = (data.payment_method as any[]).map(
         (item) => item.value,
       );

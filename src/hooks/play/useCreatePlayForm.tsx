@@ -49,8 +49,10 @@ const useCreatePlayForm = () => {
     admission_fee: yup.number().required("Please input admission fee"),
     min_participant: yup.number().min(0, "Min Participants = 0"),
     max_participant: yup.number().max(999, "Max Participants = 999"),
-    prize_fix_amount: yup.number().required("Please input total prize"),
-    prize_fix_percentages: yup.array().of(yup.number()),
+    prizes: yup.array().of(yup.object().shape({
+      prize_fix_percentages: yup.number().required("Please input total prize"),
+      prize_pool_percentages: yup.number(),
+    })),
     prize_pool_percentages: yup.array().of(yup.number()),
     opening_balance: yup.number().required("Please input opening balance"),
     tnc: yup.object().shape({
@@ -72,14 +74,27 @@ const useCreatePlayForm = () => {
     control,
     setFocus,
     watch,
+    setValue,
   } = useForm<CreatePlayFormI>({
     mode: "onSubmit",
     resolver: yupResolver(schema),
     defaultValues: {
       type: TYPE_ARENA,
       currency: "IDR",
-      prize_fix_percentages: [0, 0, 0],
-      prize_pool_percentages: [0, 0, 0],
+      prizes: [
+        {
+          prize_fix_percentages: 0,
+          prize_pool_percentages: 0,
+        },
+        {
+          prize_fix_percentages: 0,
+          prize_pool_percentages: 0,
+        },
+        {
+          prize_fix_percentages: 0,
+          prize_pool_percentages: 0,
+        },
+      ],
       asset_sub_type: [],
       category: [],
     },
@@ -88,8 +103,10 @@ const useCreatePlayForm = () => {
   const create = async (data: CreatePlayFormI) => {
     try {
       setIsLoading(true);
-      // NOTE: Cannot use any because of react-select plugin data type doesn't match with the data type that I give
-      const paymentMethodParsed = (data.payment_method as any[]).map(item => item.value);
+      // NOTE: Cannot use data type because of react-select plugin data type doesn't match with the data type that I give
+      const paymentMethodParsed = (data.payment_method as any[]).map(
+        (item) => item.value,
+      );
       const payload: CreatePlayPayload = {
         name: data.name,
         category: data.category,
@@ -112,9 +129,9 @@ const useCreatePlayForm = () => {
         opening_balance: data.opening_balance,
         admission_fee: data.admission_fee,
         fee_percentage: data.fee_percentage,
-        prize_fix_amount: data.prize_fix_amount,
-        prize_fix_percentages: data.prize_fix_percentages,
-        prize_pool_percentages: data.prize_pool_percentages,
+        prize_fix_amount: +data.prize_fix_amount,
+        prize_fix_percentages: data.prizes.map(item => item.prize_fix_percentages),
+        prize_pool_percentages: data.prizes.map(item => item.prize_pool_percentages),
         tnc: data.tnc,
         reward_url: data.reward_url,
         featured_link: data.featured_link,
@@ -131,7 +148,7 @@ const useCreatePlayForm = () => {
       if (data.sponsorship.image_url && data.sponsorship.image_url[0]) {
         const sponsorship = await uploadFile(
           accessToken!,
-          data.sponsorship.image_url[0]
+          data.sponsorship.image_url[0],
         );
         payload.sponsorship.image_url = sponsorship;
       } else {
@@ -140,7 +157,7 @@ const useCreatePlayForm = () => {
       if (data.community.image_url && data.community.image_url[0]) {
         const community = await uploadFile(
           accessToken!,
-          data.community.image_url[0]
+          data.community.image_url[0],
         );
         payload.community.image_url = community;
       } else {
@@ -165,6 +182,7 @@ const useCreatePlayForm = () => {
     control,
     isLoading,
     watch,
+    setValue,
   };
 };
 

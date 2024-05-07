@@ -89,7 +89,7 @@ export interface CreateQuizPayload {
   promo_id: string;
   featured_link: string;
   total_questions: number;
-  payment_method: string[] | GroupBase<OptChild>[];
+  payment_method: string[] | OptChild[];
 }
 
 export interface EditQuizPayload {

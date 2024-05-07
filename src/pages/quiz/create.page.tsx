@@ -12,7 +12,7 @@ import useFilePreview from "hooks/shared/useFilePreview";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { Button, FileInput } from "react-daisyui";
-import { Controller } from "react-hook-form";
+import { Controller, useFieldArray } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import ReactSelect, { GroupBase } from "react-select";
 import { useGetPaymentChannelQuery } from "services/modules/admin-fee";
@@ -33,7 +33,7 @@ const CreateQuiz = () => {
   >([]);
   const [search, setSearch] = useState<string>("");
   const [paymentChannelOpt, setPaymentChannelOpt] = useState<
-    GroupBase<OptChild>[]
+    PaymentChannelOpt[]
   >([]);
   const [optionCategory, setOptionCategory] = useState<
     {
@@ -57,6 +57,10 @@ const CreateQuiz = () => {
     isLoading,
     watch,
   } = useCreateQuizForm();
+  const { fields: fieldsPayment, append: appendPayment } = useFieldArray({
+    control,
+    name: "payment_method",
+  });
 
   const banner = watch("banner.image_link");
   const community = watch("communities.image_link");
@@ -116,23 +120,68 @@ const CreateQuiz = () => {
 
   useEffect(() => {
     if (paymentChannelState.data) {
-      const tempOpt: GroupBase<OptChild>[] = [
+      const tempOpt: PaymentChannelOpt[] = [
         {
-          label: "E-Wallet",
+          label: (() => {
+            return (
+              <div
+                onClick={() => {
+                  const ewallet =
+                    paymentChannelState?.data?.type_ewallet?.map((item) => ({
+                      label: item.payment_method,
+                      value: item.payment_method,
+                    })) ?? [];
+                  appendPayment(ewallet);
+                }}
+              >
+                E-Wallet
+              </div>
+            );
+          })(),
           options: paymentChannelState.data.type_ewallet.map((item) => ({
             label: item.payment_method,
             value: item.payment_method,
           })),
         },
         {
-          label: "Bank",
+          label: (() => {
+            return (
+              <div
+                onClick={() => {
+                  const bank =
+                    paymentChannelState?.data?.type_va?.map((item) => ({
+                      label: item.payment_method,
+                      value: item.payment_method,
+                    })) ?? [];
+                  appendPayment(bank);
+                }}
+              >
+                Bank
+              </div>
+            );
+          })(),
           options: paymentChannelState.data.type_va.map((item) => ({
             label: item.payment_method,
             value: item.payment_method,
           })),
         },
         {
-          label: "QRIS",
+          label: (() => {
+            return (
+              <div
+                onClick={() => {
+                  const qris =
+                    paymentChannelState?.data?.type_qris?.map((item) => ({
+                      label: item.payment_method,
+                      value: item.payment_method,
+                    })) ?? [];
+                  appendPayment(qris);
+                }}
+              >
+                QRIS
+              </div>
+            );
+          })(),
           options: paymentChannelState.data.type_qris.map((item) => ({
             label: item.payment_method,
             value: item.payment_method,
@@ -420,7 +469,8 @@ const CreateQuiz = () => {
                     }}
                     isMulti
                     options={paymentChannelOpt}
-                    value={value as GroupBase<OptChild>[]}
+                    // cannot use data type causing error pluggin React Select
+                    value={value as any}
                     onChange={(e) => {
                       onChange(e);
                     }}
