@@ -107,12 +107,10 @@ const useCreateQuizForm = () => {
   const create = async (data: CreateQuizPayload) => {
     try {
       setIsLoading(true);
-      let paymentMethodParsed = (data.payment_method as any[]).map((item) => {
-        if (item) {
-          return item.value;
-        }
-      });
-      paymentMethodParsed = paymentMethodParsed.filter((item) => item != null);
+      // cannot use data type causing error pluggin React Select
+      const paymentMethodParsed = (data.payment_method as any[]).map(
+        (item) => item.value,
+      );
       const payload = { ...data, payment_method: paymentMethodParsed };
       if (data.banner.image_link !== "") {
         const banner = await uploadFile(

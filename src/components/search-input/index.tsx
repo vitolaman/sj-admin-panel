@@ -6,20 +6,21 @@ interface SearchI {
 }
 const SearchInput = ({
   onSubmit,
-  placeholder,
+  placeholder,formClassName, className
 }: {
   onSubmit: (data: SearchI) => void;
   placeholder: string;
+  formClassName?:string,className?:string
 }) => {
   const { handleSubmit, register } = useForm<SearchI>({ mode: "onSubmit" });
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex border rounded-full items-center p-2"
+      className={`flex border rounded-full items-center p-2 ${formClassName}`}
     >
       <input
         type="text"
-        className="outline-none"
+        className={`outline-none ${className}`}
         {...register("text")}
         placeholder={placeholder}
       />

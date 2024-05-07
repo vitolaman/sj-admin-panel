@@ -40,6 +40,7 @@ const menuItems: MenuItem[] = [
     child: [
       { name: "Quiz List", path: "/quiz" },
       { name: "Quiz Category", path: "/quiz/category" },
+      { name: "Question Bank", path: "/quiz/question-bank" },
     ],
   },
   {
@@ -89,6 +90,7 @@ const menuItems: MenuItem[] = [
       { name: "Withdraw Quiz", path: "/withdraw-quiz" },
       { name: "Withdraw Play", path: "/play/withdraw" },
       { name: "Withdraw Circle", path: "/circle/withdraw" },
+      { name: "Disbursement Request", path: "/withdrawal/disbursement-request" },
     ],
   },
   {
@@ -105,6 +107,10 @@ const menuItems: MenuItem[] = [
       },
       { name: "Welcome Banner", path: "/push-notification/welcome-banner" },
     ],
+  },
+  {
+    name: "Gallery",
+    path: "/quiz-gallery",
   },
 ];
 

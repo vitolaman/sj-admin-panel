@@ -3,70 +3,54 @@ import {
   PromoCodeI,
 } from "_interfaces/promo-code.interfaces";
 import ContentContainer from "components/container";
-import CInput from "components/input";
 import SearchInput from "components/search-input";
-import Select from "components/select";
 import Pagination from "components/table/pagination";
 import { Columns, Table } from "components/table/table";
-import { listSpot, segmentUserOptions } from "data/promo-code";
-import useUpsertPromoCodeForm from "hooks/promo-code/useUpsertPromoCodeForm";
 import moment from "moment";
-import { useEffect, useState } from "react";
-import { Button, Dropdown, Modal } from "react-daisyui";
-import { Controller } from "react-hook-form";
-import { IoClose } from "react-icons/io5";
+import { useState } from "react";
+import { Button, Dropdown } from "react-daisyui";
 import {
+  useDeletePromoCodeMutation,
   useGetPromoCodesQuery,
-  useLazyGetPromoCodeByIdQuery,
 } from "services/modules/promo-code";
 import Filter from "./sections/filter.section";
 import { FiEdit, FiFilter, FiMoreHorizontal, FiTrash2 } from "react-icons/fi";
+import PromoCodeForm from "./sections/form.section";
+import ConfirmationModal from "components/confirmation-modal";
+import { errorHandler } from "services/errorHandler";
 
 export const promoCodeRouteName = "promo-code";
+const defaultValueParams={
+  page: 1,
+  limit: 10,
+  search_promo_code: "",
+  start_date_from: "",
+  start_date_until: "",
+}
 const PromoCode = () => {
-  const [params, setParams] = useState<GetPromoCodeQuery>({
-    page: 1,
-    limit: 10,
-    search_promo_code: "",
-  });
+  const [params, setParams] = useState<GetPromoCodeQuery>(defaultValueParams);
+  const [promoCodeId, setPromoCodeId] = useState<string>("");
   const [open, setOpen] = useState<boolean>(false);
-  const [showEdit, setShowEdit] = useState(false);
-  const [showCreate, setShowCreate] = useState(false);
-  const { data, isLoading } = useGetPromoCodesQuery(params);
-  const [getPromoCode, promoCodeDetailState] = useLazyGetPromoCodeByIdQuery();
-  const {
-    handleUpdate,
-    handleCreate,
-    register,
-    errors,
-    reset,
-    control,
-    loadingUpsert,
-    defaultValues,
-  } = useUpsertPromoCodeForm();
+  const [confirmationModal, setConfirmationModal] = useState<{
+    id?: string;
+    open: boolean;
+  }>({ open: false });
+  const [openFilter, setOpenFilter] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (promoCodeDetailState.data && showEdit) {
-      reset({
-        ...promoCodeDetailState.data,
-        start_date: moment(promoCodeDetailState.data.start_date).format(
-          "YYYY-MM-DD"
-        ),
-        end_date: moment(promoCodeDetailState.data.start_date).format(
-          "YYYY-MM-DD"
-        ),
-      });
-    }
-  }, [promoCodeDetailState.data, showEdit]);
-
-  const hideModal = () => {
-    reset(defaultValues);
-    setShowEdit(false);
-    setShowCreate(false);
-  };
+  const { data, isLoading, refetch } = useGetPromoCodesQuery(params);
+  const [deletePromoCodeById] = useDeletePromoCodeMutation();
 
   const handlePageChange = (page: number): void => {
     setParams((prev) => ({ ...prev, page }));
+  };
+  const handleDelete = async () => {
+    try {
+      await deletePromoCodeById(confirmationModal.id!).unwrap();
+      setConfirmationModal({ open: false });
+      refetch();
+    } catch (error) {
+      errorHandler(error);
+    }
   };
 
   const getStatusColor = (
@@ -97,7 +81,7 @@ const PromoCode = () => {
       label: "Promo Code",
     },
     {
-      fieldId: "category",
+      fieldId: "type",
       label: "Category",
     },
     {
@@ -118,11 +102,11 @@ const PromoCode = () => {
       ),
     },
     {
-      fieldId: "discount_percentage",
+      fieldId: "",
       label: "Discount",
       render: (item) => (
         <span className="font-poppins font-normal text-sm text-[#4DA81C]">
-          {item?.discount_percentage}%
+          {`Rp. ${item?.discount_amount?.toLocaleString()?.split(',')?.join('.')}` ?? `${item?.discount_percentage}%`}
         </span>
       ),
     },
@@ -158,19 +142,27 @@ const PromoCode = () => {
       fieldId: "id",
       label: "Action",
       render: (item) => (
-        <Dropdown horizontal="left">
+        <Dropdown horizontal="left" vertical="top">
           <Dropdown.Toggle size="xs">
             <Button size="xs" className="border-none p-0">
               <FiMoreHorizontal />
             </Button>
           </Dropdown.Toggle>
           <Dropdown.Menu className="bg-white z-10 w-[107px] rounded-[10px] flex flex-col gap-2">
-            <Dropdown.Item className="p-0">
+            <Dropdown.Item
+              className="p-0"
+              onClick={async () => {
+                if (item?.id !== undefined) {
+                  setPromoCodeId(item.id);
+                  setOpen(!open);
+                }
+              }}
+            >
               <Button
                 fullWidth
                 size="xs"
                 className="border-none shadow-none p-0 font-normal font-poppins text-sm text-[#201B1C]"
-                startIcon={<FiEdit color="#201B1C" size={20}/>}
+                startIcon={<FiEdit color="#201B1C" size={20} />}
               >
                 Edit
               </Button>
@@ -180,9 +172,10 @@ const PromoCode = () => {
                 fullWidth
                 size="xs"
                 className="border-none shadow-none p-0 font-normal font-poppins text-sm text-[#FF3838]"
-                startIcon={
-                    <FiTrash2 color="#FF3838" size={20}/>
-                }
+                startIcon={<FiTrash2 color="#FF3838" size={20} />}
+                onClick={() => {
+                  setConfirmationModal({ id: item?.id, open: true });
+                }}
               >
                 Delete
               </Button>
@@ -195,7 +188,19 @@ const PromoCode = () => {
 
   return (
     <ContentContainer>
-      <Filter open={open} setOpen={setOpen} />
+      <ConfirmationModal
+        isOpen={confirmationModal.open}
+        onClose={() => {
+          setConfirmationModal({ open: false });
+        }}
+        onConfirm={handleDelete}
+        alertType="danger"
+        title="Delete Promo Code?"
+        subTitle="Are you sure to delete this promo code?"
+        yesText="Delete"
+        noText="Cancel"
+      />
+      <Filter open={openFilter} setOpen={setOpenFilter} setParams={setParams} defaultValue={defaultValueParams} />
       <div className="w-full flex flex-row justify-between items-center">
         <h1 className="font-semibold text-2xl">Promo Code List</h1>
         <div className="flex flex-row gap-3">
@@ -209,15 +214,15 @@ const PromoCode = () => {
             shape="circle"
             className="border-seeds hover:border-seeds"
             onClick={() => {
-              setOpen(!open);
+              setOpenFilter(!openFilter);
             }}
           >
-            <FiFilter color="#3ac4a0" size={20}/>            
+            <FiFilter color="#3ac4a0" size={20} />
           </Button>
           <Button
             className="bg-seeds hover:bg-seeds-300 border-seeds hover:border-seeds-300 text-white rounded-full px-10"
             onClick={() => {
-              setShowCreate(true);
+              setOpen(!open);
             }}
           >
             Create Promo Code
@@ -229,183 +234,24 @@ const PromoCode = () => {
           columns={header}
           loading={isLoading}
           data={data?.data}
-          // onRowClick={(user) => {
-          //   getPromoCode(user.id);
-          //   setShowEdit(true);
-          // }}
         />
       </div>
       <div className="flex flex-col">
         <Pagination
           currentPage={data?.metadata?.currentPage ?? 1}
           totalPages={
-            Math.floor((data?.metadata?.total ?? 0) / params.limit) ?? 0
+            Math.ceil((data?.metadata?.total ?? 0) / params.limit) ?? 0
           }
           onPageChange={handlePageChange}
         />
       </div>
-      {/* <PromoCodeForm open={true} type="Edit" /> */}
-      <Modal
-        className="bg-white w-2/3 max-w-[900px]"
-        open={showEdit || showCreate}
-      >
-        <form
-          onSubmit={async (e) => {
-            if (showCreate) {
-              await handleCreate(e);
-            }
-            if (showEdit) {
-              await handleUpdate(e);
-            }
-            hideModal();
-          }}
-        >
-          <Modal.Header className="flex flex-row justify-between">
-            {showCreate && "Create Promo Code"}
-            {showEdit && "Edit Promo Code"}
-            <IoClose
-              onClick={() => {
-                hideModal();
-              }}
-            />
-          </Modal.Header>
-          <Modal.Body className="overflow-scroll">
-            <div className="w-full flex flex-col gap-3">
-              <div className="flex flex-col gap-2">
-                <label className="font-semibold">Promo Code</label>
-                <CInput
-                  type="string"
-                  {...register("name_promo_code")}
-                  error={errors.name_promo_code}
-                />
-              </div>
-              <div className="flex flex-col gap-2">
-                <label className="font-semibold">Quota</label>
-                <CInput
-                  type="number"
-                  {...register("quantity")}
-                  error={errors.quantity}
-                />
-              </div>
-              <div className="flex flex-col gap-2">
-                <label className="font-semibold">Institution</label>
-                <CInput
-                  type="text"
-                  {...register("institution")}
-                  error={errors.institution}
-                />
-              </div>
-              <div className="flex flex-col gap-2">
-                <label className="font-semibold">Discount</label>
-                <CInput
-                  type="number"
-                  {...register("discount_percentage")}
-                  error={errors.discount_percentage}
-                />
-              </div>
-              <div className="flex flex-col gap-2">
-                <label className="font-semibold">Max Discount</label>
-                <CInput
-                  type="number"
-                  {...register("max_discount")}
-                  error={errors.max_discount}
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <div className="flex flex-col gap-2">
-                  <label className="font-semibold">Start Date</label>
-                  <CInput
-                    type="date"
-                    {...register("start_date")}
-                    error={errors.start_date}
-                  />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <label className="font-semibold">End Date</label>
-                  <CInput
-                    type="date"
-                    {...register("end_date")}
-                    error={errors.end_date}
-                  />
-                </div>
-              </div>
-              <div className="flex flex-col gap-2">
-                <label className="font-semibold">Label Feature</label>
-                <Controller
-                  control={control}
-                  name="segment_user"
-                  render={({ field: { value, onChange } }) => (
-                    <Select
-                      options={segmentUserOptions}
-                      onChange={(e) => {
-                        onChange(e.value);
-                      }}
-                      value={value}
-                    />
-                  )}
-                />
-              </div>
-              <div className="flex flex-col gap-2">
-                <label className="font-semibold text-[#262626]">Spot</label>
-                <div className="flex flex-row gap-4 items-center">
-                  {listSpot.map((item) => (
-                    <div
-                      key={item}
-                      className="flex flex-row gap-4 items-center ml-2 py-2 px-3 border border-gray-200 rounded-lg cursor-pointer"
-                    >
-                      <Controller
-                        control={control}
-                        name="spot"
-                        render={({ field: { value, onChange } }) => (
-                          <input
-                            type="checkbox"
-                            className="scale-150"
-                            id={item}
-                            checked={value?.includes(item)}
-                            value={item}
-                            onChange={(e) => {
-                              if (e.target.checked) {
-                                const prev = value ?? [];
-                                onChange([...prev, item]);
-                              } else {
-                                const temp = value.filter(
-                                  (val) => val !== item
-                                );
-                                onChange(temp);
-                              }
-                            }}
-                          />
-                        )}
-                      />
-                      <label htmlFor={item} className="cursor-pointer">
-                        {item}
-                      </label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </Modal.Body>
-          <Modal.Actions>
-            <Button
-              variant="outline"
-              className="border-seeds text-seeds rounded-full px-10"
-              onClick={hideModal}
-              loading={loadingUpsert}
-              type="button"
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              className="bg-seeds hover:bg-seeds-300 border-seeds hover:border-seeds-300 text-white rounded-full px-10"
-              loading={loadingUpsert}
-            >
-              Save
-            </Button>
-          </Modal.Actions>
-        </form>
-      </Modal>
+      <PromoCodeForm
+        open={open}
+        id={promoCodeId}
+        setOpen={setOpen}
+        setPromoCodeId={setPromoCodeId}
+        refetch={refetch}
+      />
     </ContentContainer>
   );
 };

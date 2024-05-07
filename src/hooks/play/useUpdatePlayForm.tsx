@@ -44,8 +44,10 @@ const useUpdatePlayForm = (id: string) => {
   });
 
   const update = async (data: PlayI) => {
-    // NOTE: Cannot use any because of react-select plugin data type doesn't match with the data type that I give
-    const paymentMethodParsed = (data.payment_method as any[]).map(item => item.value);
+    // NOTE: Cannot use data type because of react-select plugin data type doesn't match with the data type that I give
+    const paymentMethodParsed = (data?.payment_method as any[]).map(
+      (item) => item.value,
+    );
     const payload: EditArenaPayloadI = {
       name: data.name,
       category: data.category as string[],
@@ -62,8 +64,12 @@ const useUpdatePlayForm = (id: string) => {
       opening_balance: data.opening_balance,
       admission_fee: data.admission_fee,
       prize_fix_amount: data.prize_fix_amount,
-      prize_fix_percentages: data.prize_fix_percentages,
-      prize_pool_percentages: data.prize_pool_percentages,
+      prize_fix_percentages: data.prizes?.map(
+        (item) => +item.prize_fix_percentages,
+      ),
+      prize_pool_percentages: data.prizes?.map(
+        (item) => +item.prize_pool_percentages,
+      ),
       tnc: data.tnc,
       reward_url: data.reward_url,
       featured_link: data.featured_link,

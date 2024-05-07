@@ -1,5 +1,5 @@
 import MDEditor, { commands } from "@uiw/react-md-editor";
-import { OptChild } from "_interfaces/admin-fee.interfaces";
+import { OptChild, PaymentChannelOpt } from "_interfaces/admin-fee.interfaces";
 import { EditQuizPayload } from "_interfaces/quiz.interfaces";
 import ContentContainer from "components/container";
 import CurrencyInput from "components/currency-input";
@@ -13,7 +13,7 @@ import useFilePreview from "hooks/shared/useFilePreview";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { Button, FileInput } from "react-daisyui";
-import { Controller } from "react-hook-form";
+import { Controller, useFieldArray } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import ReactSelect, { GroupBase } from "react-select";
 import { useGetPaymentChannelQuery } from "services/modules/admin-fee";
@@ -39,7 +39,7 @@ const UpdateQuiz = () => {
   const [refetchID, setRefetchID] = useState<number>(0);
   const [search, setSearch] = useState<string>("");
   const [paymentChannelOpt, setPaymentChannelOpt] = useState<
-    GroupBase<OptChild>[]
+    PaymentChannelOpt[]
   >([]);
   const [optionCategory, setOptionCategory] = useState<
     {
@@ -65,6 +65,10 @@ const UpdateQuiz = () => {
     watch,
     reset,
   } = useUpdateQuizForm(params.id!);
+  const { fields: fieldsPayment, append: appendPayment } = useFieldArray({
+    control,
+    name: "payment_method",
+  });
 
   const banner = watch("banner.image_link");
   const community = watch("communities.image_link");
@@ -130,32 +134,79 @@ const UpdateQuiz = () => {
 
   useEffect(() => {
     if (paymentChannelState.data && data) {
-      const tempOpt: GroupBase<OptChild>[] = [
+      const tempOpt: PaymentChannelOpt[] = [
         {
-          label: "E-Wallet",
+          label: (() => {
+            return (
+              <div
+                onClick={() => {
+                  const ewallet =
+                    paymentChannelState?.data?.type_ewallet?.map((item) => ({
+                      label: item.payment_method,
+                      value: item.payment_method,
+                    })) ?? [];
+                  appendPayment(ewallet);
+                }}
+              >
+                E-Wallet
+              </div>
+            );
+          })(),
           options: paymentChannelState.data.type_ewallet.map((item) => ({
             label: item.payment_method,
             value: item.payment_method,
           })),
         },
         {
-          label: "Bank",
+          label: (() => {
+            return (
+              <div
+                onClick={() => {
+                  const bank =
+                    paymentChannelState?.data?.type_va?.map((item) => ({
+                      label: item.payment_method,
+                      value: item.payment_method,
+                    })) ?? [];
+                  appendPayment(bank);
+                }}
+              >
+                Bank
+              </div>
+            );
+          })(),
           options: paymentChannelState.data.type_va.map((item) => ({
             label: item.payment_method,
             value: item.payment_method,
           })),
         },
         {
-          label: "QRIS",
+          label: (() => {
+            return (
+              <div
+                onClick={() => {
+                  const qris =
+                    paymentChannelState?.data?.type_qris?.map((item) => ({
+                      label: item.payment_method,
+                      value: item.payment_method,
+                    })) ?? [];
+                  appendPayment(qris);
+                }}
+              >
+                QRIS
+              </div>
+            );
+          })(),
           options: paymentChannelState.data.type_qris.map((item) => ({
             label: item.payment_method,
             value: item.payment_method,
           })),
         },
       ];
-      const selectedEWallet = paymentChannelState.data.type_ewallet.map(
+      let selectedEWallet = paymentChannelState.data.type_ewallet.map(
         (item) => {
-          if (data.payment_method?.includes(item.payment_method)) {
+          if (
+            (data.payment_method as string[])?.includes(item.payment_method)
+          ) {
             return {
               label: item.payment_method,
               value: item.payment_method,
@@ -163,22 +214,26 @@ const UpdateQuiz = () => {
           }
         }
       );
-      const selectedBank = paymentChannelState.data.type_va.map((item) => {
-        if (data.payment_method?.includes(item.payment_method)) {
+      let selectedBank = paymentChannelState.data.type_va.map((item) => {
+        if ((data.payment_method as string[])?.includes(item.payment_method)) {
           return {
             label: item.payment_method,
             value: item.payment_method,
           };
         }
       });
-      const selectedQris = paymentChannelState.data.type_qris.map((item) => {
-        if (data.payment_method?.includes(item.payment_method)) {
+      let selectedQris = paymentChannelState.data.type_qris.map((item) => {
+        if ((data.payment_method as string[])?.includes(item.payment_method)) {
           return {
             label: item.payment_method,
             value: item.payment_method,
           };
         }
       });
+      setPaymentChannelOpt(tempOpt);
+      selectedEWallet = selectedEWallet.filter(item => item != undefined);
+      selectedBank = selectedBank.filter(item => item != undefined);
+      selectedQris = selectedQris.filter(item => item != undefined);
       setPaymentChannelOpt(tempOpt);
 
       reset({
@@ -474,7 +529,8 @@ const UpdateQuiz = () => {
                     }}
                     isMulti
                     options={paymentChannelOpt}
-                    value={value as GroupBase<OptChild>[]}
+                    // cannot use data type causing error pluggin React Select
+                    value={value as any}
                     onChange={(e) => {
                       onChange(e);
                     }}
