@@ -15,7 +15,7 @@ interface Props<T extends FieldValues> {
   setSelect: React.Dispatch<React.SetStateAction<string | number | boolean | undefined>>;
 }
 
-export default function RadioInput<T extends FieldValues>({
+export default function FormRadio<T extends FieldValues>({
   label,
   registerName,
   setValue,

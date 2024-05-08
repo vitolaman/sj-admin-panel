@@ -1,17 +1,34 @@
 import { useState } from "react";
 import { useCircleListQuery } from "services/modules/circle";
-import {
-  useFilterArticle,
-  useFilterCircle,
-  useFilterPlay,
-  useFilterQuiz,
-} from "./useFilterState";
 import { usePlayListQuery } from "services/modules/play";
 import { useGetQuizListQuery } from "services/modules/quiz";
 import { useGetArticlesQuery } from "services/modules/article";
+import { CircleReq } from "_interfaces/circle.interface";
+import { PlayReq } from "_interfaces/play.interfaces";
+import { GetQuizQuery } from "_interfaces/quiz.interfaces";
+import { GetArticleQuery } from "_interfaces/article.interfaces";
 
-export const useCircleSelection = () => {
-  const { filterCircle, setFilterCircle } = useFilterCircle();
+export const useCategoryState = () => {
+  const [selectAll, setSelectAll] = useState<string[]>([]);
+  const [typeCategoryPromo, setTypeCategoryPromo] = useState<string[]>([]);
+  const [checkedFeature, setCheckedFeature] = useState<
+    {
+      id: string;
+      name: string;
+      type: string;
+    }[]
+  >([]);
+  return {
+    selectAll,
+    setSelectAll,
+    typeCategoryPromo,
+    setTypeCategoryPromo,
+    checkedFeature,
+    setCheckedFeature,
+  };
+};
+
+export const useCircleSelection = (filterCircle: CircleReq) => {
   const dataCircle = useCircleListQuery(filterCircle).data;
   const isLoadingCircle = useCircleListQuery(filterCircle).isLoading;
   const [circleSelection, setCircleSelection] = useState<
@@ -24,15 +41,12 @@ export const useCircleSelection = () => {
   return {
     circleSelection,
     setCircleSelection,
-    filterCircle,
-    setFilterCircle,
     dataCircle,
     isLoadingCircle,
   };
 };
 
-export const usePlaySelection = () => {
-  const { filterPlay, setFilterPlay } = useFilterPlay();
+export const usePlaySelection = (filterPlay: PlayReq) => {
   const dataPlay = usePlayListQuery(filterPlay).data;
   const isLoadingPlay = usePlayListQuery(filterPlay).isLoading;
   const [playSelection, setPlaySelection] = useState<
@@ -45,15 +59,12 @@ export const usePlaySelection = () => {
   return {
     playSelection,
     setPlaySelection,
-    filterPlay,
-    setFilterPlay,
     dataPlay,
     isLoadingPlay,
   };
 };
 
-export const useQuizSelection = () => {
-  const { filterQuiz, setFilterQuiz } = useFilterQuiz();
+export const useQuizSelection = (filterQuiz: GetQuizQuery) => {
   const dataQuiz = useGetQuizListQuery(filterQuiz).data;
   const isLoadingQuiz = useGetQuizListQuery(filterQuiz).isLoading;
 
@@ -67,15 +78,12 @@ export const useQuizSelection = () => {
   return {
     quizSelection,
     setQuizSelection,
-    filterQuiz,
-    setFilterQuiz,
     dataQuiz,
     isLoadingQuiz,
   };
 };
 
-export const useArticleSelection = () => {
-  const { filterArticle, setFilterArticle } = useFilterArticle();
+export const useArticleSelection = (filterArticle: GetArticleQuery) => {
   const dataArticle = useGetArticlesQuery(filterArticle).data;
   const isLoadingArticle = useGetArticlesQuery(filterArticle).isLoading;
   const [articleSelection, setArticleSelection] = useState<
@@ -88,8 +96,6 @@ export const useArticleSelection = () => {
   return {
     articleSelection,
     setArticleSelection,
-    filterArticle,
-    setFilterArticle,
     dataArticle,
     isLoadingArticle,
   };
