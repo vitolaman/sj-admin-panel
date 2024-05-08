@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { Button } from "react-daisyui";
 import { FiDownload } from "react-icons/fi";
 import { toast } from "react-toastify";
+import { errorHandler } from "services/errorHandler";
 import {
   useGetDisbursementRequestQuery,
   useLazyGetDisbursementRequestQuery,
@@ -25,23 +26,36 @@ const DisbursementRequest = () => {
     search: "",
   });
   const { data, isLoading, refetch } = useGetDisbursementRequestQuery(params);
-  const [getAllData, dataState] = useLazyGetDisbursementRequestQuery();
+  const [getAllData] = useLazyGetDisbursementRequestQuery();
   const [updateDisbursementRequestById, updateState] =
     useUpdateDisbursementRequestMutation();
   const handlePageChange = (page: number): void => {
     setParams((prev) => ({ ...prev, page }));
   };
 
-  const handleSheetsData = () => {
-    const sheetsData = dataState.data?.configurations;
-    if (sheetsData && Array.isArray(sheetsData) && sheetsData.length > 0) {
-      const ws = XLSX.utils.json_to_sheet(sheetsData);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Disbursement Request Data");
+  const handleSheetsData = async () => {
+    try {
+      const sheetsData = await getAllData({
+        page: 0,
+        limit: 0,
+        search: "",
+      }).unwrap();
 
-      XLSX.writeFile(wb, "disbursement-request-data.xlsx");
-    } else {
-      toast.error("Data is undefined or not a valid array.");
+      if (
+        sheetsData.configurations &&
+        Array.isArray(sheetsData.configurations) &&
+        sheetsData.configurations.length > 0
+      ) {
+        const ws = XLSX.utils.json_to_sheet(sheetsData.configurations);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Disbursement Request Data");
+
+        XLSX.writeFile(wb, "disbursement-request-data.xlsx");
+      } else {
+        toast.error("Data is undefined or not a valid array.");
+      }
+    } catch (error) {
+      errorHandler(error);
     }
   };
 
@@ -50,10 +64,6 @@ const DisbursementRequest = () => {
       refetch();
     }
   }, [updateState.isSuccess]);
-
-  useEffect(() => {
-    getAllData({ page: 0, limit: 0, search: "" });
-  }, []);
 
   const getStatusColor = (
     status: string
