@@ -45,6 +45,7 @@ import BlastPushNotification, {
   pushNotifRouteName,
 } from "pages/push-notification/blast-push-notification/index.page";
 import Article, { articleRouteName } from "pages/blog/article/index.page";
+import XPManagement, { xpRouteName } from "pages/xp-management/index.page";
 import FormArticle, {
   createArticleRouteName,
   editArticleRouteName,
@@ -142,6 +143,7 @@ const protectedRoutes: RouteObject[] = [
         ],
       },
       { path: promoCodeRouteName, element: <PromoCode /> },
+      { path: xpRouteName, element: <XPManagement /> },
       { path: afRouteName, element: <AdminFee /> },
       { path: "dashboard", element: <DashboardHome /> },
       {
@@ -253,7 +255,7 @@ const protectedRoutes: RouteObject[] = [
       //     },
       //   ]
       // }
-      { path: "quiz-gallery", element: <QuizGallery/> },
+      { path: "quiz-gallery", element: <QuizGallery /> },
     ],
   },
   { path: "*", element: <Navigate to="/not-found" /> },

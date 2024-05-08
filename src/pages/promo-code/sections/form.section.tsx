@@ -1,35 +1,38 @@
 import {
-  PromoCodeCustomInputI,
+  PromoCodeFormDataI,
   PromoCodeModalFormI,
-  PromoCodeRadioI,
 } from "_interfaces/promo-code.interfaces";
-import { Button, Modal, Tabs } from "react-daisyui";
+import { Button, Modal } from "react-daisyui";
 import useUpsertPromoCodeForm from "hooks/promo-code/useUpsertPromoCodeForm";
-import CInput from "components/input";
 import { useEffect, useState } from "react";
 import {
-  discountType,
   levelExpOptions,
   segmentUserOptions,
-  // statusPromo,
+  statusPromo,
 } from "data/promo-code";
 import { Controller } from "react-hook-form";
 import { useGetReferralCodesQuery } from "services/modules/referral-code";
 import Select from "react-select";
-import { useFilterRef } from "../../../hooks/promo-code/useFilterState";
-import { PlayReq } from "_interfaces/play.interfaces";
-import { GetQuizQuery } from "_interfaces/quiz.interfaces";
+import {
+  useFilterArticle,
+  useFilterCircle,
+  useFilterPlay,
+  useFilterQuiz,
+  useFilterRef,
+} from "../../../hooks/promo-code/useFilterState";
 import { useLazyGetPromoCodeByIdQuery } from "services/modules/promo-code";
 import moment from "moment";
 import { FiX } from "react-icons/fi";
-import {
-  useArticleSelection,
-  useCircleSelection,
-  usePlaySelection,
-  useQuizSelection,
-} from "hooks/promo-code/useCategoryState";
-import TabRadio from "./tabRadio.section";
+import { useCategoryState } from "hooks/promo-code/useCategoryState";
 import ReactQuill from "react-quill";
+import FormInput from "components/input/formInput";
+import FormRadio from "components/input/formRadio";
+import CategoryModal from "./categoryModal.section";
+import LeftFormModal from "./leftFormModal.section";
+import { useLazyGetArticleByIdQuery } from "services/modules/article";
+import { useLazyGetQuizByIdQuery } from "services/modules/quiz";
+import { useLazyPlayByIdQuery } from "services/modules/play";
+import { useLazyCircleDetailQuery } from "services/modules/circle";
 
 const PromoCodeModalForm = ({
   open,
@@ -39,28 +42,23 @@ const PromoCodeModalForm = ({
   refetch,
 }: PromoCodeModalFormI) => {
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const [openTab, setOpenTab] = useState<string>("circle");
-  const [discountSelect, setDiscountSelect] = useState<string>("");
-  const [levelSelect, setLevelSelect] = useState<string>("");
-  // hide until endpoint updated
-  // const [statusSelect, setStatusSelect] = useState<string>("");
+  const [discountSelect, setDiscountSelect] = useState<
+    string | number | boolean | undefined
+  >();
+  const [levelSelect, setLevelSelect] = useState<
+    string | number | boolean | undefined
+  >();
+  const [statusSelect, setStatusSelect] = useState<
+    string | number | boolean | undefined
+  >();
   const [richValue, setRichValue] = useState<string>();
+  const [isLoadingFeatureIds, setIsLoadingFeatureIds] =
+    useState<boolean>(false);
   const [segmentUser, setSegmentUser] = useState<string | null>(null);
   const [defaultValueSegmentUser, setDefaultValueSegmentUser] = useState<{
     label: string;
     value: string;
   } | null>(null);
-  const [playCategory, setPlayCategory] = useState<string>("Tournament");
-  const [selectAll, setSelectAll] = useState<string[]>([]);
-  const [selectIdType, setSelectIdType] = useState<string[]>([]);
-  const [typeCategoryPromo, setTypeCategoryPromo] = useState<string[]>([]);
-  const [checkedFeature, setCheckedFeature] = useState<
-    {
-      id: string;
-      name: string;
-      type: string;
-    }[]
-  >([]);
   const [refCodeSelection, setRefCodeSelection] = useState<
     {
       key: number;
@@ -68,42 +66,27 @@ const PromoCodeModalForm = ({
       value: string;
     }[]
   >([]);
+  const {
+    selectAll,
+    setSelectAll,
+    typeCategoryPromo,
+    setTypeCategoryPromo,
+    checkedFeature,
+    setCheckedFeature,
+  } = useCategoryState();
 
-  const {
-    circleSelection,
-    setCircleSelection,
-    filterCircle,
-    setFilterCircle,
-    dataCircle,
-    isLoadingCircle,
-  } = useCircleSelection();
-  const {
-    playSelection,
-    setPlaySelection,
-    filterPlay,
-    setFilterPlay,
-    dataPlay,
-    isLoadingPlay,
-  } = usePlaySelection();
-  const {
-    quizSelection,
-    setQuizSelection,
-    filterQuiz,
-    setFilterQuiz,
-    dataQuiz,
-    isLoadingQuiz,
-  } = useQuizSelection();
-  const {
-    articleSelection,
-    setArticleSelection,
-    filterArticle,
-    setFilterArticle,
-    dataArticle,
-    isLoadingArticle,
-  } = useArticleSelection();
+  const { filterCircle, setFilterCircle } = useFilterCircle();
+  const { filterPlay, setFilterPlay } = useFilterPlay();
+  const { filterQuiz, setFilterQuiz } = useFilterQuiz();
+  const { filterArticle, setFilterArticle } = useFilterArticle();
 
   const { paramsRef, setParamsRef } = useFilterRef();
   const [getPromoCode, promoCodeDetailState] = useLazyGetPromoCodeByIdQuery();
+  const [getArticle] = useLazyGetArticleByIdQuery();
+  const [getQuiz] = useLazyGetQuizByIdQuery();
+  const [getPlay] = useLazyPlayByIdQuery();
+  const [getCircle] = useLazyCircleDetailQuery();
+
   const dataRef = useGetReferralCodesQuery(paramsRef).data;
 
   const {
@@ -118,6 +101,7 @@ const PromoCodeModalForm = ({
     setValue,
     trigger,
     isSuccess,
+    watch,
   } = useUpsertPromoCodeForm();
 
   //TODO: Handling
@@ -139,37 +123,56 @@ const PromoCodeModalForm = ({
       search_title: "",
     }));
   };
-  const handleCategoryPromo = (type: string) => {
-    if (selectAll.find((item) => item === type)) {
-      setSelectAll((prev) => prev.filter((item) => item !== type));
-    } else {
-      setSelectAll((prev) => [...prev, type]);
-      setCheckedFeature((prev) => prev.filter((item) => item.type !== type));
-    }
-  };
 
-  const handleSelectedIdType = (category: string) => {
-    if (
-      checkedFeature.find((item) => {
-        item.type === category;
-      }) === undefined
-    ) {
-      setSelectIdType((prev) => prev.filter((item) => item !== category));
-    }
-  };
   const handleResetForm = () => {
     reset({ ...defaultValues });
     setPromoCodeId("");
     setDiscountSelect("");
+    setRichValue(undefined);
+    setStatusSelect(undefined);
     setSegmentUser(null);
-    setLevelSelect("");
+    setLevelSelect(0);
     setDefaultValueSegmentUser(null);
     setSelectAll([]);
-    setSelectIdType([]);
     setTypeCategoryPromo([]);
     setCheckedFeature([]);
     setRefCodeSelection([]);
     handleResetFilter();
+  };
+
+  const handleFeatureIds = async (id: string) => {
+    const article = await getArticle(id);
+    const quiz = await getQuiz(id);
+    const play = await getPlay(id);
+    const circle = await getCircle({ id: id });
+
+    if (article.status === "fulfilled") {
+      return {
+        id: String(article.data.news.id),
+        name: article.data.news.title,
+        type: "Premium Content",
+      };
+    } else if (quiz.status === "fulfilled") {
+      return {
+        id: quiz.data.id,
+        name: quiz.data.name,
+        type: "Paid Quiz",
+      };
+    } else if (play.status === "fulfilled") {
+      return {
+        id: play.data.id,
+        name: play.data.name,
+        type: "Paid Tournament",
+      };
+    } else if (circle.status === "fulfilled") {
+      return {
+        id: circle.data.data.id,
+        name: circle.data.data.name,
+        type: "Premium Circle",
+      };
+    } else {
+      return { id: "", name: "", type: "" };
+    }
   };
   //TODO:UseEffect
   useEffect(() => {
@@ -177,12 +180,6 @@ const PromoCodeModalForm = ({
       refetch();
     }
   }, [isSuccess]);
-  useEffect(() => {
-    handleSelectedIdType("Premium Circle");
-    handleSelectedIdType("Paid Tournament");
-    handleSelectedIdType("Paid Quiz");
-    handleSelectedIdType("Premium Content");
-  }, [checkedFeature]);
 
   useEffect(() => {
     if (discountSelect === "Nominal") {
@@ -193,13 +190,14 @@ const PromoCodeModalForm = ({
     }
   }, [discountSelect]);
   useEffect(() => {
-    const filteredTypeCategoryPromo = [...selectAll, ...selectIdType].filter(
-      (value, index, self) => {
-        return self.indexOf(value) === index;
-      }
-    );
+    const filteredTypeCategoryPromo = [
+      ...selectAll,
+      ...checkedFeature.map((obj) => obj.type.toString()),
+    ].filter((value, index, self) => {
+      return self.indexOf(value) === index;
+    });
     setTypeCategoryPromo(filteredTypeCategoryPromo);
-  }, [checkedFeature]);
+  }, [checkedFeature, selectAll]);
   useEffect(() => {
     if (dataRef?.data === null) {
       setRefCodeSelection([]);
@@ -216,208 +214,51 @@ const PromoCodeModalForm = ({
       setRefCodeSelection(tempOpt);
     }
   }, [dataRef]);
-
   useEffect(() => {
-    if (dataCircle?.data === null) {
-      setCircleSelection([]);
-    } else if (dataCircle) {
-      const tempOptPlay: {
-        id: string;
-        name: string;
-        type: string;
-      }[] = dataCircle?.data.map((item, i) => ({
-        id: item.id,
-        name: item.name,
-        type: "Premium Circle",
-      }));
-      setCircleSelection(tempOptPlay);
-    }
-  }, [dataCircle, filterCircle]);
-
-  useEffect(() => {
-    if (dataPlay?.playList === null) {
-      setPlaySelection([]);
-    } else if (dataPlay) {
-      const tempOptPlay: {
-        id: string;
-        name: string;
-        type: string;
-      }[] = dataPlay?.playList.map((item, i) => ({
-        id: item.id,
-        name: item.name,
-        type: "Paid Tournament",
-      }));
-      setPlaySelection(tempOptPlay);
-    }
-  }, [dataPlay, filterPlay]);
-
-  useEffect(() => {
-    if (dataQuiz?.data === null) {
-      setQuizSelection([]);
-    } else if (dataQuiz) {
-      const tempOptQuiz: {
-        id: string;
-        name: string;
-        type: string;
-      }[] = dataQuiz?.data.map((item, i) => ({
-        id: item.id,
-        name: item.name,
-        type: "Paid Quiz",
-      }));
-      setQuizSelection(tempOptQuiz);
-    }
-  }, [dataQuiz, filterQuiz]);
-
-  useEffect(() => {
-    if (dataArticle?.data === null) {
-      setArticleSelection([]);
-    } else if (dataArticle) {
-      const tempOptArticle: {
-        id: string;
-        name: string;
-        type: string;
-      }[] = dataArticle?.data.map((item, i) => ({
-        id: String(item.id),
-        name: item.title,
-        type: "Premium Content",
-      }));
-      setArticleSelection(tempOptArticle);
-    }
-  }, [dataArticle, filterArticle]);
+    setSelectAll(() => {
+      if (promoCodeDetailState.data?.type.includes(",")) {
+        const checkedFeatureType = checkedFeature.map((obj) =>
+          obj.type.toString()
+        );
+        const selectAllType = promoCodeDetailState.data?.type.split(",");
+        const filteredTypes = selectAllType.filter((item) => {
+          return !checkedFeatureType.includes(item);
+        });
+        return filteredTypes
+      } else {
+        return [`${promoCodeDetailState.data?.type}`];
+      }
+    });
+  }, [promoCodeDetailState.data, checkedFeature]);
 
   useEffect(() => {
     if (promoCodeDetailState.data && id) {
       reset({
         ...promoCodeDetailState.data,
         start_date: moment(promoCodeDetailState.data.start_date).format(
-          "YYYY-MM-DD"
+          "YYYY-MM-DD HH:mm"
         ),
-        end_date: moment(promoCodeDetailState.data.start_date).format(
-          "YYYY-MM-DD"
+        end_date: moment(promoCodeDetailState.data.end_date).format(
+          "YYYY-MM-DD HH:mm"
         ),
       });
     }
     if (id !== undefined && id !== "") {
       getPromoCode(id);
       setRichValue(promoCodeDetailState.data?.tnc as string);
+      setStatusSelect(promoCodeDetailState.data?.is_active);
       setSegmentUser(promoCodeDetailState.data?.segment_user as string);
       setDiscountSelect(promoCodeDetailState.data?.discount_type as string);
-      setLevelSelect(`${promoCodeDetailState.data?.min_exp}`);
+      setLevelSelect(promoCodeDetailState.data?.min_exp);
     }
   }, [promoCodeDetailState.data, id]);
 
-  const CustomInput = ({
-    label,
-    registerName,
-    type,
-    maxLength,
-    placeholder,
-    extraElement,
-  }: PromoCodeCustomInputI) => {
-    return (
-      <div className="flex flex-col gap-2 w-full">
-        <label
-          className="font-semibold font-poppins text-base text-[#262626] cursor-pointer"
-          htmlFor={`${label} label`}
-        >
-          {label}
-        </label>
-        <CInput
-          onWheel={(e) => {
-            const target = e.target as HTMLInputElement;
-            target.blur();
-            e.stopPropagation();
-            setTimeout(() => {
-              target.focus();
-            }, 0);
-          }}
-          type={type}
-          maxLength={maxLength}
-          min={0}
-          disabled={
-            (label === "Title" ||
-              label === "Promo Code" ||
-              label === "Discount Nominal" ||
-              label === "Discount Percentage" ||
-              label === "Max Discount") &&
-            id !== ""
-              ? true
-              : false
-          }
-          style={{
-            fontWeight: "400",
-            fontFamily: "Poppins, sans-serif",
-            fontSize: "16px",
-            lineHeight: "24px",
-            color: "#201B1C",
-          }}
-          id={`${label} label`}
-          placeholder={placeholder}
-          {...register(registerName)}
-        />
-        {extraElement}
-        <p className="font-poppins font-normal text-sm text-[#EF5350] text-right">
-          {errors[registerName]?.message}
-        </p>
-      </div>
-    );
-  };
-  const RadioInput = ({
-    label,
-    registerName,
-    name,
-    disabled,
-    data,
-    select,
-    setSelect,
-  }: PromoCodeRadioI) => {
-    return (
-      <div className="flex flex-col gap-2">
-        <label className="font-semibold font-poppins text-base text-[#262626]">
-          {label}
-        </label>
-        <div className="flex gap-7 flex-wrap">
-          {data.map((value, index) => {
-            return (
-              <label
-                key={index}
-                onClick={() => {
-                  if (!disabled) {
-                    setSelect(value.value);
-                    setValue(registerName, value.value);
-                  }
-                }}
-                htmlFor={value.label}
-                className={`flex gap-5 font-normal font-poppins text-base ${
-                  disabled
-                    ? "text-[#727272] cursor-not-allowed"
-                    : select === value.value
-                    ? "text-[#007bff] cursor-pointer"
-                    : "text-[#262626] cursor-pointer"
-                }`}
-              >
-                <input
-                  type="radio"
-                  name={name}
-                  className={`w-6 h-6 ${
-                    disabled ? "cursor-not-allowed" : "cursor-pointer"
-                  }`}
-                  id={value.label}
-                  disabled={disabled}
-                  checked={select === value.value}
-                />
-                {value.label}
-              </label>
-            );
-          })}
-        </div>
-      </div>
-    );
-  };
-
   //TODO:Parent Element
   return (
-    <Modal open={open} className="bg-white w-11/12 max-w-[2000px] p-8">
+    <Modal
+      open={open}
+      className="bg-white w-11/12 max-w-[2000px] p-8"
+    >
       <Modal.Header className="flex justify-between">
         <p className="font-semibold font-poppins text-xl text-black w-fit">
           {open && openModal
@@ -437,280 +278,76 @@ const PromoCodeModalForm = ({
       </Modal.Header>
       <Modal.Body className="flex flex-col gap-4">
         {open && openModal ? (
-          <>
-            <Tabs className="w-full">
-              {circleSelection !== undefined && (
-                <TabRadio
-                  data={circleSelection}
-                  onSubmit={(formData) => {
-                    setFilterCircle((prev) => ({
-                      ...prev,
-                      search: formData.text,
-                    }));
-                  }}
-                  onClick={() => {
-                    setOpenTab("circle");
-                    handleResetFilter();
-                  }}
-                  onClickSelectAll={() => {
-                    handleCategoryPromo("Premium Circle");
-                  }}
-                  label="circle"
-                  isLoading={isLoadingCircle}
-                  typePromoCategory="Premium Circle"
-                  openTab={openTab}
-                  selectAll={selectAll}
-                  checkedFeature={checkedFeature}
-                  setCheckedFeature={setCheckedFeature}
-                  setSelectIdType={setSelectIdType}
-                />
-              )}
-              {playSelection !== undefined && (
-                <TabRadio
-                  data={
-                    playCategory === "Tournament"
-                      ? playSelection
-                      : quizSelection
-                  }
-                  onSubmit={(formData) => {
-                    if (playCategory === "Tournament") {
-                      setFilterPlay((prev: PlayReq) => ({
-                        ...prev,
-                        search: formData.text,
-                      }));
-                    } else {
-                      setFilterQuiz((prev: GetQuizQuery) => ({
-                        ...prev,
-                        search: formData.text,
-                      }));
-                    }
-                  }}
-                  onClick={() => {
-                    setOpenTab("play");
-                    handleResetFilter();
-                  }}
-                  onClickSelectAll={() => {
-                    if (playCategory === "Tournament") {
-                      handleCategoryPromo("Paid Tournament");
-                    } else {
-                      handleCategoryPromo("Paid Quiz");
-                    }
-                  }}
-                  label="play"
-                  isLoading={
-                    playCategory === "Tournament"
-                      ? isLoadingPlay
-                      : isLoadingQuiz
-                  }
-                  typePromoCategory={
-                    playCategory === "Tournament"
-                      ? "Paid Tournament"
-                      : "Paid Quiz"
-                  }
-                  openTab={openTab}
-                  selectAll={selectAll}
-                  checkedFeature={checkedFeature}
-                  setCheckedFeature={setCheckedFeature}
-                  setSelectIdType={setSelectIdType}
-                  extraElement={
-                    <div className="flex gap-5 items-center my-4">
-                      <p className="font-semibold font-poppins text-lg text-[#201B1C]">
-                        Play Category
-                      </p>
-                      <Button
-                        onClick={() => {
-                          setPlayCategory("Tournament");
-                          setFilterQuiz((prev: GetQuizQuery) => ({
-                            ...prev,
-                            search: "",
-                          }));
-                        }}
-                        className={`${
-                          playCategory === "Tournament"
-                            ? "bg-[#3AC4A0] text-white hover:bg-[#3AC4A0]"
-                            : "bg-[#E9E9E980] text-[#7C7C7C] hover:bg-[#E9E9E980]"
-                        } border-none w-[174px] font-normal  font-poppins text-sm`}
-                      >
-                        Play Tournament
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          setPlayCategory("Quiz");
-                          setFilterPlay((prev: PlayReq) => ({
-                            ...prev,
-                            search: "",
-                          }));
-                        }}
-                        className={`${
-                          playCategory === "Quiz"
-                            ? "bg-[#3AC4A0] text-white hover:bg-[#3AC4A0]"
-                            : "bg-[#E9E9E980] text-[#7C7C7C] hover:bg-[#E9E9E980]"
-                        } border-none w-[174px] font-normal font-poppins text-sm`}
-                      >
-                        Play Quiz
-                      </Button>
-                    </div>
-                  }
-                />
-              )}
-              {articleSelection !== undefined && (
-                <TabRadio
-                  data={articleSelection}
-                  onSubmit={(formData) => {
-                    setFilterArticle((prev) => ({
-                      ...prev,
-                      search_title: formData.text,
-                    }));
-                  }}
-                  onClick={() => {
-                    setOpenTab("article");
-                    handleResetFilter();
-                  }}
-                  onClickSelectAll={() => {
-                    handleCategoryPromo("Premium Content");
-                  }}
-                  label="article"
-                  isLoading={isLoadingArticle}
-                  typePromoCategory="Premium Content"
-                  openTab={openTab}
-                  selectAll={selectAll}
-                  checkedFeature={checkedFeature}
-                  setCheckedFeature={setCheckedFeature}
-                  setSelectIdType={setSelectIdType}
-                />
-              )}
-            </Tabs>
-            <div className="self-end flex gap-4">
-              <Button
-                onClick={() => {
-                  setOpenModal(!openModal);
-                  handleResetFilter();
-                }}
-                className="border-[#3AC4A0] bg-white rounded-full text-[#3AC4A0] w-[268px] hover:bg-white"
-              >
-                Back
-              </Button>
-              <Modal.Actions className="m-0">
-                <Button
-                  loading={loadingUpsert}
-                  onClick={async (e) => {
-                    setValue(
-                      "feature_ids",
-                      checkedFeature.map((obj) => obj.id.toString())
-                    );
-                    setValue("type", typeCategoryPromo.join(","));
-                    if (id !== undefined && id !== "") {
-                      await handleUpdate(e);
-                    } else {
-                      await handleCreate(e);
-                    }
-                    handleResetForm();
-                    setOpen(!open);
-                    setOpenModal(!openModal);
-                  }}
-                  className="border-none bg-[#3AC4A0] rounded-full text-white w-[268px] hover:bg-[#3AC4A0]"
-                >
-                  Save
-                </Button>
-              </Modal.Actions>
-            </div>
-          </>
+          <CategoryModal
+            open={open}
+            setOpen={setOpen}
+            openModal={openModal}
+            setOpenModal={setOpenModal}
+            loadingUpsert={loadingUpsert}
+            id={id}
+            setValue={setValue}
+            handleCreate={handleCreate}
+            handleUpdate={handleUpdate}
+            handleResetFilter={handleResetFilter}
+            handleResetForm={handleResetForm}
+            selectAll={selectAll}
+            setSelectAll={setSelectAll}
+            checkedFeature={checkedFeature}
+            setCheckedFeature={setCheckedFeature}
+            typeCategoryPromo={typeCategoryPromo}
+            filterCircle={filterCircle}
+            setFilterCircle={setFilterCircle}
+            filterPlay={filterPlay}
+            setFilterPlay={setFilterPlay}
+            filterQuiz={filterQuiz}
+            setFilterQuiz={setFilterQuiz}
+            filterArticle={filterArticle}
+            setFilterArticle={setFilterArticle}
+            watch={watch}
+          />
         ) : (
           <>
             <div className="flex justify-between gap-10">
-              <div className="flex flex-col gap-4 w-5/12">
-                <CustomInput
-                  label="Title"
-                  type="text"
-                  registerName="name_promo_code"
-                />
-                <CustomInput
-                  label="Promo Code"
-                  registerName="promo_code"
-                  type="text"
-                  maxLength={20}
-                  extraElement={
-                    <p className="font-light font-poppins text-sm text-[#7C7C7C]">
-                      Max 20 character
-                    </p>
-                  }
-                />
-                <CustomInput
-                  label="Quota"
-                  type="number"
-                  registerName="quantity"
-                />
-                <RadioInput
-                  label="Discount Type"
-                  registerName="discount_type"
-                  name="discount"
-                  disabled={id !== ""}
-                  data={discountType}
-                  select={discountSelect}
-                  setSelect={setDiscountSelect}
-                />
-                <div className="flex gap-4 w-full">
-                  {discountSelect === "Percentage" ? (
-                    <>
-                      <CustomInput
-                        label="Discount Percentage"
-                        registerName="discount_percentage"
-                        type="number"
-                        placeholder="%"
-                      />
-                      <CustomInput
-                        label="Max Discount"
-                        registerName="max_discount"
-                        type="number"
-                        placeholder="Rp"
-                      />
-                    </>
-                  ) : discountSelect === "Nominal" ? (
-                    <CustomInput
-                      label="Discount Nominal"
-                      registerName="discount_amount"
-                      type="number"
-                      placeholder="Rp"
-                    />
-                  ) : (
-                    <></>
-                  )}
-                </div>
-                {/* this registerName should change if endpoint already updated */}
-                {/* <CustomInput label="Max Redeem" type="number" registerName='' /> */}
-                <CustomInput
-                  label="Min Transaction"
-                  type="number"
-                  registerName="min_transaction"
-                />
-              </div>
+              <LeftFormModal
+                register={register}
+                errors={errors}
+                id={id}
+                discountSelect={discountSelect}
+                setDiscountSelect={setDiscountSelect}
+                setValue={setValue}
+              />
               <div className="border border-[#9B9B9B]"></div>
               <div className="flex flex-col gap-4 w-7/12">
-                {/* <RadioInput
-    label="Status"
-    // this registerName should change if endpoint already updated 
-    registerName=""
-    name="status"
-    data={statusPromo}
-    select={statusSelect}
-    setSelect={setStatusSelect}
-  /> */}
+                <FormRadio<PromoCodeFormDataI>
+                  label="Status"
+                  registerName="is_active"
+                  data={statusPromo}
+                  select={statusSelect}
+                  setSelect={setStatusSelect}
+                  setValue={setValue}
+                />
                 <div className="flex gap-4 w-full">
-                  <CustomInput
+                  <FormInput<PromoCodeFormDataI>
                     label="Start Date"
                     registerName="start_date"
-                    type="date"
+                    type="datetime-local"
+                    register={register}
+                    errors={errors}
                   />
-                  <CustomInput
+                  <FormInput<PromoCodeFormDataI>
                     label="End Date"
                     registerName="end_date"
-                    type="date"
+                    type="datetime-local"
+                    register={register}
+                    errors={errors}
                   />
                 </div>
-                <CustomInput
+                <FormInput<PromoCodeFormDataI>
                   label="Description"
                   registerName="description"
                   type="text"
+                  register={register}
+                  errors={errors}
                 />
                 <div className="flex flex-col gap-2 w-full">
                   <label className="font-semibold font-poppins text-base text-[#262626] cursor-pointer">
@@ -732,7 +369,7 @@ const PromoCodeModalForm = ({
                           }}
                           options={segmentUserOptions}
                           value={
-                            id !== "" && levelSelect !== "0"
+                            id !== "" && levelSelect !== 0
                               ? segmentUserOptions.find(
                                   (item) => item.value === ""
                                 )
@@ -747,7 +384,7 @@ const PromoCodeModalForm = ({
                           onChange={(e) => {
                             onChange(e?.value);
                             if (e?.label !== "Tier Level (Xp Management)") {
-                              setLevelSelect("");
+                              setLevelSelect(0);
                               setValue("min_exp", 0);
                             } else {
                               setValue("segment_user", "All User");
@@ -766,14 +403,15 @@ const PromoCodeModalForm = ({
                     )}
                   />
                 </div>
-                {segmentUser === segmentUserOptions[3].value && (
-                  <RadioInput
+                {(segmentUser === segmentUserOptions[3].value ||
+                  levelSelect !== 0) && (
+                  <FormRadio<PromoCodeFormDataI>
                     label="Choose Level"
-                    name="level"
                     data={levelExpOptions}
                     registerName="min_exp"
                     select={levelSelect}
                     setSelect={setLevelSelect}
+                    setValue={setValue}
                   />
                 )}
                 {segmentUser === segmentUserOptions[2].value && (
@@ -837,13 +475,27 @@ const PromoCodeModalForm = ({
               </div>
             </div>
             <Button
+              disabled={isLoadingFeatureIds}
+              loading={isLoadingFeatureIds}
               onClick={async () => {
                 trigger();
                 if (await trigger()) {
+                  if (id !== undefined && id !== "") {
+                    setIsLoadingFeatureIds(true);
+                    if (promoCodeDetailState.data?.feature_ids) {
+                      const result = await Promise.all(
+                        promoCodeDetailState.data.feature_ids.map((featureId) =>
+                          handleFeatureIds(featureId)
+                        )
+                      );
+                      setCheckedFeature(result);
+                    }
+                  }
+                  setIsLoadingFeatureIds(false);
                   setOpenModal(!openModal);
                 }
               }}
-              className="self-end border-none bg-[#3AC4A0] rounded-full text-white w-[268px] hover:bg-[#3AC4A0]"
+              className="self-end border-none bg-[#3AC4A0] rounded-full text-white w-[268px] hover:bg-[#3AC4A0] disabled:text-white disabled:bg-[#3AC4A0]"
             >
               Next
             </Button>

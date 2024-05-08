@@ -16,13 +16,10 @@ const TabRadio = ({
   selectAll,
   checkedFeature,
   setCheckedFeature,
-  setSelectIdType,
 }: PromoCodeTabI) => {
   return (
     <>
-      {isLoading ? (
-        <p>Loading...</p>
-      ) : (
+      {!isLoading &&(
         <Tabs.RadioTab
           name="modal2"
           label={label}
@@ -84,7 +81,6 @@ const TabRadio = ({
                       logic={indexId !== -1 ? "flex" : "hidden"}
                       checkedFeature={checkedFeature}
                       setCheckedFeature={setCheckedFeature}
-                      setSelectIdType={setSelectIdType}
                     />
                   );
                 })}
@@ -107,7 +103,6 @@ const TabRadio = ({
                       logic={indexId !== -1 ? "hidden" : "flex"}
                       checkedFeature={checkedFeature}
                       setCheckedFeature={setCheckedFeature}
-                      setSelectIdType={setSelectIdType}
                     />
                   );
                 })}
