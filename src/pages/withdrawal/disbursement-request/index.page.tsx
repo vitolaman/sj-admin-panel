@@ -12,6 +12,7 @@ import { FiDownload } from "react-icons/fi";
 import { toast } from "react-toastify";
 import {
   useGetDisbursementRequestQuery,
+  useLazyGetDisbursementRequestQuery,
   useUpdateDisbursementRequestMutation,
 } from "services/modules/withdrawal";
 import * as XLSX from "xlsx";
@@ -24,11 +25,7 @@ const DisbursementRequest = () => {
     search: "",
   });
   const { data, isLoading, refetch } = useGetDisbursementRequestQuery(params);
-  const allData = useGetDisbursementRequestQuery({
-    page: 1,
-    limit: 100,
-    search: "",
-  });
+  const [getAllData, dataState] = useLazyGetDisbursementRequestQuery();
   const [updateDisbursementRequestById, updateState] =
     useUpdateDisbursementRequestMutation();
   const handlePageChange = (page: number): void => {
@@ -36,11 +33,11 @@ const DisbursementRequest = () => {
   };
 
   const handleSheetsData = () => {
-    const sheetsData = allData.data?.configurations;
+    const sheetsData = dataState.data?.configurations;
     if (sheetsData && Array.isArray(sheetsData) && sheetsData.length > 0) {
       const ws = XLSX.utils.json_to_sheet(sheetsData);
       const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Data");
+      XLSX.utils.book_append_sheet(wb, ws, "Disbursement Request Data");
 
       XLSX.writeFile(wb, "disbursement-request-data.xlsx");
     } else {
@@ -53,6 +50,10 @@ const DisbursementRequest = () => {
       refetch();
     }
   }, [updateState.isSuccess]);
+
+  useEffect(() => {
+    getAllData({ page: 0, limit: 0, search: "" });
+  }, []);
 
   const getStatusColor = (
     status: string
@@ -162,9 +163,7 @@ const DisbursementRequest = () => {
   return (
     <ContentContainer>
       <div className="w-full flex flex-row justify-between items-center">
-        <h1 className="font-semibold text-2xl">
-          Disbursement Request
-        </h1>
+        <h1 className="font-semibold text-2xl">Disbursement Request</h1>
         <div className="flex flex-row gap-3">
           <SearchInput
             placeholder="Search"
