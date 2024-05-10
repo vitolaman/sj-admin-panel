@@ -33,23 +33,35 @@ const useUpsertCodeForm = () => {
       .required("Please input end date")
       .typeError("invalid date"),
     expired_date: yup.string().notRequired(),
-    discount_amount: yup
-      .number()
-      .max(9000000000000000000, "Discount Amount value over max limit")
-      .notRequired(),
-    discount_percentage: yup
-      .number()
-      .max(9000000000000000000, "Discount Percentage value over max limit")
-      .notRequired(),
+    discount_amount: yup.number().when("discount_type", {
+      is: "Nominal",
+      then: yup.number().min(1, "Discount Amount cannot be zero").notRequired(),
+      otherwise: yup
+        .number()
+        .max(9000000000000000000, "Discount Amount value over max limit")
+        .notRequired(),
+    }),
+    discount_percentage: yup.number().when("discount_type", {
+      is: "Percentage",
+      then: yup.number().min(1, "Discount Percentage cannot be zero").notRequired(),
+      otherwise: yup
+        .number()
+        .max(9000000000000000000, "Discount Percentage value over max limit")
+        .notRequired(),
+    }),
     min_transaction: yup
       .number()
       .min(1, "Min Transaction cannot empty")
       .max(9000000000000000000, "Min Transaction value over max limit")
       .required("Min Transaction cannot empty"),
-    max_discount: yup
-      .number()
-      .max(9000000000000000000, "Max Discount value over max limit")
-      .notRequired(),
+    max_discount: yup.number().when("discount_type", {
+      is: "Percentage",
+      then: yup.number().min(1, "Max Discount cannot be zero").notRequired(),
+      otherwise: yup
+        .number()
+        .max(9000000000000000000, "Max Discount value over max limit")
+        .notRequired(),
+    }),
     quantity: yup
       .number()
       .min(1, "Quota cannot empty")
@@ -63,7 +75,10 @@ const useUpsertCodeForm = () => {
     description: yup.string().required("Description name cannot empty"),
     category: yup.string().notRequired(),
     min_exp: yup.number().notRequired(),
-    tnc: yup.string().matches(/^(?!<p><br><\/p>$).*/,"T&C cannot empty").required("T&C cannot empty"),
+    tnc: yup
+      .string()
+      .matches(/^(?!<p><br><\/p>$).*/, "T&C cannot empty")
+      .required("T&C cannot empty"),
     max_redeem: yup
       .number()
       .min(1, "Max Redeem cannot empty")
@@ -93,7 +108,7 @@ const useUpsertCodeForm = () => {
     min_exp: 0,
     tnc: "",
     max_redeem: 0,
-    is_active: false,
+    is_active: undefined,
   };
 
   const {
@@ -105,7 +120,7 @@ const useUpsertCodeForm = () => {
     setFocus,
     setValue,
     trigger,
-    watch
+    watch,
   } = useForm<PromoCodeFormDataI>({
     mode: "onSubmit",
     resolver: yupResolver(schema),
@@ -242,7 +257,7 @@ const useUpsertCodeForm = () => {
     setValue,
     trigger,
     isSuccess,
-    watch
+    watch,
   };
 };
 

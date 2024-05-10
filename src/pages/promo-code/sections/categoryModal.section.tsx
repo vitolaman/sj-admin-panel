@@ -19,7 +19,7 @@ export default function CategoryModal({
   openModal,
   setOpenModal,
   loadingUpsert,
-  id,
+  promoCodeData,
   setValue,
   handleCreate,
   handleUpdate,
@@ -297,7 +297,7 @@ export default function CategoryModal({
                   }
                   setValue("type", typeCategoryPromo.join(","));
                   if (watch("type") !== "") {
-                    if (id !== undefined && id !== "") {
+                    if (promoCodeData !== undefined) {
                       await handleUpdate(e);
                     } else {
                       await handleCreate(e);

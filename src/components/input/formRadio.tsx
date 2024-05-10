@@ -1,4 +1,4 @@
-import { FieldValues, Path, SetFieldValue } from "react-hook-form";
+import { FieldErrors, FieldValues, Path, SetFieldValue } from "react-hook-form";
 
 interface Data {
   label: string;
@@ -9,16 +9,20 @@ interface Props<T extends FieldValues> {
   label: string;
   registerName: Path<T>;
   setValue: SetFieldValue<T>;
+  errors?:FieldErrors<T>
   disabled?: boolean;
   data: Data[];
   select: string | number | boolean | undefined;
-  setSelect: React.Dispatch<React.SetStateAction<string | number | boolean | undefined>>;
+  setSelect: React.Dispatch<
+    React.SetStateAction<string | number | boolean | undefined>
+  >;
 }
 
 export default function FormRadio<T extends FieldValues>({
   label,
   registerName,
   setValue,
+  errors,
   disabled,
   data,
   select,
@@ -64,6 +68,9 @@ export default function FormRadio<T extends FieldValues>({
           );
         })}
       </div>
+      <p className="font-poppins font-normal text-sm text-[#EF5350] text-right">
+      {errors?.[registerName]?.message as string}
+      </p>
     </div>
   );
 }

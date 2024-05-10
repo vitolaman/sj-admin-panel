@@ -17,7 +17,7 @@ export interface CategoryModalPromoCodeI {
   openModal: boolean;
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
   loadingUpsert: boolean;
-  id?: string;
+  promoCodeData?: PromoCodeI;
   setValue: UseFormSetValue<PromoCodeFormDataI>;
   handleCreate: (
     e?: BaseSyntheticEvent<object, any, any> | undefined
@@ -52,14 +52,14 @@ export interface CategoryModalPromoCodeI {
   setFilterQuiz: React.Dispatch<React.SetStateAction<GetQuizQuery>>;
   filterArticle: GetArticleQuery;
   setFilterArticle: React.Dispatch<React.SetStateAction<GetArticleQuery>>;
-  watch:UseFormWatch<PromoCodeFormDataI>
+  watch: UseFormWatch<PromoCodeFormDataI>;
 }
 
 export interface PromoCodeModalFormI {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  id?: string;
-  setPromoCodeId: React.Dispatch<React.SetStateAction<string>>;
+  promoCodeData?: PromoCodeI;
+  setPromoCodeData: React.Dispatch<React.SetStateAction<PromoCodeI|undefined>>;
   refetch: () => QueryActionCreatorResult<
     QueryDefinition<
       GetPromoCodeQuery,
