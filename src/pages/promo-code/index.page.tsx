@@ -12,6 +12,7 @@ import { Button, Dropdown } from "react-daisyui";
 import {
   useDeletePromoCodeMutation,
   useGetPromoCodesQuery,
+  useLazyGetPromoCodeByIdQuery,
 } from "services/modules/promo-code";
 import Filter from "./sections/filter.section";
 import { FiEdit, FiFilter, FiMoreHorizontal, FiTrash2 } from "react-icons/fi";
@@ -30,6 +31,7 @@ const defaultValueParams = {
 const PromoCode = () => {
   const [params, setParams] = useState<GetPromoCodeQuery>(defaultValueParams);
   const [promoCodeId, setPromoCodeId] = useState<string>("");
+  const [promoCodeData, setPromoCodeData] = useState<PromoCodeI>();
   const [open, setOpen] = useState<boolean>(false);
   const [confirmationModal, setConfirmationModal] = useState<{
     id?: string;
@@ -38,10 +40,20 @@ const PromoCode = () => {
   const [openFilter, setOpenFilter] = useState<boolean>(false);
 
   const { data, isLoading, refetch } = useGetPromoCodesQuery(params);
+  const [getPromoCode] = useLazyGetPromoCodeByIdQuery();
   const [deletePromoCodeById] = useDeletePromoCodeMutation();
 
   const handlePageChange = (page: number): void => {
     setParams((prev) => ({ ...prev, page }));
+  };
+  const handleEdit = async (id: string) => {
+    try {
+      const data = await getPromoCode(id).unwrap();
+      setPromoCodeData(data);
+      setOpen(!open);
+    } catch (error) {
+      errorHandler(error);
+    }
   };
   const handleDelete = async () => {
     try {
@@ -50,24 +62,6 @@ const PromoCode = () => {
       refetch();
     } catch (error) {
       errorHandler(error);
-    }
-  };
-
-  const getStatusColor = (
-    is_active: boolean
-  ): { bgColor: string; textColor: string; status: string } => {
-    if (is_active) {
-      return {
-        bgColor: "bg-[#DCFCE4]",
-        textColor: "text-persian-green",
-        status: "Active",
-      };
-    } else {
-      return {
-        bgColor: "bg-[#FFF7D2]",
-        textColor: "text-[#D89918]",
-        status: "Inactive",
-      };
     }
   };
 
@@ -83,7 +77,7 @@ const PromoCode = () => {
     {
       fieldId: "type",
       label: "Category",
-      render:(item)=>(<>{item?.type.split(',').join(', ')}</>)
+      render: (item) => <>{item?.type.split(",").join(", ")}</>,
     },
     {
       fieldId: "quantity",
@@ -152,12 +146,15 @@ const PromoCode = () => {
       fieldId: "is_active",
       label: "Status",
       render: (item) => {
-        const { bgColor, textColor, status } = getStatusColor(item?.is_active!);
         return (
           <span
-            className={`px-2 py-1 font-poppins rounded-[4px] ${bgColor} ${textColor}`}
+            className={`px-2 py-1 font-poppins rounded-[4px] ${
+              item?.is_active
+                ? "bg-[#DCFCE4] text-persian-green"
+                : "bg-[#FFF7D2] text-[#D89918]"
+            }`}
           >
-            {status}
+            {item?.is_active ? "Active" : "Inactive"}
           </span>
         );
       },
@@ -175,10 +172,9 @@ const PromoCode = () => {
           <Dropdown.Menu className="bg-white z-10 w-[107px] rounded-[10px] flex flex-col gap-2">
             <Dropdown.Item
               className="p-0"
-              onClick={async () => {
+              onClick={() => {
                 if (item?.id !== undefined) {
-                  setPromoCodeId(item.id);
-                  setOpen(!open);
+                  handleEdit(item?.id);
                 }
               }}
             >
@@ -276,9 +272,9 @@ const PromoCode = () => {
       </div>
       <PromoCodeForm
         open={open}
-        id={promoCodeId}
+        promoCodeData={promoCodeData}
         setOpen={setOpen}
-        setPromoCodeId={setPromoCodeId}
+        setPromoCodeData={setPromoCodeData}
         refetch={refetch}
       />
     </ContentContainer>

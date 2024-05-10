@@ -1,4 +1,4 @@
-import { PromoCodeFormDataI } from "_interfaces/promo-code.interfaces";
+import { PromoCodeFormDataI, PromoCodeI } from "_interfaces/promo-code.interfaces";
 import FormInput from "components/input/formInput";
 import FormRadio from "components/input/formRadio";
 import { discountType } from "data/promo-code";
@@ -7,7 +7,7 @@ import { FieldErrors, UseFormRegister, UseFormSetValue } from "react-hook-form";
 interface Props {
   register: UseFormRegister<PromoCodeFormDataI>;
   errors: FieldErrors<PromoCodeFormDataI>;
-  id?: string;
+  promoCodeData?: PromoCodeI;
   discountSelect: string | number | boolean | undefined;
   setDiscountSelect: React.Dispatch<
     React.SetStateAction<string | number | boolean | undefined>
@@ -18,7 +18,7 @@ interface Props {
 const LeftFormModal = ({
   register,
   errors,
-  id,
+  promoCodeData,
   discountSelect,
   setDiscountSelect,
   setValue,
@@ -31,7 +31,7 @@ const LeftFormModal = ({
         registerName="name_promo_code"
         register={register}
         errors={errors}
-        disabled={id !== "" ? true : false}
+        disabled={promoCodeData !==undefined ? true : false}
       />
       <FormInput<PromoCodeFormDataI>
         label="Promo Code"
@@ -45,7 +45,7 @@ const LeftFormModal = ({
         }
         register={register}
         errors={errors}
-        disabled={id !== "" ? true : false}
+        disabled={promoCodeData !==undefined ? true : false}
       />
       <FormInput<PromoCodeFormDataI>
         label="Quota"
@@ -57,11 +57,12 @@ const LeftFormModal = ({
       <FormRadio<PromoCodeFormDataI>
         label="Discount Type"
         registerName="discount_type"
-        disabled={id !== ""}
+        disabled={promoCodeData !==undefined}
         data={discountType}
         select={discountSelect}
         setSelect={setDiscountSelect}
         setValue={setValue}
+        errors={errors}
       />
       <div className="flex gap-4 w-full">
         {discountSelect === "Percentage" ? (
@@ -70,7 +71,7 @@ const LeftFormModal = ({
               label="Discount Percentage"
               registerName="discount_percentage"
               type="number"
-              disabled={id !== ""}
+              disabled={promoCodeData !==undefined}
               placeholder="%"
               register={register}
               errors={errors}
@@ -79,7 +80,7 @@ const LeftFormModal = ({
               label="Max Discount"
               registerName="max_discount"
               type="number"
-              disabled={id !== ""}
+              disabled={promoCodeData !==undefined}
               placeholder="Rp"
               register={register}
               errors={errors}
@@ -90,7 +91,7 @@ const LeftFormModal = ({
             label="Discount Nominal"
             registerName="discount_amount"
             type="number"
-            disabled={id !== ""}
+            disabled={promoCodeData !==undefined}
             placeholder="Rp"
             register={register}
             errors={errors}
