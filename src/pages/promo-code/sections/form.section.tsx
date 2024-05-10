@@ -143,7 +143,7 @@ const PromoCodeModalForm = ({
   const handleFeatureIds = useCallback(async () => {
     setIsLoadingFeatureIds(true);
     let completedRequests = 0;
-    if (promoCodeData !== undefined) {
+    if (promoCodeData?.feature_ids !== null && promoCodeData !== undefined) {
       const result = await Promise.all(
         promoCodeData.feature_ids.map(async (featureId) => {
           const article = await getArticle(featureId);
@@ -184,7 +184,7 @@ const PromoCodeModalForm = ({
           }
         })
       );
-      if (completedRequests === promoCodeData.feature_ids.length) {
+      if (completedRequests === promoCodeData?.feature_ids.length) {
         setIsLoadingFeatureIds(false);
       }
 
@@ -201,6 +201,8 @@ const PromoCodeModalForm = ({
           return [`${promoCodeData?.type}`];
         }
       });
+    } else if (promoCodeData?.feature_ids === null) {
+      setIsLoadingFeatureIds(false);
     }
   }, [promoCodeData]);
   //TODO:UseEffect

@@ -30,7 +30,6 @@ const defaultValueParams = {
 };
 const PromoCode = () => {
   const [params, setParams] = useState<GetPromoCodeQuery>(defaultValueParams);
-  const [promoCodeId, setPromoCodeId] = useState<string>("");
   const [promoCodeData, setPromoCodeData] = useState<PromoCodeI>();
   const [open, setOpen] = useState<boolean>(false);
   const [confirmationModal, setConfirmationModal] = useState<{
@@ -232,7 +231,11 @@ const PromoCode = () => {
           <SearchInput
             placeholder="Search"
             onSubmit={({ text }) =>
-              setParams((prev) => ({ ...prev, search_promo_code: text }))
+              setParams((prev) => ({
+                ...prev,
+                page: 1,
+                search_promo_code: text,
+              }))
             }
           />
           <Button
