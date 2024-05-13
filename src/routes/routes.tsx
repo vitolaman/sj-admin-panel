@@ -56,6 +56,7 @@ import CategoryListPage, {
 import DisbursementRequest, {
   dRequestRouteName,
 } from "pages/withdrawal/disbursement-request/index.page";
+import Events, { eventsRouteName } from "pages/homepage-feature/events/index.page";
 
 const protectedRoutes: RouteObject[] = [
   { path: "", element: <Navigate to="/user/control-panel" /> },
@@ -93,6 +94,9 @@ const protectedRoutes: RouteObject[] = [
             index: true,
           },
         ],
+      },
+      {path:'homepage-feature',
+        children:[{path:eventsRouteName, element:<Events/>}]
       },
       {
         path: "play",
