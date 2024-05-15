@@ -26,4 +26,4 @@ export const withdrawalApi = Api.injectEndpoints({
   overrideExisting: false,
 });
 
-export const { useGetDisbursementRequestQuery, useUpdateDisbursementRequestMutation } = withdrawalApi;
+export const { useGetDisbursementRequestQuery, useLazyGetDisbursementRequestQuery, useUpdateDisbursementRequestMutation } = withdrawalApi;

@@ -9,7 +9,6 @@ const FeatureId = ({
   logic,
   checkedFeature,
   setCheckedFeature,
-  setSelectIdType,
 }: FeatureIdI) => {
   return (
     <div
@@ -21,7 +20,6 @@ const FeatureId = ({
             ...prev,
             { id: id, name: name, type: type },
           ]);
-          setSelectIdType((prev) => [...prev, type]);
         } else {
           setCheckedFeature((prev) => prev.filter((item) => item.id !== id));
         }

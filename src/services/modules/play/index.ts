@@ -61,6 +61,7 @@ export const playApi = Api.injectEndpoints({
 export const {
   usePlayListQuery,
   usePlayByIdQuery,
+  useLazyPlayByIdQuery,
   usePromoCodeQuery,
   useCancelPlayMutation,
   useUpdatePlayMutation,

@@ -117,6 +117,7 @@ export const quizApi = Api.injectEndpoints({
 export const {
   useGetQuizListQuery,
   useGetQuizByIdQuery,
+  useLazyGetQuizByIdQuery,
   useDeleteQuizMutation,
   useUpdateQuizMutation,
   useCreateQuizMutation,

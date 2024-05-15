@@ -29,6 +29,7 @@ export interface PlayI {
   prize_fix_percentages: number[];
   prize_pool_amount: number;
   prize_pool_percentages: number[];
+  prizes?: PrizesI[],
   participants?: Participant[];
   is_joined: boolean;
   created_by: string;
@@ -51,7 +52,7 @@ export interface PlayI {
   invitation_code: string;
   is_need_invitation_code: boolean;
   raw_asset_sub_type?: string[];
-  payment_method: string[] | GroupBase<OptChild>[];
+  payment_method: string[] | OptChild[];
   is_free_voucher_claimed: boolean;
 }
 
@@ -191,14 +192,18 @@ export interface CreatePlayFormI {
   admission_fee: number;
   fee_percentage: number;
   prize_fix_amount: number;
-  prize_fix_percentages: number[];
-  prize_pool_percentages: number[];
+  prizes: PrizesI[],
   tnc: { id: string; en: string };
   reward_url: string;
   featured_link: string;
   promo_id: string;
   invitation_code: string;
-  payment_method: GroupBase<OptChild>[];
+  payment_method: OptChild[];
+}
+
+export interface PrizesI {
+  prize_fix_percentages: number;
+  prize_pool_percentages: number;
 }
 
 export interface PromoCodeRes {
