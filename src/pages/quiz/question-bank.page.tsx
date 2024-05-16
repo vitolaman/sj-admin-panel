@@ -27,7 +27,7 @@ export const qbRouteName = "question-bank";
 const QuestionBank = () => {
   const [params, setParams] = useState<GetQuestionBankQuery>({
     page: 1,
-    limit: 10,
+    limit: 50,
     difficulty: "",
     search: "",
     category:"",
@@ -56,10 +56,22 @@ const QuestionBank = () => {
   });
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
+  const handleSelectAll = () => {
+    if (selectedIds.length === dataView.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(dataView?.map((item) => item.id));
+    }
+  };
+
   const header: Columns<QuestionBankI>[] = [
     {
       fieldId: "id",
-      label: "Select",
+      label: (
+        <div onClick={handleSelectAll} style={{ cursor: "pointer" }}>
+          {selectedIds.length >= 10 ? `Cancel (${selectedIds.length})` : `Select (${selectedIds.length})`}
+        </div>
+      ),
       render: (data) => (
         <>
           <div>
@@ -67,6 +79,7 @@ const QuestionBank = () => {
               type="checkbox"
               className="scale-150"
               color="primary"
+              checked={data ? selectedIds.includes(data.id) : false}
               onClick={() => {
                 if (data?.id) {
                   const isSelected = selectedIds.includes(data.id);
