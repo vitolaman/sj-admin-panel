@@ -201,7 +201,7 @@ const QuizGallery = () => {
                 <div className="w-full border-[#BDBDBD] border rounded-lg flex flex-col text-center items-center justify-center p-10 gap-3">
                   {gallery ? (
                     <video
-                      className="flex mx-auto w-[500px] h-[166px] object-fill"
+                      className="flex mx-auto w-[500px] h-auto object-fill"
                       controls
                     >
                       <source src={galleryPreview} type="video/mp4" /> Your
@@ -223,7 +223,7 @@ const QuizGallery = () => {
                 <div className="w-full border-[#BDBDBD] border rounded-lg flex flex-col text-center items-center justify-center p-10 gap-3">
                   {gallery ? (
                     <img
-                      className="flex mx-auto w-[500px] h-[166px] object-fill"
+                      className="flex mx-auto w-[200px] h-[200px] object-fill"
                       src={galleryPreview}
                       alt=""
                     />
