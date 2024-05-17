@@ -69,7 +69,7 @@ const QuestionBank = () => {
       fieldId: "id",
       label: (
         <div onClick={handleSelectAll} style={{ cursor: "pointer" }}>
-          {selectedIds.length >= 10 ? `Cancel (${selectedIds.length})` : `Select (${selectedIds.length})`}
+          {`Select (${selectedIds.length})`}
         </div>
       ),
       render: (data) => (
@@ -251,7 +251,7 @@ const QuestionBank = () => {
       <ContentContainer>
         <div className="w-full flex flex-row justify-between items-end">
           <div className="w-full flex flex-row gap-8 items-end">
-            <div className="min-w-40">
+            <div className="max-w-40 min-w-40">
               <label
                 htmlFor="category-question-bank"
                 className="font-semibold text-[#7C7C7C] mb-3"
@@ -267,7 +267,7 @@ const QuestionBank = () => {
                 rounded={true}
               />
             </div>
-            <div className="min-w-40">
+            <div className="max-w-24 min-w-24">
               <label
                 htmlFor="category-question-bank"
                 className="font-semibold text-[#7C7C7C] mb-3"
