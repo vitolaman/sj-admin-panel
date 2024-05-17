@@ -24,7 +24,7 @@ const SearchInput = ({
         {...register("text")}
         placeholder={placeholder}
       />
-      <MagnifyingGlassIcon className="w-6 h-6 text-[#262626]" />
+      <MagnifyingGlassIcon className="w-6 h-6 text-[#262626] cursor-pointer" onClick={handleSubmit(onSubmit)} />
     </form>
   );
 };

@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { Button, FileInput } from "react-daisyui";
 import { useNavigate } from "react-router-dom";
 import MDEditor, { commands } from "@uiw/react-md-editor";
-import { Controller } from "react-hook-form";
+import { Controller, useFieldArray } from "react-hook-form";
 import CInput from "components/input";
 import useCreatePlayForm from "hooks/play/useCreatePlayForm";
 import { usePromoCodeQuery } from "services/modules/play";
@@ -15,7 +15,7 @@ import ReactSelect, { GroupBase } from "react-select";
 import useDebounce from "hooks/shared/useDebounce";
 import { CreatePlayFormI } from "_interfaces/play.interfaces";
 import useFilePreview from "hooks/shared/useFilePreview";
-import { OptChild } from "_interfaces/admin-fee.interfaces";
+import { OptChild, PaymentChannelOpt } from "_interfaces/admin-fee.interfaces";
 import { useGetPaymentChannelQuery } from "services/modules/admin-fee";
 import CurrencyInput from "components/currency-input";
 
@@ -35,7 +35,7 @@ const CreatePlay = () => {
     }[]
   >([]);
   const [paymentChannelOpt, setPaymentChannelOpt] = useState<
-    GroupBase<OptChild>[]
+    PaymentChannelOpt[]
   >([]);
 
   const {
@@ -46,6 +46,7 @@ const CreatePlay = () => {
     control,
     isLoading,
     watch,
+    setValue,
   } = useCreatePlayForm();
   const promoCodeState = usePromoCodeQuery(debouncedSearchTerm);
   const banner = watch("banner");
@@ -57,6 +58,14 @@ const CreatePlay = () => {
   const paymentChannelState = useGetPaymentChannelQuery(undefined);
   const startTime = watch("play_time");
   const endTime = watch("end_time");
+  const { fields, append } = useFieldArray({
+    control,
+    name: "prizes",
+  });
+  const { fields: fieldsPayment, append: appendPayment } = useFieldArray({
+    control,
+    name: "payment_method",
+  });
 
   useEffect(() => {
     const start = moment(startTime);
@@ -96,23 +105,68 @@ const CreatePlay = () => {
 
   useEffect(() => {
     if (paymentChannelState.data) {
-      const tempOpt: GroupBase<OptChild>[] = [
+      const tempOpt: PaymentChannelOpt[] = [
         {
-          label: "E-Wallet",
+          label: (() => {
+            return (
+              <div
+                onClick={() => {
+                  const ewallet =
+                    paymentChannelState?.data?.type_ewallet?.map((item) => ({
+                      label: item.payment_method,
+                      value: item.payment_method,
+                    })) ?? [];
+                  appendPayment(ewallet);
+                }}
+              >
+                E-Wallet
+              </div>
+            );
+          })(),
           options: paymentChannelState.data.type_ewallet.map((item) => ({
             label: item.payment_method,
             value: item.payment_method,
           })),
         },
         {
-          label: "Bank",
+          label: (() => {
+            return (
+              <div
+                onClick={() => {
+                  const bank =
+                    paymentChannelState?.data?.type_va?.map((item) => ({
+                      label: item.payment_method,
+                      value: item.payment_method,
+                    })) ?? [];
+                  appendPayment(bank);
+                }}
+              >
+                Bank
+              </div>
+            );
+          })(),
           options: paymentChannelState.data.type_va.map((item) => ({
             label: item.payment_method,
             value: item.payment_method,
           })),
         },
         {
-          label: "QRIS",
+          label: (() => {
+            return (
+              <div
+                onClick={() => {
+                  const qris =
+                    paymentChannelState?.data?.type_qris?.map((item) => ({
+                      label: item.payment_method,
+                      value: item.payment_method,
+                    })) ?? [];
+                  appendPayment(qris);
+                }}
+              >
+                QRIS
+              </div>
+            );
+          })(),
           options: paymentChannelState.data.type_qris.map((item) => ({
             label: item.payment_method,
             value: item.payment_method,
@@ -471,18 +525,18 @@ const CreatePlay = () => {
               <div className="text-center col-span-2">Fix Prize</div>
               <div className="text-center col-span-2">Prize Pool Money</div>
             </div>
-            {[0, 1, 2].map((item, i) => (
+            {fields.map((item, i) => (
               <div className="grid grid-cols-5 items-center gap-4">
                 <div className="font-semibold text-sm">Winner {i + 1}</div>
                 <div className="text-center col-span-2">
                   <Controller
                     control={control}
-                    name={`prize_fix_percentages.${i}`}
+                    name={`prizes.${i}.prize_fix_percentages`}
                     render={({ field: { value, onChange } }) => (
                       <CurrencyInput
                         value={value}
                         onValueChange={(val) => onChange(val)}
-                        error={errors.prize_fix_percentages?.[i]}
+                        error={errors.prizes?.[i]?.prize_fix_percentages}
                       />
                     )}
                   />
@@ -490,12 +544,31 @@ const CreatePlay = () => {
                 <div className="text-center col-span-2">
                   <CInput
                     type="number"
-                    {...register(`prize_pool_percentages.${i}`)}
-                    error={errors.prize_pool_percentages?.[i]}
+                    {...register(`prizes.${i}.prize_pool_percentages`)}
+                    error={errors.prizes?.[i]?.prize_pool_percentages}
                   />
                 </div>
               </div>
             ))}
+            <div className="grid grid-cols-5">
+              <div className=" col-span-3" />
+              <div className=" col-span-2">
+                <Button
+                  variant="outline"
+                  className="border-seeds text-seeds rounded-full px-10 !w-full"
+                  onClick={() => {
+                    append({
+                      prize_fix_percentages: 0,
+                      prize_pool_percentages: 0,
+                    });
+                  }}
+                  loading={isLoading}
+                  type="button"
+                >
+                  Add More Winner
+                </Button>
+              </div>
+            </div>
           </div>
           <div className="flex flex-col gap-2">
             <label className="font-semibold">Opening Balance</label>
@@ -510,24 +583,27 @@ const CreatePlay = () => {
               <Controller
                 control={control}
                 name="payment_method"
-                render={({ field: { onChange, value } }) => (
-                  <ReactSelect
-                    styles={{
-                      control: (baseStyle) => ({
-                        ...baseStyle,
-                        padding: 5,
-                        borderColor: "#BDBDBD",
-                        borderRadius: "0.5rem",
-                      }),
-                    }}
-                    isMulti
-                    options={paymentChannelOpt}
-                    value={value as GroupBase<OptChild>[]}
-                    onChange={(e) => {
-                      onChange(e);
-                    }}
-                  />
-                )}
+                render={({ field: { onChange, value } }) => {
+                  return (
+                    <ReactSelect
+                      styles={{
+                        control: (baseStyle) => ({
+                          ...baseStyle,
+                          padding: 5,
+                          borderColor: "#BDBDBD",
+                          borderRadius: "0.5rem",
+                        }),
+                      }}
+                      isMulti
+                      options={paymentChannelOpt}
+                      // cannot use data type causing error pluggin React Select
+                      value={value as any}
+                      onChange={(e) => {
+                        onChange(e);
+                      }}
+                    />
+                  );
+                }}
               />
             </div>
           </div>
