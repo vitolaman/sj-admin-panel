@@ -4,6 +4,7 @@ import { Button, FileInput, Modal } from "react-daisyui";
 import { QuizGalleryI } from "_interfaces/quiz-gallery.interfaces";
 import { Columns, Table } from "components/table/table";
 import { IoClose } from "react-icons/io5";
+import { HiOutlineClipboardDocumentList } from "react-icons/hi2";
 import { Controller } from "react-hook-form";
 import Select from "components/select";
 import {
@@ -42,6 +43,18 @@ const QuizGallery = () => {
   const [galleryPreview] = useFilePreview(gallery as FileList);
   const [deleteGallery] = useDeleteQuizGalleryMutation();
 
+  const handleCopy = (url: string) => {
+    navigator.clipboard
+      .writeText(url)
+      .then(() => {
+        toast.success("Link copied to clipboard!");
+      })
+      .catch((err) => {
+        console.error("Failed to copy: ", err);
+        toast.error("Failed to copy link.");
+      });
+  };
+
   const header: Columns<QuizGalleryI>[] = [
     {
       fieldId: "index",
@@ -58,6 +71,25 @@ const QuizGallery = () => {
     {
       fieldId: "url",
       label: "Link",
+      render: (data) => (
+        <>
+          {data && data.url ? (
+            <>
+              <div
+                className="relative cursor-pointer"
+                onClick={() => handleCopy(data.url)}
+              >
+                {data.url}
+                <div className="absolute top-[-12px] right-[-15px] text-xl cursor-pointer ms-10">
+                  <HiOutlineClipboardDocumentList />
+                </div>
+              </div>
+            </>
+          ) : (
+            <span>No URL available</span>
+          )}
+        </>
+      ),
     },
     {
       fieldId: "id",
@@ -116,15 +148,15 @@ const QuizGallery = () => {
     ) as HTMLInputElement;
     if (!file) {
       toast.error("Please select a file.");
-      hideModal()
-      return
+      hideModal();
+      return;
     }
     if (file.files && file.files[0]) {
       const fileSizeMB = file.files[0].size / (1024 * 1024);
       if (fileSizeMB > MAX_FILE_SIZE_MB) {
         toast.error(`File size exceeds ${MAX_FILE_SIZE_MB} MB.`);
         hideModal();
-        return
+        return;
       }
     }
     try {
