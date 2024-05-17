@@ -22,6 +22,7 @@ import {
 } from "services/modules/quiz";
 import Pagination from "components/table/pagination";
 import moment from "moment";
+import SearchInput from "components/search-input";
 
 export const qbRouteName = "question-bank";
 const QuestionBank = () => {
@@ -30,7 +31,7 @@ const QuestionBank = () => {
     limit: 50,
     difficulty: "",
     search: "",
-    category:"",
+    category: "",
   });
   const [uploadModal, setUploadModal] = useState(false);
   const [questionsFile, setQuestionsFile] = useState<FileList | null>(null);
@@ -175,7 +176,7 @@ const QuestionBank = () => {
       setLoadingUpload(true);
       if (questionsFile) {
         await uploadQuizQuestions(accessToken!, questionsFile[0]);
-        toast.success("Upload questions success!")
+        toast.success("Upload questions success!");
         setUploadModal(false);
       } else {
         toast.error("Please choose questions file");
@@ -223,9 +224,7 @@ const QuestionBank = () => {
     } finally {
       if (dataQuestion && dataQuestion.data) {
         const temp = dataQuestion.data.filter((item) => {
-          return (
-            item.data[filter.data].question
-          );
+          return item.data[filter.data].question;
         });
         setDataView(temp);
       }
@@ -250,7 +249,7 @@ const QuestionBank = () => {
     <>
       <ContentContainer>
         <div className="w-full flex flex-row justify-between items-end">
-          <div className="w-full flex flex-row gap-8 items-end">
+          <div className="w-full flex flex-row gap-5 items-end">
             <div className="max-w-40 min-w-40">
               <label
                 htmlFor="category-question-bank"
@@ -287,9 +286,15 @@ const QuestionBank = () => {
               />
             </div>
           </div>
-          <div className="flex justify-end min-w-56">
+          <div className="flex justify-end min-w-56 gap-5">
+              <SearchInput
+                placeholder="Search"
+                onSubmit={({ text }) => {
+                  setParams((prev) => ({ ...prev, search: text, page:1, limit:50, category:'' }));
+                }}
+              />
             <Button
-              className="border-seeds text-seeds rounded-full px-10"
+              className="border-seeds text-seeds rounded-full px-8"
               onClick={() => {
                 setUploadModal(true);
               }}
