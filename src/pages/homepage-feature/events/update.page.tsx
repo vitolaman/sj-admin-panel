@@ -30,7 +30,7 @@ const UpdateEvent = () => {
   const [imageURLPreview] = useFilePreview(
     typeof imageURL === "string" ? undefined : (imageURL as FileList)
   );
-  const {data} = useGetEventByIdQuery(params.id!);
+  const { data } = useGetEventByIdQuery(params.id!);
   useEffect(() => {
     reset({
       ...data,
@@ -39,15 +39,17 @@ const UpdateEvent = () => {
   }, [data, params.id]);
   return (
     <ContentContainer>
-      <div className="w-full flex flex-row justify-between items-center pb-6">
-        <h1 className="font-semibold text-2xl font-poppins">Edit Event</h1>
-        <div className="flex flex-row gap-3">
+      <div className="w-full flex flex-col sm:flex-row justify-between items-center gap-4 pb-6">
+        <h1 className="self-start sm:self-center font-semibold md:text-2xl text-lg font-poppins">
+          Edit Event
+        </h1>
+        <div className="flex flex-row gap-3 self-end">
           <Button
             loading={loadingUpsert}
             onClick={() => {
               navigate(-1);
             }}
-            className="border-seeds text-seeds rounded-full px-10 font-semibold font-poppins text-base"
+            className="border-seeds text-seeds rounded-full md:px-10 font-semibold font-poppins md:text-base text-sm"
           >
             Cancel
           </Button>
@@ -59,13 +61,13 @@ const UpdateEvent = () => {
                 await handleUpdate(e);
               }
             }}
-            className="bg-seeds hover:bg-seeds-300 border-seeds hover:border-seeds-300 text-white rounded-full px-10 font-semibold font-poppins text-base"
+            className="bg-seeds hover:bg-seeds-300 border-seeds hover:border-seeds-300 text-white rounded-full md:px-10 font-semibold font-poppins md:text-base text-sm"
           >
             Save
           </Button>
         </div>
       </div>
-      <div className="flex gap-6">
+      <div className="flex flex-col md:flex-row gap-x-6">
         <FormInput<EventsFormDataI>
           label="Event Name"
           registerName="name"

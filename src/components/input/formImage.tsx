@@ -45,7 +45,7 @@ export default function FormImage<T extends FieldValues>({
         ): (
           <div className="text-seeds">Choose your banner here</div>
         )}
-        <FileInput {...register(registerName)} size="sm" accept="image/*" />
+        <FileInput {...register(registerName)} size="sm" accept="image/*" className="w-full sm:w-fit" />
       </div>
       <p className="font-poppins font-normal text-sm text-[#EF5350] text-right">
         {errors[registerName]?.message as string}

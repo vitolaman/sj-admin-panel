@@ -160,9 +160,10 @@ const Events = () => {
         yesText="Delete"
         noText="Cancel"
       />
-      <div className="w-full flex flex-row justify-between items-center">
-        <h1 className="font-semibold text-2xl font-poppins">List Events</h1>
-        <div className="flex flex-row gap-3">
+      <div className="w-full flex flex-col lg:flex-row justify-between items-center gap-4">
+      <h1 className="self-start lg:self-center font-semibold md:text-2xl text-lg font-poppins">
+List Events</h1>
+        <div className="flex flex-col md:flex-row gap-3">
           <SearchInput
             placeholder="Search"
             disabled={true}
