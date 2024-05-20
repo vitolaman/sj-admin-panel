@@ -17,14 +17,23 @@ export interface EventsI {
   updated_at: string;
 }
 
+export interface EventsFormDataI {
+  id?:string
+  name: string;
+  image_url: FileList | string;
+  external_url: string;
+  description: string;
+  event_date: string;
+}
+
 export interface Metadata {
-    total: number;
-    current_page: number;
-    limit: number;
-    total_page: number;
-  }
+  total: number;
+  current_page: number;
+  limit: number;
+  total_page: number;
+}
 
 export interface EventsRes {
-    data: EventsI[];
-    metadata: Metadata;
-  }
+  data: EventsI[];
+  metadata: Metadata;
+}

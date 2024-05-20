@@ -279,7 +279,7 @@ export default function CategoryModal({
                 setOpenModal(!openModal);
                 handleResetFilter();
               }}
-              className="border-[#3AC4A0] bg-white rounded-full text-[#3AC4A0] w-[268px] hover:bg-white"
+              className="border-[#3AC4A0] bg-white rounded-full text-[#3AC4A0] w-[268px] hover:bg-white font-semibold font-poppins text-base"
             >
               Back
             </Button>
@@ -309,7 +309,7 @@ export default function CategoryModal({
                     toast.error("You must select at least one promo code");
                   }
                 }}
-                className="border-none bg-[#3AC4A0] rounded-full text-white w-[268px] hover:bg-[#3AC4A0]"
+                className="border-none bg-[#3AC4A0] rounded-full text-white w-[268px] hover:bg-[#3AC4A0] font-semibold font-poppins text-base"
               >
                 Save
               </Button>
