@@ -19,7 +19,6 @@ import useFilePreview from "hooks/shared/useFilePreview";
 import { toast } from "react-toastify";
 
 export const galleryRouteName = "";
-const MAX_FILE_SIZE_MB = 3;
 
 const QuizGallery = () => {
   const [uploadModal, setUploadModal] = useState<boolean>(false);
@@ -151,20 +150,12 @@ const QuizGallery = () => {
       hideModal();
       return;
     }
-    if (file.files && file.files[0]) {
-      const fileSizeMB = file.files[0].size / (1024 * 1024);
-      if (fileSizeMB > MAX_FILE_SIZE_MB) {
-        toast.error(`File size exceeds ${MAX_FILE_SIZE_MB} MB.`);
-        hideModal();
-        return;
-      }
-    }
     try {
-      await handleCreate(e);
-      hideModal();
+      await handleCreate(e);;
     } catch (error) {
       errorHandler(error);
-      hideModal();
+    } finally {
+      hideModal()
     }
   };
 
@@ -272,7 +263,8 @@ const QuizGallery = () => {
                 </div>
               )}
               <div className="text-sm text-[#3C49D6] font-normal my-2">
-                *Max File Size: 3 MB
+                <p>*Max File Size Image: 5 MB</p>
+                <p>*Max File Size Video: 64 MB</p>
               </div>
             </div>
           </Modal.Body>
