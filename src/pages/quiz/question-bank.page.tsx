@@ -174,10 +174,14 @@ const QuestionBank = () => {
   const uploadQuestions = async () => {
     try {
       setLoadingUpload(true);
-      if (questionsFile) {
-        await uploadQuizQuestions(accessToken!, questionsFile[0]);
-        toast.success("Upload questions success!");
+      if (questionsFile !== null) {
+        const response = await uploadQuizQuestions(accessToken!, questionsFile[0]);
         setUploadModal(false);
+        if(response.status === 200){
+          toast.success('Upload questions success!')
+        } else {
+          toast.error('Upload questions failed!')
+        }
       } else {
         toast.error("Please choose questions file");
       }
