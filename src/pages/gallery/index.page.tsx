@@ -4,6 +4,7 @@ import { Button, FileInput, Modal } from "react-daisyui";
 import { QuizGalleryI } from "_interfaces/quiz-gallery.interfaces";
 import { Columns, Table } from "components/table/table";
 import { IoClose } from "react-icons/io5";
+import { HiOutlineClipboardDocumentList } from "react-icons/hi2";
 import { Controller } from "react-hook-form";
 import Select from "components/select";
 import {
@@ -18,7 +19,6 @@ import useFilePreview from "hooks/shared/useFilePreview";
 import { toast } from "react-toastify";
 
 export const galleryRouteName = "";
-const MAX_FILE_SIZE_MB = 3;
 
 const QuizGallery = () => {
   const [uploadModal, setUploadModal] = useState<boolean>(false);
@@ -42,6 +42,18 @@ const QuizGallery = () => {
   const [galleryPreview] = useFilePreview(gallery as FileList);
   const [deleteGallery] = useDeleteQuizGalleryMutation();
 
+  const handleCopy = (url: string) => {
+    navigator.clipboard
+      .writeText(url)
+      .then(() => {
+        toast.success("Link copied to clipboard!");
+      })
+      .catch((err) => {
+        console.error("Failed to copy: ", err);
+        toast.error("Failed to copy link.");
+      });
+  };
+
   const header: Columns<QuizGalleryI>[] = [
     {
       fieldId: "index",
@@ -58,6 +70,25 @@ const QuizGallery = () => {
     {
       fieldId: "url",
       label: "Link",
+      render: (data) => (
+        <>
+          {data && data.url ? (
+            <>
+              <div
+                className="relative cursor-pointer"
+                onClick={() => handleCopy(data.url)}
+              >
+                {data.url}
+                <div className="absolute top-[-12px] right-[-15px] text-xl cursor-pointer ms-10">
+                  <HiOutlineClipboardDocumentList />
+                </div>
+              </div>
+            </>
+          ) : (
+            <span>No URL available</span>
+          )}
+        </>
+      ),
     },
     {
       fieldId: "id",
@@ -116,23 +147,15 @@ const QuizGallery = () => {
     ) as HTMLInputElement;
     if (!file) {
       toast.error("Please select a file.");
-      hideModal()
-      return
-    }
-    if (file.files && file.files[0]) {
-      const fileSizeMB = file.files[0].size / (1024 * 1024);
-      if (fileSizeMB > MAX_FILE_SIZE_MB) {
-        toast.error(`File size exceeds ${MAX_FILE_SIZE_MB} MB.`);
-        hideModal();
-        return
-      }
+      hideModal();
+      return;
     }
     try {
-      await handleCreate(e);
-      hideModal();
+      await handleCreate(e);;
     } catch (error) {
       errorHandler(error);
-      hideModal();
+    } finally {
+      hideModal()
     }
   };
 
@@ -201,7 +224,7 @@ const QuizGallery = () => {
                 <div className="w-full border-[#BDBDBD] border rounded-lg flex flex-col text-center items-center justify-center p-10 gap-3">
                   {gallery ? (
                     <video
-                      className="flex mx-auto w-[500px] h-[166px] object-fill"
+                      className="flex mx-auto w-[500px] h-auto object-fill"
                       controls
                     >
                       <source src={galleryPreview} type="video/mp4" /> Your
@@ -223,7 +246,7 @@ const QuizGallery = () => {
                 <div className="w-full border-[#BDBDBD] border rounded-lg flex flex-col text-center items-center justify-center p-10 gap-3">
                   {gallery ? (
                     <img
-                      className="flex mx-auto w-[500px] h-[166px] object-fill"
+                      className="flex mx-auto w-[200px] h-[200px] object-fill"
                       src={galleryPreview}
                       alt=""
                     />
@@ -240,7 +263,8 @@ const QuizGallery = () => {
                 </div>
               )}
               <div className="text-sm text-[#3C49D6] font-normal my-2">
-                *Max File Size: 3 MB
+                <p>*Max File Size Image: 5 MB</p>
+                <p>*Max File Size Video: 64 MB</p>
               </div>
             </div>
           </Modal.Body>
