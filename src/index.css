@@ -9,6 +9,10 @@
   font-family: 'Montserrat', sans-serif;;
 }
 
+.code-outline-highlight{
+  display: none;
+}
+
 input:not([type='file']):not([type='radio']) {
   @apply !border-[#BDBDBD];
 }

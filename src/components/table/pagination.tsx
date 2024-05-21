@@ -1,5 +1,5 @@
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import { useEffect, useState } from 'react';
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { useEffect, useState } from "react";
 
 interface PaginationProps {
   currentPage: number;
@@ -10,7 +10,7 @@ interface PaginationProps {
 const Pagination: React.FC<PaginationProps> = ({
   currentPage,
   totalPages,
-  onPageChange
+  onPageChange,
 }) => {
   const [inputPage, setInputPage] = useState<any>(currentPage);
 
@@ -63,7 +63,7 @@ const Pagination: React.FC<PaginationProps> = ({
           key={i}
           href="#"
           className={`${
-            i === currentPage ? 'text-white bg-[#3AC4A0]' : 'text-[#262626]'
+            i === currentPage ? "text-white bg-[#3AC4A0]" : "text-[#262626]"
           } rounded-full w-6 h-6 mx-2 inline-flex justify-center items-center text-xs`}
           onClick={() => {
             handlePageButtonClick(i);
@@ -78,52 +78,42 @@ const Pagination: React.FC<PaginationProps> = ({
   };
 
   return (
-    <div className="grid grid-cols-10 gap-4 mt-16">
-      <div className="col-span-2" />
-      <div className="col-span-6 pt-[1px]">
-        <div className="flex justify-center items-center">
-          <a
-            href="#"
-            onClick={handlePreviousPage}
-            className="w-6 h-6 mx-2 text-[#262626] inline-flex justify-center items-center"
-          >
-            <FaChevronLeft className="h-4 w-4 text-[#262626]" />
-          </a>
-          {generatePageButtons()}
-          <a
-            href="#"
-            onClick={handleNextPage}
-            className="w-6 h-6 mx-2 text-[#262626] inline-flex justify-center items-center"
-          >
-            <FaChevronRight className="h-4 w-4 text-[#262626]" />
-          </a>
-        </div>
+    <div className="flex lg:justify-between justify-center mt-16">
+    <div className="w-[200px] lg:flex hidden"/>
+      <div className="flex justify-center items-center">
+        <a
+          href="#"
+          onClick={handlePreviousPage}
+          className="w-6 h-6 mx-2 text-[#262626] inline-flex justify-center items-center"
+        >
+          <FaChevronLeft className="h-4 w-4 text-[#262626]" />
+        </a>
+        {generatePageButtons()}
+        <a
+          href="#"
+          onClick={handleNextPage}
+          className="w-6 h-6 mx-2 text-[#262626] inline-flex justify-center items-center"
+        >
+          <FaChevronRight className="h-4 w-4 text-[#262626]" />
+        </a>
       </div>
-      <div className="col-span-2">
-        <div className="flex justify-center items-center gap-4">
-          <div className="flex-none">
-            <div className="text-xs h-[23px] leading-[23px] block text-[#BDBDBD]">
-              Go to page
-            </div>
-          </div>
-          <div className="flex-1">
-            <input
-              onChange={handleInputChange}
-              value={inputPage}
-              type="text"
-              className="rounded-full border border-[#3AC4A0] block w-full px-2 text-[#262626] text-sm h-[23px] placeholder:text-[#BDBDBD] focus:outline-0 disabled:bg-[#E9E9E9]"
-            />
-          </div>
-          <div className="flex-1">
-            <button
-              type="button"
-              onClick={handlePageChange}
-              className="inline-flex items-center px-4 h-[23px] border border-transparent text-xs font-semibold rounded-full text-white bg-[#3AC4A0]"
-            >
-              Go
-            </button>
-          </div>
+      <div className="lg:flex hidden justify-center items-center gap-4 w-[200px]">
+        <div className="text-xs h-[23px] leading-[23px] w-[75px] text-[#BDBDBD]">
+          Go to page
         </div>
+        <input
+          onChange={handleInputChange}
+          value={inputPage}
+          type="text"
+          className="rounded-full border border-[#3AC4A0] w-9 px-2 text-[#262626] text-center text-sm h-[23px] placeholder:text-[#BDBDBD] focus:outline-0 disabled:bg-[#E9E9E9]"
+        />
+        <button
+          type="button"
+          onClick={handlePageChange}
+          className="inline-flex items-center px-4 h-[23px] border border-transparent text-xs font-semibold rounded-full text-white bg-[#3AC4A0]"
+        >
+          Go
+        </button>
       </div>
     </div>
   );

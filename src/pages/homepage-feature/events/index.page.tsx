@@ -98,13 +98,13 @@ const Events = () => {
       fieldId: "id",
       label: "Action",
       render: (item) => (
-        <Dropdown horizontal="left" vertical="top">
+        <Dropdown className="relative">
           <Dropdown.Toggle size="xs">
             <Button size="xs" className="border-none p-0">
               <FiMoreHorizontal />
             </Button>
           </Dropdown.Toggle>
-          <Dropdown.Menu className="bg-white z-10 w-[150px] rounded-[10px] flex flex-col gap-2">
+          <Dropdown.Menu className="absolute right-10 top-3/4 -translate-y-3/4 bg-white z-10 w-[150px] rounded-[10px] flex flex-col gap-2">
             <Dropdown.Item className="p-0">
               <Button
                 fullWidth
@@ -124,6 +124,9 @@ const Events = () => {
                 size="xs"
                 className="border-none shadow-none p-0 font-normal font-poppins text-sm text-[#201B1C]"
                 startIcon={<FiSearch color="#201B1C" size={20} />}
+                onClick={() => {
+                  navigate(`/homepage-feature/events/${item?.id}/detail`);
+                }}
               >
                 Detail Event
               </Button>
@@ -160,42 +163,45 @@ const Events = () => {
         yesText="Delete"
         noText="Cancel"
       />
-      <div className="w-full flex flex-col lg:flex-row justify-between items-center gap-4">
-      <h1 className="self-start lg:self-center font-semibold md:text-2xl text-lg font-poppins">
-List Events</h1>
-        <div className="flex flex-col md:flex-row gap-3">
-          <SearchInput
-            placeholder="Search"
-            disabled={true}
-            formClassName="bg-[#F5F5F5]"
-          />
-          <Button
-            className="bg-seeds hover:bg-seeds-300 border-seeds hover:border-seeds-300 text-white rounded-full px-10"
-            onClick={() => {
-              navigate("/homepage-feature/events/create");
-            }}
-          >
-            Add Event
-          </Button>
+      <div className="flex flex-col gap-6">
+        <div className="w-full flex flex-col lg:flex-row justify-between items-center gap-4">
+          <h1 className="self-start lg:self-center font-semibold md:text-2xl text-lg font-poppins">
+            List Events
+          </h1>
+          <div className="flex flex-col md:flex-row gap-3">
+            <SearchInput
+              placeholder="Search"
+              disabled={true}
+              formClassName="bg-[#F5F5F5]"
+            />
+            <Button
+              className="bg-seeds hover:bg-seeds-300 border-seeds hover:border-seeds-300 text-white rounded-full px-10"
+              onClick={() => {
+                navigate("/homepage-feature/events/create");
+              }}
+            >
+              Add Event
+            </Button>
+          </div>
         </div>
-      </div>
-      <div className="mt-4 max-w-full overflow-x-auto overflow-y-hidden border border-[#BDBDBD] rounded-lg">
-        <Table<EventsI>
-          columns={header}
-          loading={isLoading}
-          data={data?.data}
-          currentPage={params.page}
-          limit={params.limit}
-        />
-      </div>
-      <div className="flex flex-col">
-        <Pagination
-          currentPage={data?.metadata?.current_page ?? 1}
-          totalPages={
-            Math.ceil((data?.metadata?.total ?? 0) / params.limit) ?? 0
-          }
-          onPageChange={handlePageChange}
-        />
+        <div className="max-w-full overflow-x-auto overflow-y-hidden border border-[#BDBDBD] rounded-lg">
+          <Table<EventsI>
+            columns={header}
+            loading={isLoading}
+            data={data?.data}
+            currentPage={params.page}
+            limit={params.limit}
+          />
+        </div>
+        <div className="flex flex-col">
+          <Pagination
+            currentPage={data?.metadata?.current_page ?? 1}
+            totalPages={
+              Math.ceil((data?.metadata?.total ?? 0) / params.limit) ?? 0
+            }
+            onPageChange={handlePageChange}
+          />
+        </div>
       </div>
     </ContentContainer>
   );
