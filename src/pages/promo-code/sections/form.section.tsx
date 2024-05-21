@@ -508,7 +508,7 @@ const PromoCodeModalForm = ({
                   setOpenModal(!openModal);
                 }
               }}
-              className="self-end border-none bg-[#3AC4A0] rounded-full text-white w-[268px] hover:bg-[#3AC4A0] disabled:text-white disabled:bg-[#3AC4A0]"
+              className="self-end border-none bg-[#3AC4A0] rounded-full text-white w-[268px] hover:bg-[#3AC4A0] disabled:text-white disabled:bg-[#3AC4A0] font-semibold font-poppins text-base"
             >
               Next
             </Button>

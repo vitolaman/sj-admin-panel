@@ -48,7 +48,7 @@ const PaymentSection = ({ filter }: { filter?: AdminFeeFilterI }) => {
         ...item,
         promo_start_date: moment(item.promo_start_date).format("YYYY-MM-DD"),
         promo_end_date: moment(item.promo_end_date).format("YYYY-MM-DD"),
-      })),
+      }))
     );
   }, [data?.config_list]);
 
@@ -87,7 +87,9 @@ const PaymentSection = ({ filter }: { filter?: AdminFeeFilterI }) => {
     {
       fieldId: "promo_price",
       label: "Promo Price",
+      render: (data) => (data?.is_promo_active ? `${data?.promo_price}` : ""),
     },
+
     {
       fieldId: "priority",
       label: "Priority",
@@ -156,10 +158,10 @@ const PaymentSection = ({ filter }: { filter?: AdminFeeFilterI }) => {
           is_promo_active: selectedData.is_promo_active,
           status: selectedData.status,
           promo_start_date: moment(selectedData.promo_start_date).format(
-            "YYYY-MM-DD",
+            "YYYY-MM-DD"
           ),
-          promo_end_date: moment(selectedData.promo_start_date).format(
-            "YYYY-MM-DD",
+          promo_end_date: moment(selectedData.promo_end_date).format(
+            "YYYY-MM-DD"
           ),
           max_promo_usage_per_month: selectedData.max_promo_usage_per_month,
         });
@@ -221,10 +223,7 @@ const PaymentSection = ({ filter }: { filter?: AdminFeeFilterI }) => {
           loading={isLoading}
         />
       </div>
-      <Modal
-        className="bg-white w-2/3 max-w-[900px]"
-        open={modal.show}
-      >
+      <Modal className="bg-white w-2/3 max-w-[900px]" open={modal.show}>
         <Modal.Header className="flex flex-row justify-between">
           Edit Payment
           <IoClose
@@ -234,10 +233,7 @@ const PaymentSection = ({ filter }: { filter?: AdminFeeFilterI }) => {
           />
         </Modal.Header>
         <Modal.Body className="overflow-scroll">
-          <form
-            className="grid grid-cols-5"
-            onSubmit={handleUpdate}
-          >
+          <form className="grid grid-cols-5" onSubmit={handleUpdate}>
             <div className="border-r border-[#9B9B9B] p-4 col-span-2 flex flex-col gap-4">
               <label
                 htmlFor="merchantID"
@@ -245,11 +241,7 @@ const PaymentSection = ({ filter }: { filter?: AdminFeeFilterI }) => {
               >
                 Merchant ID
               </label>
-              <CInput
-                {...register("id")}
-                type="text"
-                disabled={true}
-              />
+              <CInput {...register("id")} type="text" disabled={true} />
               <label
                 htmlFor="category"
                 className="font-semibold text-[#262626]"
@@ -334,7 +326,7 @@ const PaymentSection = ({ filter }: { filter?: AdminFeeFilterI }) => {
                           onChange={(e) =>
                             setValue(
                               "status",
-                              value === "hidden" ? "displayed" : "hidden",
+                              value === "hidden" ? "displayed" : "hidden"
                             )
                           }
                           checked={value === "hidden"}
