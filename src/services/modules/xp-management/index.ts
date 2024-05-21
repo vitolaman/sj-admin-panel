@@ -1,7 +1,7 @@
 import { GetXPManagementQuery, XPManagementI, XPManagementRes } from "_interfaces/xp-management.interface";
 import { Api } from "services/api";
   
-  export const withdrawalApi = Api.injectEndpoints({
+  export const xpManagementApi = Api.injectEndpoints({
     endpoints: (build) => ({
       getXPManagement: build.query<XPManagementRes,GetXPManagementQuery>({
         query: (params) => ({
@@ -27,5 +27,5 @@ import { Api } from "services/api";
     overrideExisting: false,
   });
   
-  export const { useGetXPManagementQuery,useLazyGetXPManagementByIdQuery, useUpdateXPManagementMutation } = withdrawalApi;
+  export const { useGetXPManagementQuery,useLazyGetXPManagementByIdQuery, useUpdateXPManagementMutation } = xpManagementApi;
   

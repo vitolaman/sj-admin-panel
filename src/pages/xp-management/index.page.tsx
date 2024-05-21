@@ -145,7 +145,7 @@ const XPManagement = () => {
         setId={setId}
       />
       <div className="w-full flex flex-row justify-between items-center">
-        <h1 className="font-semibold text-2xl">XP Management</h1>
+        <h1 className="font-semibold text-2xl font-poppins">XP Management</h1>
         <div className="flex flex-row gap-3">
           <SearchInput
             placeholder="Search"

@@ -25,7 +25,7 @@ const TabRadio = ({
           label={label}
           active={openTab === label}
           onClick={onClick}
-          className={`!w-[390px] capitalize text-center font-semibold font-poppins text-base ${
+          className={`!w-[29.5vw] capitalize text-center font-semibold font-poppins text-base ${
             openTab === label
               ? "border-b-4 border-[#27A590] text-[#27A590]"
               : "border-b border-[#BDBDBD] text-[#7C7C7C]"

@@ -31,6 +31,11 @@ const menuItems: MenuItem[] = [
     path: "/trading",
   },
   {
+    name: "Homepage Feature",
+    path: "#",
+    child: [{ name: "Events", path: "/homepage-feature/events" }],
+  },
+  {
     name: "Play",
     path: "/play",
   },
@@ -94,7 +99,10 @@ const menuItems: MenuItem[] = [
       { name: "Withdraw Quiz", path: "/withdraw-quiz" },
       { name: "Withdraw Play", path: "/play/withdraw" },
       { name: "Withdraw Circle", path: "/circle/withdraw" },
-      { name: "Disbursement Request", path: "/withdrawal/disbursement-request" },
+      {
+        name: "Disbursement Request",
+        path: "/withdrawal/disbursement-request",
+      },
     ],
   },
   {

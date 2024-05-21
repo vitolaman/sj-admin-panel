@@ -213,7 +213,7 @@ const PromoCode = () => {
           setConfirmationModal({ open: false });
         }}
         onConfirm={handleDelete}
-        alertType="danger"
+        alertType="delete"
         title="Delete Promo Code?"
         subTitle="Are you sure to delete this promo code?"
         yesText="Delete"
@@ -226,7 +226,7 @@ const PromoCode = () => {
         defaultValue={defaultValueParams}
       />
       <div className="w-full flex flex-row justify-between items-center">
-        <h1 className="font-semibold text-2xl">Promo Code List</h1>
+        <h1 className="font-semibold text-2xl font-poppins">Promo Code List</h1>
         <div className="flex flex-row gap-3">
           <SearchInput
             placeholder="Search"
@@ -248,7 +248,7 @@ const PromoCode = () => {
             <FiFilter color="#3ac4a0" size={20} />
           </Button>
           <Button
-            className="bg-seeds hover:bg-seeds-300 border-seeds hover:border-seeds-300 text-white rounded-full px-10"
+            className="bg-seeds hover:bg-seeds-300 border-seeds hover:border-seeds-300 text-white rounded-full px-10 font-semibold font-poppins text-base"
             onClick={() => {
               setOpen(!open);
             }}
