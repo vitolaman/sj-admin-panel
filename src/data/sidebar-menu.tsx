@@ -33,7 +33,7 @@ const menuItems: MenuItem[] = [
   {
     name: "Homepage Feature",
     path: "#",
-    child: [{ name: "Events", path: "/homepage-feature/events" }],
+    child: [{ name: "Seeds Event", path: "/homepage-feature/events" }],
   },
   {
     name: "Play",

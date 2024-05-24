@@ -11,23 +11,21 @@ const ScanInput = ({
   formClassName,
   className,
   disabled,
-  value
+  value,
 }: {
   onSubmit?: (data: ScanI) => void;
   placeholder: string;
   formClassName?: string;
   className?: string;
   disabled?: boolean;
-  value:string
+  value: string;
 }) => {
   const { handleSubmit, register } = useForm<ScanI>({ mode: "onSubmit" });
   return (
     <>
       <form
         onSubmit={() => {
-          if (onSubmit !== undefined) {
-            handleSubmit(onSubmit);
-          }
+          handleSubmit(onSubmit!);
         }}
         className={`flex border rounded-full items-center p-2 ${formClassName}`}
       >
@@ -43,9 +41,7 @@ const ScanInput = ({
       <Button
         className="bg-seeds hover:bg-seeds-300 border-seeds hover:border-seeds-300 text-white rounded-full lg:px-10 font-semibold font-poppins md:text-base text-sm"
         onClick={() => {
-          if (onSubmit !== undefined) {
-            handleSubmit(onSubmit);
-          }
+          handleSubmit(onSubmit!);
         }}
       >
         Enter

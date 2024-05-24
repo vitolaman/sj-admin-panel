@@ -4,7 +4,7 @@ import SearchInput from "components/search-input";
 import Pagination from "components/table/pagination";
 import { Columns, Table } from "components/table/table";
 import { useRef, useState } from "react";
-import { Button, Modal } from "react-daisyui";
+import { Button } from "react-daisyui";
 import { useParams } from "react-router-dom";
 import {
   useGetEventByIdQuery,
@@ -106,9 +106,6 @@ const DetailEvent = () => {
 
           <div className="flex flex-col md:flex-row gap-3 w-full">
             <ScanInput
-              onSubmit={() => {
-                scanResult.result;
-              }}
               placeholder="Input Code"
               formClassName="w-full"
               className="w-full"
