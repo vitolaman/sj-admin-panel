@@ -20,11 +20,7 @@ const SearchInput = ({
   const { handleSubmit, register } = useForm<SearchI>({ mode: "onSubmit" });
   return (
     <form
-      onSubmit={() => {
-        if (onSubmit !== undefined) {
-          handleSubmit(onSubmit);
-        }
-      }}
+      onSubmit={handleSubmit(onSubmit!)}
       className={`flex border rounded-full items-center p-2 ${formClassName}`}
     >
       <input
@@ -36,11 +32,7 @@ const SearchInput = ({
       />
       <MagnifyingGlassIcon
         className="w-6 h-6 text-[#262626] cursor-pointer"
-        onClick={() => {
-          if (onSubmit !== undefined) {
-            handleSubmit(onSubmit);
-          }
-        }}
+        onClick={handleSubmit(onSubmit!)}
       />
     </form>
   );

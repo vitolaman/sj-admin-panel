@@ -161,8 +161,9 @@ const Events = () => {
         noText="Cancel"
       />
       <div className="w-full flex flex-col lg:flex-row justify-between items-center gap-4">
-      <h1 className="self-start lg:self-center font-semibold md:text-2xl text-lg font-poppins">
-List Events</h1>
+        <h1 className="self-start lg:self-center font-semibold md:text-2xl text-lg font-poppins">
+          List Events
+        </h1>
         <div className="flex flex-col md:flex-row gap-3">
           <SearchInput
             placeholder="Search"
