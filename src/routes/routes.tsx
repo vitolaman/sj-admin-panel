@@ -65,6 +65,7 @@ import CreateEvent, {
 import UpdateEvent, {
   uEventsRouteName,
 } from "pages/homepage-feature/events/update.page";
+import DetailEvent, { dEventsRouteName } from "pages/homepage-feature/events/detail.page";
 
 const protectedRoutes: RouteObject[] = [
   { path: "", element: <Navigate to="/user/control-panel" /> },
@@ -109,6 +110,7 @@ const protectedRoutes: RouteObject[] = [
           { path: eventsRouteName, element: <Events />, index: true },
           { path: cEventsRouteName, element: <CreateEvent /> },
           { path: uEventsRouteName, element: <UpdateEvent /> },
+          { path: dEventsRouteName, element: <DetailEvent /> },
         ],
       },
       {
