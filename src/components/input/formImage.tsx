@@ -21,7 +21,6 @@ export default function FormImage<T extends FieldValues>({
   imageURLPreview,
   data
 }: Props<T>) {
-  console.log(data)
   return (
     <div className="flex flex-col gap-2 w-full">
       <label
