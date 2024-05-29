@@ -96,7 +96,7 @@ const menuItems: MenuItem[] = [
     name: "Withdrawal",
     path: "#",
     child: [
-      { name: "Withdraw Quiz", path: "/withdraw-quiz" },
+      { name: "Withdraw Quiz", path: "/quiz/withdraw" },
       { name: "Withdraw Play", path: "/play/withdraw" },
       { name: "Withdraw Circle", path: "/circle/withdraw" },
       {
