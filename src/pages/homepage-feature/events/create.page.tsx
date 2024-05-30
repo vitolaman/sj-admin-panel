@@ -7,6 +7,12 @@ import useFilePreview from "hooks/shared/useFilePreview";
 import { Button } from "react-daisyui";
 import FormImage from "components/input/formImage";
 import { useNavigate } from "react-router-dom";
+import { Controller } from "react-hook-form";
+import CurrencyInput from "components/currency-input";
+import FormCheckbox from "components/input/formCheckbox";
+import Select from "components/select";
+import { currencyOptions } from "data/currency";
+import { useState } from "react";
 
 export const cEventsRouteName = "events/create";
 const CreateEvent = () => {
@@ -23,6 +29,7 @@ const CreateEvent = () => {
   } = useUpsertEvents();
   const imageURL = watch("image_url");
   const [imageURLPreview] = useFilePreview(imageURL as FileList);
+  const [logic, setLogic] = useState<boolean>(false);
   return (
     <ContentContainer>
       <div className="flex flex-col gap-6">
@@ -72,12 +79,14 @@ const CreateEvent = () => {
             />
           </div>
           <div className="flex gap-6">
-            {/* <FormCheckbox<EventsFormDataI>
-          label="Is Paid Event"
-          registerName="id"
-          setValue={setValue}
-          errors={errors}
-        /> */}
+            <FormCheckbox<EventsFormDataI>
+              label="Is Paid Event"
+              registerName="id"
+              setValue={setValue}
+              errors={errors}
+              logic={logic}
+              setLogic={setLogic}
+            />
             <FormInput<EventsFormDataI>
               label="Event Date"
               registerName="event_date"
@@ -86,32 +95,38 @@ const CreateEvent = () => {
               type="datetime-local"
             />
           </div>
-          {/* <div className="w-[48.75%] flex gap-4">
-        <div className="w-[200px]">
-          <Controller
-            control={control}
-            name="id"
-            render={({ field: { value, onChange } }) => (
-              <Select
-                value={value}
-                options={currencyOptions}
-                onChange={(e) => onChange(e.value)}
+          <div
+            className={`${logic ? "flex" : "hidden"} w-[48.75%] flex-col gap-2`}
+          >
+            <label className="font-semibold font-poppins text-base text-[#262626] cursor-pointer">
+              Event Price
+            </label>
+            <div className="flex gap-4">
+              <div className="w-[200px]">
+                <Controller
+                  control={control}
+                  name="id"
+                  render={({ field: { value, onChange } }) => (
+                    <Select
+                      value={value}
+                      options={currencyOptions}
+                      onChange={(e) => onChange(e.value)}
+                    />
+                  )}
+                />
+              </div>
+              <Controller
+                control={control}
+                name="id"
+                render={({ field: { onChange, value } }) => (
+                  <CurrencyInput
+                    value={value}
+                    onValueChange={(value) => onChange(value)}
+                  />
+                )}
               />
-            )}
-          />
-        </div>
-
-        <Controller
-          control={control}
-          name="id"
-          render={({ field: { onChange, value } }) => (
-            <CurrencyInput
-              value={value}
-              onValueChange={(value) => onChange(value)}
-            />
-          )}
-        />
-      </div> */}
+            </div>
+          </div>
           <FormEditor<EventsFormDataI>
             label="Body Message"
             registerName="description"

@@ -12,6 +12,8 @@ interface Props<T extends FieldValues> {
   setValue: SetFieldValue<T>;
   errors: FieldErrors<T>;
   extraElement?: React.ReactNode;
+  setLogic: React.Dispatch<React.SetStateAction<boolean>>;
+  logic: boolean;
 }
 
 export default function FormCheckbox<T extends FieldValues>({
@@ -20,6 +22,8 @@ export default function FormCheckbox<T extends FieldValues>({
   setValue,
   extraElement,
   errors,
+  logic,
+  setLogic,
 }: Props<T>) {
   return (
     <div className="flex flex-col gap-2 w-full">
@@ -29,7 +33,7 @@ export default function FormCheckbox<T extends FieldValues>({
       >
         {label}
       </label>
-      <input type="checkbox" className="w-fit scale-150 m-2" />
+      <input type="checkbox" className="w-fit scale-150 m-2" onClick={()=>{setLogic(!logic)}} checked={logic} />
       {extraElement}
       <p className="font-poppins font-normal text-sm text-[#EF5350] text-right">
         {errors[registerName]?.message as string}
