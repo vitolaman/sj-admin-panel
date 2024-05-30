@@ -32,7 +32,7 @@ const WithdrawQuiz = () => {
   const handleUpdateStatus = async () => {
     try {
       if (dataUpdate) {
-        await update(dataUpdate);
+        await update(dataUpdate).unwrap();
         setOpenReason(false);
         toast("Withdraw status updated");
         refetch();
