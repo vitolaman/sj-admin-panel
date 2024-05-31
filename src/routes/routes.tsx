@@ -65,7 +65,10 @@ import CreateEvent, {
 import UpdateEvent, {
   uEventsRouteName,
 } from "pages/homepage-feature/events/update.page";
-import DetailEvent, { dEventsRouteName } from "pages/homepage-feature/events/detail.page";
+import DetailEvent, {
+  dEventsRouteName,
+} from "pages/homepage-feature/events/detail.page";
+import WithdrawQuiz, { withdrawQuizRouteName } from "pages/quiz/withdraw.page";
 
 const protectedRoutes: RouteObject[] = [
   { path: "", element: <Navigate to="/user/control-panel" /> },
@@ -158,6 +161,10 @@ const protectedRoutes: RouteObject[] = [
           {
             path: qbRouteName,
             element: <QuestionBank />,
+          },
+          {
+            path: withdrawQuizRouteName,
+            element: <WithdrawQuiz />,
           },
         ],
       },
