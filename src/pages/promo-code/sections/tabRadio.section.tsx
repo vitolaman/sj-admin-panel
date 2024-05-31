@@ -17,6 +17,7 @@ const TabRadio = ({
   checkedFeature,
   setCheckedFeature,
 }: PromoCodeTabI) => {
+  console.log(data);
   return (
     <>
       {!isLoading && (
@@ -57,7 +58,13 @@ const TabRadio = ({
                 </p>
               </div>
               <div className="overflow-auto h-[200px]">
-                {data !== null &&
+                {data?.length === 0 &&!(selectAll.find((item) => item === typePromoCategory) !==
+                    undefined) ? (
+                  <span className="ms-14 text-base font-poppins text-[#7C7C7C]">
+                    No Data Here
+                  </span>
+                ) : (
+                  data !== null &&
                   selectAll.find((item) => item === typePromoCategory) ===
                     undefined &&
                   data?.map((value, index) => {
@@ -76,7 +83,8 @@ const TabRadio = ({
                         setCheckedFeature={setCheckedFeature}
                       />
                     );
-                  })}
+                  })
+                )}
               </div>
             </div>
             <div className="w-full">
