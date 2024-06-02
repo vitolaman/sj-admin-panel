@@ -17,7 +17,6 @@ const TabRadio = ({
   checkedFeature,
   setCheckedFeature,
 }: PromoCodeTabI) => {
-  console.log(data);
   return (
     <>
       {!isLoading && (
