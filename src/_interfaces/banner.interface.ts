@@ -65,6 +65,20 @@ export interface ExclussiveBannerFormData {
   tnc: string;
 }
 
+export interface OpenAccountFromData {
+  name: string;
+  banner: {
+    image_url: string;
+    image_link: string | FileList;
+  };
+  external_url: string;
+  type: string;
+  title: string;
+  description: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface CreateBannerReq {
   name: string;
   image_url: string;

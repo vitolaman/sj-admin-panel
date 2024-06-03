@@ -65,7 +65,14 @@ import CreateEvent, {
 import UpdateEvent, {
   uEventsRouteName,
 } from "pages/homepage-feature/events/update.page";
-import DetailEvent, { dEventsRouteName } from "pages/homepage-feature/events/detail.page";
+import DetailEvent, {
+  dEventsRouteName,
+} from "pages/homepage-feature/events/detail.page";
+import OpenAccount, {
+  openAccountRouteName,
+} from "pages/homepage-feature/open-account";
+import CreateOpenAccount, { cOpenAccountRouteName } from "pages/homepage-feature/open-account/create.page";
+import UpdateOpenAccount, { uOpenAccountRouteName } from "pages/homepage-feature/open-account/update.page";
 
 const protectedRoutes: RouteObject[] = [
   { path: "", element: <Navigate to="/user/control-panel" /> },
@@ -111,6 +118,9 @@ const protectedRoutes: RouteObject[] = [
           { path: cEventsRouteName, element: <CreateEvent /> },
           { path: uEventsRouteName, element: <UpdateEvent /> },
           { path: dEventsRouteName, element: <DetailEvent /> },
+          { path: openAccountRouteName, element: <OpenAccount /> },
+          { path: cOpenAccountRouteName, element: <CreateOpenAccount /> },
+          { path: uOpenAccountRouteName, element: <UpdateOpenAccount /> },
         ],
       },
       {
