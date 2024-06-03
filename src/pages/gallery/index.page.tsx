@@ -17,6 +17,7 @@ import ConfirmationModal from "components/confirmation-modal";
 import { errorHandler } from "services/errorHandler";
 import useFilePreview from "hooks/shared/useFilePreview";
 import { toast } from "react-toastify";
+import { typeFile } from "data/gallery";
 
 export const galleryRouteName = "";
 
@@ -48,8 +49,7 @@ const QuizGallery = () => {
       .then(() => {
         toast.success("Link copied to clipboard!");
       })
-      .catch((err) => {
-        console.error("Failed to copy: ", err);
+      .catch(() => {
         toast.error("Failed to copy link.");
       });
   };
@@ -102,25 +102,6 @@ const QuizGallery = () => {
           Delete
         </Button>
       ),
-    },
-  ];
-
-  const typeFile = [
-    {
-      key: 0,
-      label: "Select...",
-      value: "",
-      isDisabled: true,
-    },
-    {
-      key: 1,
-      label: "image",
-      value: "image",
-    },
-    {
-      key: 2,
-      label: "video",
-      value: "video",
     },
   ];
 

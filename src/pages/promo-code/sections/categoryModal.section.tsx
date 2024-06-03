@@ -68,7 +68,7 @@ export default function CategoryModal({
   useEffect(() => {
     if (dataCircle?.data === null) {
       setCircleSelection([]);
-    } else if (dataCircle) {
+    } else if (dataCircle?.data!==undefined) {
       const tempOptPlay: {
         id: string;
         name: string;
@@ -85,7 +85,7 @@ export default function CategoryModal({
   useEffect(() => {
     if (dataPlay?.playList === null) {
       setPlaySelection([]);
-    } else if (dataPlay) {
+    } else if (dataPlay?.playList!==undefined) {
       const tempOptPlay: {
         id: string;
         name: string;
@@ -102,7 +102,7 @@ export default function CategoryModal({
   useEffect(() => {
     if (dataQuiz?.data === null) {
       setQuizSelection([]);
-    } else if (dataQuiz) {
+    } else if (dataQuiz?.data!==undefined) {
       const tempOptQuiz: {
         id: string;
         name: string;
@@ -119,7 +119,7 @@ export default function CategoryModal({
   useEffect(() => {
     if (dataArticle?.data === null) {
       setArticleSelection([]);
-    } else if (dataArticle) {
+    } else if (dataArticle?.data!==undefined) {
       const tempOptArticle: {
         id: string;
         name: string;

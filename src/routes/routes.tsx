@@ -73,6 +73,7 @@ import OpenAccount, {
 } from "pages/homepage-feature/open-account";
 import CreateOpenAccount, { cOpenAccountRouteName } from "pages/homepage-feature/open-account/create.page";
 import UpdateOpenAccount, { uOpenAccountRouteName } from "pages/homepage-feature/open-account/update.page";
+import WithdrawQuiz, { withdrawQuizRouteName } from "pages/quiz/withdraw.page";
 
 const protectedRoutes: RouteObject[] = [
   { path: "", element: <Navigate to="/user/control-panel" /> },
@@ -168,6 +169,10 @@ const protectedRoutes: RouteObject[] = [
           {
             path: qbRouteName,
             element: <QuestionBank />,
+          },
+          {
+            path: withdrawQuizRouteName,
+            element: <WithdrawQuiz />,
           },
         ],
       },
