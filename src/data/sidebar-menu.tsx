@@ -31,6 +31,11 @@ const menuItems: MenuItem[] = [
     path: "/trading",
   },
   {
+    name: "Homepage Feature",
+    path: "#",
+    child: [{ name: "Seeds Event", path: "/homepage-feature/events" }],
+  },
+  {
     name: "Play",
     path: "/play",
   },
@@ -72,6 +77,10 @@ const menuItems: MenuItem[] = [
     path: "/seeds-coin-management",
   },
   {
+    name: "XP Management",
+    path: "/xp-management",
+  },
+  {
     name: "Blog",
     path: "#",
     child: [
@@ -87,10 +96,13 @@ const menuItems: MenuItem[] = [
     name: "Withdrawal",
     path: "#",
     child: [
-      { name: "Withdraw Quiz", path: "/withdraw-quiz" },
+      { name: "Withdraw Quiz", path: "/quiz/withdraw" },
       { name: "Withdraw Play", path: "/play/withdraw" },
       { name: "Withdraw Circle", path: "/circle/withdraw" },
-      { name: "Disbursement Request", path: "/withdrawal/disbursement-request" },
+      {
+        name: "Disbursement Request",
+        path: "/withdrawal/disbursement-request",
+      },
     ],
   },
   {

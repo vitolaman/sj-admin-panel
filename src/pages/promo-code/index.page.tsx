@@ -12,6 +12,7 @@ import { Button, Dropdown } from "react-daisyui";
 import {
   useDeletePromoCodeMutation,
   useGetPromoCodesQuery,
+  useLazyGetPromoCodeByIdQuery,
 } from "services/modules/promo-code";
 import Filter from "./sections/filter.section";
 import { FiEdit, FiFilter, FiMoreHorizontal, FiTrash2 } from "react-icons/fi";
@@ -20,16 +21,16 @@ import ConfirmationModal from "components/confirmation-modal";
 import { errorHandler } from "services/errorHandler";
 
 export const promoCodeRouteName = "promo-code";
-const defaultValueParams={
+const defaultValueParams = {
   page: 1,
   limit: 10,
   search_promo_code: "",
   start_date_from: "",
   start_date_until: "",
-}
+};
 const PromoCode = () => {
   const [params, setParams] = useState<GetPromoCodeQuery>(defaultValueParams);
-  const [promoCodeId, setPromoCodeId] = useState<string>("");
+  const [promoCodeData, setPromoCodeData] = useState<PromoCodeI>();
   const [open, setOpen] = useState<boolean>(false);
   const [confirmationModal, setConfirmationModal] = useState<{
     id?: string;
@@ -38,10 +39,20 @@ const PromoCode = () => {
   const [openFilter, setOpenFilter] = useState<boolean>(false);
 
   const { data, isLoading, refetch } = useGetPromoCodesQuery(params);
+  const [getPromoCode] = useLazyGetPromoCodeByIdQuery();
   const [deletePromoCodeById] = useDeletePromoCodeMutation();
 
   const handlePageChange = (page: number): void => {
     setParams((prev) => ({ ...prev, page }));
+  };
+  const handleEdit = async (id: string) => {
+    try {
+      const data = await getPromoCode(id).unwrap();
+      setPromoCodeData(data);
+      setOpen(!open);
+    } catch (error) {
+      errorHandler(error);
+    }
   };
   const handleDelete = async () => {
     try {
@@ -50,24 +61,6 @@ const PromoCode = () => {
       refetch();
     } catch (error) {
       errorHandler(error);
-    }
-  };
-
-  const getStatusColor = (
-    is_active: boolean
-  ): { bgColor: string; textColor: string; status: string } => {
-    if (is_active) {
-      return {
-        bgColor: "bg-[#DCFCE4]",
-        textColor: "text-persian-green",
-        status: "Active",
-      };
-    } else {
-      return {
-        bgColor: "bg-[#FFF7D2]",
-        textColor: "text-[#D89918]",
-        status: "Inactive",
-      };
     }
   };
 
@@ -83,10 +76,14 @@ const PromoCode = () => {
     {
       fieldId: "type",
       label: "Category",
+      render: (item) => <>{item?.type.split(",").join(", ")}</>,
     },
     {
       fieldId: "quantity",
       label: "Quota",
+      render: (item) => (
+        <>{item?.quantity?.toLocaleString().split(",").join(".")}</>
+      ),
     },
     {
       fieldId: "description",
@@ -95,18 +92,38 @@ const PromoCode = () => {
     {
       fieldId: "min_exp",
       label: "Level",
-      render: (item) => (
-        <p className="font-poppins font-normal text-sm text-[#201B1C]">
-          Level {item?.min_exp}
-        </p>
-      ),
+      render: (item) => {
+        const level = item?.min_exp;
+        return (
+          <p className="font-poppins font-normal text-sm text-[#201B1C]">
+            Level{" "}
+            {level === 175000
+              ? "4"
+              : level === 25000
+              ? "3"
+              : level === 3500
+              ? "2"
+              : level === 500
+              ? "1"
+              : "0"}
+          </p>
+        );
+      },
     },
     {
       fieldId: "",
       label: "Discount",
       render: (item) => (
         <span className="font-poppins font-normal text-sm text-[#4DA81C]">
-          {`Rp. ${item?.discount_amount?.toLocaleString()?.split(',')?.join('.')}` ?? `${item?.discount_percentage}%`}
+          {item?.discount_amount !== undefined
+            ? `Rp. ${item?.discount_amount
+                ?.toLocaleString()
+                ?.split(",")
+                ?.join(".")}`
+            : `${item?.discount_percentage
+                ?.toLocaleString()
+                ?.split(",")
+                ?.join(".")}%`}
         </span>
       ),
     },
@@ -128,12 +145,15 @@ const PromoCode = () => {
       fieldId: "is_active",
       label: "Status",
       render: (item) => {
-        const { bgColor, textColor, status } = getStatusColor(item?.is_active!);
         return (
           <span
-            className={`px-2 py-1 font-poppins rounded-[4px] ${bgColor} ${textColor}`}
+            className={`px-2 py-1 font-poppins rounded-[4px] ${
+              item?.is_active
+                ? "bg-[#DCFCE4] text-persian-green"
+                : "bg-[#FFF7D2] text-[#D89918]"
+            }`}
           >
-            {status}
+            {item?.is_active ? "Active" : "Inactive"}
           </span>
         );
       },
@@ -151,10 +171,9 @@ const PromoCode = () => {
           <Dropdown.Menu className="bg-white z-10 w-[107px] rounded-[10px] flex flex-col gap-2">
             <Dropdown.Item
               className="p-0"
-              onClick={async () => {
+              onClick={() => {
                 if (item?.id !== undefined) {
-                  setPromoCodeId(item.id);
-                  setOpen(!open);
+                  handleEdit(item?.id);
                 }
               }}
             >
@@ -194,20 +213,29 @@ const PromoCode = () => {
           setConfirmationModal({ open: false });
         }}
         onConfirm={handleDelete}
-        alertType="danger"
+        alertType="delete"
         title="Delete Promo Code?"
         subTitle="Are you sure to delete this promo code?"
         yesText="Delete"
         noText="Cancel"
       />
-      <Filter open={openFilter} setOpen={setOpenFilter} setParams={setParams} defaultValue={defaultValueParams} />
+      <Filter
+        open={openFilter}
+        setOpen={setOpenFilter}
+        setParams={setParams}
+        defaultValue={defaultValueParams}
+      />
       <div className="w-full flex flex-row justify-between items-center">
-        <h1 className="font-semibold text-2xl">Promo Code List</h1>
+        <h1 className="font-semibold text-2xl font-poppins">Promo Code List</h1>
         <div className="flex flex-row gap-3">
           <SearchInput
             placeholder="Search"
             onSubmit={({ text }) =>
-              setParams((prev) => ({ ...prev, search_promo_code: text }))
+              setParams((prev) => ({
+                ...prev,
+                page: 1,
+                search_promo_code: text,
+              }))
             }
           />
           <Button
@@ -220,7 +248,7 @@ const PromoCode = () => {
             <FiFilter color="#3ac4a0" size={20} />
           </Button>
           <Button
-            className="bg-seeds hover:bg-seeds-300 border-seeds hover:border-seeds-300 text-white rounded-full px-10"
+            className="bg-seeds hover:bg-seeds-300 border-seeds hover:border-seeds-300 text-white rounded-full px-10 font-semibold font-poppins text-base"
             onClick={() => {
               setOpen(!open);
             }}
@@ -247,9 +275,9 @@ const PromoCode = () => {
       </div>
       <PromoCodeForm
         open={open}
-        id={promoCodeId}
+        promoCodeData={promoCodeData}
         setOpen={setOpen}
-        setPromoCodeId={setPromoCodeId}
+        setPromoCodeData={setPromoCodeData}
         refetch={refetch}
       />
     </ContentContainer>

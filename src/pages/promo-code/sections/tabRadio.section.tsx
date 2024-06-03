@@ -16,21 +16,16 @@ const TabRadio = ({
   selectAll,
   checkedFeature,
   setCheckedFeature,
-  setSelectIdType,
 }: PromoCodeTabI) => {
   return (
     <>
-      {isLoading ? (
-        <p>Loading...</p>
-      ) : (
+      {!isLoading && (
         <Tabs.RadioTab
           name="modal2"
           label={label}
           active={openTab === label}
-          onClick={
-            onClick
-          }
-          className={`!w-[390px] capitalize text-center font-semibold font-poppins text-base ${
+          onClick={onClick}
+          className={`!w-[29.5vw] capitalize text-center font-semibold font-poppins text-base ${
             openTab === label
               ? "border-b-4 border-[#27A590] text-[#27A590]"
               : "border-b border-[#BDBDBD] text-[#7C7C7C]"
@@ -43,74 +38,84 @@ const TabRadio = ({
             formClassName="w-full my-4 border-[#7C7C7C]"
             className="w-full"
           />
-          <div className="flex flex-col gap-1">
-            <div
-              className="flex items-center gap-3 cursor-pointer"
-              onClick={onClickSelectAll}
-            >
-              <input
-                type="checkbox"
-                className="w-4 h-4 m-3"
-                checked={
-                  selectAll.find((item) => item === typePromoCategory) !==
-                  undefined
-                }
-              />
-              <p className="font-semibold font-poppins text-sm text-[#262626]">
-                Select All
-              </p>
+          <div className="flex flex-row w-full gap-3">
+            <div className="w-full">
+              <div
+                className="flex items-center gap-3 cursor-pointer w-fit"
+                onClick={onClickSelectAll}
+              >
+                <input
+                  type="checkbox"
+                  className="w-4 h-4 m-3"
+                  checked={
+                    selectAll.find((item) => item === typePromoCategory) !==
+                    undefined
+                  }
+                />
+                <p className="font-semibold font-poppins text-sm text-[#262626]">
+                  Select All
+                </p>
+              </div>
+              <div className="overflow-auto h-[200px]">
+                {data?.length === 0 &&!(selectAll.find((item) => item === typePromoCategory) !==
+                    undefined) ? (
+                  <span className="ms-14 text-base font-poppins text-[#7C7C7C]">
+                    No Data Here
+                  </span>
+                ) : (
+                  data !== null &&
+                  selectAll.find((item) => item === typePromoCategory) ===
+                    undefined &&
+                  data?.map((value, index) => {
+                    const indexId = checkedFeature.findIndex(
+                      (item) => item.id === value.id
+                    );
+                    return (
+                      <FeatureId
+                        index={index}
+                        indexId={indexId}
+                        id={value.id}
+                        name={value.name}
+                        type={value.type}
+                        logic={indexId !== -1 ? "hidden" : "flex"}
+                        checkedFeature={checkedFeature}
+                        setCheckedFeature={setCheckedFeature}
+                      />
+                    );
+                  })
+                )}
+              </div>
             </div>
-            <div
-              className={`${
-                checkedFeature.length === 0
-                  ? "hidden"
-                  : checkedFeature.length <= 2
-                  ? "h-[100px]"
-                  : "h-[200px]"
-              } overflow-auto`}
-            >
-              {checkedFeature.length !== 0 &&
-                checkedFeature?.map((value, index) => {
-                  const indexId = checkedFeature.findIndex(
-                    (item) => item.id === value.id
-                  );
-                  return (
-                    <FeatureId
-                      index={index}
-                      indexId={indexId}
-                      id={value.id}
-                      name={value.name}
-                      type={value.type}
-                      logic={indexId !== -1 ? "flex" : "hidden"}
-                      checkedFeature={checkedFeature}
-                      setCheckedFeature={setCheckedFeature}
-                      setSelectIdType={setSelectIdType}
-                    />
-                  );
-                })}
-            </div>
-            <div className="overflow-auto h-[200px]">
-              {data !== null &&
-                selectAll.find((item) => item === typePromoCategory) ===
-                  undefined &&
-                data?.map((value, index) => {
-                  const indexId = checkedFeature.findIndex(
-                    (item) => item.id === value.id
-                  );
-                  return (
-                    <FeatureId
-                      index={index}
-                      indexId={indexId}
-                      id={value.id}
-                      name={value.name}
-                      type={value.type}
-                      logic={indexId !== -1 ? "hidden" : "flex"}
-                      checkedFeature={checkedFeature}
-                      setCheckedFeature={setCheckedFeature}
-                      setSelectIdType={setSelectIdType}
-                    />
-                  );
-                })}
+            <div className="w-full">
+              <div className="flex items-center h-10">
+                <p className="font-semibold font-poppins text-sm text-[#262626]">
+                  Selected Promo Code List
+                </p>
+              </div>
+              <div
+                className={`${
+                  checkedFeature.length === 0 ? "hidden" : "h-[200px]"
+                } overflow-auto`}
+              >
+                {checkedFeature.length !== 0 &&
+                  checkedFeature?.map((value, index) => {
+                    const indexId = checkedFeature.findIndex(
+                      (item) => item.id === value.id
+                    );
+                    return (
+                      <FeatureId
+                        index={index}
+                        indexId={indexId}
+                        id={value.id}
+                        name={value.name}
+                        type={value.type}
+                        logic={indexId !== -1 ? "flex" : "hidden"}
+                        checkedFeature={checkedFeature}
+                        setCheckedFeature={setCheckedFeature}
+                      />
+                    );
+                  })}
+              </div>
             </div>
           </div>
         </Tabs.RadioTab>
