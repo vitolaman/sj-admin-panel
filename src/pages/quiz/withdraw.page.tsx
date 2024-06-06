@@ -6,6 +6,7 @@ import {
 } from "_interfaces/quiz-withdraw.interfaces";
 import ContentContainer from "components/container";
 import CInput from "components/input";
+import SearchInput from "components/search-input";
 import Pagination from "components/table/pagination";
 import { Columns, Table } from "components/table/table";
 import { useState } from "react";
@@ -23,11 +24,14 @@ const WithdrawQuiz = () => {
   const [params, setParams] = useState<QuizWithdrawReqI>({
     page: 1,
     limit: 10,
+    search: "",
+    status: "",
   });
   const { data, isLoading, refetch } = useQuizWithdrawListQuery(params);
   const [update, updateState] = useQuizUpdateWithdrawStatusMutation();
   const [dataUpdate, setDataUpdate] = useState<QuizWithdrawUpdateI>();
   const [openReason, setOpenReason] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState<string>("");
 
   const handleUpdateStatus = async () => {
     try {
@@ -46,6 +50,19 @@ const WithdrawQuiz = () => {
   const handlePageChange = (page: number): void => {
     setParams((prev) => ({ ...prev, page }));
   };
+
+  const handleStatusChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedOption = event.target.value;
+    setSelectedStatus(selectedOption);
+    setParams((prev) => ({ ...prev, status: selectedOption }));
+  };
+
+  const options = [
+    { value: "", label: "All" },
+    { value: "PENDING", label: "Pending" },
+    { value: "REJECT", label: "Reject" },
+    { value: "SUCCESS", label: "Success" },
+  ];
 
   const header: Columns<QuizWithdrawListI>[] = [
     {
@@ -90,34 +107,38 @@ const WithdrawQuiz = () => {
             <FaEllipsisH />
           </Dropdown.Toggle>
           <Dropdown.Menu className="w-52 bg-white z-50">
-            <Dropdown.Item
-              className="hover:bg-green-500 hover:text-white"
-              onClick={() => {
-                setDataUpdate({
-                  quiz_id: data?.quiz_id!,
-                  user_id: data?.user_id!,
-                  status: "SUCCESS",
-                  reject_reason: "",
-                });
-                handleUpdateStatus();
-              }}
-            >
-              Accept
-            </Dropdown.Item>
-            <Dropdown.Item
-              className="hover:bg-red-500 hover:text-white"
-              onClick={() => {
-                setDataUpdate({
-                  quiz_id: data?.quiz_id!,
-                  user_id: data?.user_id!,
-                  status: "REJECT",
-                  reject_reason: "",
-                });
-                setOpenReason(true);
-              }}
-            >
-              Reject
-            </Dropdown.Item>
+            {data?.status === "PENDING" && (
+              <>
+                <Dropdown.Item
+                  className="hover:bg-green-500 hover:text-white"
+                  onClick={() => {
+                    setDataUpdate({
+                      quiz_id: data?.quiz_id!,
+                      user_id: data?.user_id!,
+                      status: "SUCCESS",
+                      reject_reason: "",
+                    });
+                    handleUpdateStatus();
+                  }}
+                >
+                  Accept
+                </Dropdown.Item>
+                <Dropdown.Item
+                  className="hover:bg-red-500 hover:text-white"
+                  onClick={() => {
+                    setDataUpdate({
+                      quiz_id: data?.quiz_id!,
+                      user_id: data?.user_id!,
+                      status: "REJECT",
+                      reject_reason: "",
+                    });
+                    setOpenReason(true);
+                  }}
+                >
+                  Reject
+                </Dropdown.Item>
+              </>
+            )}
           </Dropdown.Menu>
         </Dropdown>
       ),
@@ -156,8 +177,34 @@ const WithdrawQuiz = () => {
       <ContentContainer>
         <div className="w-full flex flex-row justify-between items-center">
           <h1 className="font-semibold text-2xl">Quiz Withdrawal</h1>
+          <div className="flex justify-between items-center gap-2">
+            <SearchInput
+              placeholder="Search"
+              onSubmit={({ text }) => {
+                setParams((prev) => ({ ...prev, search: text }));
+              }}
+            />
+            <div className="flex items-center gap-2">
+              <p className="text-[#7C7C7C] text-xs">Filter by Status</p>
+              <select
+                className={"outline-none border rounded-full items-center p-1"}
+                onChange={handleStatusChange}
+                value={selectedStatus}
+              >
+                {options.map((option) => (
+                  <option
+                    key={option.value}
+                    value={option.value}
+                    className="cursor-pointer"
+                  >
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
         </div>
-        <div className="mt-4 max-w-full overflow-x-auto overflow-y-hidden border border-[#BDBDBD] rounded-lg">
+        <div className="mt-4 max-w-full overflow-x-auto overflow-y-hidden border border-[#BDBDBD] rounded-lg z-0">
           <Table<QuizWithdrawListI>
             columns={header}
             data={data?.data}
