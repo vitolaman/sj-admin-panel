@@ -68,6 +68,11 @@ import UpdateEvent, {
 import DetailEvent, {
   dEventsRouteName,
 } from "pages/homepage-feature/events/detail.page";
+import OpenAccount, {
+  openAccountRouteName,
+} from "pages/homepage-feature/open-account";
+import CreateOpenAccount, { cOpenAccountRouteName } from "pages/homepage-feature/open-account/create.page";
+import UpdateOpenAccount, { uOpenAccountRouteName } from "pages/homepage-feature/open-account/update.page";
 import WithdrawQuiz, { withdrawQuizRouteName } from "pages/quiz/withdraw.page";
 
 const protectedRoutes: RouteObject[] = [
@@ -114,6 +119,9 @@ const protectedRoutes: RouteObject[] = [
           { path: cEventsRouteName, element: <CreateEvent /> },
           { path: uEventsRouteName, element: <UpdateEvent /> },
           { path: dEventsRouteName, element: <DetailEvent /> },
+          { path: openAccountRouteName, element: <OpenAccount /> },
+          { path: cOpenAccountRouteName, element: <CreateOpenAccount /> },
+          { path: uOpenAccountRouteName, element: <UpdateOpenAccount /> },
         ],
       },
       {
