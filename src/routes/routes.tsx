@@ -69,6 +69,7 @@ import DetailEvent, {
   dEventsRouteName,
 } from "pages/homepage-feature/events/detail.page";
 import WithdrawQuiz, { withdrawQuizRouteName } from "pages/quiz/withdraw.page";
+import Company, { companyRouteName } from "pages/company/index.page";
 
 const protectedRoutes: RouteObject[] = [
   { path: "", element: <Navigate to="/user/control-panel" /> },
@@ -171,6 +172,7 @@ const protectedRoutes: RouteObject[] = [
       { path: promoCodeRouteName, element: <PromoCode /> },
       { path: xpRouteName, element: <XPManagement /> },
       { path: afRouteName, element: <AdminFee /> },
+      { path: companyRouteName, element: <Company /> },
       { path: "dashboard", element: <DashboardHome /> },
       {
         path: "circle",

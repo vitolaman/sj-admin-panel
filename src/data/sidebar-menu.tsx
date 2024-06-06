@@ -124,6 +124,10 @@ const menuItems: MenuItem[] = [
     name: "Gallery",
     path: "/quiz-gallery",
   },
+  {
+    name: "B2B Company",
+    path: "/company",
+  },
 ];
 
 export { menuItems };
