@@ -58,10 +58,10 @@ const QuestionBank = () => {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const handleSelectAll = () => {
-    if (selectedIds.length === dataView.length) {
+    if (dataQuestion?.data && selectedIds.length === dataQuestion.data.length) {
       setSelectedIds([]);
     } else {
-      setSelectedIds(dataView?.map((item) => item.id));
+      setSelectedIds(dataQuestion?.data?.map((item) => item.id) || []);
     }
   };
 
@@ -151,8 +151,6 @@ const QuestionBank = () => {
     },
   ];
 
-  const [dataView, setDataView] = useState<QuestionBankI[]>([]);
-
   const categoryOptions = [
     {
       key: 0,
@@ -201,9 +199,6 @@ const QuestionBank = () => {
       await deleteQuestionBank(confirmationModal.id!).unwrap();
       setConfirmationModal({ open: false });
       refetch();
-      setDataView((prevDataView) =>
-        prevDataView.filter((item) => item.id !== confirmationModal.id)
-      );
     } catch (error) {
       errorHandler(error);
     }
@@ -226,29 +221,10 @@ const QuestionBank = () => {
     } catch (error) {
       errorHandler(error);
     } finally {
-      if (dataQuestion && dataQuestion.data) {
-        const temp = dataQuestion.data.filter((item) => {
-          return item.data[filter.data].question;
-        });
-        setDataView(temp);
-      }
+      setConfirmationSelectedModal({ open: false });
     }
   };
-
-  useEffect(() => {
-    if (dataQuestion && dataQuestion.data) {
-      let temp;
-      if (params.category === "") {
-        temp = dataQuestion.data;
-      } else {
-        temp = dataQuestion.data.filter((item) => {
-          return item.category === params.category;
-        });
-      }
-      setDataView(temp);
-    }
-  }, [dataQuestion, params.category]);
-
+  
   return (
     <>
       <ContentContainer>
@@ -310,7 +286,7 @@ const QuestionBank = () => {
         <div className="mt-4 max-w-full overflow-x-auto overflow-y-hidden border border-[#BDBDBD] rounded-lg">
           <Table<QuestionBankI>
             columns={header}
-            data={dataView}
+            data={dataQuestion?.data}
             loading={loadingQuestion}
           />
         </div>
