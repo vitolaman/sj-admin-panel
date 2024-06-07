@@ -33,7 +33,10 @@ const menuItems: MenuItem[] = [
   {
     name: "Homepage Feature",
     path: "#",
-    child: [{ name: "Seeds Event", path: "/homepage-feature/events" }],
+    child: [
+      { name: "Seeds Event", path: "/homepage-feature/events" },
+      { name: "Open Account", path: "/homepage-feature/open-account" },
+    ],
   },
   {
     name: "Play",
@@ -123,6 +126,10 @@ const menuItems: MenuItem[] = [
   {
     name: "Gallery",
     path: "/quiz-gallery",
+  },
+  {
+    name: "B2B Company",
+    path: "/company",
   },
 ];
 
