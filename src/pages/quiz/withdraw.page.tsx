@@ -9,6 +9,7 @@ import CInput from "components/input";
 import SearchInput from "components/search-input";
 import Pagination from "components/table/pagination";
 import { Columns, Table } from "components/table/table";
+import { withdrawStatusOptions } from "data/withdrawal";
 import { useState } from "react";
 import { Button, Dropdown, Modal } from "react-daisyui";
 import { FaEllipsisH } from "react-icons/fa";
@@ -56,13 +57,6 @@ const WithdrawQuiz = () => {
     setSelectedStatus(selectedOption);
     setParams((prev) => ({ ...prev, status: selectedOption }));
   };
-
-  const options = [
-    { value: "", label: "All" },
-    { value: "PENDING", label: "Pending" },
-    { value: "REJECT", label: "Reject" },
-    { value: "SUCCESS", label: "Success" },
-  ];
 
   const header: Columns<QuizWithdrawListI>[] = [
     {
@@ -191,7 +185,7 @@ const WithdrawQuiz = () => {
                 onChange={handleStatusChange}
                 value={selectedStatus}
               >
-                {options.map((option) => (
+                {withdrawStatusOptions.map((option) => (
                   <option
                     key={option.value}
                     value={option.value}
