@@ -8,6 +8,7 @@ export interface EventsI {
   created_at: string;
   description: string;
   event_date: string;
+  event_price: number;
   external_url: string;
   id: string;
   image_url: string;
