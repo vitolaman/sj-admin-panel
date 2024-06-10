@@ -14,10 +14,12 @@ import CookieStorage from "./cookieStore";
 import Cookies from "cookies-js";
 import { Api } from "services/api";
 import auth from "./auth";
+import isPaid from "./events";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 
 const reducers = combineReducers({
   auth,
+  isPaid,
   [Api.reducerPath]: Api.reducer,
 });
 

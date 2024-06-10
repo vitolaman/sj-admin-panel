@@ -1,11 +1,12 @@
 import { EventsI, GetEventsQuery } from "_interfaces/events.interface";
 import ConfirmationModal from "components/confirmation-modal";
 import ContentContainer from "components/container";
+import CreateEventModal from "components/events";
 import SearchInput from "components/search-input";
 import Pagination from "components/table/pagination";
 import { Columns, Table } from "components/table/table";
-import { useState } from "react";
-import { Button, Dropdown } from "react-daisyui";
+import { forwardRef, useCallback, useRef, useState } from "react";
+import { Button, Dropdown, Modal } from "react-daisyui";
 import { FiEdit, FiMoreHorizontal, FiSearch, FiTrash2 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { errorHandler } from "services/errorHandler";
@@ -149,6 +150,19 @@ const Events = () => {
       ),
     },
   ];
+  
+  const modalRef = useRef<HTMLDialogElement>(null);
+
+  const handleShowDialog = useCallback(() => {
+    modalRef.current?.showModal();
+  }, [modalRef]);
+
+  const handleCloseDialog = useCallback(() => {
+    modalRef.current?.close();
+  }, [modalRef]);
+  
+  const ForwardedRefCreateEventModal = forwardRef(CreateEventModal);
+
   return (
     <ContentContainer>
       <ConfirmationModal
@@ -176,9 +190,7 @@ const Events = () => {
             />
             <Button
               className="bg-seeds hover:bg-seeds-300 border-seeds hover:border-seeds-300 text-white rounded-full px-10"
-              onClick={() => {
-                navigate("/homepage-feature/events/create");
-              }}
+              onClick={handleShowDialog}
             >
               Add Event
             </Button>
@@ -203,6 +215,11 @@ const Events = () => {
           />
         </div>
       </div>
+
+      <ForwardedRefCreateEventModal
+        ref={modalRef}
+        handleClose={handleCloseDialog}
+      />
     </ContentContainer>
   );
 };
