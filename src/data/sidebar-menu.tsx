@@ -14,6 +14,7 @@ const menuItems: MenuItem[] = [
     name: "User",
     path: "#",
     child: [
+      // hide for not spamming
       // { name: "Dashboard Monitoring", path: "/user/dashboard-monitoring" },
       { name: "Control Panel", path: "/user/control-panel" },
       // {
