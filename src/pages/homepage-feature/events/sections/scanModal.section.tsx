@@ -1,14 +1,18 @@
-import { RefObject } from "react";
+import React, { MutableRefObject, RefObject } from "react";
 import { Modal } from "react-daisyui";
 import imageLogo from "assets/images/logo.png";
+import { FiXCircle } from "react-icons/fi";
+import QrScanner from "qr-scanner";
 
 interface Props {
   open: boolean;
   videoRef: RefObject<HTMLVideoElement>;
   divRef: RefObject<HTMLDivElement>;
+  scanner: MutableRefObject<QrScanner | undefined>;
+  setScanResult:React.Dispatch<React.SetStateAction<{result?:string, open:boolean}>>
 }
 
-const ScanModal = ({ open, videoRef, divRef }: Props) => {
+const ScanModal = ({ open, videoRef, divRef, scanner, setScanResult }: Props) => {
   return (
     <Modal
       open={open}
@@ -16,15 +20,12 @@ const ScanModal = ({ open, videoRef, divRef }: Props) => {
     >
       <Modal.Body className="relative flex flex-col justify-center">
         <video ref={videoRef} className="w-96"></video>
-        <div className="flex flex-col items-center justify-between py-2 absolute !top-0 !left-1/2 !-translate-x-1/2 !h-full !w-[216px]">
-          <img src={imageLogo} className="w-[40px] sm:w-[80px]" />
-          <div
-            ref={divRef}
-            className="flex items-center justify-center absolute !top-1/2 !left-1/2 !-translate-x-1/2 !-translate-y-1/2"
-          >
+        <div className="flex flex-col items-center justify-center gap-3 absolute !top-0 !left-1/2 !-translate-x-1/2 !translate-y-1/2 w-full">
+          <img src={imageLogo} className="w-[80px]" />
+          <div ref={divRef} className="!static !w-40 !h-40">
             <svg
-              width="128"
-              height="128"
+              width="160"
+              height="160"
               viewBox="0 0 128 128"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -48,10 +49,18 @@ const ScanModal = ({ open, videoRef, divRef }: Props) => {
             </svg>
           </div>
 
-          <p className="font-normal text-xs sm:text-base font-poppins text-white">
+          <p className="font-normal text-base font-poppins text-white">
             Please Scan the QR Code
           </p>
         </div>
+        <FiXCircle
+          className="absolute top-2 right-2 bg-white/50 rounded-full cursor-pointer"
+          size={24}
+          onClick={async () => {
+            setScanResult((prev)=>({...prev, open:!open}))
+            await scanner?.current?.stop();
+          }}
+        />
       </Modal.Body>
     </Modal>
   );
