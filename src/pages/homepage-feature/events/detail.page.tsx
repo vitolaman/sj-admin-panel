@@ -25,7 +25,6 @@ const DetailEvent = () => {
     result?: string;
     open: boolean;
   }>({ open: false });
-  console.log(scanResult);
 
   const [params, setParams] = useState<GetEventsQuery>({
     page: 1,
