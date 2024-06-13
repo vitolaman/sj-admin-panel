@@ -24,6 +24,7 @@
     "i18next": "^22.4.9",
     "moment": "^2.29.4",
     "moment-timezone": "^0.5.34",
+    "qr-scanner": "^1.4.2",
     "react": "^18.1.0",
     "react-csv": "^2.2.2",
     "react-currency-input-field": "^3.8.0",

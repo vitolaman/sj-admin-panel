@@ -22,15 +22,16 @@ import {
 } from "services/modules/quiz";
 import Pagination from "components/table/pagination";
 import moment from "moment";
+import SearchInput from "components/search-input";
 
 export const qbRouteName = "question-bank";
 const QuestionBank = () => {
   const [params, setParams] = useState<GetQuestionBankQuery>({
     page: 1,
-    limit: 10,
+    limit: 50,
     difficulty: "",
     search: "",
-    category:"",
+    category: "",
   });
   const [uploadModal, setUploadModal] = useState(false);
   const [questionsFile, setQuestionsFile] = useState<FileList | null>(null);
@@ -56,10 +57,22 @@ const QuestionBank = () => {
   });
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
+  const handleSelectAll = () => {
+    if (dataQuestion?.data && selectedIds.length === dataQuestion.data.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(dataQuestion?.data?.map((item) => item.id) || []);
+    }
+  };
+
   const header: Columns<QuestionBankI>[] = [
     {
       fieldId: "id",
-      label: "Select",
+      label: (
+        <div onClick={handleSelectAll} style={{ cursor: "pointer" }}>
+          {`Select (${selectedIds.length})`}
+        </div>
+      ),
       render: (data) => (
         <>
           <div>
@@ -67,6 +80,7 @@ const QuestionBank = () => {
               type="checkbox"
               className="scale-150"
               color="primary"
+              checked={data ? selectedIds.includes(data.id) : false}
               onClick={() => {
                 if (data?.id) {
                   const isSelected = selectedIds.includes(data.id);
@@ -137,8 +151,6 @@ const QuestionBank = () => {
     },
   ];
 
-  const [dataView, setDataView] = useState<QuestionBankI[]>([]);
-
   const categoryOptions = [
     {
       key: 0,
@@ -160,10 +172,14 @@ const QuestionBank = () => {
   const uploadQuestions = async () => {
     try {
       setLoadingUpload(true);
-      if (questionsFile) {
-        await uploadQuizQuestions(accessToken!, questionsFile[0]);
-        toast.success("Upload questions success!")
+      if (questionsFile !== null) {
+        const response = await uploadQuizQuestions(accessToken!, questionsFile[0]);
         setUploadModal(false);
+        if(response.status === 200){
+          toast.success('Upload questions success!')
+        } else {
+          toast.error('Upload questions failed!')
+        }
       } else {
         toast.error("Please choose questions file");
       }
@@ -183,9 +199,6 @@ const QuestionBank = () => {
       await deleteQuestionBank(confirmationModal.id!).unwrap();
       setConfirmationModal({ open: false });
       refetch();
-      setDataView((prevDataView) =>
-        prevDataView.filter((item) => item.id !== confirmationModal.id)
-      );
     } catch (error) {
       errorHandler(error);
     }
@@ -208,37 +221,16 @@ const QuestionBank = () => {
     } catch (error) {
       errorHandler(error);
     } finally {
-      if (dataQuestion && dataQuestion.data) {
-        const temp = dataQuestion.data.filter((item) => {
-          return (
-            item.data[filter.data].question
-          );
-        });
-        setDataView(temp);
-      }
+      setConfirmationSelectedModal({ open: false });
     }
   };
-
-  useEffect(() => {
-    if (dataQuestion && dataQuestion.data) {
-      let temp;
-      if (params.category === "") {
-        temp = dataQuestion.data;
-      } else {
-        temp = dataQuestion.data.filter((item) => {
-          return item.category === params.category;
-        });
-      }
-      setDataView(temp);
-    }
-  }, [dataQuestion, params.category]);
-
+  
   return (
     <>
       <ContentContainer>
         <div className="w-full flex flex-row justify-between items-end">
-          <div className="w-full flex flex-row gap-8 items-end">
-            <div className="min-w-40">
+          <div className="w-full flex flex-row gap-5 items-end">
+            <div className="max-w-40 min-w-40">
               <label
                 htmlFor="category-question-bank"
                 className="font-semibold text-[#7C7C7C] mb-3"
@@ -254,7 +246,7 @@ const QuestionBank = () => {
                 rounded={true}
               />
             </div>
-            <div className="min-w-40">
+            <div className="max-w-24 min-w-24">
               <label
                 htmlFor="category-question-bank"
                 className="font-semibold text-[#7C7C7C] mb-3"
@@ -274,9 +266,15 @@ const QuestionBank = () => {
               />
             </div>
           </div>
-          <div className="flex justify-end min-w-56">
+          <div className="flex justify-end min-w-56 gap-5">
+              <SearchInput
+                placeholder="Search"
+                onSubmit={({ text }) => {
+                  setParams((prev) => ({ ...prev, search: text, page:1, limit:50, category:'' }));
+                }}
+              />
             <Button
-              className="border-seeds text-seeds rounded-full px-10"
+              className="border-seeds text-seeds rounded-full px-8"
               onClick={() => {
                 setUploadModal(true);
               }}
@@ -288,7 +286,7 @@ const QuestionBank = () => {
         <div className="mt-4 max-w-full overflow-x-auto overflow-y-hidden border border-[#BDBDBD] rounded-lg">
           <Table<QuestionBankI>
             columns={header}
-            data={dataView}
+            data={dataQuestion?.data}
             loading={loadingQuestion}
           />
         </div>

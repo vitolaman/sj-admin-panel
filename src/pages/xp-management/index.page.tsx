@@ -56,7 +56,8 @@ const XPManagement = () => {
       fieldId: "description",
       label: "Description",
       render: (item) => (
-        <span className="font-poppins font-normal text-sm text-[#201B1C]"
+        <span
+          className="font-poppins font-normal text-sm text-[#201B1C]"
           dangerouslySetInnerHTML={{
             __html: `          ${
               item?.description.length! > 20
@@ -108,9 +109,9 @@ const XPManagement = () => {
       label: "Action",
       render: (item) => (
         <Dropdown horizontal="left" vertical="top">
-          <Dropdown.Toggle size="xs">
+          <Dropdown.Toggle size="xs" button={false}>
             <Button size="xs" className="border-none p-0">
-              <FiMoreHorizontal />
+              <FiMoreHorizontal color="#27a590" size={20} />
             </Button>
           </Dropdown.Toggle>
           <Dropdown.Menu className="bg-white z-10 w-[90px] rounded-[10px] flex flex-col gap-2">
@@ -145,7 +146,7 @@ const XPManagement = () => {
         setId={setId}
       />
       <div className="w-full flex flex-row justify-between items-center">
-        <h1 className="font-semibold text-2xl">XP Management</h1>
+        <h1 className="font-semibold text-2xl font-poppins">XP Management</h1>
         <div className="flex flex-row gap-3">
           <SearchInput
             placeholder="Search"

@@ -40,7 +40,7 @@ export const useFilterPlay=()=>{
   const [filterPlay, setFilterPlay] = useState<PlayReq>({
     search: "",
     type: "",
-    status: "",
+    status: "ACTIVE",
     page: 1,
     limit: 10,
   });
