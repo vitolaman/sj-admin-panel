@@ -75,6 +75,20 @@ const Events = () => {
       ),
     },
     {
+      fieldId: "",
+      label: "Event Type",
+      render: (item) => (
+        <span
+          className={`px-2 py-1 font-poppins`}
+        >
+          {
+            ((item?.event_status ?? '') === '') ?
+              '-' : capitalizeFirstLetter(item?.event_status ?? '')
+          }
+        </span>
+      ),
+    },
+    {
       fieldId: "event_date",
       label: "Event Date",
       render: (item) => {
@@ -162,6 +176,15 @@ const Events = () => {
   }, [modalRef]);
   
   const ForwardedRefCreateEventModal = forwardRef(CreateEventModal);
+
+  const capitalizeFirstLetter = (str: string): string => {
+    let lowerCaseWords = str.toLowerCase();
+    let words = lowerCaseWords.split(' ');
+    let capitalizedWords = words.map(word => {
+        return word.charAt(0).toUpperCase() + word.slice(1);
+    });
+    return capitalizedWords.join(' ');
+  }
 
   return (
     <ContentContainer>
