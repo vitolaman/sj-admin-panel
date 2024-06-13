@@ -178,7 +178,7 @@ const DisbursementRequest = () => {
           <SearchInput
             placeholder="Search"
             onSubmit={({ text }) =>
-              setParams((prev) => ({ ...prev, search: text }))
+              setParams((prev) => ({ ...prev, page: 1, search: text }))
             }
           />
           <Button
