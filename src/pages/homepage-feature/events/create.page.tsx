@@ -13,6 +13,10 @@ import FormCheckbox from "components/input/formCheckbox";
 import Select from "components/select";
 import { currencyOptions } from "data/currency";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "store";
+import { platformOptions } from "data/platformOptions";
+import { setStatusState } from "store/events/statusSlice";
 
 export const cEventsRouteName = "events/create";
 const CreateEvent = () => {
@@ -26,10 +30,13 @@ const CreateEvent = () => {
     setValue,
     trigger,
     watch,
+    reset
   } = useUpsertEvents();
+  const dispatch = useDispatch();
   const imageURL = watch("image_url");
   const [imageURLPreview] = useFilePreview(imageURL as FileList);
-  const [logic, setLogic] = useState<boolean>(false);
+  const { isPaidEvent } = useSelector((state: RootState) => state?.isPaid ?? {});
+  const { isStatusEvent } = useSelector((state: RootState) => state?.isStatus ?? {});
   return (
     <ContentContainer>
       <div className="flex flex-col gap-6">
@@ -69,64 +76,126 @@ const CreateEvent = () => {
               register={register}
               errors={errors}
               maxLength={200}
+              placeholder="Please input event name"
             />
-            <FormInput<EventsFormDataI>
-              label="Link for Registration"
-              registerName="external_url"
-              register={register}
-              errors={errors}
-              maxLength={200}
-            />
+            <div
+              className={`${isPaidEvent ? "flex" : "hidden"} w-full flex-col gap-2 mb-4`}
+            >
+              <label className="font-semibold font-poppins text-base text-[#262626] cursor-pointer">
+                Event Price
+              </label>
+              <div className="flex gap-4">
+                <div className="w-[200px]">
+                  <Controller
+                    control={control}
+                    name="id"
+                    render={({ field: { value, onChange } }) => (
+                      <Select
+                        value={value}
+                        options={currencyOptions}
+                        onChange={(e) => onChange(e.value)}
+                      />
+                    )}
+                  />
+                </div>
+                <Controller
+                  control={control}
+                  name="id"
+                  render={({ field: { onChange, value } }) => (
+                    <CurrencyInput
+                      value={value}
+                      onValueChange={(value) => onChange(value)}
+                    />
+                  )}
+                />
+              </div>
+            </div>
           </div>
-          <div className="flex gap-6">
-            <FormCheckbox<EventsFormDataI>
-              label="Is Paid Event"
-              registerName="id"
-              setValue={setValue}
-              errors={errors}
-              logic={logic}
-              setLogic={setLogic}
-            />
+          <div className="flex flex-col md:flex-row gap-4 mb-4">
             <FormInput<EventsFormDataI>
-              label="Event Date"
+              label={isStatusEvent === "ONLINE" ? "Event Start Date" : "Event Date"}
               registerName="event_date"
               register={register}
               errors={errors}
               type="datetime-local"
             />
-          </div>
-          <div
-            className={`${logic ? "flex" : "hidden"} w-[48.75%] flex-col gap-2`}
-          >
-            <label className="font-semibold font-poppins text-base text-[#262626] cursor-pointer">
-              Event Price
-            </label>
-            <div className="flex gap-4">
-              <div className="w-[200px]">
-                <Controller
-                  control={control}
-                  name="id"
-                  render={({ field: { value, onChange } }) => (
-                    <Select
-                      value={value}
-                      options={currencyOptions}
-                      onChange={(e) => onChange(e.value)}
-                    />
-                  )}
+            {
+              (isStatusEvent === "ONLINE") &&
+                <FormInput<EventsFormDataI>
+                  label="Event Ended Date"
+                  registerName="ended_at"
+                  register={register}
+                  errors={errors}
+                  type="datetime-local"
                 />
+            }
+          </div>
+          <div className="flex flex-col md:flex-row gap-4 mb-4">
+            <div className="border-b-2 border-[#BDBDBD] flex justify-center cursor-pointer">
+              <div onClick={() => {dispatch(setStatusState("OFFLINE"))}} className={`px-4 py-2 mx-2 font-semibold ${isStatusEvent === "OFFLINE" ? 'border-b-4 border-[#27A590] text-[#27A590]' : 'text-[#7C7C7C]'}`}>
+                Offline Event
               </div>
-              <Controller
-                control={control}
-                name="id"
-                render={({ field: { onChange, value } }) => (
-                  <CurrencyInput
-                    value={value}
-                    onValueChange={(value) => onChange(value)}
-                  />
-                )}
-              />
+            </div>
+            <div className="border-b-2 border-[#BDBDBD] flex justify-center cursor-pointer">
+              <div onClick={() => {dispatch(setStatusState("ONLINE"))}} className={`px-4 py-2 mx-2 font-semibold ${isStatusEvent === "ONLINE" ? 'border-b-4 border-[#27A590] text-[#27A590]' : 'text-[#7C7C7C]'}`}>
+                Online Event
+              </div>
             </div>
           </div>
+          {
+            (isStatusEvent === "ONLINE") ?
+              <div className="flex flex-col md:flex-row gap-x-6 mb-4">
+                <div
+                  className="w-full flex flex-col gap-2 mb-4"
+                >
+                  <label className="font-semibold font-poppins text-base text-[#262626] cursor-pointer">
+                    Platform
+                  </label>
+                  <div className="flex gap-4">
+                    <div className="w-full">
+                      <Controller
+                        control={control}
+                        name="location_name"
+                        render={({ field: { value, onChange } }) => (
+                          <Select
+                            value={value}
+                            options={platformOptions}
+                            onChange={(e) => onChange(e.value)}
+                          />
+                        )}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <FormInput<EventsFormDataI>
+                  label="Link Conference"
+                  registerName="external_url"
+                  register={register}
+                  errors={errors}
+                  maxLength={200}
+                  placeholder="Please input conference link"
+                />
+              </div>
+              :
+              <div className="flex flex-col md:flex-row gap-x-6 mb-4">
+                <FormInput<EventsFormDataI>
+                  label="Location Name"
+                  registerName="location_name"
+                  register={register}
+                  errors={errors}
+                  maxLength={200}
+                  placeholder="Please input location name"
+                />
+                <FormInput<EventsFormDataI>
+                  label="Link Gmaps"
+                  registerName="external_url"
+                  register={register}
+                  errors={errors}
+                  maxLength={200}
+                  placeholder="Please input gmaps link"
+                />
+              </div>
+          }
           <FormEditor<EventsFormDataI>
             label="Body Message"
             registerName="description"

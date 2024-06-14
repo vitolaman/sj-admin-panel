@@ -9,15 +9,20 @@ import {
   useUpdateEventsMutation,
 } from "services/modules/events";
 import { uploadFile } from "services/modules/file";
-import { useAppSelector } from "store";
+import { RootState, useAppSelector } from "store";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { setStatusState } from "store/events/statusSlice";
 
 const useUpsertEvents = (id?: string) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { accessToken } = useAppSelector((state) => state.auth);
   const [updateEvents, updateState] = useUpdateEventsMutation();
   const [createEvents, createState] = useCreateEventsMutation();
   const loadingUpsert = createState.isLoading || updateState.isLoading;
+  const { isPaidEvent } = useSelector((state: RootState) => state?.isPaid ?? {});
+  const { isStatusEvent } = useSelector((state: RootState) => state?.isStatus ?? {});
   const schema = yup.object().shape({
     name: yup.string().required("Name cannot empty"),
     external_url: yup
@@ -54,7 +59,16 @@ const useUpsertEvents = (id?: string) => {
   const create = async (data: EventsFormDataI) => {
     try {
       const eventDateUtc = new Date(data?.event_date!).toISOString();
-      const payload: EventsFormDataI = { ...data, event_date: eventDateUtc };
+      const payload: EventsFormDataI = { ...data, event_status: isStatusEvent, event_date: eventDateUtc };
+      if (data?.ended_at && isStatusEvent === "ONLINE") {
+        const endedAtUtc = new Date(data?.ended_at!).toISOString();
+        payload.ended_at = endedAtUtc;
+      } else {
+        delete payload.ended_at;
+      }
+      if (isPaidEvent) {
+        payload.event_price = parseFloat(payload.id as string)
+      }
       if (data.image_url && data.image_url[0]) {
         const image_url = await uploadFile(
           accessToken!,
@@ -64,11 +78,14 @@ const useUpsertEvents = (id?: string) => {
       } else {
         payload.image_url = "";
       }
+      console.log('payload ', payload)
       await createEvents(payload).unwrap();
       toast.success("Creating a event was successful");
       navigate(-1);
     } catch (error) {
       errorHandler(error);
+    } finally {
+      dispatch(setStatusState("OFFLINE"))
     }
   };
 

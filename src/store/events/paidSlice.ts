@@ -1,4 +1,3 @@
-import { LoginResI } from '_interfaces/auth-api.interfaces';
 import { createSlice } from '@reduxjs/toolkit';
 
 interface IsPaidState {

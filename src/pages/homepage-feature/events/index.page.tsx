@@ -8,22 +8,26 @@ import { Columns, Table } from "components/table/table";
 import { forwardRef, useCallback, useRef, useState } from "react";
 import { Button, Dropdown, Modal } from "react-daisyui";
 import { FiEdit, FiMoreHorizontal, FiSearch, FiTrash2 } from "react-icons/fi";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { errorHandler } from "services/errorHandler";
 import {
   useDeleteEventsMutation,
   useGetEventsQuery,
 } from "services/modules/events";
+import { setStatusState } from "store/events/statusSlice";
 
 export const eventsRouteName = "events";
 const Events = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [params, setParams] = useState<GetEventsQuery>({
     page: 1,
     limit: 10,
     search: "",
   });
   const { data, isLoading, refetch } = useGetEventsQuery(params);
+  dispatch(setStatusState("OFFLINE"))
   const [deleteEventById] = useDeleteEventsMutation();
   const [confirmationModal, setConfirmationModal] = useState<{
     id?: string;

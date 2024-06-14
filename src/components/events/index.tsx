@@ -2,7 +2,7 @@ import React, { ForwardRefRenderFunction, useState } from "react";
 import { Button, Modal } from "react-daisyui";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setPaidState } from "store/events";
+import { setPaidState } from "store/events/paidSlice";
   
 interface IModalCreateEvent {
   ref: React.DialogHTMLAttributes<HTMLDialogElement>;
