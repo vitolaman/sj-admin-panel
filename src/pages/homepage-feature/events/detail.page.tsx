@@ -42,6 +42,15 @@ const DetailEvent = () => {
     await scanner?.current?.stop();
   };
 
+  const capitalizeFirstLetter = (str: string): string => {
+    let lowerCaseWords = str.toLowerCase();
+    let words = lowerCaseWords.split(' ');
+    let capitalizedWords = words.map(word => {
+        return word.charAt(0).toUpperCase() + word.slice(1);
+    });
+    return capitalizedWords.join(' ');
+  }
+
   const header: Columns<EventsI>[] = [
     {
       fieldId: "index",
@@ -60,16 +69,30 @@ const DetailEvent = () => {
     },
     {
       fieldId: "",
-      label: "Is Paid Event",
+      label: "Category",
       render: (item) => (
         <span
           className={`px-2 py-1 font-poppins rounded-[4px] ${
-            item?.is_liked
-              ? "bg-[#DCFCE4] text-persian-green"
-              : "bg-[#FFEBEB] text-[#BB1616]"
+            ((item?.event_price ?? 0) === 0)
+              ? "bg-[#EDE3FE] text-[#7555DA]"
+              : "bg-[#DCFCE4] text-[#27A590]"
           }`}
         >
-          {item?.is_liked ? "Yes" : "No"}
+          {((item?.event_price ?? 0) === 0) ? "Free" : "Paid"}
+        </span>
+      ),
+    },
+    {
+      fieldId: "",
+      label: "Event Type",
+      render: (item) => (
+        <span
+          className={`px-2 py-1 font-poppins`}
+        >
+          {
+            ((item?.event_status ?? '') === '') ?
+              '-' : capitalizeFirstLetter(item?.event_status ?? '')
+          }
         </span>
       ),
     },
