@@ -9,14 +9,13 @@ import FormImage from "components/input/formImage";
 import { useNavigate } from "react-router-dom";
 import { Controller } from "react-hook-form";
 import CurrencyInput from "components/currency-input";
-import FormCheckbox from "components/input/formCheckbox";
 import Select from "components/select";
 import { currencyOptions } from "data/currency";
-import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "store";
 import { platformOptions } from "data/platformOptions";
 import { setStatusState } from "store/events/statusSlice";
+import EventStatusSelector from "components/input/formStatus";
 
 export const cEventsRouteName = "events/create";
 const CreateEvent = () => {
@@ -32,7 +31,6 @@ const CreateEvent = () => {
     watch,
     reset
   } = useUpsertEvents();
-  const dispatch = useDispatch();
   const imageURL = watch("image_url");
   const [imageURLPreview] = useFilePreview(imageURL as FileList);
   const { isPaidEvent } = useSelector((state: RootState) => state?.isPaid ?? {});
@@ -130,17 +128,8 @@ const CreateEvent = () => {
                 />
             }
           </div>
-          <div className="flex flex-col md:flex-row gap-4 mb-4">
-            <div className="border-b-2 border-[#BDBDBD] flex justify-center cursor-pointer">
-              <div onClick={() => {dispatch(setStatusState("OFFLINE"))}} className={`px-4 py-2 mx-2 font-semibold ${isStatusEvent === "OFFLINE" ? 'border-b-4 border-[#27A590] text-[#27A590]' : 'text-[#7C7C7C]'}`}>
-                Offline Event
-              </div>
-            </div>
-            <div className="border-b-2 border-[#BDBDBD] flex justify-center cursor-pointer">
-              <div onClick={() => {dispatch(setStatusState("ONLINE"))}} className={`px-4 py-2 mx-2 font-semibold ${isStatusEvent === "ONLINE" ? 'border-b-4 border-[#27A590] text-[#27A590]' : 'text-[#7C7C7C]'}`}>
-                Online Event
-              </div>
-            </div>
+          <div>
+            <EventStatusSelector setValue={setValue} control={control} name="event_status" isStatusEvent={isStatusEvent}/>
           </div>
           {
             (isStatusEvent === "ONLINE") ?

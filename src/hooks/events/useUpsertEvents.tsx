@@ -23,23 +23,49 @@ const useUpsertEvents = (id?: string) => {
   const loadingUpsert = createState.isLoading || updateState.isLoading;
   const { isPaidEvent } = useSelector((state: RootState) => state?.isPaid ?? {});
   const { isStatusEvent } = useSelector((state: RootState) => state?.isStatus ?? {});
-  const schema = yup.object().shape({
-    name: yup.string().required("Name cannot empty"),
-    external_url: yup
-      .string()
-      .required("Link cannot empty")
-      .matches(/^https:\/\//, "Link must start with https://"),
-    description: yup.string().required("Description cannot empty"),
-    event_date: yup
-      .date()
-      .required("Please input event date")
-      .typeError("invalid date"),
-  });
+  const schema = (isStatusEvent === "OFFLINE") ? (
+    yup.object().shape({
+      name: yup.string().required("Name cannot empty"),
+      external_url: yup
+        .string()
+        .required("Link cannot empty")
+        .matches(/^https:\/\//, "Link must start with https://"),
+      description: yup.string().required("Description cannot empty"),
+      event_date: yup
+        .date()
+        .required("Please input event date")
+        .typeError("invalid date"),
+      event_status: yup.string().required("Status cannot empty"),
+      location_name: yup.string().required("Location cannot empty"),
+    })
+  ) : (
+    yup.object().shape({
+      name: yup.string().required("Name cannot empty"),
+      external_url: yup
+        .string()
+        .required("Link cannot empty")
+        .matches(/^https:\/\//, "Link must start with https://"),
+      description: yup.string().required("Description cannot empty"),
+      event_date: yup
+        .date()
+        .required("Please input event date")
+        .typeError("invalid date"),
+      event_status: yup.string().required("Status cannot empty"),
+      location_name: yup.string().required("Location cannot empty"),
+      ended_at: yup
+        .date()
+        .required("Please input event end date")
+        .typeError("invalid date"),
+    })
+  );
   const defaultValues = {
     name: "",
     external_url: "",
     description: "",
     event_date: "",
+    ended_at: "",
+    location_name: "",
+    event_status: "OFFLINE"
   };
   const {
     handleSubmit,
@@ -59,7 +85,11 @@ const useUpsertEvents = (id?: string) => {
   const create = async (data: EventsFormDataI) => {
     try {
       const eventDateUtc = new Date(data?.event_date!).toISOString();
-      const payload: EventsFormDataI = { ...data, event_status: isStatusEvent, event_date: eventDateUtc };
+      const payload: EventsFormDataI = { 
+        ...data, 
+        event_status: isStatusEvent, 
+        event_date: eventDateUtc
+      };
       if (data?.ended_at && isStatusEvent === "ONLINE") {
         const endedAtUtc = new Date(data?.ended_at!).toISOString();
         payload.ended_at = endedAtUtc;
@@ -92,7 +122,23 @@ const useUpsertEvents = (id?: string) => {
   const update = async (data: EventsFormDataI) => {
     try {
       const eventDateUtc = new Date(data?.event_date!).toISOString();
-      const payload: EventsFormDataI = { ...data, event_date: eventDateUtc };
+      const payload: EventsFormDataI = {
+        ...data,
+        event_status: isStatusEvent,
+        event_date: eventDateUtc
+      };
+      if (data?.ended_at && isStatusEvent === "ONLINE") {
+        const endedAtUtc = new Date(data?.ended_at!).toISOString();
+        payload.ended_at = endedAtUtc;
+      } else {
+        delete payload.ended_at;
+      }
+      if (isPaidEvent) {
+        payload.event_price = parseFloat(payload.event_price as unknown as string);
+      } else {
+        payload.event_price = parseFloat(0 as unknown as string);
+        delete payload.currency;
+      }
       if (data.image_url && data.image_url[0]) {
         const image_url = await uploadFile(
           accessToken!,
@@ -102,6 +148,7 @@ const useUpsertEvents = (id?: string) => {
       } else {
         payload.image_url = "";
       }
+      console.log('payload ', payload)
       if (id !== undefined) {
         await updateEvents({ id: id, body: payload }).unwrap();
         toast.success("Updating a event was successful");
@@ -109,6 +156,8 @@ const useUpsertEvents = (id?: string) => {
       }
     } catch (error) {
       errorHandler(error);
+    } finally {
+      dispatch(setStatusState("OFFLINE"))
     }
   };
   const handleUpdate = handleSubmit(update);

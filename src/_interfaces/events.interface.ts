@@ -5,6 +5,7 @@ export interface GetEventsQuery {
 }
 
 export interface EventsI {
+  currency?: string;
   created_at: string;
   description: string;
   ended_at?: string;
@@ -23,7 +24,7 @@ export interface EventsI {
 
 export interface EventsFormDataI {
   id?:string
-  currency: string;
+  currency?: string;
   name: string;
   image_url: FileList | string;
   external_url: string;
