@@ -24,6 +24,7 @@ const CurrencyInput = ({
         value={value}
         onValueChange={onValueChange}
         disabled={disabled}
+        placeholder="Please input event price"
       />
       <ValidationError error={error} />
     </div>

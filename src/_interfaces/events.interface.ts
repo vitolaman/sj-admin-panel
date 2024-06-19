@@ -22,6 +22,18 @@ export interface EventsI {
   updated_at: string;
 }
 
+export interface EventDetailI {
+  id: string;
+  user_id: string;
+  name: string;
+  seeds_tag: string;
+  event_id: string;
+  ticket_code: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface EventsFormDataI {
   id?:string
   currency?: string;
@@ -36,6 +48,10 @@ export interface EventsFormDataI {
   ended_at?: string;
 }
 
+export interface TicketFormDataI{
+  ticket_code:string
+}
+
 export interface Metadata {
   total: number;
   current_page: number;
@@ -45,5 +61,10 @@ export interface Metadata {
 
 export interface EventsRes {
   data: EventsI[];
+  metadata: Metadata;
+}
+
+export interface EventDetailRes {
+  data: EventDetailI[];
   metadata: Metadata;
 }

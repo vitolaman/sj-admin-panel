@@ -18,6 +18,7 @@ interface Props<T extends FieldValues> {
   extraElement?: React.ReactNode;
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  className?:string
 }
 
 export default function FormInput<T extends FieldValues>({
@@ -32,6 +33,7 @@ export default function FormInput<T extends FieldValues>({
   disabled,
   value,
   onChange,
+  className
 }: Props<T>) {
   return (
     <div className="flex flex-col gap-2 w-full">
@@ -66,6 +68,7 @@ export default function FormInput<T extends FieldValues>({
         {...register(registerName)}
         value={value}
         onChange={onChange}
+        className={className}
       />
       {extraElement}
       <p className="font-poppins font-normal text-sm text-[#EF5350] text-right">
