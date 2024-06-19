@@ -10,12 +10,11 @@ import { useNavigate } from "react-router-dom";
 import { Controller } from "react-hook-form";
 import CurrencyInput from "components/currency-input";
 import Select from "components/select";
-import { currencyOptions } from "data/currency";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "store";
 import { platformOptions } from "data/platformOptions";
-import { setStatusState } from "store/events/statusSlice";
 import EventStatusSelector from "components/input/formStatus";
+import { useState } from "react";
 
 export const cEventsRouteName = "events/create";
 const CreateEvent = () => {
@@ -35,6 +34,23 @@ const CreateEvent = () => {
   const [imageURLPreview] = useFilePreview(imageURL as FileList);
   const { isPaidEvent } = useSelector((state: RootState) => state?.isPaid ?? {});
   const { isStatusEvent } = useSelector((state: RootState) => state?.isStatus ?? {});
+
+  const [endDate, setEndDate] = useState<string>("");
+
+  const handleAutoFill = (event: React.ChangeEvent<HTMLInputElement>):string => {
+    const eventDateObj = new Date(event.target.value);
+    const endedAtObj = new Date(eventDateObj.getTime() + 2 * 60 * 60 * 1000); // Add 2 hour from start date
+    const year = endedAtObj.getFullYear();
+    const month = String(endedAtObj.getMonth() + 1).padStart(2, "0");
+    const day = String(endedAtObj.getDate()).padStart(2, "0");
+    const hours = String(endedAtObj.getHours()).padStart(2, "0");
+    const minutes = String(endedAtObj.getMinutes()).padStart(2, "0");
+    const formattedEndedAt = `${year}-${month}-${day}T${hours}:${minutes}`;
+    setEndDate(formattedEndedAt);
+    setValue("ended_at", formattedEndedAt);
+    return formattedEndedAt
+  }
+
   return (
     <ContentContainer>
       <div className="flex flex-col gap-6">
@@ -66,8 +82,8 @@ const CreateEvent = () => {
             </Button>
           </div>
         </div>
-        <div>
-          <div className="flex flex-col md:flex-row gap-x-6">
+        <div className="w-full flex flex-col lg:flex-row gap-x-6">
+          <div className={`${(isPaidEvent) ? 'lg:w-1/2' : 'w-full lg:mb-2'} flex flex-col md:flex-row gap-4`}>
             <FormInput<EventsFormDataI>
               label="Event Name"
               registerName="name"
@@ -76,26 +92,15 @@ const CreateEvent = () => {
               maxLength={200}
               placeholder="Please input event name"
             />
-            <div
-              className={`${isPaidEvent ? "flex" : "hidden"} w-full flex-col gap-2 mb-4`}
-            >
+          </div>
+          <div className={`w-full flex flex-col md:flex-row ${(isPaidEvent) ? 'gap-x-6 lg:w-1/2' : 'hidden'}`}>
+          {
+            (isPaidEvent) &&
+            <div className={`w-full flex-col gap-2`}>
               <label className="font-semibold font-poppins text-base text-[#262626] cursor-pointer">
                 Event Price
               </label>
-              <div className="flex gap-4">
-                <div className="w-[200px]">
-                  <Controller
-                    control={control}
-                    name="id"
-                    render={({ field: { value, onChange } }) => (
-                      <Select
-                        value={value}
-                        options={currencyOptions}
-                        onChange={(e) => onChange(e.value)}
-                      />
-                    )}
-                  />
-                </div>
+              <div className="flex gap-4 mt-2">
                 <Controller
                   control={control}
                   name="id"
@@ -108,97 +113,101 @@ const CreateEvent = () => {
                 />
               </div>
             </div>
-          </div>
-          <div className="flex flex-col md:flex-row gap-4 mb-4">
-            <FormInput<EventsFormDataI>
-              label={isStatusEvent === "ONLINE" ? "Event Start Date" : "Event Date"}
-              registerName="event_date"
-              register={register}
-              errors={errors}
-              type="datetime-local"
-            />
-            {
-              (isStatusEvent === "ONLINE") &&
-                <FormInput<EventsFormDataI>
-                  label="Event Ended Date"
-                  registerName="ended_at"
-                  register={register}
-                  errors={errors}
-                  type="datetime-local"
-                />
-            }
-          </div>
-          <div>
-            <EventStatusSelector setValue={setValue} control={control} name="event_status" isStatusEvent={isStatusEvent}/>
-          </div>
-          {
-            (isStatusEvent === "ONLINE") ?
-              <div className="flex flex-col md:flex-row gap-x-6 mb-4">
-                <div
-                  className="w-full flex flex-col gap-2 mb-4"
-                >
-                  <label className="font-semibold font-poppins text-base text-[#262626] cursor-pointer">
-                    Platform
-                  </label>
-                  <div className="flex gap-4">
-                    <div className="w-full">
-                      <Controller
-                        control={control}
-                        name="location_name"
-                        render={({ field: { value, onChange } }) => (
-                          <Select
-                            value={value}
-                            options={platformOptions}
-                            onChange={(e) => onChange(e.value)}
-                          />
-                        )}
-                      />
-                    </div>
-                  </div>
-                </div>
-                <FormInput<EventsFormDataI>
-                  label="Link Conference"
-                  registerName="external_url"
-                  register={register}
-                  errors={errors}
-                  maxLength={200}
-                  placeholder="Please input conference link"
-                />
-              </div>
-              :
-              <div className="flex flex-col md:flex-row gap-x-6 mb-4">
-                <FormInput<EventsFormDataI>
-                  label="Location Name"
-                  registerName="location_name"
-                  register={register}
-                  errors={errors}
-                  maxLength={200}
-                  placeholder="Please input location name"
-                />
-                <FormInput<EventsFormDataI>
-                  label="Link Gmaps"
-                  registerName="external_url"
-                  register={register}
-                  errors={errors}
-                  maxLength={200}
-                  placeholder="Please input gmaps link"
-                />
-              </div>
           }
-          <FormEditor<EventsFormDataI>
-            label="Body Message"
-            registerName="description"
-            control={control}
-            errors={errors}
-          />
-          <FormImage<EventsFormDataI>
-            label="Attachment"
-            registerName="image_url"
+          </div>
+        </div>
+        <div className="w-full flex flex-col lg:flex-row gap-x-6">
+          <FormInput<EventsFormDataI>
+            label={isStatusEvent === "ONLINE" ? "Event Start Date" : "Event Date"}
+            registerName="event_date"
             register={register}
             errors={errors}
-            imageURLPreview={imageURLPreview}
+            type="datetime-local"
+            onChange={(e) => handleAutoFill(e)}
           />
+          {
+            (isStatusEvent === "ONLINE") &&
+              <FormInput<EventsFormDataI>
+                label="Event End Date"
+                registerName="ended_at"
+                register={register}
+                errors={errors}
+                type="datetime-local"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+              />
+          }
         </div>
+        <div>
+          <EventStatusSelector setValue={setValue} control={control} name="event_status" isStatusEvent={isStatusEvent}/>
+        </div>
+        {
+          (isStatusEvent === "ONLINE") ?
+            <div className="flex flex-col md:flex-row gap-x-6 mb-4">
+              <div
+                className="w-full flex flex-col gap-2 mb-4"
+              >
+                <label className="font-semibold font-poppins text-base text-[#262626] cursor-pointer">
+                  Platform
+                </label>
+                <div className="flex gap-4">
+                  <div className="w-full">
+                    <Controller
+                      control={control}
+                      name="location_name"
+                      render={({ field: { value, onChange } }) => (
+                        <Select
+                          value={value}
+                          options={platformOptions}
+                          onChange={(e) => onChange(e.value)}
+                        />
+                      )}
+                    />
+                  </div>
+                </div>
+              </div>
+              <FormInput<EventsFormDataI>
+                label="Link Conference"
+                registerName="external_url"
+                register={register}
+                errors={errors}
+                maxLength={200}
+                placeholder="Please input conference link"
+              />
+            </div>
+            :
+            <div className="flex flex-col md:flex-row gap-x-6 mb-4">
+              <FormInput<EventsFormDataI>
+                label="Location Name"
+                registerName="location_name"
+                register={register}
+                errors={errors}
+                maxLength={200}
+                placeholder="Please input location name"
+              />
+              <FormInput<EventsFormDataI>
+                label="Link Gmaps"
+                registerName="external_url"
+                register={register}
+                errors={errors}
+                maxLength={200}
+                placeholder="Please input gmaps link"
+              />
+            </div>
+        }
+        <FormEditor<EventsFormDataI>
+          label="Body Message"
+          registerName="description"
+          control={control}
+          errors={errors}
+        />
+        <FormImage<EventsFormDataI>
+          label="Attachment"
+          registerName="image_url"
+          register={register}
+          errors={errors}
+          imageURLPreview={imageURLPreview}
+        />
       </div>
     </ContentContainer>
   );

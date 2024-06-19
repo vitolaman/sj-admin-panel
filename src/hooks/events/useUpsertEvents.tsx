@@ -23,7 +23,7 @@ const useUpsertEvents = (id?: string) => {
   const loadingUpsert = createState.isLoading || updateState.isLoading;
   const { isPaidEvent } = useSelector((state: RootState) => state?.isPaid ?? {});
   const { isStatusEvent } = useSelector((state: RootState) => state?.isStatus ?? {});
-  const schema = (isStatusEvent === "OFFLINE") ? (
+  const schema = (
     yup.object().shape({
       name: yup.string().required("Name cannot empty"),
       external_url: yup
@@ -37,25 +37,6 @@ const useUpsertEvents = (id?: string) => {
         .typeError("invalid date"),
       event_status: yup.string().required("Status cannot empty"),
       location_name: yup.string().required("Location cannot empty"),
-    })
-  ) : (
-    yup.object().shape({
-      name: yup.string().required("Name cannot empty"),
-      external_url: yup
-        .string()
-        .required("Link cannot empty")
-        .matches(/^https:\/\//, "Link must start with https://"),
-      description: yup.string().required("Description cannot empty"),
-      event_date: yup
-        .date()
-        .required("Please input event date")
-        .typeError("invalid date"),
-      event_status: yup.string().required("Status cannot empty"),
-      location_name: yup.string().required("Location cannot empty"),
-      ended_at: yup
-        .date()
-        .required("Please input event end date")
-        .typeError("invalid date"),
     })
   );
   const defaultValues = {
@@ -65,7 +46,7 @@ const useUpsertEvents = (id?: string) => {
     event_date: "",
     ended_at: "",
     location_name: "",
-    event_status: "OFFLINE"
+    event_status: isStatusEvent ?? "OFFLINE"
   };
   const {
     handleSubmit,
@@ -90,7 +71,7 @@ const useUpsertEvents = (id?: string) => {
         event_status: isStatusEvent, 
         event_date: eventDateUtc
       };
-      if (data?.ended_at && isStatusEvent === "ONLINE") {
+      if (data.ended_at && (isStatusEvent === "ONLINE")) {
         const endedAtUtc = new Date(data?.ended_at!).toISOString();
         payload.ended_at = endedAtUtc;
       } else {
@@ -108,7 +89,6 @@ const useUpsertEvents = (id?: string) => {
       } else {
         payload.image_url = "";
       }
-      console.log('payload ', payload)
       await createEvents(payload).unwrap();
       toast.success("Creating a event was successful");
       navigate(-1);
@@ -127,16 +107,17 @@ const useUpsertEvents = (id?: string) => {
         event_status: isStatusEvent,
         event_date: eventDateUtc
       };
-      if (data?.ended_at && isStatusEvent === "ONLINE") {
+      if (data.ended_at && isStatusEvent === "ONLINE") {
         const endedAtUtc = new Date(data?.ended_at!).toISOString();
         payload.ended_at = endedAtUtc;
       } else {
-        delete payload.ended_at;
+        const endedAtUtc = new Date("0001-01-01T00:00:00Z").toISOString();
+        payload.ended_at = endedAtUtc;
       }
       if (isPaidEvent) {
         payload.event_price = parseFloat(payload.event_price as unknown as string);
       } else {
-        payload.event_price = parseFloat(0 as unknown as string);
+        payload.event_price = 0;
         delete payload.currency;
       }
       if (data.image_url && data.image_url[0]) {
@@ -145,10 +126,10 @@ const useUpsertEvents = (id?: string) => {
           data.image_url[0] as File
         );
         payload.image_url = image_url;
-      } else {
-        payload.image_url = "";
+        if (data.image_url[0] === 'h') {
+          payload.image_url = data.image_url
+        }
       }
-      console.log('payload ', payload)
       if (id !== undefined) {
         await updateEvents({ id: id, body: payload }).unwrap();
         toast.success("Updating a event was successful");

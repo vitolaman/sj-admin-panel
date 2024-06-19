@@ -23,7 +23,7 @@ export const eventsApi = Api.injectEndpoints({
       query({ id, body }) {
         return {
           url: `/admin-portal/v1/event/${id}`,
-          method: "PATCH",
+          method: "PUT",
           body,
         };
       },

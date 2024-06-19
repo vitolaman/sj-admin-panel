@@ -19,7 +19,7 @@ import { setStatusState } from "store/events/statusSlice";
 import { platformOptions } from "data/platformOptions";
 import { setPaidState } from "store/events/paidSlice";
 import EventStatusSelector from "components/input/formStatus";
-import FormIsPaid from "components/input/formIsPaid";
+import FormCheckbox from "components/input/formCheckbox";
 
 export const uEventsRouteName = "events/:id/edit";
 const UpdateEvent = () => {
@@ -81,6 +81,19 @@ const UpdateEvent = () => {
     }
   }, [data, params.id]);
 
+  const handleAutoFill = (event: React.ChangeEvent<HTMLInputElement>):string => {
+    const eventDateObj = new Date(event.target.value);
+    const endedAtObj = new Date(eventDateObj.getTime() + 2 * 60 * 60 * 1000); // Add 2 hour from start date
+    const year = endedAtObj.getFullYear();
+    const month = String(endedAtObj.getMonth() + 1).padStart(2, "0");
+    const day = String(endedAtObj.getDate()).padStart(2, "0");
+    const hours = String(endedAtObj.getHours()).padStart(2, "0");
+    const minutes = String(endedAtObj.getMinutes()).padStart(2, "0");
+    const formattedEndedAt = `${year}-${month}-${day}T${hours}:${minutes}`;
+    setValue("ended_at", formattedEndedAt);
+    return formattedEndedAt
+  }
+
   return (
     <ContentContainer>
       <div className="w-full flex flex-col sm:flex-row justify-between items-center gap-4 pb-6">
@@ -111,54 +124,61 @@ const UpdateEvent = () => {
           </Button>
         </div>
       </div>
-      <FormIsPaid<EventsFormDataI>
+      <FormCheckbox<EventsFormDataI>
         label="Paid Event"
         registerName="event_price"
         setValue={setValue}
         errors={errors}
         logic={isPaid}
         setLogic={handleChangeIsPaid}
+        className={"flex gap-2 w-full mb-4 items-center"}
       />
-      <div className={`flex flex-col md:flex-row gap-x-6 ${(isPaidEvent && isPaid) ? '' : 'md:mb-2'}`}>
-        <FormInput<EventsFormDataI>
-          label="Event Name"
-          registerName="name"
-          register={register}
-          errors={errors}
-          maxLength={200}
-        />
-        <div
-          className={`${(isPaidEvent && isPaid) ? "flex" : "hidden"} w-full flex-col gap-2 mb-4`}
-        >
-          <label className="font-semibold font-poppins text-base text-[#262626] cursor-pointer">
-            Event Price
-          </label>
-          <div className="flex gap-4">
-            <Controller
-              control={control}
-              name="event_price"
-              render={({ field: { onChange, value } }) => (
-                <CurrencyInput
-                  value={value}
-                  onValueChange={(value) => onChange(value)}
-                />
-              )}
-            />
-          </div>
+      <div className={`w-full flex flex-col lg:flex-row gap-x-6`}>
+        <div className={`${(isPaidEvent && isPaid) ? 'lg:w-1/2' : 'w-full lg:mb-2'} flex flex-col md:flex-row gap-4`}>
+          <FormInput<EventsFormDataI>
+            label="Event Name"
+            registerName="name"
+            register={register}
+            errors={errors}
+            maxLength={200}
+          />
+        </div>
+        <div className={`w-full flex flex-col md:flex-row ${(isPaidEvent && isPaid) ? 'gap-x-6 lg:w-1/2' : 'md:mb-2 hidden'}`}>
+          {
+            (isPaidEvent && isPaid) &&
+              <div className={`w-full flex-col gap-2 mb-2 lg:mb-4`}>
+                <label className="font-semibold font-poppins text-base text-[#262626] cursor-pointer">
+                  Event Price
+                </label>
+                <div className="flex gap-4 mt-2">
+                  <Controller
+                    control={control}
+                    name="event_price"
+                    render={({ field: { onChange, value } }) => (
+                      <CurrencyInput
+                        value={value}
+                        onValueChange={(value) => onChange(value)}
+                      />
+                    )}
+                  />
+                </div>
+              </div>
+          }
         </div>
       </div>
-      <div className="flex flex-col md:flex-row gap-4 mb-4">
+      <div className="w-full flex flex-col lg:flex-row gap-x-6">
         <FormInput<EventsFormDataI>
           label={isStatusEvent === "ONLINE" ? "Event Start Date" : "Event Date"}
           registerName="event_date"
           register={register}
           errors={errors}
           type="datetime-local"
+          onChange={(e) => handleAutoFill(e)}
         />
         {
           (isStatusEvent === "ONLINE") &&
             <FormInput<EventsFormDataI>
-              label="Event Ended Date"
+              label="Event End Date"
               registerName="ended_at"
               register={register}
               errors={errors}

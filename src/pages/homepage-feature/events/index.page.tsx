@@ -137,19 +137,23 @@ const Events = () => {
                 Edit Event
               </Button>
             </Dropdown.Item>
-            <Dropdown.Item className="p-0">
-              <Button
-                fullWidth
-                size="xs"
-                className="border-none shadow-none p-0 font-normal font-poppins text-sm text-[#201B1C]"
-                startIcon={<FiSearch color="#201B1C" size={20} />}
-                onClick={() => {
-                  navigate(`/homepage-feature/events/${item?.id}/detail`);
-                }}
-              >
-                Detail Event
-              </Button>
-            </Dropdown.Item>
+            {
+              item?.event_status !== 'ONLINE' && (            
+                <Dropdown.Item className="p-0">
+                  <Button
+                    fullWidth
+                    size="xs"
+                    className="border-none shadow-none p-0 font-normal font-poppins text-sm text-[#201B1C]"
+                    startIcon={<FiSearch color="#201B1C" size={20} />}
+                    onClick={() => {
+                      navigate(`/homepage-feature/events/${item?.id}/detail`);
+                    }}
+                  >
+                    Detail Event
+                  </Button>
+                </Dropdown.Item>
+              ) 
+            } 
             <Dropdown.Item className="p-0">
               <Button
                 fullWidth
