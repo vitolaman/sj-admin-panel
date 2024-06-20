@@ -16,8 +16,6 @@ interface Props<T extends FieldValues> {
   maxLength?: number;
   placeholder?: string;
   extraElement?: React.ReactNode;
-  value?: string;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   className?:string
 }
 
@@ -31,8 +29,6 @@ export default function FormInput<T extends FieldValues>({
   extraElement,
   errors,
   disabled,
-  value,
-  onChange,
   className
 }: Props<T>) {
   return (
@@ -66,8 +62,6 @@ export default function FormInput<T extends FieldValues>({
         id={`${label} label`}
         placeholder={placeholder}
         {...register(registerName)}
-        value={value}
-        onChange={onChange}
         className={className}
       />
       {extraElement}

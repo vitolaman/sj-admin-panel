@@ -92,6 +92,7 @@ const CreateEvent = () => {
                     <CurrencyInput
                       value={value}
                       onValueChange={(value) => onChange(value)}
+                      placeholder="Please input event price"
                     />
                   )}
                 />
