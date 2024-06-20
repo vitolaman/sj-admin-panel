@@ -1,7 +1,7 @@
 import { useState } from "react";
 import ContentContainer from "components/container";
 import { Button, FileInput, Modal } from "react-daisyui";
-import { QuizGalleryI } from "_interfaces/quiz-gallery.interfaces";
+import { QuizGalleryI, QuizGalleryReq } from "_interfaces/quiz-gallery.interfaces";
 import { Columns, Table } from "components/table/table";
 import { IoClose } from "react-icons/io5";
 import { HiOutlineClipboardDocumentList } from "react-icons/hi2";
@@ -17,6 +17,9 @@ import ConfirmationModal from "components/confirmation-modal";
 import { errorHandler } from "services/errorHandler";
 import useFilePreview from "hooks/shared/useFilePreview";
 import { toast } from "react-toastify";
+import Pagination from "components/table/pagination";
+import SearchInput from "components/search-input";
+import { typeFile, optionsFile } from "data/gallery";
 
 export const galleryRouteName = "";
 
@@ -26,7 +29,16 @@ const QuizGallery = () => {
     id?: string;
     open: boolean;
   }>({ open: false });
-  const { isLoading, data, refetch } = useGetQuizGalleryListQuery(undefined);
+  const [params, setParams] = useState<QuizGalleryReq>({
+    page: 1,
+    limit: 10,
+    search: "",
+    type: "",
+  });
+  const handlePageChange = (page: number): void => {
+    setParams((prev) => ({ ...prev, page }));
+  };
+  const { isLoading, data, refetch } = useGetQuizGalleryListQuery(params);
   const {
     handleCreate,
     register,
@@ -48,8 +60,7 @@ const QuizGallery = () => {
       .then(() => {
         toast.success("Link copied to clipboard!");
       })
-      .catch((err) => {
-        console.error("Failed to copy: ", err);
+      .catch(() => {
         toast.error("Failed to copy link.");
       });
   };
@@ -105,25 +116,6 @@ const QuizGallery = () => {
     },
   ];
 
-  const typeFile = [
-    {
-      key: 0,
-      label: "Select...",
-      value: "",
-      isDisabled: true,
-    },
-    {
-      key: 1,
-      label: "image",
-      value: "image",
-    },
-    {
-      key: 2,
-      label: "video",
-      value: "video",
-    },
-  ];
-
   const handleDelete = async () => {
     try {
       await deleteGallery(confirmationModal.id!).unwrap();
@@ -159,13 +151,41 @@ const QuizGallery = () => {
     }
   };
 
+  console.log('lihat data meta data', data)
+
   return (
     <>
       {/* Start of UI Gallery Quiz */}
       <ContentContainer>
-        <div className="w-full flex flex-row justify-between items-center">
-          <h1 className="font-semibold text-2xl">Quiz Gallery</h1>
+      <div className="w-full flex flex-row justify-between items-end">
+            <div className="max-w-40 min-w-40">
+              <label
+                htmlFor="category-question-bank"
+                className="font-semibold text-[#7C7C7C] mb-3"
+              >
+                Type File
+              </label>
+              <Select
+                value={params.type}
+                onChange={(e) =>
+                  setParams((prev) => ({ ...prev, type: e.value }))
+                }
+                options={optionsFile}
+                rounded={true}
+              />
+            </div>
           <div className="flex flex-row gap-3">
+            <SearchInput
+              placeholder="Search"
+              onSubmit={({ text }) => {
+                setParams((prev) => ({
+                  ...prev,
+                  search: text,
+                  page: 1,
+                  limit: 10,
+                }));
+              }}
+            />
             <Button
               className="border-seeds text-seeds rounded-full px-10"
               onClick={() => {
@@ -183,6 +203,11 @@ const QuizGallery = () => {
             loading={isLoading}
           />
         </div>
+        <Pagination
+          currentPage={data?.metadata?.currentPage ?? 1}
+          totalPages={data?.metadata?.totalPage ?? 0}
+          onPageChange={handlePageChange}
+        />
       </ContentContainer>
       {/* End of UI Gallery Quiz */}
 

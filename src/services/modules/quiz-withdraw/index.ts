@@ -9,7 +9,7 @@ export const quizWithdrawApi = Api.injectEndpoints({
   endpoints: (build) => ({
     quizWithdrawList: build.query<QuizWithdrawResI, QuizWithdrawReqI>({
       query: (params) =>
-        `quiz/v1/withdraw/list?search=&status=&page=${params.page}&limit=${params.limit}`,
+        `quiz/v1/withdraw/list?search=${params.search}&status=${params.status}&page=${params.page}&limit=${params.limit}`,
       keepUnusedDataFor: 0,
     }),
     quizUpdateWithdrawStatus: build.mutation<void, QuizWithdrawUpdateI>({

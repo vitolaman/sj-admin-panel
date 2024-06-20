@@ -30,6 +30,7 @@ interface Props<T extends FieldValues> {
   maxLength?: number;
   placeholder?: string;
   extraElement?: React.ReactNode;
+  className?:string
 }
 
 export default function FormInput<T extends FieldValues>({
@@ -46,6 +47,7 @@ export default function FormInput<T extends FieldValues>({
   extraElement,
   errors,
   disabled,
+  className
 }: Props<T>) {
   return (
     <div className="flex flex-col gap-2 w-full">
@@ -73,6 +75,7 @@ export default function FormInput<T extends FieldValues>({
           }}
           id={`${label} label`}
           placeholder={placeholder}
+          className={className}
           onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
             if (!/^\d*$/.test(e.key) && type === "number") {
               e.preventDefault();
