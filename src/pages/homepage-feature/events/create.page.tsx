@@ -13,8 +13,7 @@ import Select from "components/select";
 import { useSelector } from "react-redux";
 import { RootState } from "store";
 import { platformOptions } from "data/platformOptions";
-import EventStatusSelector from "components/input/formStatus";
-import { useState } from "react";
+import EventStatusSelector from "./sections/formStatus.section";
 
 export const cEventsRouteName = "events/create";
 const CreateEvent = () => {
@@ -28,28 +27,13 @@ const CreateEvent = () => {
     setValue,
     trigger,
     watch,
-    reset
+    reset,
+    getValues
   } = useUpsertEvents();
   const imageURL = watch("image_url");
   const [imageURLPreview] = useFilePreview(imageURL as FileList);
   const { isPaidEvent } = useSelector((state: RootState) => state?.isPaid ?? {});
   const { isStatusEvent } = useSelector((state: RootState) => state?.isStatus ?? {});
-
-  const [endDate, setEndDate] = useState<string>("");
-
-  const handleAutoFill = (event: React.ChangeEvent<HTMLInputElement>):string => {
-    const eventDateObj = new Date(event.target.value);
-    const endedAtObj = new Date(eventDateObj.getTime() + 2 * 60 * 60 * 1000); // Add 2 hour from start date
-    const year = endedAtObj.getFullYear();
-    const month = String(endedAtObj.getMonth() + 1).padStart(2, "0");
-    const day = String(endedAtObj.getDate()).padStart(2, "0");
-    const hours = String(endedAtObj.getHours()).padStart(2, "0");
-    const minutes = String(endedAtObj.getMinutes()).padStart(2, "0");
-    const formattedEndedAt = `${year}-${month}-${day}T${hours}:${minutes}`;
-    setEndDate(formattedEndedAt);
-    setValue("ended_at", formattedEndedAt);
-    return formattedEndedAt
-  }
 
   return (
     <ContentContainer>
@@ -123,7 +107,6 @@ const CreateEvent = () => {
             register={register}
             errors={errors}
             type="datetime-local"
-            onChange={(e) => handleAutoFill(e)}
           />
           {
             (isStatusEvent === "ONLINE") &&
@@ -133,8 +116,6 @@ const CreateEvent = () => {
                 register={register}
                 errors={errors}
                 type="datetime-local"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
               />
           }
         </div>

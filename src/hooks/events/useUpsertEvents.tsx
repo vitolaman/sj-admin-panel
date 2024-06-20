@@ -13,6 +13,7 @@ import { RootState, useAppSelector } from "store";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setStatusState } from "store/events/statusSlice";
+import { useEffect } from "react";
 
 const useUpsertEvents = (id?: string) => {
   const navigate = useNavigate();
@@ -37,6 +38,38 @@ const useUpsertEvents = (id?: string) => {
         .typeError("invalid date"),
       event_status: yup.string().required("Status cannot empty"),
       location_name: yup.string().required("Location cannot empty"),
+      ended_at: yup
+        .date()
+        .when('event_status', {
+          is: 'ONLINE',
+          then: yup
+            .date()
+            .required("Please input event date")
+            .typeError("Invalid date")
+            .test(
+              "is-same-date",
+              "End date must be on the same day as start date",
+              function (value) {
+                const { event_date } = this.parent;
+                if (!event_date || !value) return true;
+                return (
+                  event_date.getFullYear() === value.getFullYear() &&
+                  event_date.getMonth() === value.getMonth() &&
+                  event_date.getDate() === value.getDate()
+                );
+              }
+            )
+            .test(
+              "is-after-start-date",
+              "End date must be after start date",
+              function (value) {
+                const { event_date } = this.parent;
+                if (!event_date || !value) return true;
+                return value > event_date;
+              }
+            ),
+          otherwise: yup.date().nullable().notRequired(),
+        })
     })
   );
   const defaultValues = {
@@ -44,7 +77,7 @@ const useUpsertEvents = (id?: string) => {
     external_url: "",
     description: "",
     event_date: "",
-    ended_at: "",
+    // ended_at: "",
     location_name: "",
     event_status: isStatusEvent ?? "OFFLINE"
   };
@@ -56,12 +89,20 @@ const useUpsertEvents = (id?: string) => {
     setValue,
     trigger,
     watch,
-    reset
+    reset,
+    getValues
   } = useForm<EventsFormDataI>({
     mode: "onSubmit",
     resolver: yupResolver(schema),
     defaultValues,
   });
+
+  useEffect(() => {
+    setValue('event_status', isStatusEvent)
+    if (isStatusEvent === "OFFLINE") {
+      setValue('ended_at', null)
+    }
+  }, [isStatusEvent])
 
   const create = async (data: EventsFormDataI) => {
     try {
@@ -111,8 +152,7 @@ const useUpsertEvents = (id?: string) => {
         const endedAtUtc = new Date(data?.ended_at!).toISOString();
         payload.ended_at = endedAtUtc;
       } else {
-        const endedAtUtc = new Date("0001-01-01T00:00:00Z").toISOString();
-        payload.ended_at = endedAtUtc;
+        payload.ended_at = null;
       }
       if (isPaidEvent) {
         payload.event_price = parseFloat(payload.event_price as unknown as string);
@@ -153,7 +193,8 @@ const useUpsertEvents = (id?: string) => {
     setValue,
     trigger,
     watch,
-    reset
+    reset,
+    getValues
   };
 };
 

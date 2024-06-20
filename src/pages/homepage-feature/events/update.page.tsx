@@ -18,8 +18,8 @@ import { RootState } from "store";
 import { setStatusState } from "store/events/statusSlice";
 import { platformOptions } from "data/platformOptions";
 import { setPaidState } from "store/events/paidSlice";
-import EventStatusSelector from "components/input/formStatus";
 import FormCheckbox from "components/input/formCheckbox";
+import EventStatusSelector from "./sections/formStatus.section";
 
 export const uEventsRouteName = "events/:id/edit";
 const UpdateEvent = () => {
@@ -80,19 +80,6 @@ const UpdateEvent = () => {
       setIsPaid(true)
     }
   }, [data, params.id]);
-
-  const handleAutoFill = (event: React.ChangeEvent<HTMLInputElement>):string => {
-    const eventDateObj = new Date(event.target.value);
-    const endedAtObj = new Date(eventDateObj.getTime() + 2 * 60 * 60 * 1000); // Add 2 hour from start date
-    const year = endedAtObj.getFullYear();
-    const month = String(endedAtObj.getMonth() + 1).padStart(2, "0");
-    const day = String(endedAtObj.getDate()).padStart(2, "0");
-    const hours = String(endedAtObj.getHours()).padStart(2, "0");
-    const minutes = String(endedAtObj.getMinutes()).padStart(2, "0");
-    const formattedEndedAt = `${year}-${month}-${day}T${hours}:${minutes}`;
-    setValue("ended_at", formattedEndedAt);
-    return formattedEndedAt
-  }
 
   return (
     <ContentContainer>
@@ -173,7 +160,6 @@ const UpdateEvent = () => {
           register={register}
           errors={errors}
           type="datetime-local"
-          onChange={(e) => handleAutoFill(e)}
         />
         {
           (isStatusEvent === "ONLINE") &&

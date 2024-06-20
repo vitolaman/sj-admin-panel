@@ -3,7 +3,6 @@ import { useController, Control, useFormContext } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { setStatusState } from 'store/events/statusSlice';
 import { EventsFormDataI } from '_interfaces/events.interface';
-import useUpsertEvents from 'hooks/events/useUpsertEvents';
 
 interface EventStatusSelectorProps {
   control: Control<EventsFormDataI>;

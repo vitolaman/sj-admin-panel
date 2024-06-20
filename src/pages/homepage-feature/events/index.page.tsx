@@ -1,7 +1,6 @@
 import { EventsI, GetEventsQuery } from "_interfaces/events.interface";
 import ConfirmationModal from "components/confirmation-modal";
 import ContentContainer from "components/container";
-import CreateEventModal from "components/events";
 import SearchInput from "components/search-input";
 import Pagination from "components/table/pagination";
 import { Columns, Table } from "components/table/table";
@@ -16,6 +15,7 @@ import {
   useGetEventsQuery,
 } from "services/modules/events";
 import { setStatusState } from "store/events/statusSlice";
+import CreateEventModal from "./sections/createModal.section";
 
 export const eventsRouteName = "events";
 const Events = () => {
