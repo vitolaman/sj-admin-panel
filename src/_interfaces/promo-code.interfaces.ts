@@ -59,7 +59,9 @@ export interface PromoCodeModalFormI {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   promoCodeData?: PromoCodeI;
-  setPromoCodeData: React.Dispatch<React.SetStateAction<PromoCodeI|undefined>>;
+  setPromoCodeData: React.Dispatch<
+    React.SetStateAction<PromoCodeI | undefined>
+  >;
   refetch: () => QueryActionCreatorResult<
     QueryDefinition<
       GetPromoCodeQuery,
@@ -172,8 +174,8 @@ export interface PromoCodeFormDataI {
   name_promo_code?: string;
   promo_code?: string;
   start_date: string;
-  end_date: string;
-  expired_date: string;
+  end_date: string | null;
+  expired_date: string | null;
   discount_amount?: number;
   discount_percentage?: number;
   min_transaction: number;
