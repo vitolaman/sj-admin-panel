@@ -16,6 +16,7 @@ interface Data {
 interface Props<T extends FieldValues> {
   label: string;
   registerName: Path<T>;
+  type: string;
   errors?: FieldErrors<T>;
   register?: UseFormRegister<T>;
   setValue?: SetFieldValue<T>;
@@ -26,7 +27,6 @@ interface Props<T extends FieldValues> {
     value: string | number | boolean | null | undefined
   ) => void;
   disabled?: boolean;
-  type?: string;
   maxLength?: number;
   placeholder?: string;
   extraElement?: React.ReactNode;

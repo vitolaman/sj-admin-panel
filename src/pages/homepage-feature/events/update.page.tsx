@@ -125,6 +125,7 @@ const UpdateEvent = () => {
           <FormInput<EventsFormDataI>
             label="Event Name"
             registerName="name"
+            type="text"
             register={register}
             errors={errors}
             maxLength={200}
@@ -204,6 +205,7 @@ const UpdateEvent = () => {
             <FormInput<EventsFormDataI>
               label="Link Conference"
               registerName="external_url"
+              type="text"
               register={register}
               errors={errors}
               maxLength={200}
@@ -215,6 +217,7 @@ const UpdateEvent = () => {
             <FormInput<EventsFormDataI>
               label="Location Name"
               registerName="location_name"
+              type="text"
               register={register}
               errors={errors}
               maxLength={200}
@@ -223,6 +226,7 @@ const UpdateEvent = () => {
             <FormInput<EventsFormDataI>
               label="Link Gmaps"
               registerName="external_url"
+              type="text"
               register={register}
               errors={errors}
               maxLength={200}
