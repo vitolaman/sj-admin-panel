@@ -7,19 +7,14 @@ import {
   XPManagementModal,
 } from "_interfaces/xp-management.interface";
 import FormInput from "components/input/formInput";
-import RadioInput from "components/input/formRadio";
 import { limitation, status } from "data/xp-management";
 import ReactQuill from "react-quill";
 import { useLazyGetXPManagementByIdQuery } from "services/modules/xp-management";
 import moment from "moment";
+import useRadioForm from "hooks/shared/useRadioForm";
 
 const XPForm = ({ id, setId, open, setOpen, refetch }: XPManagementModal) => {
-  const [isDaily, setIsDaily] = useState<
-    string | number | boolean | undefined
-  >();
-  const [isActive, setIsActive] = useState<
-    string | number | boolean | undefined
-  >();
+  const { radioSelect, setRadioSelect, handleSelectChange } = useRadioForm();
   const [richValue, setRichValue] = useState<string>();
   const [getXPManagement, XPManagementDetailState] =
     useLazyGetXPManagementByIdQuery();
@@ -37,10 +32,10 @@ const XPForm = ({ id, setId, open, setOpen, refetch }: XPManagementModal) => {
   const handleResetForm = () => {
     reset({ ...defaultValues });
     setId("");
-    setIsDaily(undefined);
-    setIsActive(undefined);
+    setRadioSelect(undefined);
     setRichValue(undefined);
   };
+
   useEffect(() => {
     if (XPManagementDetailState.data && id) {
       reset({
@@ -55,16 +50,16 @@ const XPForm = ({ id, setId, open, setOpen, refetch }: XPManagementModal) => {
     }
     if (id !== undefined && id !== "") {
       getXPManagement(id);
-      setIsDaily(XPManagementDetailState.data?.is_daily_task);
-      setIsActive(XPManagementDetailState.data?.is_active);
+      setRadioSelect((prev) => ({
+        ...prev,
+        is_daily_task: XPManagementDetailState.data?.is_daily_task,
+        is_active: XPManagementDetailState.data?.is_active,
+      }));
       setRichValue(XPManagementDetailState.data?.description);
     }
   }, [XPManagementDetailState.data, id]);
   return (
-    <Modal
-      open={open}
-      className="bg-white w-11/12 max-w-[2000px] p-8"
-    >
+    <Modal open={open} className="bg-white w-11/12 max-w-[2000px] p-8">
       <Modal.Header className="flex justify-between">
         <p className="font-semibold font-poppins text-xl text-black w-fit">
           Detail Activity
@@ -95,15 +90,16 @@ const XPForm = ({ id, setId, open, setOpen, refetch }: XPManagementModal) => {
               register={register}
               errors={errors}
             />
-            <RadioInput<XPManagementI>
+            <FormInput<XPManagementI>
               label="Limitation"
               registerName="is_daily_task"
+              type="radio"
               setValue={setValue}
               data={limitation}
-              select={isDaily}
-              setSelect={setIsDaily}
+              select={radioSelect?.is_daily_task}
+              handleSelectChange={handleSelectChange}
             />
-            {isDaily && (
+            {radioSelect?.is_daily_task && (
               <FormInput<XPManagementI>
                 label="Max Activity"
                 type="number"
@@ -115,13 +111,14 @@ const XPForm = ({ id, setId, open, setOpen, refetch }: XPManagementModal) => {
           </div>
           <div className="border border-[#9B9B9B]"></div>
           <div className="flex flex-col gap-4 w-7/12">
-            <RadioInput<XPManagementI>
+            <FormInput<XPManagementI>
               label="Status"
               registerName="is_active"
+              type="radio"
               setValue={setValue}
               data={status}
-              select={isActive}
-              setSelect={setIsActive}
+              select={radioSelect?.is_active}
+              handleSelectChange={handleSelectChange}
             />
             <div className="flex gap-4 w-full">
               <FormInput<XPManagementI>
@@ -148,7 +145,7 @@ const XPForm = ({ id, setId, open, setOpen, refetch }: XPManagementModal) => {
                 value={richValue}
                 onChange={(e) => {
                   setRichValue(e);
-                  setValue("description", e==='<p><br></p>'?'':e);
+                  setValue("description", e === "<p><br></p>" ? "" : e);
                 }}
               />
               <p className="font-poppins font-normal text-sm text-[#EF5350] text-right mt-10">
@@ -172,8 +169,8 @@ const XPForm = ({ id, setId, open, setOpen, refetch }: XPManagementModal) => {
             loading={loading}
             onClick={async () => {
               if (await trigger()) {
-                if(!isDaily){
-                    setValue('max_exp',0)
+                if (!radioSelect?.is_daily_task) {
+                  setValue("max_exp", 0);
                 }
                 await handleUpdate();
                 handleResetForm();
