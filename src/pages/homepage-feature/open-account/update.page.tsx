@@ -77,6 +77,7 @@ const UpdateOpenAccount = () => {
             <FormInput<OpenAccountFromData>
               label="Account Name"
               registerName="name"
+              type="text"
               register={register}
               errors={errors}
               maxLength={30}
@@ -84,6 +85,7 @@ const UpdateOpenAccount = () => {
             <FormInput<OpenAccountFromData>
               label="Register Link"
               registerName="external_url"
+              type="text"
               register={register}
               errors={errors}
               maxLength={30}
@@ -93,6 +95,7 @@ const UpdateOpenAccount = () => {
             <FormInput<OpenAccountFromData>
               label="Title"
               registerName="title"
+              type="text"
               register={register}
               errors={errors}
               maxLength={30}

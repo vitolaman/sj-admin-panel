@@ -1,4 +1,5 @@
 import {
+  EventDetailRes,
   EventsFormDataI,
   EventsI,
   EventsRes,
@@ -19,11 +20,18 @@ export const eventsApi = Api.injectEndpoints({
       query: (id) => `/admin-portal/v1/event/${id}`,
       keepUnusedDataFor: 0,
     }),
+    getEventDetail: build.query<EventDetailRes,{id:string, params:GetEventsQuery}>({
+      query: ({id, params}) => ({
+        url: `/admin-portal/v1/event/${id}/ticket`,
+        params,
+      }),
+      keepUnusedDataFor: 0,
+    }),
     updateEvents: build.mutation<void, { id: string; body: EventsFormDataI }>({
       query({ id, body }) {
         return {
           url: `/admin-portal/v1/event/${id}`,
-          method: "PATCH",
+          method: "PUT",
           body,
         };
       },
@@ -46,6 +54,15 @@ export const eventsApi = Api.injectEndpoints({
         };
       },
     }),
+    createCheckIn: build.mutation<void, string>({
+      query(id) {
+        return {
+          url: `/admin-portal/v1/event/check-in`,
+          method: "POST",
+          body:{ticket_code:id},
+        };
+      },
+    }),
   }),
   overrideExisting: false,
 });
@@ -53,7 +70,9 @@ export const eventsApi = Api.injectEndpoints({
 export const {
   useGetEventsQuery,
   useGetEventByIdQuery,
+  useGetEventDetailQuery,
   useUpdateEventsMutation,
   useCreateEventsMutation,
   useDeleteEventsMutation,
+  useCreateCheckInMutation,
 } = eventsApi;

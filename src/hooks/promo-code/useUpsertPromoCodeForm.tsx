@@ -28,10 +28,10 @@ const useUpsertCodeForm = () => {
       .required("Please input start date")
       .typeError("invalid date"),
     end_date: yup
-      .date()
-      .min(yup.ref("start_date"), "End date must be after start date")
-      .required("Please input end date")
-      .typeError("invalid date"),
+    .date()
+    .nullable()
+    .min(yup.ref("start_date"), "End date must be after start date")
+    .notRequired(),
     expired_date: yup.string().notRequired(),
     discount_amount: yup.number().when("discount_type", {
       is: "Nominal",
@@ -43,7 +43,10 @@ const useUpsertCodeForm = () => {
     }),
     discount_percentage: yup.number().when("discount_type", {
       is: "Percentage",
-      then: yup.number().min(1, "Discount Percentage cannot be zero").notRequired(),
+      then: yup
+        .number()
+        .min(1, "Discount Percentage cannot be zero")
+        .notRequired(),
       otherwise: yup
         .number()
         .max(9000000000000000000, "Discount Percentage value over max limit")
@@ -51,7 +54,6 @@ const useUpsertCodeForm = () => {
     }),
     min_transaction: yup
       .number()
-      .min(1, "Min Transaction cannot empty")
       .max(9000000000000000000, "Min Transaction value over max limit")
       .required("Min Transaction cannot empty"),
     max_discount: yup.number().when("discount_type", {
@@ -64,7 +66,6 @@ const useUpsertCodeForm = () => {
     }),
     quantity: yup
       .number()
-      .min(1, "Quota cannot empty")
       .max(9000000000000000000, "Quota value over max limit")
       .required("Quota cannot empty"),
     type: yup.string().notRequired(),
@@ -81,7 +82,6 @@ const useUpsertCodeForm = () => {
       .required("T&C cannot empty"),
     max_redeem: yup
       .number()
-      .min(1, "Max Redeem cannot empty")
       .max(9000000000000000000, "Max Redeem value over max limit")
       .required("Max Redeem cannot empty"),
     is_active: yup.boolean().required("Status cannot empty"),
@@ -92,11 +92,6 @@ const useUpsertCodeForm = () => {
     start_date: "",
     end_date: "",
     expired_date: "",
-    discount_amount: 0,
-    discount_percentage: 0,
-    min_transaction: 0,
-    max_discount: 0,
-    quantity: 0,
     type: "",
     institution: "",
     segment_user: "",
@@ -107,7 +102,6 @@ const useUpsertCodeForm = () => {
     category: "",
     min_exp: 0,
     tnc: "",
-    max_redeem: 0,
     is_active: undefined,
   };
 
@@ -126,11 +120,13 @@ const useUpsertCodeForm = () => {
     resolver: yupResolver(schema),
     defaultValues,
   });
-
   const update = async (data: PromoCodeFormDataI) => {
     try {
       const startDateUtc = new Date(data?.start_date!).toISOString();
-      const endDateUtc = new Date(data?.end_date!).toISOString();
+      const endDateUtc =
+        data?.end_date !== null
+          ? new Date(data?.end_date!).toISOString()
+          : null;
       const payload: PromoCodeFormDataI = {
         id: data?.id,
         name_promo_code: data?.name_promo_code,
@@ -187,7 +183,10 @@ const useUpsertCodeForm = () => {
   const create = async (data: PromoCodeFormDataI) => {
     try {
       const startDateUtc = new Date(data?.start_date!).toISOString();
-      const endDateUtc = new Date(data?.end_date!).toISOString();
+      const endDateUtc =
+        data?.end_date !== null
+          ? new Date(data?.end_date!).toISOString()
+          : null;
       const payload: PromoCodeFormDataI = {
         name_promo_code: data.name_promo_code,
         promo_code: data.promo_code,
