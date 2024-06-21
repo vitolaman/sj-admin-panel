@@ -55,18 +55,11 @@ const UpdateEvent = () => {
   };
 
   useEffect(() => {
-    if (data?.event_status === "OFFLINE") {
-      reset({
-        ...data,
-        event_date: moment(data?.event_date).format("YYYY-MM-DD HH:mm"),
-      });
-    } else {
-      reset({
-        ...data,
-        event_date: moment(data?.event_date).format("YYYY-MM-DD HH:mm"),
-        ended_at: moment(data?.ended_at).format("YYYY-MM-DD HH:mm"),
-      });
-    }
+    reset({
+      ...data,
+      event_date: moment(data?.event_date).format("YYYY-MM-DD HH:mm"),
+      ended_at: moment(data?.ended_at).format("YYYY-MM-DD HH:mm"),
+    });
 
     dispatch(setStatusState(data?.event_status))
 
@@ -157,22 +150,19 @@ const UpdateEvent = () => {
       </div>
       <div className="w-full flex flex-col lg:flex-row gap-x-6">
         <FormInput<EventsFormDataI>
-          label={isStatusEvent === "ONLINE" ? "Event Start Date" : "Event Date"}
+          label={"Event Start Date"}
           registerName="event_date"
           register={register}
           errors={errors}
           type="datetime-local"
         />
-        {
-          (isStatusEvent === "ONLINE") &&
-            <FormInput<EventsFormDataI>
-              label="Event End Date"
-              registerName="ended_at"
-              register={register}
-              errors={errors}
-              type="datetime-local"
-            />
-        }
+        <FormInput<EventsFormDataI>
+          label="Event End Date"
+          registerName="ended_at"
+          register={register}
+          errors={errors}
+          type="datetime-local"
+        />
       </div>
       <div>
         <EventStatusSelector setValue={setValue} control={control} name="event_status" isStatusEvent={isStatusEvent}/>
