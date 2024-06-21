@@ -64,7 +64,6 @@ const useUpsertEvents = (id?: string) => {
             return value > event_date;
           }
         ),
-        otherwise: yup.date().nullable().notRequired(),
     })
   );
   const defaultValues = {
