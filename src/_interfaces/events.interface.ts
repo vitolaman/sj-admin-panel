@@ -8,7 +8,7 @@ export interface EventsI {
   currency?: string;
   created_at: string;
   description: string;
-  ended_at?: string;
+  ended_at: string;
   event_date: string;
   event_price: number;
   event_status: string;
@@ -45,7 +45,7 @@ export interface EventsFormDataI {
   event_price?: number;
   location_name: string;
   event_status: string;
-  ended_at?: string | null;
+  ended_at: string;
 }
 
 export interface TicketFormDataI{

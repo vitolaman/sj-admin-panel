@@ -40,36 +40,30 @@ const useUpsertEvents = (id?: string) => {
       location_name: yup.string().required("Location cannot empty"),
       ended_at: yup
         .date()
-        .when('event_status', {
-          is: 'ONLINE',
-          then: yup
-            .date()
-            .required("Please input event date")
-            .typeError("Invalid date")
-            .test(
-              "is-same-date",
-              "End date must be on the same day as start date",
-              function (value) {
-                const { event_date } = this.parent;
-                if (!event_date || !value) return true;
-                return (
-                  event_date.getFullYear() === value.getFullYear() &&
-                  event_date.getMonth() === value.getMonth() &&
-                  event_date.getDate() === value.getDate()
-                );
-              }
-            )
-            .test(
-              "is-after-start-date",
-              "End date must be after start date",
-              function (value) {
-                const { event_date } = this.parent;
-                if (!event_date || !value) return true;
-                return value > event_date;
-              }
-            ),
-          otherwise: yup.date().nullable().notRequired(),
-        })
+        .required("Please input event date")
+        .typeError("Invalid date")
+        .test(
+          "is-same-date",
+          "End date must be on the same day as start date",
+          function (value) {
+            const { event_date } = this.parent;
+            if (!event_date || !value) return true;
+            return (
+              event_date.getFullYear() === value.getFullYear() &&
+              event_date.getMonth() === value.getMonth() &&
+              event_date.getDate() === value.getDate()
+            );
+          }
+        )
+        .test(
+          "is-after-start-date",
+          "End date must be after start date",
+          function (value) {
+            const { event_date } = this.parent;
+            if (!event_date || !value) return true;
+            return value > event_date;
+          }
+        ),
     })
   );
   const defaultValues = {
@@ -77,7 +71,7 @@ const useUpsertEvents = (id?: string) => {
     external_url: "",
     description: "",
     event_date: "",
-    // ended_at: "",
+    ended_at: "",
     location_name: "",
     event_status: isStatusEvent ?? "OFFLINE"
   };
@@ -97,27 +91,16 @@ const useUpsertEvents = (id?: string) => {
     defaultValues,
   });
 
-  useEffect(() => {
-    setValue('event_status', isStatusEvent)
-    if (isStatusEvent === "OFFLINE") {
-      setValue('ended_at', null)
-    }
-  }, [isStatusEvent])
-
   const create = async (data: EventsFormDataI) => {
     try {
       const eventDateUtc = new Date(data?.event_date!).toISOString();
+      const endedAtUtc = new Date(data?.ended_at!).toISOString();
       const payload: EventsFormDataI = { 
         ...data, 
         event_status: isStatusEvent, 
-        event_date: eventDateUtc
+        event_date: eventDateUtc,
+        ended_at: endedAtUtc
       };
-      if (data.ended_at && (isStatusEvent === "ONLINE")) {
-        const endedAtUtc = new Date(data?.ended_at!).toISOString();
-        payload.ended_at = endedAtUtc;
-      } else {
-        delete payload.ended_at;
-      }
       if (isPaidEvent) {
         payload.event_price = parseFloat(payload.id as string)
       }
@@ -143,17 +126,13 @@ const useUpsertEvents = (id?: string) => {
   const update = async (data: EventsFormDataI) => {
     try {
       const eventDateUtc = new Date(data?.event_date!).toISOString();
+      const endedAtUtc = new Date(data?.ended_at!).toISOString();
       const payload: EventsFormDataI = {
         ...data,
         event_status: isStatusEvent,
-        event_date: eventDateUtc
+        event_date: eventDateUtc,
+        ended_at: endedAtUtc
       };
-      if (data.ended_at && isStatusEvent === "ONLINE") {
-        const endedAtUtc = new Date(data?.ended_at!).toISOString();
-        payload.ended_at = endedAtUtc;
-      } else {
-        payload.ended_at = null;
-      }
       if (isPaidEvent) {
         payload.event_price = parseFloat(payload.event_price as unknown as string);
       } else {
