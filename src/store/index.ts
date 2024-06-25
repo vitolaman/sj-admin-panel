@@ -14,17 +14,21 @@ import CookieStorage from "./cookieStore";
 import Cookies from "cookies-js";
 import { Api } from "services/api";
 import auth from "./auth";
+import isPaidReducer from "./events/paidSlice";
+import isStatusReducer from "./events/statusSlice";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 
 const reducers = combineReducers({
   auth,
+  isPaid: isPaidReducer,
+  isStatus: isStatusReducer,
   [Api.reducerPath]: Api.reducer,
 });
 
 const persistConfig = {
   key: "seedsfinancestore",
   storage: new CookieStorage(Cookies, {}),
-  whitelist: ["auth"],
+  whitelist: ["auth", "isPaid", "isStatus"],
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);

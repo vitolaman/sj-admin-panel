@@ -1,17 +1,26 @@
-import { PromoCodeFormDataI, PromoCodeI } from "_interfaces/promo-code.interfaces";
+import {
+  PromoCodeFormDataI,
+  PromoCodeI,
+} from "_interfaces/promo-code.interfaces";
 import FormInput from "components/input/formInput";
-import FormRadio from "components/input/formRadio";
-import { discountType } from "data/promo-code";
+import {
+  discountType,
+  minTransactionType,
+  quotaType,
+  redeemType,
+} from "data/promo-code";
+import { RadioSelectI } from "hooks/shared/useRadioForm";
 import { FieldErrors, UseFormRegister, UseFormSetValue } from "react-hook-form";
 
 interface Props {
   register: UseFormRegister<PromoCodeFormDataI>;
   errors: FieldErrors<PromoCodeFormDataI>;
   promoCodeData?: PromoCodeI;
-  discountSelect: string | number | boolean | undefined;
-  setDiscountSelect: React.Dispatch<
-    React.SetStateAction<string | number | boolean | undefined>
-  >;
+  radioSelect: RadioSelectI | undefined;
+  handleSelectChange: (
+    field: keyof RadioSelectI,
+    value: string | number | boolean | undefined | null
+  ) => void;
   setValue: UseFormSetValue<PromoCodeFormDataI>;
 }
 
@@ -19,8 +28,8 @@ const LeftFormModal = ({
   register,
   errors,
   promoCodeData,
-  discountSelect,
-  setDiscountSelect,
+  radioSelect,
+  handleSelectChange,
   setValue,
 }: Props) => {
   return (
@@ -31,7 +40,7 @@ const LeftFormModal = ({
         registerName="name_promo_code"
         register={register}
         errors={errors}
-        disabled={promoCodeData !==undefined ? true : false}
+        disabled={promoCodeData !== undefined ? true : false}
       />
       <FormInput<PromoCodeFormDataI>
         label="Promo Code"
@@ -45,75 +54,114 @@ const LeftFormModal = ({
         }
         register={register}
         errors={errors}
-        disabled={promoCodeData !==undefined ? true : false}
+        disabled={promoCodeData !== undefined ? true : false}
       />
       <FormInput<PromoCodeFormDataI>
-        label="Quota"
-        type="number"
+        label="Quota Type"
         registerName="quantity"
-        register={register}
-        errors={errors}
-      />
-      <FormRadio<PromoCodeFormDataI>
-        label="Discount Type"
-        registerName="discount_type"
-        disabled={promoCodeData !==undefined}
-        data={discountType}
-        select={discountSelect}
-        setSelect={setDiscountSelect}
+        type="radio"
+        data={quotaType}
+        select={radioSelect?.quantity}
         setValue={setValue}
         errors={errors}
+        handleSelectChange={handleSelectChange}
       />
-      <div className="flex gap-4 w-full">
-        {discountSelect === "Percentage" ? (
-          <>
+      {radioSelect?.quantity !== 0 && radioSelect?.quantity && (
+        <FormInput<PromoCodeFormDataI>
+          label="Limit Quota"
+          type="number"
+          registerName="quantity"
+          register={register}
+          errors={errors}
+        />
+      )}
+      <FormInput<PromoCodeFormDataI>
+        label="Discount Type"
+        registerName="discount_type"
+        type="radio"
+        disabled={promoCodeData !== undefined}
+        data={discountType}
+        select={radioSelect?.discount_type}
+        setValue={setValue}
+        errors={errors}
+        handleSelectChange={handleSelectChange}
+      />
+      {radioSelect?.discount_type && (
+        <div className="flex gap-4 w-full">
+          {radioSelect?.discount_type === "Percentage" ? (
+            <>
+              <FormInput<PromoCodeFormDataI>
+                label="Discount Percentage"
+                registerName="discount_percentage"
+                type="number"
+                disabled={promoCodeData !== undefined}
+                placeholder="%"
+                register={register}
+                errors={errors}
+              />
+              <FormInput<PromoCodeFormDataI>
+                label="Max Discount"
+                registerName="max_discount"
+                type="number"
+                disabled={promoCodeData !== undefined}
+                placeholder="Rp"
+                register={register}
+                errors={errors}
+              />
+            </>
+          ) : radioSelect?.discount_type === "Nominal" ? (
             <FormInput<PromoCodeFormDataI>
-              label="Discount Percentage"
-              registerName="discount_percentage"
+              label="Discount Nominal"
+              registerName="discount_amount"
               type="number"
-              disabled={promoCodeData !==undefined}
-              placeholder="%"
-              register={register}
-              errors={errors}
-            />
-            <FormInput<PromoCodeFormDataI>
-              label="Max Discount"
-              registerName="max_discount"
-              type="number"
-              disabled={promoCodeData !==undefined}
+              disabled={promoCodeData !== undefined}
               placeholder="Rp"
               register={register}
               errors={errors}
             />
-          </>
-        ) : discountSelect === "Nominal" ? (
-          <FormInput<PromoCodeFormDataI>
-            label="Discount Nominal"
-            registerName="discount_amount"
-            type="number"
-            disabled={promoCodeData !==undefined}
-            placeholder="Rp"
-            register={register}
-            errors={errors}
-          />
-        ) : (
-          <></>
-        )}
-      </div>
+          ) : (
+            <></>
+          )}
+        </div>
+      )}
       <FormInput<PromoCodeFormDataI>
-        label="Max Redeem"
-        type="number"
+        label="Redeem Type"
         registerName="max_redeem"
-        register={register}
+        type="radio"
+        data={redeemType}
+        select={radioSelect?.max_redeem}
+        setValue={setValue}
         errors={errors}
+        handleSelectChange={handleSelectChange}
       />
+      {radioSelect?.max_redeem !== 0 && radioSelect?.max_redeem && (
+        <FormInput<PromoCodeFormDataI>
+          label="Max Redeem"
+          type="number"
+          registerName="max_redeem"
+          register={register}
+          errors={errors}
+        />
+      )}
       <FormInput<PromoCodeFormDataI>
-        label="Min Transaction"
-        type="number"
+        label="Minimum Transaction Type"
         registerName="min_transaction"
-        register={register}
+        type="radio"
+        data={minTransactionType}
+        select={radioSelect?.min_transaction}
+        setValue={setValue}
         errors={errors}
+        handleSelectChange={handleSelectChange}
       />
+      {radioSelect?.min_transaction !== 0 && radioSelect?.min_transaction && (
+        <FormInput<PromoCodeFormDataI>
+          label="Minimum Transaction"
+          type="number"
+          registerName="min_transaction"
+          register={register}
+          errors={errors}
+        />
+      )}
     </div>
   );
 };
