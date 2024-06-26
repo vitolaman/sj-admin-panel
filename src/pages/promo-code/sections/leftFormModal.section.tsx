@@ -2,7 +2,7 @@ import {
   PromoCodeFormDataI,
   PromoCodeI,
 } from "_interfaces/promo-code.interfaces";
-import FormInput from "components/input/formInput";
+import MInput from "components/multi-input/index";
 import {
   discountType,
   minTransactionType,
@@ -34,7 +34,7 @@ const LeftFormModal = ({
 }: Props) => {
   return (
     <div className="flex flex-col gap-4 w-5/12">
-      <FormInput<PromoCodeFormDataI>
+      <MInput<PromoCodeFormDataI>
         label="Title"
         type="text"
         registerName="name_promo_code"
@@ -42,7 +42,7 @@ const LeftFormModal = ({
         errors={errors}
         disabled={promoCodeData !== undefined ? true : false}
       />
-      <FormInput<PromoCodeFormDataI>
+      <MInput<PromoCodeFormDataI>
         label="Promo Code"
         registerName="promo_code"
         type="text"
@@ -56,7 +56,7 @@ const LeftFormModal = ({
         errors={errors}
         disabled={promoCodeData !== undefined ? true : false}
       />
-      <FormInput<PromoCodeFormDataI>
+      <MInput<PromoCodeFormDataI>
         label="Quota Type"
         registerName="quantity"
         type="radio"
@@ -67,7 +67,7 @@ const LeftFormModal = ({
         handleSelectChange={handleSelectChange}
       />
       {select?.quantity !== 0 && select?.quantity && (
-        <FormInput<PromoCodeFormDataI>
+        <MInput<PromoCodeFormDataI>
           label="Limit Quota"
           type="number"
           registerName="quantity"
@@ -75,7 +75,7 @@ const LeftFormModal = ({
           errors={errors}
         />
       )}
-      <FormInput<PromoCodeFormDataI>
+      <MInput<PromoCodeFormDataI>
         label="Discount Type"
         registerName="discount_type"
         type="radio"
@@ -90,7 +90,7 @@ const LeftFormModal = ({
         <div className="flex gap-4 w-full">
           {select?.discount_type === "Percentage" ? (
             <>
-              <FormInput<PromoCodeFormDataI>
+              <MInput<PromoCodeFormDataI>
                 label="Discount Percentage"
                 registerName="discount_percentage"
                 type="number"
@@ -99,7 +99,7 @@ const LeftFormModal = ({
                 register={register}
                 errors={errors}
               />
-              <FormInput<PromoCodeFormDataI>
+              <MInput<PromoCodeFormDataI>
                 label="Max Discount"
                 registerName="max_discount"
                 type="number"
@@ -110,7 +110,7 @@ const LeftFormModal = ({
               />
             </>
           ) : select?.discount_type === "Nominal" ? (
-            <FormInput<PromoCodeFormDataI>
+            <MInput<PromoCodeFormDataI>
               label="Discount Nominal"
               registerName="discount_amount"
               type="number"
@@ -124,7 +124,7 @@ const LeftFormModal = ({
           )}
         </div>
       )}
-      <FormInput<PromoCodeFormDataI>
+      <MInput<PromoCodeFormDataI>
         label="Redeem Type"
         registerName="max_redeem"
         type="radio"
@@ -135,7 +135,7 @@ const LeftFormModal = ({
         handleSelectChange={handleSelectChange}
       />
       {select?.max_redeem !== 0 && select?.max_redeem && (
-        <FormInput<PromoCodeFormDataI>
+        <MInput<PromoCodeFormDataI>
           label="Max Redeem"
           type="number"
           registerName="max_redeem"
@@ -143,7 +143,7 @@ const LeftFormModal = ({
           errors={errors}
         />
       )}
-      <FormInput<PromoCodeFormDataI>
+      <MInput<PromoCodeFormDataI>
         label="Minimum Transaction Type"
         registerName="min_transaction"
         type="radio"
@@ -154,7 +154,7 @@ const LeftFormModal = ({
         handleSelectChange={handleSelectChange}
       />
       {select?.min_transaction !== 0 && select?.min_transaction && (
-        <FormInput<PromoCodeFormDataI>
+        <MInput<PromoCodeFormDataI>
           label="Minimum Transaction"
           type="number"
           registerName="min_transaction"

@@ -1,5 +1,5 @@
 import ContentContainer from "components/container";
-import FormInput from "components/input/formInput";
+import MInput from "components/multi-input/index";
 import useFilePreview from "hooks/shared/useFilePreview";
 import { Button } from "react-daisyui";
 import { useNavigate, useParams } from "react-router-dom";
@@ -72,7 +72,7 @@ const UpdateOpenAccount = () => {
         </div>
         <div>
           <div className="flex flex-col md:flex-row gap-x-6">
-            <FormInput<OpenAccountFromData>
+            <MInput<OpenAccountFromData>
               label="Account Name"
               registerName="name"
               type="text"
@@ -80,7 +80,7 @@ const UpdateOpenAccount = () => {
               errors={errors}
               maxLength={30}
             />
-            <FormInput<OpenAccountFromData>
+            <MInput<OpenAccountFromData>
               label="Register Link"
               registerName="external_url"
               type="text"
@@ -90,7 +90,7 @@ const UpdateOpenAccount = () => {
             />
           </div>
           <div className="flex flex-col md:flex-row gap-x-6">
-            <FormInput<OpenAccountFromData>
+            <MInput<OpenAccountFromData>
               label="Title"
               registerName="title"
               type="text"
@@ -100,14 +100,14 @@ const UpdateOpenAccount = () => {
             />
             <div className="w-full" />
           </div>
-          <FormInput<OpenAccountFromData>
+          <MInput<OpenAccountFromData>
             label="Description"
             registerName="description"
             type="rich-text"
             control={control}
             errors={errors}
           />
-          <FormInput<OpenAccountFromData>
+          <MInput<OpenAccountFromData>
             label="Image Banner"
             registerName="banner.image_link"
             type="image"

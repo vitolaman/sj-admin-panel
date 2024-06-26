@@ -12,7 +12,7 @@ import {
 } from "services/modules/events";
 import QrScanner from "qr-scanner";
 import ScanModal from "./sections/scanModal.section";
-import FormInput from "components/input/formInput";
+import MInput from "components/multi-input/index";
 import useCreateCheckIn from "hooks/events/useCreateCheckIn";
 
 export const dEventsRouteName = "events/:id/detail";
@@ -128,7 +128,7 @@ const DetailEvent = () => {
           </h1>
 
           <div className="flex flex-col md:flex-row gap-3 w-full">
-            <FormInput
+            <MInput
               label=""
               placeholder="Input Code"
               registerName="ticket_code"

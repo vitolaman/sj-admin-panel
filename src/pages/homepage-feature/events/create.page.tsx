@@ -1,6 +1,6 @@
 import { EventsFormDataI } from "_interfaces/events.interface";
 import ContentContainer from "components/container";
-import FormInput from "components/input/formInput";
+import MInput from "components/multi-input/index";
 import useUpsertEvents from "hooks/events/useUpsertEvents";
 import useFilePreview from "hooks/shared/useFilePreview";
 import { Button } from "react-daisyui";
@@ -65,7 +65,7 @@ const CreateEvent = () => {
         </div>
         <div className="w-full flex flex-col lg:flex-row gap-x-6">
           <div className={`${(isPaidEvent) ? 'lg:w-1/2' : 'w-full lg:mb-2'} flex flex-col md:flex-row gap-4`}>
-            <FormInput<EventsFormDataI>
+            <MInput<EventsFormDataI>
               label="Event Name"
               registerName="name"
               type="text"
@@ -100,14 +100,14 @@ const CreateEvent = () => {
           </div>
         </div>
         <div className="w-full flex flex-col lg:flex-row gap-x-6">
-          <FormInput<EventsFormDataI>
+          <MInput<EventsFormDataI>
             label={"Event Start Date"}
             registerName="event_date"
             register={register}
             errors={errors}
             type="datetime-local"
           />
-          <FormInput<EventsFormDataI>
+          <MInput<EventsFormDataI>
             label="Event End Date"
             registerName="ended_at"
             register={register}
@@ -143,7 +143,7 @@ const CreateEvent = () => {
                   </div>
                 </div>
               </div>
-              <FormInput<EventsFormDataI>
+              <MInput<EventsFormDataI>
                 label="Link Conference"
                 registerName="external_url"
                 type="text"
@@ -155,7 +155,7 @@ const CreateEvent = () => {
             </div>
             :
             <div className="flex flex-col md:flex-row gap-x-6 mb-4">
-              <FormInput<EventsFormDataI>
+              <MInput<EventsFormDataI>
                 label="Location Name"
                 registerName="location_name"
                 type="text"
@@ -164,7 +164,7 @@ const CreateEvent = () => {
                 maxLength={200}
                 placeholder="Please input location name"
               />
-              <FormInput<EventsFormDataI>
+              <MInput<EventsFormDataI>
                 label="Link Gmaps"
                 registerName="external_url"
                 type="text"
@@ -175,14 +175,14 @@ const CreateEvent = () => {
               />
             </div>
         }
-        <FormInput<EventsFormDataI>
+        <MInput<EventsFormDataI>
           label="Body Message"
           registerName="description"
           type="rich-text"
           control={control}
           errors={errors}
         />
-        <FormInput<EventsFormDataI>
+        <MInput<EventsFormDataI>
           label="Attachment"
           registerName="image_url"
           type="image"

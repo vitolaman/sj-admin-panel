@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button, Modal } from "react-daisyui";
 import { FiX } from "react-icons/fi";
-import FormInput from "components/input/formInput";
+import MInput from "components/multi-input/index";
 import { noExp, status } from "data/seeds-coin-management";
 import moment from "moment";
 import useRNCHelper from "hooks/shared/useRNCHelper";
@@ -67,7 +67,7 @@ const SeedsCoinForm = ({ data, open, setOpen, refetch }: SeedsCoinModal) => {
       <Modal.Body className="flex flex-col gap-4">
         <div className="flex flex-col md:flex-row md:justify-between gap-4 md:gap-10">
           <div className="flex flex-col gap-4 w-full md:w-5/12">
-            <FormInput<SeedsCoinManagementReq>
+            <MInput<SeedsCoinManagementReq>
               label="Activity"
               type="text"
               registerName="name"
@@ -75,7 +75,7 @@ const SeedsCoinForm = ({ data, open, setOpen, refetch }: SeedsCoinModal) => {
               errors={errors}
               disabled
             />
-            <FormInput<SeedsCoinManagementReq>
+            <MInput<SeedsCoinManagementReq>
               label="Coin Value"
               type="number"
               registerName="coin_value"
@@ -85,7 +85,7 @@ const SeedsCoinForm = ({ data, open, setOpen, refetch }: SeedsCoinModal) => {
           </div>
           <div className="hidden md:block border border-[#9B9B9B]"></div>
           <div className="flex flex-col gap-4 w-full md:w-7/12">
-            <FormInput<SeedsCoinManagementReq>
+            <MInput<SeedsCoinManagementReq>
               registerName="is_active"
               type="radio"
               setValue={setValue}
@@ -95,7 +95,7 @@ const SeedsCoinForm = ({ data, open, setOpen, refetch }: SeedsCoinModal) => {
               register={register}
             />
             <div className="flex flex-col lg:flex-row gap-4 w-full">
-              <FormInput<SeedsCoinManagementReq>
+              <MInput<SeedsCoinManagementReq>
                 label="Start Date"
                 registerName="started_at"
                 register={register}
@@ -104,7 +104,7 @@ const SeedsCoinForm = ({ data, open, setOpen, refetch }: SeedsCoinModal) => {
               />
 
               {select?.expired_at !== null && (
-                <FormInput<SeedsCoinManagementReq>
+                <MInput<SeedsCoinManagementReq>
                   label="Expired Date"
                   registerName="expired_at"
                   register={register}
@@ -113,7 +113,7 @@ const SeedsCoinForm = ({ data, open, setOpen, refetch }: SeedsCoinModal) => {
                 />
               )}
             </div>
-            <FormInput<SeedsCoinManagementReq>
+            <MInput<SeedsCoinManagementReq>
               registerName="expired_at"
               type="checkbox"
               data={noExp}

@@ -26,7 +26,7 @@ import moment from "moment";
 import { FiX } from "react-icons/fi";
 import { useCategoryState } from "hooks/promo-code/useCategoryState";
 import ReactQuill from "react-quill";
-import FormInput from "components/input/formInput";
+import MInput from "components/multi-input/index";
 import CategoryModal from "./categoryModal.section";
 import LeftFormModal from "./leftFormModal.section";
 import { useLazyGetArticleByIdQuery } from "services/modules/article";
@@ -351,7 +351,7 @@ const PromoCodeModalForm = ({
               />
               <div className="border border-[#9B9B9B]"></div>
               <div className="flex flex-col gap-4 w-7/12">
-                <FormInput<PromoCodeFormDataI>
+                <MInput<PromoCodeFormDataI>
                   label="Status"
                   registerName="is_active"
                   type="radio"
@@ -362,7 +362,7 @@ const PromoCodeModalForm = ({
                   handleSelectChange={handleSelectChange}
                   register={register}
                 />
-                <FormInput<PromoCodeFormDataI>
+                <MInput<PromoCodeFormDataI>
                   label="Periode Promo"
                   registerName="end_date"
                   type="radio"
@@ -375,7 +375,7 @@ const PromoCodeModalForm = ({
                 />
                 {select?.end_date !== undefined && (
                   <div className="flex gap-4 w-full">
-                    <FormInput<PromoCodeFormDataI>
+                    <MInput<PromoCodeFormDataI>
                       label="Start Date"
                       registerName="start_date"
                       type="datetime-local"
@@ -383,7 +383,7 @@ const PromoCodeModalForm = ({
                       errors={errors}
                     />
                     {select?.end_date !== null && (
-                      <FormInput<PromoCodeFormDataI>
+                      <MInput<PromoCodeFormDataI>
                         label="End Date"
                         registerName="end_date"
                         type="datetime-local"
@@ -393,7 +393,7 @@ const PromoCodeModalForm = ({
                     )}
                   </div>
                 )}
-                <FormInput<PromoCodeFormDataI>
+                <MInput<PromoCodeFormDataI>
                   label="Description"
                   registerName="description"
                   type="text"
@@ -459,7 +459,7 @@ const PromoCodeModalForm = ({
                 </div>
                 {/* {(segmentUser === segmentUserOptions[3].value ||
                   (select?.min_exp && segmentUser === "All User")) && (
-                  <FormInput<PromoCodeFormDataI>
+                  <MInput<PromoCodeFormDataI>
                     label="Choose Level"
                     registerName="min_exp"
                     type="radio"

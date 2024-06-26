@@ -41,7 +41,7 @@ interface Props<T extends FieldValues> {
   className?: string;
 }
 
-export default function FormInput<T extends FieldValues>({
+export default function MInput<T extends FieldValues>({
   label,
   registerName,
   register,
