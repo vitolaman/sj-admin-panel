@@ -101,22 +101,19 @@ const CreateEvent = () => {
         </div>
         <div className="w-full flex flex-col lg:flex-row gap-x-6">
           <FormInput<EventsFormDataI>
-            label={isStatusEvent === "ONLINE" ? "Event Start Date" : "Event Date"}
+            label={"Event Start Date"}
             registerName="event_date"
             register={register}
             errors={errors}
             type="datetime-local"
           />
-          {
-            (isStatusEvent === "ONLINE") &&
-              <FormInput<EventsFormDataI>
-                label="Event End Date"
-                registerName="ended_at"
-                register={register}
-                errors={errors}
-                type="datetime-local"
-              />
-          }
+          <FormInput<EventsFormDataI>
+            label="Event End Date"
+            registerName="ended_at"
+            register={register}
+            errors={errors}
+            type="datetime-local"
+          />
         </div>
         <div>
           <EventStatusSelector setValue={setValue} control={control} name="event_status" isStatusEvent={isStatusEvent}/>
