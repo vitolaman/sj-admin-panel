@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Modal } from "react-daisyui";
 import { FiX } from "react-icons/fi";
 import useUpdateXPManagementForm from "hooks/xp-management/useUpdateXPManagement";
@@ -11,10 +11,10 @@ import { limitation, status } from "data/xp-management";
 import ReactQuill from "react-quill";
 import { useLazyGetXPManagementByIdQuery } from "services/modules/xp-management";
 import moment from "moment";
-import useRadioForm from "hooks/shared/useRadioForm";
+import useRNCHelper from "hooks/shared/useRNCHelper";
 
 const XPForm = ({ id, setId, open, setOpen, refetch }: XPManagementModal) => {
-  const { radioSelect, setRadioSelect, handleSelectChange } = useRadioForm();
+  const { select, setSelect, handleSelectChange } = useRNCHelper();
   const [richValue, setRichValue] = useState<string>();
   const [getXPManagement, XPManagementDetailState] =
     useLazyGetXPManagementByIdQuery();
@@ -32,7 +32,7 @@ const XPForm = ({ id, setId, open, setOpen, refetch }: XPManagementModal) => {
   const handleResetForm = () => {
     reset({ ...defaultValues });
     setId("");
-    setRadioSelect(undefined);
+    setSelect(undefined);
     setRichValue(undefined);
   };
 
@@ -50,7 +50,7 @@ const XPForm = ({ id, setId, open, setOpen, refetch }: XPManagementModal) => {
     }
     if (id !== undefined && id !== "") {
       getXPManagement(id);
-      setRadioSelect((prev) => ({
+      setSelect((prev) => ({
         ...prev,
         is_daily_task: XPManagementDetailState.data?.is_daily_task,
         is_active: XPManagementDetailState.data?.is_active,
@@ -96,10 +96,10 @@ const XPForm = ({ id, setId, open, setOpen, refetch }: XPManagementModal) => {
               type="radio"
               setValue={setValue}
               data={limitation}
-              select={radioSelect?.is_daily_task}
+              select={select?.is_daily_task}
               handleSelectChange={handleSelectChange}
             />
-            {radioSelect?.is_daily_task && (
+            {select?.is_daily_task && (
               <FormInput<XPManagementI>
                 label="Max Activity"
                 type="number"
@@ -117,7 +117,7 @@ const XPForm = ({ id, setId, open, setOpen, refetch }: XPManagementModal) => {
               type="radio"
               setValue={setValue}
               data={status}
-              select={radioSelect?.is_active}
+              select={select?.is_active}
               handleSelectChange={handleSelectChange}
             />
             <div className="flex gap-4 w-full">
@@ -169,7 +169,7 @@ const XPForm = ({ id, setId, open, setOpen, refetch }: XPManagementModal) => {
             loading={loading}
             onClick={async () => {
               if (await trigger()) {
-                if (!radioSelect?.is_daily_task) {
+                if (!select?.is_daily_task) {
                   setValue("max_exp", 0);
                 }
                 await handleUpdate();

@@ -34,7 +34,7 @@ import { useLazyGetQuizByIdQuery } from "services/modules/quiz";
 import { useLazyPlayByIdQuery } from "services/modules/play";
 import { useLazyCircleDetailQuery } from "services/modules/circle";
 import { Loader } from "components/spinner/loader";
-import useRadioForm from "hooks/shared/useRadioForm";
+import useRNCHelper from "hooks/shared/useRNCHelper";
 
 const PromoCodeModalForm = ({
   open,
@@ -43,7 +43,7 @@ const PromoCodeModalForm = ({
   setPromoCodeData,
   refetch,
 }: PromoCodeModalFormI) => {
-  const { radioSelect, setRadioSelect, handleSelectChange } = useRadioForm();
+  const { select, setSelect, handleSelectChange } = useRNCHelper();
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [richValue, setRichValue] = useState<string>();
   const [isLoadingFeatureIds, setIsLoadingFeatureIds] =
@@ -120,7 +120,7 @@ const PromoCodeModalForm = ({
   const handleResetForm = () => {
     reset({ ...defaultValues });
     setPromoCodeData(undefined);
-    setRadioSelect(undefined);
+    setSelect(undefined);
     setRichValue(undefined);
     setSegmentUser(null);
     setDefaultValueSegmentUser(null);
@@ -204,13 +204,13 @@ const PromoCodeModalForm = ({
   }, [isSuccess]);
 
   useEffect(() => {
-    if (radioSelect?.discount_type === "Nominal") {
+    if (select?.discount_type === "Nominal") {
       setValue("discount_percentage", 0);
       setValue("max_discount", 0);
-    } else if (radioSelect?.discount_type === "Percentage") {
+    } else if (select?.discount_type === "Percentage") {
       setValue("discount_amount", 0);
     }
-  }, [radioSelect?.discount_type]);
+  }, [select?.discount_type]);
   useEffect(() => {
     if (dataRef?.data === null) {
       setRefCodeSelection([]);
@@ -241,7 +241,7 @@ const PromoCodeModalForm = ({
       });
       setRichValue(promoCodeData?.tnc as string);
       setSegmentUser(promoCodeData?.segment_user as string);
-      setRadioSelect((prev) => ({
+      setSelect((prev) => ({
         ...prev,
         discount_type: promoCodeData.discount_type,
         min_exp: promoCodeData.min_exp,
@@ -345,7 +345,7 @@ const PromoCodeModalForm = ({
                 register={register}
                 errors={errors}
                 promoCodeData={promoCodeData}
-                radioSelect={radioSelect}
+                select={select}
                 setValue={setValue}
                 handleSelectChange={handleSelectChange}
               />
@@ -356,22 +356,24 @@ const PromoCodeModalForm = ({
                   registerName="is_active"
                   type="radio"
                   data={statusPromo}
-                  select={radioSelect?.is_active}
+                  select={select?.is_active}
                   setValue={setValue}
                   errors={errors}
                   handleSelectChange={handleSelectChange}
+                  register={register}
                 />
                 <FormInput<PromoCodeFormDataI>
                   label="Periode Promo"
                   registerName="end_date"
                   type="radio"
                   data={promoDateType}
-                  select={radioSelect?.end_date}
+                  select={select?.end_date}
                   setValue={setValue}
                   errors={errors}
                   handleSelectChange={handleSelectChange}
+                  register={register}
                 />
-                {radioSelect?.end_date !== undefined && (
+                {select?.end_date !== undefined && (
                   <div className="flex gap-4 w-full">
                     <FormInput<PromoCodeFormDataI>
                       label="Start Date"
@@ -380,7 +382,7 @@ const PromoCodeModalForm = ({
                       register={register}
                       errors={errors}
                     />
-                    {radioSelect?.end_date !== null && (
+                    {select?.end_date !== null && (
                       <FormInput<PromoCodeFormDataI>
                         label="End Date"
                         registerName="end_date"
@@ -418,7 +420,7 @@ const PromoCodeModalForm = ({
                           }}
                           options={segmentUserOptions}
                           value={
-                            promoCodeData !== undefined && radioSelect?.min_exp
+                            promoCodeData !== undefined && select?.min_exp
                               ? segmentUserOptions.find(
                                   (item) => item.value === ""
                                 )
@@ -433,7 +435,7 @@ const PromoCodeModalForm = ({
                           onChange={(e) => {
                             onChange(e?.value);
                             if (e?.label !== "Tier Level (Xp Management)") {
-                              setRadioSelect((prev) => ({
+                              setSelect((prev) => ({
                                 ...prev,
                                 min_exp: undefined,
                               }));
@@ -456,13 +458,13 @@ const PromoCodeModalForm = ({
                   />
                 </div>
                 {/* {(segmentUser === segmentUserOptions[3].value ||
-                  (radioSelect?.min_exp && segmentUser === "All User")) && (
+                  (select?.min_exp && segmentUser === "All User")) && (
                   <FormInput<PromoCodeFormDataI>
                     label="Choose Level"
                     registerName="min_exp"
                     type="radio"
                     data={levelExpOptions}
-                    select={radioSelect?.min_exp}
+                    select={select?.min_exp}
                     setValue={setValue}
                     handleSelectChange={handleSelectChange}
                   />

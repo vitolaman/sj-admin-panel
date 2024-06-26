@@ -1,9 +1,7 @@
 import ContentContainer from "components/container";
 import FormInput from "components/input/formInput";
-import FormEditor from "components/input/formEditor";
 import useFilePreview from "hooks/shared/useFilePreview";
 import { Button } from "react-daisyui";
-import FormImage from "components/input/formImage";
 import { useNavigate, useParams } from "react-router-dom";
 import { OpenAccountFromData } from "_interfaces/banner.interface";
 import useUpsertOpenAccount from "hooks/open-account/useUpsertOpenAccount";
@@ -102,19 +100,21 @@ const UpdateOpenAccount = () => {
             />
             <div className="w-full" />
           </div>
-          <FormEditor<OpenAccountFromData>
+          <FormInput<OpenAccountFromData>
             label="Description"
             registerName="description"
+            type="rich-text"
             control={control}
             errors={errors}
           />
-          <FormImage<OpenAccountFromData>
+          <FormInput<OpenAccountFromData>
             label="Image Banner"
             registerName="banner.image_link"
+            type="image"
             register={register}
             errors={errors}
             imageURLPreview={imageURLPreview}
-            data={data?.image_url!}
+            dataImage={data?.image_url!}
           />
         </div>
       </div>

@@ -1,11 +1,9 @@
 import { EventsFormDataI } from "_interfaces/events.interface";
 import ContentContainer from "components/container";
 import FormInput from "components/input/formInput";
-import FormEditor from "components/input/formEditor";
 import useUpsertEvents from "hooks/events/useUpsertEvents";
 import useFilePreview from "hooks/shared/useFilePreview";
 import { Button } from "react-daisyui";
-import FormImage from "components/input/formImage";
 import { useNavigate, useParams } from "react-router-dom";
 import { useGetEventByIdQuery } from "services/modules/events";
 import { useEffect, useState } from "react";
@@ -234,19 +232,21 @@ const UpdateEvent = () => {
             />
           </div>
       }
-      <FormEditor<EventsFormDataI>
+      <FormInput<EventsFormDataI>
         label="Body Message"
         registerName="description"
+        type="rich-text"
         control={control}
         errors={errors}
       />
-      <FormImage<EventsFormDataI>
+      <FormInput<EventsFormDataI>
         label="Attachment"
         registerName="image_url"
+        type="image"
         register={register}
         errors={errors}
         imageURLPreview={imageURLPreview}
-        data={data?.image_url!}
+        dataImage={data?.image_url!}
       />
     </ContentContainer>
   );

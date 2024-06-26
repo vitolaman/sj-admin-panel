@@ -9,16 +9,16 @@ import {
   quotaType,
   redeemType,
 } from "data/promo-code";
-import { RadioSelectI } from "hooks/shared/useRadioForm";
+import { SelectI } from "hooks/shared/useRNCHelper";
 import { FieldErrors, UseFormRegister, UseFormSetValue } from "react-hook-form";
 
 interface Props {
   register: UseFormRegister<PromoCodeFormDataI>;
   errors: FieldErrors<PromoCodeFormDataI>;
   promoCodeData?: PromoCodeI;
-  radioSelect: RadioSelectI | undefined;
+  select: SelectI | undefined;
   handleSelectChange: (
-    field: keyof RadioSelectI,
+    field: keyof SelectI,
     value: string | number | boolean | undefined | null
   ) => void;
   setValue: UseFormSetValue<PromoCodeFormDataI>;
@@ -28,7 +28,7 @@ const LeftFormModal = ({
   register,
   errors,
   promoCodeData,
-  radioSelect,
+  select,
   handleSelectChange,
   setValue,
 }: Props) => {
@@ -61,12 +61,12 @@ const LeftFormModal = ({
         registerName="quantity"
         type="radio"
         data={quotaType}
-        select={radioSelect?.quantity}
+        select={select?.quantity}
         setValue={setValue}
         errors={errors}
         handleSelectChange={handleSelectChange}
       />
-      {radioSelect?.quantity !== 0 && radioSelect?.quantity && (
+      {select?.quantity !== 0 && select?.quantity && (
         <FormInput<PromoCodeFormDataI>
           label="Limit Quota"
           type="number"
@@ -81,14 +81,14 @@ const LeftFormModal = ({
         type="radio"
         disabled={promoCodeData !== undefined}
         data={discountType}
-        select={radioSelect?.discount_type}
+        select={select?.discount_type}
         setValue={setValue}
         errors={errors}
         handleSelectChange={handleSelectChange}
       />
-      {radioSelect?.discount_type && (
+      {select?.discount_type && (
         <div className="flex gap-4 w-full">
-          {radioSelect?.discount_type === "Percentage" ? (
+          {select?.discount_type === "Percentage" ? (
             <>
               <FormInput<PromoCodeFormDataI>
                 label="Discount Percentage"
@@ -109,7 +109,7 @@ const LeftFormModal = ({
                 errors={errors}
               />
             </>
-          ) : radioSelect?.discount_type === "Nominal" ? (
+          ) : select?.discount_type === "Nominal" ? (
             <FormInput<PromoCodeFormDataI>
               label="Discount Nominal"
               registerName="discount_amount"
@@ -129,12 +129,12 @@ const LeftFormModal = ({
         registerName="max_redeem"
         type="radio"
         data={redeemType}
-        select={radioSelect?.max_redeem}
+        select={select?.max_redeem}
         setValue={setValue}
         errors={errors}
         handleSelectChange={handleSelectChange}
       />
-      {radioSelect?.max_redeem !== 0 && radioSelect?.max_redeem && (
+      {select?.max_redeem !== 0 && select?.max_redeem && (
         <FormInput<PromoCodeFormDataI>
           label="Max Redeem"
           type="number"
@@ -148,12 +148,12 @@ const LeftFormModal = ({
         registerName="min_transaction"
         type="radio"
         data={minTransactionType}
-        select={radioSelect?.min_transaction}
+        select={select?.min_transaction}
         setValue={setValue}
         errors={errors}
         handleSelectChange={handleSelectChange}
       />
-      {radioSelect?.min_transaction !== 0 && radioSelect?.min_transaction && (
+      {select?.min_transaction !== 0 && select?.min_transaction && (
         <FormInput<PromoCodeFormDataI>
           label="Minimum Transaction"
           type="number"
