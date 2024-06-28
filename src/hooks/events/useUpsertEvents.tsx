@@ -84,7 +84,6 @@ const useUpsertEvents = (id?: string) => {
     trigger,
     watch,
     reset,
-    getValues
   } = useForm<EventsFormDataI>({
     mode: "onSubmit",
     resolver: yupResolver(schema),
@@ -173,7 +172,6 @@ const useUpsertEvents = (id?: string) => {
     trigger,
     watch,
     reset,
-    getValues
   };
 };
 
