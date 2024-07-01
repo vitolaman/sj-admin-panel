@@ -183,74 +183,77 @@ const DetailEvent = () => {
         setScanResult={setScanResult}
       />
       <div className="flex flex-col gap-6">
-        <div className="w-full flex flex-col justify-between gap-4">
-          <h1 className="font-semibold md:text-2xl text-lg font-poppins">
-            Scan Ticket
-          </h1>
+        {detailData?.event_status === "OFFLINE" && (
+          <div className="w-full flex flex-col justify-between gap-4">
+            <h1 className="font-semibold md:text-2xl text-lg font-poppins">
+              Scan Ticket
+            </h1>
 
-          <div className="flex flex-col lg:flex-row gap-3 w-full">
-            <div className="w-full lg:w-5/12 xl:w-full">
-              <MInput
-                placeholder="Input Code"
-                registerName="ticket_code"
-                type="text"
-                register={register}
-                errors={errors}
-                className="rounded-full"
-              />
-            </div>
-            <div className="flex flex-col md:flex-row gap-3 w-full justify-end">
-              <Button
-                loading={loading}
-                className="bg-seeds hover:bg-seeds-300 border-seeds hover:border-seeds-300 text-white rounded-full px-10 font-semibold font-poppins md:text-base text-sm w-full md:w-fit"
-                onClick={async (e) => {
-                  const status = await trigger();
-                  if (status) {
-                    await handleCheckIn(e);
-                    refetch();
-                  }
-                }}
-              >
-                Check In
-              </Button>
-              <Button
-                loading={loading}
-                className="bg-[#FF3838] hover:bg-[#FF3838]/75 border-[#FF3838] hover:border-[#FF3838]/75 text-white rounded-full px-10 font-semibold font-poppins md:text-base text-sm w-full md:w-fit"
-                onClick={async (e) => {
-                  const status = await trigger();
-                  if (status) {
-                    await handleCheckOut(e);
-                    refetch();
-                  }
-                }}
-              >
-                Check Out
-              </Button>
-              <Button
-                className="border-seeds text-seeds rounded-full px-10 font-semibold font-poppins md:text-base text-sm w-full md:w-fit"
-                onClick={async () => {
-                  setScanResult({ open: !scanResult.open });
-                  await scanner?.current?.start();
-                  if (videoRef?.current && !scanner.current) {
-                    scanner.current = new QrScanner(
-                      videoRef?.current,
-                      handleResult,
-                      {
-                        preferredCamera: "environment",
-                        highlightScanRegion: true,
-                        highlightCodeOutline: true,
-                        overlay: divRef?.current || undefined,
-                      }
-                    );
+            <div className="flex flex-col lg:flex-row gap-3 w-full">
+              <div className="w-full lg:w-5/12 xl:w-full">
+                <MInput
+                  placeholder="Input Code"
+                  registerName="ticket_code"
+                  type="text"
+                  register={register}
+                  errors={errors}
+                  className="rounded-full"
+                />
+              </div>
+              <div className="flex flex-col md:flex-row gap-3 w-full justify-end">
+                <Button
+                  loading={loading}
+                  className="bg-seeds hover:bg-seeds-300 border-seeds hover:border-seeds-300 text-white rounded-full px-10 font-semibold font-poppins md:text-base text-sm w-full md:w-fit"
+                  onClick={async (e) => {
+                    const status = await trigger();
+                    if (status) {
+                      await handleCheckIn(e);
+                      refetch();
+                    }
+                  }}
+                >
+                  Check In
+                </Button>
+                <Button
+                  loading={loading}
+                  className="bg-[#FF3838] hover:bg-[#FF3838]/75 border-[#FF3838] hover:border-[#FF3838]/75 text-white rounded-full px-10 font-semibold font-poppins md:text-base text-sm w-full md:w-fit"
+                  onClick={async (e) => {
+                    const status = await trigger();
+                    if (status) {
+                      await handleCheckOut(e);
+                      refetch();
+                    }
+                  }}
+                >
+                  Check Out
+                </Button>
+                <Button
+                  className="border-seeds text-seeds rounded-full px-10 font-semibold font-poppins md:text-base text-sm w-full md:w-fit"
+                  onClick={async () => {
+                    setScanResult({ open: !scanResult.open });
                     await scanner?.current?.start();
-                  }
-                }}
-              >
-                Scan
-              </Button>
+                    if (videoRef?.current && !scanner.current) {
+                      scanner.current = new QrScanner(
+                        videoRef?.current,
+                        handleResult,
+                        {
+                          preferredCamera: "environment",
+                          highlightScanRegion: true,
+                          highlightCodeOutline: true,
+                          overlay: divRef?.current || undefined,
+                        }
+                      );
+                      await scanner?.current?.start();
+                    }
+                  }}
+                >
+                  Scan
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
+        )}
+
         <div className="w-full flex flex-col lg:flex-row justify-between items-center gap-4">
           <h1 className="self-start lg:self-center font-semibold md:text-2xl text-lg font-poppins">
             {detailData?.name}

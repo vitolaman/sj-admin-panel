@@ -22,7 +22,7 @@ const EventStatusSelector: React.FC<EventStatusSelectorProps> = ({ setValue, con
   };
 
   return (
-    <div className="flex flex-col md:flex-row gap-4 mb-4">
+    <div className="flex flex-col md:flex-row gap-4">
       <div className="border-b-2 border-[#BDBDBD] flex justify-center cursor-pointer">
         <div
           onClick={() => handleStatusChange('OFFLINE')}

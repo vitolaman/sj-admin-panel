@@ -1,5 +1,6 @@
 import MDEditor, { commands } from "@uiw/react-md-editor";
 import CInput from "components/input";
+import { quilFormats, quilModules } from "data/quil";
 import { SelectI } from "hooks/shared/useRNCHelper";
 import { FileInput } from "react-daisyui";
 import {
@@ -11,6 +12,7 @@ import {
   SetFieldValue,
   UseFormRegister,
 } from "react-hook-form";
+import ReactQuill from "react-quill";
 
 interface Data {
   label: string;
@@ -170,7 +172,7 @@ export default function MInput<T extends FieldValues>({
             })}
           </div>
         )}
-      {type === "rich-text" && (
+      {type === "md-rich-text" && (
         <Controller
           control={control}
           name={registerName}
@@ -188,6 +190,23 @@ export default function MInput<T extends FieldValues>({
             </div>
           )}
         />
+      )}
+      {type === "html-rich-text" && (
+        <div className="h-[200px]">
+          <Controller
+            control={control}
+            name={registerName}
+            render={({ field: { value, onChange } }) => (
+              <ReactQuill
+                className="h-[109px] sm:h-[134px] md:h-[159px]"
+                formats={quilFormats}
+                modules={quilModules}
+                onChange={onChange}
+                value={value}
+              />
+            )}
+          />
+        </div>
       )}
       {type === "image" && register && (
         <div className="w-full border-[#BDBDBD] border rounded-lg flex flex-col text-center items-center justify-center p-10 gap-3">

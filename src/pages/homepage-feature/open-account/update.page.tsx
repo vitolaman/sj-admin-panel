@@ -103,7 +103,7 @@ const UpdateOpenAccount = () => {
           <MInput<OpenAccountFromData>
             label="Description"
             registerName="description"
-            type="rich-text"
+            type="md-rich-text"
             control={control}
             errors={errors}
           />
