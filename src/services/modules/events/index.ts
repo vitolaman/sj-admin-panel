@@ -20,8 +20,11 @@ export const eventsApi = Api.injectEndpoints({
       query: (id) => `/admin-portal/v1/event/${id}`,
       keepUnusedDataFor: 0,
     }),
-    getEventDetail: build.query<EventDetailRes,{id:string, params:GetEventsQuery}>({
-      query: ({id, params}) => ({
+    getEventDetail: build.query<
+      EventDetailRes,
+      { id: string; params: GetEventsQuery }
+    >({
+      query: ({ id, params }) => ({
         url: `/admin-portal/v1/event/${id}/ticket`,
         params,
       }),
@@ -59,7 +62,16 @@ export const eventsApi = Api.injectEndpoints({
         return {
           url: `/admin-portal/v1/event/check-in`,
           method: "POST",
-          body:{ticket_code:id},
+          body: { ticket_code: id },
+        };
+      },
+    }),
+    createCheckOut: build.mutation<void, string>({
+      query(id) {
+        return {
+          url: `/admin-portal/v1/event/check-out`,
+          method: "POST",
+          body: { ticket_code: id },
         };
       },
     }),
@@ -71,8 +83,10 @@ export const {
   useGetEventsQuery,
   useGetEventByIdQuery,
   useGetEventDetailQuery,
+  useLazyGetEventDetailQuery,
   useUpdateEventsMutation,
   useCreateEventsMutation,
   useDeleteEventsMutation,
   useCreateCheckInMutation,
+  useCreateCheckOutMutation,
 } = eventsApi;
