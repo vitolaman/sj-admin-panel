@@ -9,7 +9,7 @@ export interface MainSeedsAcademyReq {
   type: string;
   limit: number;
   page: number;
-  id?: string
+  id?: string;
 }
 
 export interface Metadata {
@@ -41,20 +41,20 @@ export interface CreateCategoryPayload {
     en: string;
     id: string;
   };
-  banner: any;
+  banner: FileList | string;
   level: string[];
   status: string;
   published_at: string;
 }
 
 export interface CreateCategoryPayloadRes {
-  id:string;
+  id: string;
   title: string;
   about: {
     en: string;
     id: string;
   };
-  banner:  string | File;
+  banner: string | File;
   level: string[];
   status: string;
   published_at: string;
@@ -85,7 +85,7 @@ export interface CategoryFormData {
 }
 
 export interface GetClassByCatagoryRes {
-  id:string;
+  id: string;
   title: string;
   about: {
     en: string;
@@ -95,7 +95,7 @@ export interface GetClassByCatagoryRes {
   level: string[];
   status: string;
   published_at: string;
-  classes: ClassListI[]
+  classes: ClassListI[];
 }
 
 export interface ClassListI {
@@ -116,15 +116,15 @@ export interface CreateClassPayload {
   title: string;
   description: {
     id: string;
-    en:string;
+    en: string;
   };
   module: any;
   price: {
-    idr: any
+    idr: any;
   };
-  category_id: string | undefined
+  category_id: string | undefined;
   level: string;
-  banner:  any;
+  banner: any;
   video: string;
   quiz: string | File;
 }
@@ -132,16 +132,15 @@ export interface CreateClassPayloadRes {
   title: string;
   description: {
     id: string;
-    en:string;
+    en: string;
   };
   module: string;
   price: {
     idr: number;
   };
-  category_id: string | undefined
+  category_id: string | undefined;
   level: string;
   banner: string;
   video: string;
   quiz: string | File;
 }
-

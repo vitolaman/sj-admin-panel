@@ -11,7 +11,6 @@ import {
 } from "_interfaces/seeds-academy.interfaces";
 import { Api } from "services/api";
 
-
 export const seedsAcademyApi = Api.injectEndpoints({
   endpoints: (build) => ({
     SeedsAcademyList: build.query<MainSeedsAcademyRes, MainSeedsAcademyReq>({
@@ -25,10 +24,7 @@ export const seedsAcademyApi = Api.injectEndpoints({
         `admin-academy/v1/category?search=${param.search}&status=${param.status}&type=${param.type}&limit=${param.limit}&page=${param.page}`,
       keepUnusedDataFor: 0,
     }),
-    createCategory: build.mutation<
-      CreateCategoryPayloadRes,
-      CreateCategoryPayload
-    >({
+    createCategory: build.mutation<CreateCategoryPayloadRes, any>({
       query(body) {
         return {
           url: `admin-academy/v1/category`,
@@ -37,21 +33,19 @@ export const seedsAcademyApi = Api.injectEndpoints({
         };
       },
     }),
-    updateCategory: build.mutation<string, { id: string; body: CreateCategoryPayload }>(
-      {
-        query({ id, body }) {
-          return {
-            url: `admin-portal/v1/category/${id}`,
-            method: "PATCH",
-            body,
-          };
-        },
-      }
-    ),
-    createClass: build.mutation<
-      CreateClassPayloadRes,
-      FormData
+    updateCategory: build.mutation<
+      string,
+      { id: string; body: CreateCategoryPayload }
     >({
+      query({ id, body }) {
+        return {
+          url: `admin-portal/v1/category/${id}`,
+          method: "PATCH",
+          body,
+        };
+      },
+    }),
+    createClass: build.mutation<CreateClassPayloadRes, FormData>({
       query(body) {
         return {
           url: `admin-academy/v1/class`,

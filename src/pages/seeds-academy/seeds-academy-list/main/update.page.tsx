@@ -42,12 +42,10 @@ const UpdateSeedsAcademy = () => {
   const [bannerPreview] = useFilePreview(
     typeof banner === "string" ? undefined : (banner as FileList)
   );
-
   const handleAddNewLevel = () => {
     setLevels([...levels, ""]);
   };
 
-  console.log("ll", data);
   useEffect(() => {
     if (data)
       reset({
@@ -125,10 +123,10 @@ const UpdateSeedsAcademy = () => {
         <div className="col-span-2 my-3">
           <h1 className="font-semibold text-base">Add Category Banner</h1>
           <div className="w-full border-[#BDBDBD] border rounded-lg flex flex-col text-center items-center justify-center p-10 gap-3">
-            {bannerPreview ? (
+            {banner ? (
               <img
                 className="flex mx-auto w-[500px] h-[166px] object-fill"
-                src={bannerPreview}
+                src={bannerPreview ? bannerPreview : (banner as string)}
                 alt=""
               />
             ) : (

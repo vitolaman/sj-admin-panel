@@ -18,7 +18,6 @@ const useCreateSeedsAcademyForm = () => {
   const dateNow = new Date();
   const schema = yup.object().shape({
     title: yup.string().required("Category name cannot be empty"),
-    banner: yup.string().required("Please input banner"),
     level: yup
       .array()
       .of(yup.string().required("Please input level"))
@@ -51,7 +50,7 @@ const useCreateSeedsAcademyForm = () => {
     try {
       console.log(data.banner, "abc");
       setIsLoading(true);
-      const payload = {
+      const payload: any = {
         ...data,
         published_at: dateNow.toISOString(),
         status: "PUBLISHED",

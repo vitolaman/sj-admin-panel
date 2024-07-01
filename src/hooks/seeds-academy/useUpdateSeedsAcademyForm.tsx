@@ -15,11 +15,9 @@ const useUpdateSeedsAcademyForm = (id: string) => {
   const [updateCategory] = useUpdateCategoryMutation();
   const { accessToken } = useAppSelector((state) => state.auth);
 
-
   const dateNow = new Date();
   const schema = yup.object().shape({
     title: yup.string().required("Category name cannot be empty"),
-    banner: yup.string().required("Please input banner"),
     level: yup
       .array()
       .of(yup.string().required("Please input level"))
