@@ -22,7 +22,8 @@ const useUpdateXPManagementForm = () => {
       .required("Please input start date")
       .typeError("invalid date"),
     expired_at: yup
-      .date().min(yup.ref("started_at"), "End date must be after start date")
+      .date()
+      .min(yup.ref("started_at"), "End date must be after start date")
       .required("Please input end date")
       .typeError("invalid date"),
   });

@@ -7,6 +7,7 @@ type InputProps = {
   onValueChange?: (value?: string) => void;
   error?: FieldError;
   disabled?: boolean;
+  placeholder?: string;
 };
 
 const CurrencyInput = ({
@@ -14,6 +15,7 @@ const CurrencyInput = ({
   onValueChange,
   error,
   disabled = false,
+  placeholder
 }: InputProps) => {
   return (
     <div className="w-full">
@@ -24,6 +26,7 @@ const CurrencyInput = ({
         value={value}
         onValueChange={onValueChange}
         disabled={disabled}
+        placeholder={placeholder ?? ''}
       />
       <ValidationError error={error} />
     </div>

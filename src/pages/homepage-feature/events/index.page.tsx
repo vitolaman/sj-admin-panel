@@ -4,25 +4,30 @@ import ContentContainer from "components/container";
 import SearchInput from "components/search-input";
 import Pagination from "components/table/pagination";
 import { Columns, Table } from "components/table/table";
-import { useState } from "react";
-import { Button, Dropdown } from "react-daisyui";
+import { forwardRef, useCallback, useRef, useState } from "react";
+import { Button, Dropdown, Modal } from "react-daisyui";
 import { FiEdit, FiMoreHorizontal, FiSearch, FiTrash2 } from "react-icons/fi";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { errorHandler } from "services/errorHandler";
 import {
   useDeleteEventsMutation,
   useGetEventsQuery,
 } from "services/modules/events";
+import { setStatusState } from "store/events/statusSlice";
+import CreateEventModal from "./sections/createModal.section";
 
 export const eventsRouteName = "events";
 const Events = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [params, setParams] = useState<GetEventsQuery>({
     page: 1,
     limit: 10,
     search: "",
   });
   const { data, isLoading, refetch } = useGetEventsQuery(params);
+  dispatch(setStatusState("OFFLINE"));
   const [deleteEventById] = useDeleteEventsMutation();
   const [confirmationModal, setConfirmationModal] = useState<{
     id?: string;
@@ -60,16 +65,27 @@ const Events = () => {
     },
     {
       fieldId: "",
-      label: "Is Paid Event",
+      label: "Category",
       render: (item) => (
         <span
           className={`px-2 py-1 font-poppins rounded-[4px] ${
-            item?.is_liked
-              ? "bg-[#DCFCE4] text-persian-green"
-              : "bg-[#FFEBEB] text-[#BB1616]"
+            (item?.event_price ?? 0) === 0
+              ? "bg-[#EDE3FE] text-[#7555DA]"
+              : "bg-[#DCFCE4] text-[#27A590]"
           }`}
         >
-          {item?.is_liked ? "Yes" : "No"}
+          {(item?.event_price ?? 0) === 0 ? "Free" : "Paid"}
+        </span>
+      ),
+    },
+    {
+      fieldId: "",
+      label: "Event Type",
+      render: (item) => (
+        <span className={`px-2 py-1 font-poppins`}>
+          {(item?.event_status ?? "") === ""
+            ? "-"
+            : capitalizeFirstLetter(item?.event_status ?? "")}
         </span>
       ),
     },
@@ -99,9 +115,9 @@ const Events = () => {
       label: "Action",
       render: (item) => (
         <Dropdown className="relative">
-          <Dropdown.Toggle size="xs">
+          <Dropdown.Toggle size="xs" button={false}>
             <Button size="xs" className="border-none p-0">
-              <FiMoreHorizontal />
+              <FiMoreHorizontal color="#27a590" size={20} />
             </Button>
           </Dropdown.Toggle>
           <Dropdown.Menu className="absolute right-10 top-3/4 -translate-y-3/4 bg-white z-10 w-[150px] rounded-[10px] flex flex-col gap-2">
@@ -118,19 +134,21 @@ const Events = () => {
                 Edit Event
               </Button>
             </Dropdown.Item>
-            <Dropdown.Item className="p-0">
-              <Button
-                fullWidth
-                size="xs"
-                className="border-none shadow-none p-0 font-normal font-poppins text-sm text-[#201B1C]"
-                startIcon={<FiSearch color="#201B1C" size={20} />}
-                onClick={() => {
-                  navigate(`/homepage-feature/events/${item?.id}/detail`);
-                }}
-              >
-                Detail Event
-              </Button>
-            </Dropdown.Item>
+            {item?.event_status !== "ONLINE" && (
+              <Dropdown.Item className="p-0">
+                <Button
+                  fullWidth
+                  size="xs"
+                  className="border-none shadow-none p-0 font-normal font-poppins text-sm text-[#201B1C]"
+                  startIcon={<FiSearch color="#201B1C" size={20} />}
+                  onClick={() => {
+                    navigate(`/homepage-feature/events/${item?.id}/detail`);
+                  }}
+                >
+                  Detail Event
+                </Button>
+              </Dropdown.Item>
+            )}
             <Dropdown.Item className="p-0">
               <Button
                 fullWidth
@@ -149,6 +167,28 @@ const Events = () => {
       ),
     },
   ];
+
+  const modalRef = useRef<HTMLDialogElement>(null);
+
+  const handleShowDialog = useCallback(() => {
+    modalRef.current?.showModal();
+  }, [modalRef]);
+
+  const handleCloseDialog = useCallback(() => {
+    modalRef.current?.close();
+  }, [modalRef]);
+
+  const ForwardedRefCreateEventModal = forwardRef(CreateEventModal);
+
+  const capitalizeFirstLetter = (str: string): string => {
+    let lowerCaseWords = str.toLowerCase();
+    let words = lowerCaseWords.split(" ");
+    let capitalizedWords = words.map((word) => {
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    });
+    return capitalizedWords.join(" ");
+  };
+
   return (
     <ContentContainer>
       <ConfirmationModal
@@ -176,9 +216,7 @@ const Events = () => {
             />
             <Button
               className="bg-seeds hover:bg-seeds-300 border-seeds hover:border-seeds-300 text-white rounded-full px-10"
-              onClick={() => {
-                navigate("/homepage-feature/events/create");
-              }}
+              onClick={handleShowDialog}
             >
               Add Event
             </Button>
@@ -203,6 +241,11 @@ const Events = () => {
           />
         </div>
       </div>
+
+      <ForwardedRefCreateEventModal
+        ref={modalRef}
+        handleClose={handleCloseDialog}
+      />
     </ContentContainer>
   );
 };
