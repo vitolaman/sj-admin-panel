@@ -6,6 +6,15 @@ export interface ReferralCodeI {
   notes: string;
   users: number;
 }
+
+export interface ReferralCodeFormDataI {
+  ref_code: string;
+  phone_number: string;
+  name: string;
+  seeds_tag: string;
+  notes: string;
+  users: number;
+}
 export interface Metadata {
   total: number;
   currentPage: number;
@@ -19,7 +28,9 @@ export interface ReferralCodeRes {
 }
 
 export interface GetReferralCodeQuery {
-    page: number;
-    limit: number;
-    search: string;
+  search :string,
+  minDate:string,
+  maxDate:string,
+  limit: number,
+  page: number,
   }
