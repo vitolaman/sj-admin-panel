@@ -1,11 +1,9 @@
 import { EventsFormDataI } from "_interfaces/events.interface";
 import ContentContainer from "components/container";
-import FormInput from "components/input/formInput";
-import FormEditor from "components/input/formEditor";
+import MInput from "components/multi-input/index";
 import useUpsertEvents from "hooks/events/useUpsertEvents";
 import useFilePreview from "hooks/shared/useFilePreview";
 import { Button } from "react-daisyui";
-import FormImage from "components/input/formImage";
 import { useNavigate } from "react-router-dom";
 import { Controller } from "react-hook-form";
 import CurrencyInput from "components/currency-input";
@@ -28,7 +26,6 @@ const CreateEvent = () => {
     trigger,
     watch,
     reset,
-    getValues
   } = useUpsertEvents();
   const imageURL = watch("image_url");
   const [imageURLPreview] = useFilePreview(imageURL as FileList);
@@ -68,7 +65,7 @@ const CreateEvent = () => {
         </div>
         <div className="w-full flex flex-col lg:flex-row gap-x-6">
           <div className={`${(isPaidEvent) ? 'lg:w-1/2' : 'w-full lg:mb-2'} flex flex-col md:flex-row gap-4`}>
-            <FormInput<EventsFormDataI>
+            <MInput<EventsFormDataI>
               label="Event Name"
               registerName="name"
               type="text"
@@ -103,23 +100,20 @@ const CreateEvent = () => {
           </div>
         </div>
         <div className="w-full flex flex-col lg:flex-row gap-x-6">
-          <FormInput<EventsFormDataI>
-            label={isStatusEvent === "ONLINE" ? "Event Start Date" : "Event Date"}
+          <MInput<EventsFormDataI>
+            label={"Event Start Date"}
             registerName="event_date"
             register={register}
             errors={errors}
             type="datetime-local"
           />
-          {
-            (isStatusEvent === "ONLINE") &&
-              <FormInput<EventsFormDataI>
-                label="Event End Date"
-                registerName="ended_at"
-                register={register}
-                errors={errors}
-                type="datetime-local"
-              />
-          }
+          <MInput<EventsFormDataI>
+            label="Event End Date"
+            registerName="ended_at"
+            register={register}
+            errors={errors}
+            type="datetime-local"
+          />
         </div>
         <div>
           <EventStatusSelector setValue={setValue} control={control} name="event_status" isStatusEvent={isStatusEvent}/>
@@ -149,7 +143,7 @@ const CreateEvent = () => {
                   </div>
                 </div>
               </div>
-              <FormInput<EventsFormDataI>
+              <MInput<EventsFormDataI>
                 label="Link Conference"
                 registerName="external_url"
                 type="text"
@@ -161,7 +155,7 @@ const CreateEvent = () => {
             </div>
             :
             <div className="flex flex-col md:flex-row gap-x-6 mb-4">
-              <FormInput<EventsFormDataI>
+              <MInput<EventsFormDataI>
                 label="Location Name"
                 registerName="location_name"
                 type="text"
@@ -170,7 +164,7 @@ const CreateEvent = () => {
                 maxLength={200}
                 placeholder="Please input location name"
               />
-              <FormInput<EventsFormDataI>
+              <MInput<EventsFormDataI>
                 label="Link Gmaps"
                 registerName="external_url"
                 type="text"
@@ -181,15 +175,17 @@ const CreateEvent = () => {
               />
             </div>
         }
-        <FormEditor<EventsFormDataI>
+        <MInput<EventsFormDataI>
           label="Body Message"
           registerName="description"
+          type="rich-text"
           control={control}
           errors={errors}
         />
-        <FormImage<EventsFormDataI>
+        <MInput<EventsFormDataI>
           label="Attachment"
           registerName="image_url"
+          type="image"
           register={register}
           errors={errors}
           imageURLPreview={imageURLPreview}

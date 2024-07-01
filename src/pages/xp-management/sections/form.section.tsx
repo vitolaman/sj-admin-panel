@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Modal } from "react-daisyui";
 import { FiX } from "react-icons/fi";
 import useUpdateXPManagementForm from "hooks/xp-management/useUpdateXPManagement";
@@ -6,15 +6,15 @@ import {
   XPManagementI,
   XPManagementModal,
 } from "_interfaces/xp-management.interface";
-import FormInput from "components/input/formInput";
+import MInput from "components/multi-input/index";
 import { limitation, status } from "data/xp-management";
 import ReactQuill from "react-quill";
 import { useLazyGetXPManagementByIdQuery } from "services/modules/xp-management";
 import moment from "moment";
-import useRadioForm from "hooks/shared/useRadioForm";
+import useRNCHelper from "hooks/shared/useRNCHelper";
 
 const XPForm = ({ id, setId, open, setOpen, refetch }: XPManagementModal) => {
-  const { radioSelect, setRadioSelect, handleSelectChange } = useRadioForm();
+  const { select, setSelect, handleSelectChange } = useRNCHelper();
   const [richValue, setRichValue] = useState<string>();
   const [getXPManagement, XPManagementDetailState] =
     useLazyGetXPManagementByIdQuery();
@@ -32,7 +32,7 @@ const XPForm = ({ id, setId, open, setOpen, refetch }: XPManagementModal) => {
   const handleResetForm = () => {
     reset({ ...defaultValues });
     setId("");
-    setRadioSelect(undefined);
+    setSelect(undefined);
     setRichValue(undefined);
   };
 
@@ -50,7 +50,7 @@ const XPForm = ({ id, setId, open, setOpen, refetch }: XPManagementModal) => {
     }
     if (id !== undefined && id !== "") {
       getXPManagement(id);
-      setRadioSelect((prev) => ({
+      setSelect((prev) => ({
         ...prev,
         is_daily_task: XPManagementDetailState.data?.is_daily_task,
         is_active: XPManagementDetailState.data?.is_active,
@@ -75,7 +75,7 @@ const XPForm = ({ id, setId, open, setOpen, refetch }: XPManagementModal) => {
       <Modal.Body className="flex flex-col gap-4">
         <div className="flex justify-between gap-10">
           <div className="flex flex-col gap-4 w-5/12">
-            <FormInput<XPManagementI>
+            <MInput<XPManagementI>
               label="Activity"
               type="text"
               registerName="name"
@@ -83,24 +83,24 @@ const XPForm = ({ id, setId, open, setOpen, refetch }: XPManagementModal) => {
               errors={errors}
               disabled
             />
-            <FormInput<XPManagementI>
+            <MInput<XPManagementI>
               label="XP Gained"
               type="number"
               registerName="exp_gained"
               register={register}
               errors={errors}
             />
-            <FormInput<XPManagementI>
+            <MInput<XPManagementI>
               label="Limitation"
               registerName="is_daily_task"
               type="radio"
               setValue={setValue}
               data={limitation}
-              select={radioSelect?.is_daily_task}
+              select={select?.is_daily_task}
               handleSelectChange={handleSelectChange}
             />
-            {radioSelect?.is_daily_task && (
-              <FormInput<XPManagementI>
+            {select?.is_daily_task && (
+              <MInput<XPManagementI>
                 label="Max Activity"
                 type="number"
                 registerName="max_exp"
@@ -111,24 +111,24 @@ const XPForm = ({ id, setId, open, setOpen, refetch }: XPManagementModal) => {
           </div>
           <div className="border border-[#9B9B9B]"></div>
           <div className="flex flex-col gap-4 w-7/12">
-            <FormInput<XPManagementI>
+            <MInput<XPManagementI>
               label="Status"
               registerName="is_active"
               type="radio"
               setValue={setValue}
               data={status}
-              select={radioSelect?.is_active}
+              select={select?.is_active}
               handleSelectChange={handleSelectChange}
             />
             <div className="flex gap-4 w-full">
-              <FormInput<XPManagementI>
+              <MInput<XPManagementI>
                 label="Start Date"
                 registerName="started_at"
                 register={register}
                 errors={errors}
                 type="datetime-local"
               />
-              <FormInput<XPManagementI>
+              <MInput<XPManagementI>
                 label="End Date"
                 registerName="expired_at"
                 register={register}
@@ -169,7 +169,7 @@ const XPForm = ({ id, setId, open, setOpen, refetch }: XPManagementModal) => {
             loading={loading}
             onClick={async () => {
               if (await trigger()) {
-                if (!radioSelect?.is_daily_task) {
+                if (!select?.is_daily_task) {
                   setValue("max_exp", 0);
                 }
                 await handleUpdate();

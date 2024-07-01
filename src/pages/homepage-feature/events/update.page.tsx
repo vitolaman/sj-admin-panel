@@ -1,11 +1,9 @@
 import { EventsFormDataI } from "_interfaces/events.interface";
 import ContentContainer from "components/container";
-import FormInput from "components/input/formInput";
-import FormEditor from "components/input/formEditor";
+import MInput from "components/multi-input/index";
 import useUpsertEvents from "hooks/events/useUpsertEvents";
 import useFilePreview from "hooks/shared/useFilePreview";
 import { Button } from "react-daisyui";
-import FormImage from "components/input/formImage";
 import { useNavigate, useParams } from "react-router-dom";
 import { useGetEventByIdQuery } from "services/modules/events";
 import { useEffect, useState } from "react";
@@ -55,18 +53,11 @@ const UpdateEvent = () => {
   };
 
   useEffect(() => {
-    if (data?.event_status === "OFFLINE") {
-      reset({
-        ...data,
-        event_date: moment(data?.event_date).format("YYYY-MM-DD HH:mm"),
-      });
-    } else {
-      reset({
-        ...data,
-        event_date: moment(data?.event_date).format("YYYY-MM-DD HH:mm"),
-        ended_at: moment(data?.ended_at).format("YYYY-MM-DD HH:mm"),
-      });
-    }
+    reset({
+      ...data,
+      event_date: moment(data?.event_date).format("YYYY-MM-DD HH:mm"),
+      ended_at: moment(data?.ended_at).format("YYYY-MM-DD HH:mm"),
+    });
 
     dispatch(setStatusState(data?.event_status))
 
@@ -122,7 +113,7 @@ const UpdateEvent = () => {
       />
       <div className={`w-full flex flex-col lg:flex-row gap-x-6`}>
         <div className={`${(isPaidEvent && isPaid) ? 'lg:w-1/2' : 'w-full lg:mb-2'} flex flex-col md:flex-row gap-4`}>
-          <FormInput<EventsFormDataI>
+          <MInput<EventsFormDataI>
             label="Event Name"
             registerName="name"
             type="text"
@@ -156,23 +147,20 @@ const UpdateEvent = () => {
         </div>
       </div>
       <div className="w-full flex flex-col lg:flex-row gap-x-6">
-        <FormInput<EventsFormDataI>
-          label={isStatusEvent === "ONLINE" ? "Event Start Date" : "Event Date"}
+        <MInput<EventsFormDataI>
+          label={"Event Start Date"}
           registerName="event_date"
           register={register}
           errors={errors}
           type="datetime-local"
         />
-        {
-          (isStatusEvent === "ONLINE") &&
-            <FormInput<EventsFormDataI>
-              label="Event End Date"
-              registerName="ended_at"
-              register={register}
-              errors={errors}
-              type="datetime-local"
-            />
-        }
+        <MInput<EventsFormDataI>
+          label="Event End Date"
+          registerName="ended_at"
+          register={register}
+          errors={errors}
+          type="datetime-local"
+        />
       </div>
       <div>
         <EventStatusSelector setValue={setValue} control={control} name="event_status" isStatusEvent={isStatusEvent}/>
@@ -202,7 +190,7 @@ const UpdateEvent = () => {
                 </div>
               </div>
             </div>
-            <FormInput<EventsFormDataI>
+            <MInput<EventsFormDataI>
               label="Link Conference"
               registerName="external_url"
               type="text"
@@ -214,7 +202,7 @@ const UpdateEvent = () => {
           </div>
           :
           <div className="flex flex-col md:flex-row gap-x-6 mb-4">
-            <FormInput<EventsFormDataI>
+            <MInput<EventsFormDataI>
               label="Location Name"
               registerName="location_name"
               type="text"
@@ -223,7 +211,7 @@ const UpdateEvent = () => {
               maxLength={200}
               placeholder="Please input location name"
             />
-            <FormInput<EventsFormDataI>
+            <MInput<EventsFormDataI>
               label="Link Gmaps"
               registerName="external_url"
               type="text"
@@ -234,19 +222,21 @@ const UpdateEvent = () => {
             />
           </div>
       }
-      <FormEditor<EventsFormDataI>
+      <MInput<EventsFormDataI>
         label="Body Message"
         registerName="description"
+        type="rich-text"
         control={control}
         errors={errors}
       />
-      <FormImage<EventsFormDataI>
+      <MInput<EventsFormDataI>
         label="Attachment"
         registerName="image_url"
+        type="image"
         register={register}
         errors={errors}
         imageURLPreview={imageURLPreview}
-        data={data?.image_url!}
+        dataImage={data?.image_url!}
       />
     </ContentContainer>
   );

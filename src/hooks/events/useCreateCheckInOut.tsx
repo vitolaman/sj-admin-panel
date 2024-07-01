@@ -4,11 +4,12 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { errorHandler } from "services/errorHandler";
-import { useCreateCheckInMutation } from "services/modules/events";
+import { useCreateCheckInMutation, useCreateCheckOutMutation } from "services/modules/events";
 
-const useCreateCheckIn = (id?: string) => {
-  const [createCheckIn, createState] = useCreateCheckInMutation();
-  const loading = createState.isLoading;
+const useCreateCheckInOut = () => {
+  const [createCheckIn, checkInState] = useCreateCheckInMutation();
+  const [createCheckOut, checkOutState] = useCreateCheckOutMutation();
+  const loading = checkInState.isLoading || checkOutState.isLoading;
   const schema = yup.object().shape({
     ticket_code: yup.string().required("Ticket Code cannot empty"),
   });
@@ -28,7 +29,7 @@ const useCreateCheckIn = (id?: string) => {
     defaultValues,
   });
 
-  const create = async (data: TicketFormDataI) => {
+  const checkIn = async (data: TicketFormDataI) => {
     try {
       await createCheckIn(data.ticket_code).unwrap();
       toast.success("Participant check-in successful");
@@ -38,9 +39,23 @@ const useCreateCheckIn = (id?: string) => {
       errorHandler(error);
     }
   };
-  const handleCreate = handleSubmit(create);
+
+  const checkOut = async (data: TicketFormDataI) => {
+    try {
+      await createCheckOut(data.ticket_code).unwrap();
+      toast.success("Participant check-out successful");
+      reset({...defaultValues})
+    } catch (error) {
+      reset({...defaultValues})
+      errorHandler(error);
+    }
+  };
+
+  const handleCheckIn = handleSubmit(checkIn);
+  const handleCheckOut = handleSubmit(checkOut);
   return {
-    handleCreate,
+    handleCheckIn,
+    handleCheckOut,
     register,
     errors,
     loading,
@@ -49,4 +64,4 @@ const useCreateCheckIn = (id?: string) => {
   };
 };
 
-export default useCreateCheckIn;
+export default useCreateCheckInOut;

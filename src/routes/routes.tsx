@@ -77,7 +77,7 @@ import WithdrawQuiz, { withdrawQuizRouteName } from "pages/quiz/withdraw.page";
 import Company, { companyRouteName } from "pages/company/index.page";
 import ReferralCode, {reffCodeRouteName} from "pages/referral-code/index.page"
 import ReferralCodeReward, { reffRewardRouteName } from "pages/referral-code/reward.page";
-import { register } from "mixpanel-browser";
+import SeedsCoinManagement,{ seedsCoinRouteName } from "pages/seeds-coin-management/index.page";
 
 const protectedRoutes: RouteObject[] = [
   { path: "", element: <Navigate to="/user/control-panel" /> },
@@ -181,6 +181,7 @@ const protectedRoutes: RouteObject[] = [
         ],
       },
       { path: promoCodeRouteName, element: <PromoCode /> },
+      {path:seedsCoinRouteName, element:<SeedsCoinManagement/>},
       { path: xpRouteName, element: <XPManagement /> },
       { path: afRouteName, element: <AdminFee /> },
       { path: companyRouteName, element: <Company /> },

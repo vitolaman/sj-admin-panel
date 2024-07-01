@@ -37,7 +37,7 @@ export const minTransactionType = [
   { label: "No min Transaction", value: 0 },
 ];
 export const promoDateType = [
-  { label: "Date Periode", value: "" },
+  { label: "Date Periode", value: '' },
   { label: "No Expired Date", value: null },
 ];
 export const statusPromo = [
