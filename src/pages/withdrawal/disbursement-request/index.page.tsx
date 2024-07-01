@@ -3,6 +3,7 @@ import {
   GetDisbursementRequestQuery,
 } from "_interfaces/disbursement-request.interface";
 import ContentContainer from "components/container";
+import CSVDownload from "components/csv-download-button";
 import SearchInput from "components/search-input";
 import Pagination from "components/table/pagination";
 import { Columns, Table } from "components/table/table";
@@ -26,34 +27,20 @@ const DisbursementRequest = () => {
     search: "",
   });
   const { data, isLoading, refetch } = useGetDisbursementRequestQuery(params);
-  const [getAllData] = useLazyGetDisbursementRequestQuery();
+  const [getAllData, dataState] = useLazyGetDisbursementRequestQuery();
   const [updateDisbursementRequestById, updateState] =
     useUpdateDisbursementRequestMutation();
   const handlePageChange = (page: number): void => {
     setParams((prev) => ({ ...prev, page }));
   };
 
-  const handleSheetsData = async () => {
+  const handleGetData = async () => {
     try {
-      const sheetsData = await getAllData({
+      await getAllData({
         page: 0,
         limit: 0,
         search: "",
       }).unwrap();
-
-      if (
-        sheetsData.configurations &&
-        Array.isArray(sheetsData.configurations) &&
-        sheetsData.configurations.length > 0
-      ) {
-        const ws = XLSX.utils.json_to_sheet(sheetsData.configurations);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Disbursement Request Data");
-
-        XLSX.writeFile(wb, "disbursement-request-data.xlsx");
-      } else {
-        toast.error("Data is undefined or not a valid array.");
-      }
     } catch (error) {
       errorHandler(error);
     }
@@ -173,7 +160,9 @@ const DisbursementRequest = () => {
   return (
     <ContentContainer>
       <div className="w-full flex flex-row justify-between items-center">
-        <h1 className="font-semibold text-2xl font-poppins">Disbursement Request</h1>
+        <h1 className="font-semibold text-2xl font-poppins">
+          Disbursement Request
+        </h1>
         <div className="flex flex-row gap-3">
           <SearchInput
             placeholder="Search"
@@ -181,13 +170,12 @@ const DisbursementRequest = () => {
               setParams((prev) => ({ ...prev, page: 1, search: text }))
             }
           />
-          <Button
-            shape="circle"
-            className="border-seeds hover:border-seeds"
-            onClick={handleSheetsData}
-          >
-            <FiDownload color="#3ac4a0" size={20} />
-          </Button>
+          <CSVDownload<DisbursementRequestI[]>
+            data={dataState.currentData?.configurations!}
+            onClick={handleGetData}
+            fileName="disbursement_request_data"
+            bookName="Disbursement Request Data"
+          />
         </div>
       </div>
       <div className="mt-4 max-w-full overflow-x-auto overflow-y-hidden border border-[#BDBDBD] rounded-lg">
