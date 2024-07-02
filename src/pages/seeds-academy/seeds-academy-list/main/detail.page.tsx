@@ -131,14 +131,14 @@ export default function DetailCategory(): React.ReactElement {
         </h3>
         <div className="flex items-center justify-end gap-4 ">
           <div className="flex items-center justify-between gap-4 ml-4">
-            <Button
+            {/* <Button
               type="button"
               onClick={() => {}}
               className="rounded-full px-6 py-2 flex gap-2 bg-seeds text-white hover:bg-seeds/90 "
             >
               <FiEdit className=" h-4 w-4" />
               Edit
-            </Button>
+            </Button> */}
             <Button
               type="button"
               onClick={handleSave}

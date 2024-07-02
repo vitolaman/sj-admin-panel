@@ -17,9 +17,9 @@ const AddNewClassPopup: React.FC<{
   categoryId: string | undefined;
 }> = ({ isOpen, onClose, levelName, categoryId }) => {
   if (!isOpen) return null;
-  
+
   const handleCreateSuccess = (): void => {
-    onClose(); 
+    onClose();
   };
   const {
     register,
@@ -30,7 +30,11 @@ const AddNewClassPopup: React.FC<{
     watch,
     handleCreate,
     setValue,
-  } = useCreateClassForm({ levelName, categoryId, onSuccess: handleCreateSuccess, });
+  } = useCreateClassForm({
+    levelName,
+    categoryId,
+    onSuccess: handleCreateSuccess,
+  });
 
   const banner = watch("banner");
   const [bannerPreview] = useFilePreview(banner as unknown as FileList);
@@ -40,8 +44,6 @@ const AddNewClassPopup: React.FC<{
 
   const quiz = watch("quiz");
   const [quizPreview] = useFilePreview(quiz as unknown as FileList);
-
-  
 
   return (
     <Modal open={isOpen} className="bg-white w-11/12 max-w-[2000px] p-8">
@@ -114,7 +116,7 @@ const AddNewClassPopup: React.FC<{
                         value={value}
                         onChange={onChange}
                         highlightEnable={false}
-                  preview="live"
+                        preview="live"
                       />
                     )}
                   />
@@ -133,7 +135,7 @@ const AddNewClassPopup: React.FC<{
                         value={value}
                         onChange={onChange}
                         highlightEnable={false}
-                  preview="live"
+                        preview="live"
                       />
                     )}
                   />
@@ -208,7 +210,7 @@ const AddNewClassPopup: React.FC<{
               Cancel
             </Button>
             <Button
-              //   onClick={handleCreate}
+                // onClick={handleCreate}
               type="submit"
               loading={isLoading}
               className="border-none bg-[#3AC4A0] rounded-full text-white w-[268px] hover:bg-[#3AC4A0] font-semibold font-poppins text-base"

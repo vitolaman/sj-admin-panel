@@ -1,24 +1,17 @@
-import { CategoryFormData } from "_interfaces/seeds-academy.interfaces";
 import ContentContainer from "components/container";
 import CInput from "components/input";
-import CancelPopUp from "components/modal/other/Cancel";
-import SavePopUp from "components/modal/other/Save";
-import useCreateMainBannerForm from "hooks/banner/useCreateMainBannerForm";
 import useCreateSeedsAcademyForm from "hooks/seeds-academy/useCreateSeedsAcademyForm";
 import useFilePreview from "hooks/shared/useFilePreview";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button, FileInput } from "react-daisyui";
 import { useNavigate } from "react-router-dom";
-import { Controller, useFieldArray } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import MDEditor, { commands } from "@uiw/react-md-editor";
 
 export const csaRouteName = "seeds-academy-list/create";
 const CreateSeedsAcademy = () => {
   const navigate = useNavigate();
-  const [isSavePopupOpen, setIsSavePopupOpen] = useState(false);
-  const [isCancelPopupOpen, setIsCancelPopupOpen] = useState(false);
   const [levels, setLevels] = useState<string[]>([""]);
-  const push = useNavigate();
   const {
     register,
     errors,
@@ -32,35 +25,14 @@ const CreateSeedsAcademy = () => {
 
   const banner = watch("banner");
   const [bannerPreview] = useFilePreview(banner as unknown as FileList);
-  console.log(banner);
 
   const handleAddNewLevel = () => {
     setLevels([...levels, ""]);
   };
 
-  // useEffect(() => {
-  //   const firstError = Object.keys(errors)[0] as keyof CategoryFormData;
-  //   if (firstError) {
-  //     setFocus(firstError);
-  //     const element = errors[firstError]?.ref;
-  //     if (element) {
-  //       element?.scrollIntoView?.({
-  //         behavior: "smooth",
-  //         block: "center",
-  //         inline: "nearest",
-  //       });
-  //     }
-  //   }
-  // }, [errors, setFocus]);
-
-  const handleCancelPopup = () => {
-    setIsCancelPopupOpen(!isCancelPopupOpen);
+  const handleCancel = () => {
+    navigate(`/seeds-academy/seeds-academy-list`);
   };
-
-  const handleSavePopup = () => {
-    setIsSavePopupOpen(!isSavePopupOpen);
-  };
-
   return (
     <ContentContainer>
       <form onSubmit={handleCreate}>
@@ -168,7 +140,7 @@ const CreateSeedsAcademy = () => {
           <div className="flex items-center justify-between gap-4 ml-4">
             <Button
               type="button"
-              onClick={() => {}}
+              onClick={handleCancel}
               className="rounded-full px-6 py-2 border-seeds text-seeds hover:bg-seeds/90 hover:text-white"
             >
               Cancel

@@ -7,7 +7,6 @@ import UserControlPanel, {
 } from "pages/user/control-panel/control-panel.page";
 import Play, { playRouteName } from "pages/play/index.page";
 import SeedsAcademyList, { salRouteName } from "pages/seeds-academy/seeds-academy-list"
-import SubcriptionPrice, { spRouteName } from "pages/seeds-academy/subcription-price"
 import CreateSeedsAcademy, {csaRouteName} from "pages/seeds-academy/seeds-academy-list/main/create.page"
 import UpdateSeedsAcademy, {usaRouteName} from "pages/seeds-academy/seeds-academy-list/main/update.page"
 import DetailCategory, {dcRouteName} from "pages/seeds-academy/seeds-academy-list/main/detail.page"
@@ -160,10 +159,6 @@ const protectedRoutes: RouteObject[] = [
           {
             path: salRouteName,
             element: <SeedsAcademyList />
-          },
-          {
-            path: spRouteName,
-            element: <SubcriptionPrice />
           },
           {
             path: csaRouteName,

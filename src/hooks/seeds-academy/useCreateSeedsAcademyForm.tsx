@@ -48,7 +48,6 @@ const useCreateSeedsAcademyForm = () => {
 
   const create = async (data: CreateCategoryPayload) => {
     try {
-      console.log(data.banner, "abc");
       setIsLoading(true);
       const payload: any = {
         ...data,

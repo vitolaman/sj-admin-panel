@@ -10,16 +10,9 @@ import {
   MainSeedsAcademyReq,
 } from "_interfaces/seeds-academy.interfaces";
 import {
-  // useBannerListQuery,
-  useChangeStatusBannerMutation,
-  useDeleteBannerMutation,
-} from "services/modules/banner";
-import {
-  useCreateClassListQuery,
   useClassByCategoryListQuery,
 } from "services/modules/seeds-academy";
 import { Columns, Table } from "components/table/table";
-import { errorHandler } from "services/errorHandler";
 import AddNewClassPopUp from "./addNewClassPopUp";
 import { CiFileOn } from "react-icons/ci";
 
@@ -42,8 +35,6 @@ export default function CreateClass(): React.ReactElement {
   });
   const { data, isLoading, refetch } =
     useClassByCategoryListQuery(searchParams);
-  const [changeStatusBanner, { error }] = useChangeStatusBannerMutation();
-  const [deleteBanner] = useDeleteBannerMutation();
   const [levelName, setLevelName] = useState<string>("");
 
   useEffect(() => {
@@ -228,7 +219,7 @@ export default function CreateClass(): React.ReactElement {
         <div className="flex items-center justify-between gap-4 ml-4">
           <Button
             type="button"
-            onClick={() => {}}
+            onClick={() => {handleSave}}
             className="rounded-full px-6 py-2 border-seeds text-seeds hover:bg-seeds/90 hover:text-white"
           >
             Cancel
@@ -243,7 +234,6 @@ export default function CreateClass(): React.ReactElement {
           <Button
             type="button"
             onClick={handleSave}
-            // loading={isLoading}
             className="rounded-full px-6 py-2 bg-seeds text-white hover:bg-seeds/90 "
           >
             Save

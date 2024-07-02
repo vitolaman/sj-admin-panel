@@ -1,6 +1,5 @@
 import {
   SeedsAcademyListI,
-  // ChangeStatusBannerReq,
   CreateClassPayloadRes,
   CreateClassPayload,
   GetClassByCatagoryRes,
@@ -24,7 +23,7 @@ export const seedsAcademyApi = Api.injectEndpoints({
         `admin-academy/v1/category?search=${param.search}&status=${param.status}&type=${param.type}&limit=${param.limit}&page=${param.page}`,
       keepUnusedDataFor: 0,
     }),
-    createCategory: build.mutation<CreateCategoryPayloadRes, any>({
+    createCategory: build.mutation<CreateCategoryPayloadRes, CreateCategoryPayload>({
       query(body) {
         return {
           url: `admin-academy/v1/category`,
@@ -39,7 +38,7 @@ export const seedsAcademyApi = Api.injectEndpoints({
     >({
       query({ id, body }) {
         return {
-          url: `admin-portal/v1/category/${id}`,
+          url: `admin-academy/v1/category/${id}`,
           method: "PATCH",
           body,
         };
@@ -84,39 +83,6 @@ export const seedsAcademyApi = Api.injectEndpoints({
         `admin-academy/v1/class?search=${param.search}&status=${param.status}&type=${param.type}&limit=${param.limit}&page=${param.page}`,
       keepUnusedDataFor: 0,
     }),
-    //   deleteBanner: build.mutation<string, { id: string }>({
-    //     query(body) {
-    //       return {
-    //         url: `admin-portal/v1/banner/${body.id}`,
-    //         method: "DELETE",
-    //         body: {
-    //           ...body,
-    //         },
-    //       };
-    //     },
-    //   }),
-    //   updateBanner: build.mutation<string, { id: string; body: CreateBannerReq }>(
-    //     {
-    //       query({ id, body }) {
-    //         return {
-    //           url: `admin-portal/v1/banner/${id}`,
-    //           method: "PATCH",
-    //           body,
-    //         };
-    //       },
-    //     }
-    //   ),
-    //   createBanner: build.mutation<string, CreateBannerReq>({
-    //     query(body) {
-    //       return {
-    //         url: `/admin-portal/v1/banner/create`,
-    //         method: "POST",
-    //         body: {
-    //           ...body,
-    //         },
-    //       };
-    //     },
-    //   }),
   }),
   overrideExisting: false,
 });
@@ -125,10 +91,7 @@ export const {
   useSeedsAcademyListQuery,
   useCreateClassListQuery,
   useClassByCategoryListQuery,
-  // useChangeStatusBannerMutation,
   useCreateCategoryMutation,
   useCreateClassMutation,
-  // useDeleteBannerMutation,
-  // useBannerDetailQuery,
   useUpdateCategoryMutation,
 } = seedsAcademyApi;

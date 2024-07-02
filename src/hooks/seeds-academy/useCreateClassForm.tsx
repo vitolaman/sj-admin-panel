@@ -25,7 +25,6 @@ const useCreateClassForm = ({
   const [createClass] = useCreateClassMutation();
   const { accessToken } = useAppSelector((state) => state.auth);
 
-  const dateNow = new Date();
   const schema = yup.object().shape({
     title: yup.string().required("Title name cannot be empty"),
   });

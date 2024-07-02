@@ -55,12 +55,11 @@ const useUpdateSeedsAcademyForm = (id: string) => {
         published_at: dateNow.toISOString(),
         status: "PUBLISHED",
       };
-      if (data.banner !== "") {
-        const banner = await uploadFile(
-          accessToken!,
-          data.banner.image_link[0] as File
-        );
+      if (data.banner) {
+        const banner = await uploadFile(accessToken!, data.banner[0] as File);
         payload.banner = banner;
+      } else {
+        payload.banner = "";
       }
       await updateCategory({ id, body: payload }).unwrap();
       navigate(-1);
@@ -79,12 +78,11 @@ const useUpdateSeedsAcademyForm = (id: string) => {
         published_at: dateNow.toISOString(),
         status: "DRAFTED",
       };
-      if (data.banner !== "") {
-        const banner = await uploadFile(
-          accessToken!,
-          data.banner.image_link[0] as File
-        );
+      if (data.banner) {
+        const banner = await uploadFile(accessToken!, data.banner[0] as File);
         payload.banner = banner;
+      } else {
+        payload.banner = "";
       }
       await updateCategory({ id, body: payload }).unwrap();
       navigate(-1);

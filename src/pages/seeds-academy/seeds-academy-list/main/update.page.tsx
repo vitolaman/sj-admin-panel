@@ -46,6 +46,10 @@ const UpdateSeedsAcademy = () => {
     setLevels([...levels, ""]);
   };
 
+  const handleCancel = () => {
+    navigate(`/seeds-academy/seeds-academy-list`);
+  };
+
   useEffect(() => {
     if (data)
       reset({
@@ -63,7 +67,7 @@ const UpdateSeedsAcademy = () => {
             <div className="flex items-center justify-between gap-4 ml-4">
               <Button
                 type="button"
-                onClick={() => {}}
+                onClick={handleCancel}
                 // loading={isLoading}
                 className="rounded-full flex gap-2 px-6 py-2 bg-[#DD2525] text-white  "
               >
@@ -171,7 +175,7 @@ const UpdateSeedsAcademy = () => {
           <div className="flex items-center justify-between gap-4 ml-4">
             <Button
               type="button"
-              onClick={() => {}}
+              onClick={handleCancel}
               className="rounded-full px-6 py-2 border-seeds text-seeds hover:bg-seeds/90 hover:text-white"
             >
               Cancel
