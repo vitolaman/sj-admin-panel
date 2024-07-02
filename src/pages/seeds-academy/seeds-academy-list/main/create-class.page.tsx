@@ -219,7 +219,7 @@ export default function CreateClass(): React.ReactElement {
         <div className="flex items-center justify-between gap-4 ml-4">
           <Button
             type="button"
-            onClick={() => {handleSave}}
+            onClick={handleSave}
             className="rounded-full px-6 py-2 border-seeds text-seeds hover:bg-seeds/90 hover:text-white"
           >
             Cancel
