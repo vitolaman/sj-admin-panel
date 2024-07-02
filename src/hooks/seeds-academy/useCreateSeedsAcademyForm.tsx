@@ -49,7 +49,7 @@ const useCreateSeedsAcademyForm = () => {
   const create = async (data: CreateCategoryPayload) => {
     try {
       setIsLoading(true);
-      const payload: any = {
+      const payload = {
         ...data,
         published_at: dateNow.toISOString(),
         status: "PUBLISHED",

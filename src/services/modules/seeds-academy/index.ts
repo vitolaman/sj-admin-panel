@@ -9,6 +9,7 @@ import {
   MainSeedsAcademyRes,
 } from "_interfaces/seeds-academy.interfaces";
 import { Api } from "services/api";
+import { errorHandler } from "services/errorHandler";
 
 export const seedsAcademyApi = Api.injectEndpoints({
   endpoints: (build) => ({
@@ -40,19 +41,6 @@ export const seedsAcademyApi = Api.injectEndpoints({
         return {
           url: `admin-academy/v1/category/${id}`,
           method: "PATCH",
-          body,
-        };
-      },
-    }),
-    createClass: build.mutation<CreateClassPayloadRes, FormData>({
-      query(body) {
-        return {
-          url: `admin-academy/v1/class`,
-          method: "POST",
-          // headers: {
-          //   'Content-Type': 'multipart/form-data',
-          // },
-          formData: true,
           body,
         };
       },
@@ -92,6 +80,34 @@ export const {
   useCreateClassListQuery,
   useClassByCategoryListQuery,
   useCreateCategoryMutation,
-  useCreateClassMutation,
+  // useCreateClassMutation,
   useUpdateCategoryMutation,
 } = seedsAcademyApi;
+
+const createClass = async (
+  accessToken: string,
+  formData: FormData,
+) => {
+  try {
+    const response = await fetch(
+      `${process.env.REACT_APP_REST_HOST}/admin-academy/v1/class`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: formData,
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const responseData = await response.json();
+  } catch (error) {
+    errorHandler(error);
+  }
+};
+
+export default createClass;

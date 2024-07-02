@@ -1,6 +1,5 @@
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import React, { useState } from "react";
-import { PiWarningCircleFill } from "react-icons/pi";
 import {
   Menu,
   MenuHandler,
@@ -10,31 +9,20 @@ import {
 import { useNavigate } from "react-router-dom";
 import { Button } from "react-daisyui";
 import SearchInput from "components/search-input";
-import WarningMaxPopUp from "components/modal/banner/WarningMaxPopUp";
-import PopUpImage from "components/modal/banner/PopUpImage";
 import {
   SeedsAcademyListI,
   MainSeedsAcademyReq,
 } from "_interfaces/seeds-academy.interfaces";
-import {
-  useChangeStatusBannerMutation,
-  useDeleteBannerMutation,
-} from "services/modules/banner";
 import { useSeedsAcademyListQuery } from "services/modules/seeds-academy";
 import { Columns, Table } from "components/table/table";
 import { FiEye } from "react-icons/fi";
 import { FiEyeOff } from "react-icons/fi";
 import { FiEdit } from "react-icons/fi";
-import { errorHandler } from "services/errorHandler";
 
 export const salRouteName = "seeds-academy-list";
 export default function SeedsAcademyList(): React.ReactElement {
   const push = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState<string | null>(null);
-  const [isWarningPopupOpen, setIsWarningPopupOpen] = useState(false);
-  const [warningMessage, setWarningMessage] = useState<string | null>(null);
-  const [isImagePopupOpen, setIsImagePopupOpen] = useState(false);
-  const [selectedImageUrl, setSelectedImageUrl] = useState<string | null>(null);
   const [searchParams, setSearchParams] = useState<MainSeedsAcademyReq>({
     search: "",
     status: "",
@@ -43,7 +31,6 @@ export default function SeedsAcademyList(): React.ReactElement {
     page: 1,
   });
   const { data, isLoading, refetch } = useSeedsAcademyListQuery(searchParams);
-  const [deleteBanner] = useDeleteBannerMutation();
 
   const handleCreateSeedsAcademy = (): void => {
     void push("/seeds-academy/seeds-academy-list/create");
@@ -54,11 +41,6 @@ export default function SeedsAcademyList(): React.ReactElement {
   };
   const handleDetailCategory = (id: string): void => {
     void push(`/seeds-academy/seeds-academy-list/detail/${id}`);
-  };
-
-  const handleClosePopup = () => {
-    setIsWarningPopupOpen(false);
-    setIsImagePopupOpen(false);
   };
 
   const header: Columns<SeedsAcademyListI>[] = [
@@ -127,12 +109,7 @@ export default function SeedsAcademyList(): React.ReactElement {
                   View Detail
                 </label>
               </MenuItem>
-              <MenuItem
-                placeholder={""}
-                className="p-0"
-                onClick={() => {
-                }}
-              >
+              <MenuItem placeholder={""} className="p-0" onClick={() => {}}>
                 <label
                   htmlFor="item-1"
                   className="flex cursor-pointer items-center gap-2 p-2 hover:bg-gray-100 text-sm text-[#201B1C]"
@@ -204,30 +181,8 @@ export default function SeedsAcademyList(): React.ReactElement {
                     loading={isLoading}
                   />
                 </div>
-                {warningMessage && (
-                  <div className={`text-sm text-red-400 font-normal flex my-4`}>
-                    <PiWarningCircleFill className="my-auto mr-2" />
-                    <span>{warningMessage}</span>
-                  </div>
-                )}
               </div>
             </div>
-          </div>
-          <div>
-            {isWarningPopupOpen && (
-              <WarningMaxPopUp
-                isOpen={isWarningPopupOpen}
-                data={warningMessage}
-                onClose={handleClosePopup}
-              />
-            )}
-            {selectedImageUrl && (
-              <PopUpImage
-                isOpen={isImagePopupOpen}
-                data={selectedImageUrl}
-                onClose={handleClosePopup}
-              />
-            )}
           </div>
         </div>
       </div>

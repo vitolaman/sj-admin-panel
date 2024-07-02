@@ -1,33 +1,20 @@
 import React, { useState } from "react";
-import { PiWarningCircleFill } from "react-icons/pi";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "react-daisyui";
-import WarningMaxPopUp from "components/modal/banner/WarningMaxPopUp";
-import PopUpImage from "components/modal/banner/PopUpImage";
-import { FiEdit } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
 import {
   ClassListI,
   MainSeedsAcademyReq,
 } from "_interfaces/seeds-academy.interfaces";
-import {
-  useChangeStatusBannerMutation,
-  useDeleteBannerMutation,
-} from "services/modules/banner";
+
 import { useClassByCategoryListQuery } from "services/modules/seeds-academy";
 import { Columns, Table } from "components/table/table";
-import AddNewClassPopUp from "./addNewClassPopUp";
 import { CiFileOn } from "react-icons/ci";
 
 export const dcRouteName = "seeds-academy-list/detail/:id";
 export default function DetailCategory(): React.ReactElement {
   const navigate = useNavigate();
-  const [isWarningPopupOpen, setIsWarningPopupOpen] = useState(false);
-  const [warningMessage, setWarningMessage] = useState<string | null>(null);
-  const [isImagePopupOpen, setIsImagePopupOpen] = useState(false);
   const params = useParams<{ id: string }>();
-  const [selectedImageUrl, setSelectedImageUrl] = useState<string | null>(null);
-  const [isAddNewClassPopupOpen, setIsAddNewClassPopupOpen] = useState(false);
   const [searchParams, setSearchParams] = useState<MainSeedsAcademyReq>({
     search: "",
     status: "",
@@ -38,12 +25,6 @@ export default function DetailCategory(): React.ReactElement {
   });
   const { data, isLoading, refetch } =
     useClassByCategoryListQuery(searchParams);
-  const [levelName, setLevelName] = useState<string>("");
-
-  const handleClosePopup = () => {
-    setIsWarningPopupOpen(false);
-    setIsImagePopupOpen(false);
-  };
 
   const handleSave = () => {
     navigate(`/seeds-academy/seeds-academy-list`);
@@ -182,42 +163,12 @@ export default function DetailCategory(): React.ReactElement {
                       />
                     </div>
                   )}
-                  {warningMessage && (
-                    <div
-                      className={`text-sm text-red-400 font-normal flex my-4`}
-                    >
-                      <PiWarningCircleFill className="my-auto mr-2" />
-                      <span>{warningMessage}</span>
-                    </div>
-                  )}
                 </div>
               </div>
-            </div>
-            <div>
-              {isWarningPopupOpen && (
-                <WarningMaxPopUp
-                  isOpen={isWarningPopupOpen}
-                  data={warningMessage}
-                  onClose={handleClosePopup}
-                />
-              )}
-              {selectedImageUrl && (
-                <PopUpImage
-                  isOpen={isImagePopupOpen}
-                  data={selectedImageUrl}
-                  onClose={handleClosePopup}
-                />
-              )}
             </div>
           </div>
         </div>
       ))}
-      <AddNewClassPopUp
-        isOpen={isAddNewClassPopupOpen}
-        onClose={() => setIsAddNewClassPopupOpen(false)}
-        levelName={levelName}
-        categoryId={searchParams.id}
-      />
     </div>
   );
 }

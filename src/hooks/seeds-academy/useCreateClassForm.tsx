@@ -6,13 +6,13 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAppSelector } from "store";
 import { CreateClassPayload } from "_interfaces/seeds-academy.interfaces";
-import { useCreateClassMutation } from "services/modules/seeds-academy";
+import  createClass  from "services/modules/seeds-academy";
 import { uploadFile } from "services/modules/file";
 
 interface UseCreateClassFormProps {
   levelName: string;
   categoryId: string | undefined;
-  onSuccess: any
+  onSuccess: ()=> void
 }
 
 const useCreateClassForm = ({
@@ -22,7 +22,6 @@ const useCreateClassForm = ({
 }: UseCreateClassFormProps) => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const [createClass] = useCreateClassMutation();
   const { accessToken } = useAppSelector((state) => state.auth);
 
   const schema = yup.object().shape({
@@ -61,22 +60,7 @@ const useCreateClassForm = ({
       formData.append("video", data.video);
       formData.append("quiz", data.quiz instanceof File ? data.quiz : "");
 
-      const response = await fetch(
-        `${process.env.REACT_APP_REST_HOST}/admin-academy/v1/class`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-          body: formData,
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const responseData = await response.json();
+      const response = await createClass(accessToken!,formData)
       onSuccess();
     } catch (error) {
       errorHandler(error);

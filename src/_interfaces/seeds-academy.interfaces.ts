@@ -118,9 +118,9 @@ export interface CreateClassPayload {
     id: string;
     en: string;
   };
-  module: any;
+  module: string;
   price: {
-    idr: any;
+    idr: string;
   };
   category_id: string | undefined;
   level: string;

@@ -106,21 +106,10 @@ const CreateSeedsAcademy = () => {
         <div className="flex flex-col gap-2 my-3">
           <label className="font-semibold">Level</label>
           {[0, 1, 2].map((item, i) => (
-            <div className="grid grid-cols-3 items-center gap-4">
+            <div className="grid grid-cols-3 items-center gap-4" key={i}>
               <div className="font-semibold text-sm">{i + 1}</div>
               <div className="text-center col-span-2">
-                <Controller
-                  control={control}
-                  name={`level.${i}`}
-                  render={({ field: { onChange, value } }) => (
-                    <CInput
-                      value={value}
-                      onChange={(value) => onChange(value)}
-                      borderOffset
-                    />
-                  )}
-                />
-                {/* <ValidationError error={errors?.level?.[i]} /> */}
+                <CInput {...register(`level.${i}`)} error={errors.title} />
               </div>
             </div>
           ))}
