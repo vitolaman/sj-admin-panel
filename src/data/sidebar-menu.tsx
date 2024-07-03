@@ -1,12 +1,3 @@
-import {
-  FiBookOpen,
-  FiHome,
-  FiArchive,
-  FiMapPin,
-  FiGitBranch,
-  FiMessageSquare,
-} from "react-icons/fi";
-
 interface SubMenuItem {
   name: string;
   path: string;
@@ -21,45 +12,57 @@ interface MenuItem {
 const menuItems: MenuItem[] = [
   {
     name: "User",
-    path: "/#",
+    path: "#",
     child: [
-      { name: "Dashboard Monitoring", path: "/user/dashboard-monitoring" },
+      // hide for not spamming
+      // { name: "Dashboard Monitoring", path: "/user/dashboard-monitoring" },
       { name: "Control Panel", path: "/user/control-panel" },
-      {
-        name: "Internal Staff Monitoring",
-        path: "/user/internal-staff-monitoring",
-      },
+      // {
+      //   name: "Internal Staff Monitoring",
+      //   path: "/user/internal-staff-monitoring",
+      // },
     ],
   },
+  // {
+  //   name: "Content",
+  //   path: "/content",
+  // },
+  // {
+  //   name: "Trading",
+  //   path: "/trading",
+  // },
   {
-    name: "Content",
-    path: "/content",
-  },
-  {
-    name: "Trading",
-    path: "/trading",
+    name: "Homepage Feature",
+    path: "#",
+    child: [
+      { name: "Seeds Event", path: "/homepage-feature/events" },
+      { name: "Open Account", path: "/homepage-feature/open-account" },
+    ],
   },
   {
     name: "Play",
     path: "/play",
-    child: [{ name: "Withdraw", path: "/play/withdraw" }],
   },
   {
     name: "Quiz",
-    path: "/quiz",
+    path: "#",
+    child: [
+      { name: "Quiz List", path: "/quiz" },
+      { name: "Quiz Category", path: "/quiz/category" },
+      { name: "Question Bank", path: "/quiz/question-bank" },
+    ],
   },
   {
     name: "Circle",
-    path: "/#",
+    path: "#",
     child: [
       { name: "Control Panel", path: "/circle/control-panel" },
-      { name: "Membership", path: "/circle/membership" },
-      { name: "Withdraw", path: "/circle/withdraw" },
+      // { name: "Membership", path: "/circle/membership" },
     ],
   },
   {
     name: "Banner",
-    path: "/#",
+    path: "#",
     child: [
       { name: "Main Banner", path: "/banner/main-banner" },
       { name: "Exclusive Offers", path: "/banner/exclusive-offers" },
@@ -78,21 +81,33 @@ const menuItems: MenuItem[] = [
     path: "/seeds-coin-management",
   },
   {
+    name: "XP Management",
+    path: "/xp-management",
+  },
+  {
     name: "Blog",
-    path: "/#",
+    path: "#",
     child: [
-      { name: "Event Highlight", path: "/blog/event-highlight" },
+      // { name: "Event Highlight", path: "/blog/event-highlight" },
       { name: "Article", path: "/blog/article" },
     ],
   },
-  {
-    name: "News",
-    path: "/news",
-  },
+  // {
+  //   name: "News",
+  //   path: "/news",
+  // },
   {
     name: "Withdrawal",
-    path: "/#",
-    child: [{ name: "Withdraw Quiz", path: "/withdraw-quiz" }],
+    path: "#",
+    child: [
+      { name: "Withdraw Quiz", path: "/quiz/withdraw" },
+      { name: "Withdraw Play", path: "/play/withdraw" },
+      { name: "Withdraw Circle", path: "/circle/withdraw" },
+      {
+        name: "Disbursement Request",
+        path: "/withdrawal/disbursement-request",
+      },
+    ],
   },
   {
     name: "Referral Code",
@@ -100,7 +115,7 @@ const menuItems: MenuItem[] = [
   },
   {
     name: "Push Notification",
-    path: "/#",
+    path: "#",
     child: [
       {
         name: "Blast Push Notification",
@@ -108,6 +123,14 @@ const menuItems: MenuItem[] = [
       },
       { name: "Welcome Banner", path: "/push-notification/welcome-banner" },
     ],
+  },
+  {
+    name: "Gallery",
+    path: "/quiz-gallery",
+  },
+  {
+    name: "B2B Company",
+    path: "/company",
   },
 ];
 

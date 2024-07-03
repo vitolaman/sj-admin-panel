@@ -1,9 +1,13 @@
-module.exports = {
+const withMT = require('@material-tailwind/react/utils/withMT');
+
+module.exports = withMT({
   darkMode: [],
   content: [
     './src/**/*.{js,jsx,ts,tsx}',
     './node_modules/daisyui/dist/**/*.js',
     './node_modules/react-daisyui/dist/**/*.js',
+    './node_modules/@material-tailwind/react/components/**/*.{js,ts,jsx,tsx}',
+    './node_modules/@material-tailwind/react/theme/components/**/*.{js,ts,jsx,tsx}',
   ],
   mode: 'jit',
   theme: {
@@ -150,6 +154,9 @@ module.exports = {
         },
       },
     },
+    fontFamily: {
+      poppins: ['Poppins', 'sans-serif']
+    }
   },
   plugins: [require('daisyui')],
   daisyui: {
@@ -161,4 +168,4 @@ module.exports = {
       },
     ],
   },
-};
+});

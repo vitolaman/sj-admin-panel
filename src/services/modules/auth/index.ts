@@ -1,5 +1,5 @@
 import { LoginReqI, LoginResI } from "_interfaces/auth-api.interfaces";
-import { ApiResponseI, Api } from "services/api";
+import { Api } from "services/api";
 
 export const userApi = Api.injectEndpoints({
   endpoints: (build) => ({
