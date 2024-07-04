@@ -5,6 +5,7 @@ import {
   GetClassByCatagoryRes,
   CreateCategoryPayloadRes,
   CreateCategoryPayload,
+  CreateCategoryReq,
   MainSeedsAcademyReq,
   MainSeedsAcademyRes,
 } from "_interfaces/seeds-academy.interfaces";
@@ -24,7 +25,7 @@ export const seedsAcademyApi = Api.injectEndpoints({
         `admin-academy/v1/category?search=${param.search}&status=${param.status}&type=${param.type}&limit=${param.limit}&page=${param.page}`,
       keepUnusedDataFor: 0,
     }),
-    createCategory: build.mutation<CreateCategoryPayloadRes, CreateCategoryPayload>({
+    createCategory: build.mutation<CreateCategoryPayloadRes, CreateCategoryReq>({
       query(body) {
         return {
           url: `admin-academy/v1/category`,
@@ -35,7 +36,7 @@ export const seedsAcademyApi = Api.injectEndpoints({
     }),
     updateCategory: build.mutation<
       string,
-      { id: string; body: CreateCategoryPayload }
+      { id: string; body: CreateCategoryReq }
     >({
       query({ id, body }) {
         return {

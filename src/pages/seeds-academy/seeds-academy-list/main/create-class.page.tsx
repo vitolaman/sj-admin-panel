@@ -9,9 +9,7 @@ import {
   ClassListI,
   MainSeedsAcademyReq,
 } from "_interfaces/seeds-academy.interfaces";
-import {
-  useClassByCategoryListQuery,
-} from "services/modules/seeds-academy";
+import { useClassByCategoryListQuery } from "services/modules/seeds-academy";
 import { Columns, Table } from "components/table/table";
 import AddNewClassPopUp from "./addNewClassPopUp";
 import { CiFileOn } from "react-icons/ci";
@@ -70,7 +68,7 @@ export default function CreateClass(): React.ReactElement {
         id: "empty",
       },
       module: "empty",
-      assesment: "empty",
+      total_question: "empty",
     },
   ];
 
@@ -96,7 +94,7 @@ export default function CreateClass(): React.ReactElement {
       fieldId: "banner",
       label: "Banner",
       render: (data) => {
-        if (data?.banner) {
+        if (data?.banner !== "") {
           return (
             <div className="rounded-full bg-[#DCFCE4] p-1 w-[25px] h-[25px] mx-auto">
               <CiFileOn style={{ color: "green", margin: "0 auto" }} />
@@ -124,10 +122,24 @@ export default function CreateClass(): React.ReactElement {
     {
       fieldId: "module",
       label: "Modul",
+      render: (data) => {
+        if (data?.module !== "") {
+          return <div className="">FileName.pdf</div>;
+        } else {
+          return <>empty</>;
+        }
+      },
     },
     {
-      fieldId: "assesment",
+      fieldId: "total_question",
       label: "Assesment",
+      render: (data) => {
+        if (data?.total_question !== 0) {
+          return <div className="">FileName.csv</div>;
+        } else {
+          return <>empty</>;
+        }
+      },
     },
   ];
 

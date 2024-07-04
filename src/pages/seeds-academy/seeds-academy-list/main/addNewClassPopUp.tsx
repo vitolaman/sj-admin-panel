@@ -36,13 +36,13 @@ const AddNewClassPopup: React.FC<{
     onSuccess: handleCreateSuccess,
   });
 
-  const banner = watch("banner");
-  const [bannerPreview] = useFilePreview(banner as unknown as FileList);
+  const banner = watch("banner.image_link");
+  const [bannerPreview] = useFilePreview(banner as FileList);
 
-  const module = watch("module");
+  const module = watch("module.file_link");
   const [modulePreview] = useFilePreview(module as unknown as FileList);
 
-  const quiz = watch("quiz");
+  const quiz = watch("quiz.file_link");
   const [quizPreview] = useFilePreview(quiz as unknown as FileList);
 
   return (
@@ -155,9 +155,9 @@ const AddNewClassPopup: React.FC<{
                       <div className="text-seeds">Drag Your Image Here</div>
                     )}
                     <FileInput
-                      {...register("module")}
+                      {...register("module.file_link")}
                       size="sm"
-                      accept="image/*"
+                      accept=".pdf"
                     />
                   </div>
                 </div>
@@ -174,9 +174,9 @@ const AddNewClassPopup: React.FC<{
                       <div className="text-seeds">Drag Your Image Here</div>
                     )}
                     <FileInput
-                      {...register("quiz")}
+                      {...register("quiz.file_link")}
                       size="sm"
-                      accept=".csv, .txt, .pdf"
+                      accept=".csv"
                     />
                   </div>
                 </div>
@@ -193,7 +193,7 @@ const AddNewClassPopup: React.FC<{
                       <div className="text-seeds">Drag Your Image Here</div>
                     )}
                     <FileInput
-                      {...register("banner")}
+                      {...register("banner.image_link")}
                       size="sm"
                       accept="image/*"
                     />
@@ -210,7 +210,7 @@ const AddNewClassPopup: React.FC<{
               Cancel
             </Button>
             <Button
-                // onClick={handleCreate}
+              // onClick={handleCreate}
               type="submit"
               loading={isLoading}
               className="border-none bg-[#3AC4A0] rounded-full text-white w-[268px] hover:bg-[#3AC4A0] font-semibold font-poppins text-base"

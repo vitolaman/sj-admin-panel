@@ -5,7 +5,10 @@ import { errorHandler } from "services/errorHandler";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAppSelector } from "store";
-import { CreateCategoryPayload } from "_interfaces/seeds-academy.interfaces";
+import {
+  CreateCategoryPayload,
+  CreateCategoryReq,
+} from "_interfaces/seeds-academy.interfaces";
 import { useUpdateCategoryMutation } from "services/modules/seeds-academy";
 import { uploadFile } from "services/modules/file";
 
@@ -45,6 +48,12 @@ const useUpdateSeedsAcademyForm = (id: string) => {
   } = useForm<CreateCategoryPayload>({
     mode: "onSubmit",
     resolver: yupResolver(schema),
+    defaultValues: {
+      banner: {
+        image_link: "",
+        image_url: "",
+      },
+    },
   });
 
   const create = async (data: CreateCategoryPayload) => {
@@ -54,9 +63,13 @@ const useUpdateSeedsAcademyForm = (id: string) => {
         ...data,
         published_at: dateNow.toISOString(),
         status: "PUBLISHED",
+        banner: data.banner.image_url,
       };
-      if (data.banner) {
-        const banner = await uploadFile(accessToken!, data.banner[0] as File);
+      if (data.banner.image_link !== "") {
+        const banner = await uploadFile(
+          accessToken!,
+          data.banner.image_link[0] as File
+        );
         payload.banner = banner;
       } else {
         payload.banner = "";
@@ -77,9 +90,13 @@ const useUpdateSeedsAcademyForm = (id: string) => {
         ...data,
         published_at: dateNow.toISOString(),
         status: "DRAFTED",
+        banner: data.banner.image_url,
       };
-      if (data.banner) {
-        const banner = await uploadFile(accessToken!, data.banner[0] as File);
+      if (data.banner.image_link !== "") {
+        const banner = await uploadFile(
+          accessToken!,
+          data.banner.image_link[0] as File
+        );
         payload.banner = banner;
       } else {
         payload.banner = "";

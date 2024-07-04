@@ -11,7 +11,6 @@ import MDEditor, { commands } from "@uiw/react-md-editor";
 export const csaRouteName = "seeds-academy-list/create";
 const CreateSeedsAcademy = () => {
   const navigate = useNavigate();
-  const [levels, setLevels] = useState<string[]>([""]);
   const {
     register,
     errors,
@@ -22,16 +21,20 @@ const CreateSeedsAcademy = () => {
     handleCreate,
     handleDraft,
   } = useCreateSeedsAcademyForm();
+  const [levels, setLevels] = useState([0, 1, 2]);
 
-  const banner = watch("banner");
-  const [bannerPreview] = useFilePreview(banner as unknown as FileList);
 
-  const handleAddNewLevel = () => {
-    setLevels([...levels, ""]);
-  };
+  const banner = watch("banner.image_link");
+  const [bannerPreview] = useFilePreview(banner as FileList);
 
   const handleCancel = () => {
     navigate(`/seeds-academy/seeds-academy-list`);
+  };
+
+
+  
+  const handleAddNewLevel = () => {
+    setLevels([...levels, levels[levels.length-1]+1]); 
   };
   return (
     <ContentContainer>
@@ -100,12 +103,16 @@ const CreateSeedsAcademy = () => {
             ) : (
               <div className="text-seeds">Drag Your Image Here</div>
             )}
-            <FileInput {...register("banner")} size="sm" accept="image/*" />
+            <FileInput
+              {...register("banner.image_link")}
+              size="sm"
+              accept="image/*"
+            />
           </div>
         </div>
         <div className="flex flex-col gap-2 my-3">
           <label className="font-semibold">Level</label>
-          {[0, 1, 2].map((item, i) => (
+          {levels.map((item, i) => (
             <div className="grid grid-cols-3 items-center gap-4" key={i}>
               <div className="font-semibold text-sm">{i + 1}</div>
               <div className="text-center col-span-2">

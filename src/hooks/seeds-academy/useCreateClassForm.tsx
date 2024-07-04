@@ -6,13 +6,13 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAppSelector } from "store";
 import { CreateClassPayload } from "_interfaces/seeds-academy.interfaces";
-import  createClass  from "services/modules/seeds-academy";
+import createClass from "services/modules/seeds-academy";
 import { uploadFile } from "services/modules/file";
 
 interface UseCreateClassFormProps {
   levelName: string;
   categoryId: string | undefined;
-  onSuccess: ()=> void
+  onSuccess: () => void;
 }
 
 const useCreateClassForm = ({
@@ -39,28 +39,73 @@ const useCreateClassForm = ({
   } = useForm<CreateClassPayload>({
     mode: "onSubmit",
     resolver: yupResolver(schema),
+    defaultValues: {
+      banner: {
+        image_link: "",
+        image_url: "",
+      },
+      module: {
+        file_link: "",
+        file_url: "",
+      },
+      quiz: {
+        file_link: "",
+        file_url: "",
+      },
+    },
   });
 
   const create = async (data: CreateClassPayload) => {
+    console.log(data.module, data.quiz, "akdjk");
+
     try {
       setIsLoading(true);
-      let banner = ''
-      if (data.banner) {
-         banner = await uploadFile(accessToken!, data.banner[0] as File);
+      let bannerReq = "";
+      if (data.banner.image_link !== "") {
+        const banner = await uploadFile(
+          accessToken!,
+          data.banner.image_link[0] as File
+        );
+        bannerReq = banner;
+      } else {
+        bannerReq = "";
       }
+
+      let moduleReq = "";
+      if (data.module.file_link !== "") {
+        const module = await uploadFile(
+          accessToken!,
+          data.module.file_link[0] as File
+        );
+        moduleReq = module;
+      } else {
+        moduleReq = "";
+      }
+
+      let quizReq = "";
+      if (data.quiz.file_link !== "") {
+        const quiz = await uploadFile(
+          accessToken!,
+          data.quiz.file_link[0] as File
+        );
+        quizReq = quiz;
+      } else {
+        quizReq = "";
+      }
+
       const formData = new FormData();
       formData.append("title", data.title);
       formData.append("description[id]", data.description.id);
       formData.append("description[en]", data.description.en);
-      formData.append("module", data.module);
+      formData.append("module", moduleReq);
       formData.append("price[idr]", data.price.idr);
       formData.append("level", levelName);
       formData.append("category_id", categoryId || "");
-      formData.append("banner", banner);
+      formData.append("banner", bannerReq);
       formData.append("video", data.video);
-      formData.append("quiz", data.quiz instanceof File ? data.quiz : "");
+      formData.append("quiz", quizReq);
 
-      const response = await createClass(accessToken!,formData)
+      const response = await createClass(accessToken!, formData);
       onSuccess();
     } catch (error) {
       errorHandler(error);

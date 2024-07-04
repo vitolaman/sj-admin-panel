@@ -38,10 +38,10 @@ const UpdateSeedsAcademy = () => {
   const { data, isLoading, refetch } =
     useClassByCategoryListQuery(searchParams);
 
-  const banner = watch("banner");
-  const [bannerPreview] = useFilePreview(
-    typeof banner === "string" ? undefined : (banner as FileList)
-  );
+    const banner = watch("banner.image_link");
+    const [bannerPreview] = useFilePreview(
+      typeof banner === "string" ? undefined : (banner as FileList)
+    );
   const handleAddNewLevel = () => {
     setLevels([...levels, ""]);
   };
@@ -54,6 +54,10 @@ const UpdateSeedsAcademy = () => {
     if (data)
       reset({
         ...data,
+        banner: {
+          image_url: data.banner,
+          image_link: "",
+        },
       });
   }, [data]);
   return (
@@ -127,16 +131,26 @@ const UpdateSeedsAcademy = () => {
         <div className="col-span-2 my-3">
           <h1 className="font-semibold text-base">Add Category Banner</h1>
           <div className="w-full border-[#BDBDBD] border rounded-lg flex flex-col text-center items-center justify-center p-10 gap-3">
-            {banner ? (
+          {bannerPreview ? (
               <img
                 className="flex mx-auto w-[500px] h-[166px] object-fill"
-                src={bannerPreview ? bannerPreview : (banner as string)}
+                src={bannerPreview}
                 alt=""
               />
+            ) : data?.banner === "" ? (
+              <div className="text-seeds">Choose your banner here</div>
             ) : (
-              <div className="text-seeds">Drag Your Image Here</div>
+              <img
+                className="flex mx-auto w-[500px] h-[166px] object-fill"
+                src={data?.banner}
+                alt=""
+              />
             )}
-            <FileInput {...register("banner")} size="sm" accept="image/*" />
+            <FileInput
+              {...register("banner.image_link")}
+              size="sm"
+              accept="image/*"
+            />
           </div>
         </div>
         <div className="flex flex-col gap-2 my-3">

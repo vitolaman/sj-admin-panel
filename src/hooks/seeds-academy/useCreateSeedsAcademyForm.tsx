@@ -5,7 +5,7 @@ import { errorHandler } from "services/errorHandler";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAppSelector } from "store";
-import { CreateCategoryPayload } from "_interfaces/seeds-academy.interfaces";
+import { CreateCategoryPayload, CreateCategoryReq } from "_interfaces/seeds-academy.interfaces";
 import { useCreateCategoryMutation } from "services/modules/seeds-academy";
 import { uploadFile } from "services/modules/file";
 
@@ -44,18 +44,28 @@ const useCreateSeedsAcademyForm = () => {
   } = useForm<CreateCategoryPayload>({
     mode: "onSubmit",
     resolver: yupResolver(schema),
+    defaultValues: {
+      banner: {
+        image_link: "",
+        image_url: "",
+      },
+    },
   });
 
   const create = async (data: CreateCategoryPayload) => {
     try {
       setIsLoading(true);
-      const payload = {
+      const payload :CreateCategoryReq = {
         ...data,
         published_at: dateNow.toISOString(),
         status: "PUBLISHED",
+        banner: data.banner.image_url
       };
-      if (data.banner) {
-        const banner = await uploadFile(accessToken!, data.banner[0] as File);
+      if (data.banner.image_link !== "") {
+        const banner = await uploadFile(
+          accessToken!,
+          data.banner.image_link[0] as File
+        );
         payload.banner = banner;
       } else {
         payload.banner = "";
@@ -74,11 +84,21 @@ const useCreateSeedsAcademyForm = () => {
   const draft = async (data: CreateCategoryPayload) => {
     try {
       setIsLoading(true);
-      const payload = {
+      const payload :CreateCategoryReq = {
         ...data,
         published_at: dateNow.toISOString(),
         status: "DRAFTED",
+        banner: data.banner.image_url
       };
+      if (data.banner.image_link !== "") {
+        const banner = await uploadFile(
+          accessToken!,
+          data.banner.image_link[0] as File
+        );
+        payload.banner = banner;
+      } else {
+        payload.banner = "";
+      }
       const response = await createCategory(payload).unwrap();
       navigate(
         `/seeds-academy/seeds-academy-list/create-class?id=${response.id}`

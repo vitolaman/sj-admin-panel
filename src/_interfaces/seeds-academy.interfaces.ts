@@ -41,7 +41,22 @@ export interface CreateCategoryPayload {
     en: string;
     id: string;
   };
-  banner: FileList | string;
+  banner: {
+    image_url: string;
+    image_link: string | FileList;
+  };
+  level: string[];
+  status: string;
+  published_at: string;
+}
+
+export interface CreateCategoryReq {
+  title: string;
+  about: {
+    en: string;
+    id: string;
+  };
+  banner: string;
   level: string[];
   status: string;
   published_at: string;
@@ -110,9 +125,10 @@ export interface ClassListI {
   };
   module: string;
   assesment: string;
+  total_question: number
 }
 
-export interface CreateClassPayload {
+export interface CreateClassReq{
   title: string;
   description: {
     id: string;
@@ -124,9 +140,35 @@ export interface CreateClassPayload {
   };
   category_id: string | undefined;
   level: string;
-  banner: any;
+  banner: string;
   video: string;
-  quiz: string | File;
+  quiz: string;
+}
+
+export interface CreateClassPayload {
+  title: string;
+  description: {
+    id: string;
+    en: string;
+  };
+  module: {
+    file_url: string;
+    file_link: string | FileList;
+  };
+  price: {
+    idr: string;
+  };
+  category_id: string | undefined;
+  level: string;
+  banner: {
+    image_url: string;
+    image_link: string | FileList;
+  };
+  video: string;
+  quiz:  {
+    file_url: string;
+    file_link: string | FileList;
+  };
 }
 export interface CreateClassPayloadRes {
   title: string;
