@@ -197,9 +197,9 @@ const CreateEvent = () => {
           handleSelectChange={handleSelectChange}
           setValue={setValue}
           data={certificate}
-          registerName="id"
+          registerName="reward"
           errors={errors}
-          select={select?.id}
+          select={select?.reward}
         />
         <MInput<EventsFormDataI>
           label="Body Message"

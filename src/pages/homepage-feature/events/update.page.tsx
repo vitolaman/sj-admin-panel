@@ -67,7 +67,7 @@ const UpdateEvent = () => {
     });
     setSelect((prev) => ({
       ...prev,
-      id: data?.id
+      reward: data?.reward
     }));
 
     dispatch(setStatusState(data?.event_status));
@@ -248,9 +248,9 @@ const UpdateEvent = () => {
           handleSelectChange={handleSelectChange}
           setValue={setValue}
           data={certificate}
-          registerName="id"
+          registerName="reward"
           errors={errors}
-          select={select?.id}
+          select={select?.reward}
           disabled
         />
         <MInput<EventsFormDataI>
