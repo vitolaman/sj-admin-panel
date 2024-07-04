@@ -121,7 +121,7 @@ const DetailEvent = () => {
       fieldId: "name",
       label: "Name",
       render: (item) => (
-        <p className="text-left font-normal font-poppins text-sm text-[#201B1C]">
+        <p className="text-center font-normal font-poppins text-sm text-[#201B1C]">
           {item?.name?.length! < 50
             ? item?.name
             : `${item?.name.substring(0, 50)}...`}
@@ -152,7 +152,7 @@ const DetailEvent = () => {
           item?.check_in_time!
         );
         return (
-          <p className="text-left font-normal font-poppins text-sm text-[#201B1C]">
+          <p className="text-center font-normal font-poppins text-sm text-[#201B1C]">
             {`${day.replace(",", "")} ${month} ${year} ${hours}:${minutes}`}
           </p>
         );
@@ -166,8 +166,8 @@ const DetailEvent = () => {
           item?.check_out_time!
         );
         return (
-          <p className="text-left font-normal font-poppins text-sm text-[#201B1C]">
-            {`${day.replace(",", "")} ${month} ${year} ${hours}:${minutes}`}
+          <p className="text-center font-normal font-poppins text-sm text-[#201B1C]">
+            {item?.check_out_time === "0001-01-01T00:00:00Z" ? '-' : `${day.replace(",", "")} ${month} ${year} ${hours}:${minutes}`}
           </p>
         );
       },

@@ -29,8 +29,6 @@ export interface ReferralCodeRes {
 
 export interface GetReferralCodeQuery {
   search :string,
-  minDate:string,
-  maxDate:string,
   limit: number,
   page: number,
   }

@@ -7,7 +7,7 @@ import {
 } from "_interfaces/referral-code.interface";
 import ContentContainer from "components/container";
 import CInput from "components/input";
-import FormInput from "components/input/formInput";
+import MInput from "components/multi-input/index";
 import SearchInput from "components/search-input";
 import Pagination from "components/table/pagination";
 import { Columns, Table } from "components/table/table";
@@ -35,8 +35,6 @@ const ReferralCode = () => {
 
   const [params, setParams] = useState<GetReferralCodeQuery>({
     search: "",
-    minDate: "",
-    maxDate: "",
     limit: 10,
     page: 1,
   });
@@ -121,7 +119,7 @@ const ReferralCode = () => {
                 </div>
                 <Modal.Body className="min-w-full lg:h-auto">
                   <div className="lg:flex lg:flex-col py-3 px-2">
-                    <FormInput<ReferralCodeFormDataI>
+                    <MInput<ReferralCodeFormDataI>
                      label="Name"
                      registerName="name" 
                      type="text"
@@ -130,7 +128,7 @@ const ReferralCode = () => {
                      />
                   </div>
                   <div className="lg:flex lg:flex-col py-3 px-2">
-                    <FormInput<ReferralCodeFormDataI>
+                    <MInput<ReferralCodeFormDataI>
                      label="SeedsTag"
                      type="text"
                      registerName="seeds_tag"
@@ -139,7 +137,7 @@ const ReferralCode = () => {
                      />
                   </div>
                   <div className="lg:flex lg:flex-col py-3 px-2">
-                    <FormInput<ReferralCodeFormDataI>
+                    <MInput<ReferralCodeFormDataI>
                      label="Referral Code"
                      type="text"
                      registerName="ref_code"
