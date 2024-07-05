@@ -75,8 +75,6 @@ import CreateOpenAccount, { cOpenAccountRouteName } from "pages/homepage-feature
 import UpdateOpenAccount, { uOpenAccountRouteName } from "pages/homepage-feature/open-account/update.page";
 import WithdrawQuiz, { withdrawQuizRouteName } from "pages/quiz/withdraw.page";
 import Company, { companyRouteName } from "pages/company/index.page";
-import ReferralCode, {reffCodeRouteName} from "pages/referral-code/index.page"
-import ReferralCodeReward, { reffRewardRouteName } from "pages/referral-code/reward.page";
 import SeedsCoinManagement,{ seedsCoinRouteName } from "pages/seeds-coin-management/index.page";
 
 const protectedRoutes: RouteObject[] = [
@@ -269,21 +267,6 @@ const protectedRoutes: RouteObject[] = [
             index: true,
           },
         ],
-      },
-      {
-        path: "referral-code",
-        children:[
-          {
-            path: reffCodeRouteName, 
-            element: <ReferralCode/>,
-            index: true
-          },
-          {
-            path : reffRewardRouteName,
-            element: <ReferralCodeReward/>,
-            
-          }
-        ]
       },
       // {
       //   path: "operating-area",
