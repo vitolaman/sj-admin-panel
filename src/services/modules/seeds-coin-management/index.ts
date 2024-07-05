@@ -21,7 +21,7 @@ export const seedsCoinManagementApi = Api.injectEndpoints({
       }),
       keepUnusedDataFor: 0,
     }),
-    updateSeedsCoinManagement: build.mutation<void,SeedsCoinManagementReq >({
+    updateSeedsCoinManagement: build.mutation<void,SeedsCoinManagementReq>({
         query(body) {
           return {
             url: `/admin-portal/v1/coin-config/${body.id}`,
