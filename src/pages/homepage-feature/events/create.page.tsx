@@ -192,7 +192,7 @@ const CreateEvent = () => {
             />
           </div>
         )}
-        <MInput<EventsFormDataI>
+        {/* <MInput<EventsFormDataI>
           type="checkbox"
           handleSelectChange={handleSelectChange}
           setValue={setValue}
@@ -200,7 +200,7 @@ const CreateEvent = () => {
           registerName="reward"
           errors={errors}
           select={select?.reward}
-        />
+        /> */}
         <MInput<EventsFormDataI>
           label="Body Message"
           registerName="description"
