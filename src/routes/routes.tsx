@@ -75,6 +75,7 @@ import CreateOpenAccount, { cOpenAccountRouteName } from "pages/homepage-feature
 import UpdateOpenAccount, { uOpenAccountRouteName } from "pages/homepage-feature/open-account/update.page";
 import WithdrawQuiz, { withdrawQuizRouteName } from "pages/quiz/withdraw.page";
 import Company, { companyRouteName } from "pages/company/index.page";
+import SeedsCoinManagement,{ seedsCoinRouteName } from "pages/seeds-coin-management/index.page";
 
 const protectedRoutes: RouteObject[] = [
   { path: "", element: <Navigate to="/user/control-panel" /> },
@@ -178,6 +179,7 @@ const protectedRoutes: RouteObject[] = [
         ],
       },
       { path: promoCodeRouteName, element: <PromoCode /> },
+      {path:seedsCoinRouteName, element:<SeedsCoinManagement/>},
       { path: xpRouteName, element: <XPManagement /> },
       { path: afRouteName, element: <AdminFee /> },
       { path: companyRouteName, element: <Company /> },

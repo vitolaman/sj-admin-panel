@@ -110,10 +110,6 @@ const menuItems: MenuItem[] = [
     ],
   },
   {
-    name: "Referral Code",
-    path: "/referral-code",
-  },
-  {
     name: "Push Notification",
     path: "#",
     child: [

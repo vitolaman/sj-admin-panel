@@ -1,9 +1,7 @@
 import ContentContainer from "components/container";
-import FormInput from "components/input/formInput";
-import FormEditor from "components/input/formEditor";
+import MInput from "components/multi-input/index";
 import useFilePreview from "hooks/shared/useFilePreview";
 import { Button } from "react-daisyui";
-import FormImage from "components/input/formImage";
 import { useNavigate } from "react-router-dom";
 import { OpenAccountFromData } from "_interfaces/banner.interface";
 import useUpsertOpenAccount from "hooks/open-account/useUpsertOpenAccount";
@@ -55,7 +53,7 @@ const CreateOpenAccount = () => {
         </div>
         <div>
           <div className="flex flex-col md:flex-row gap-x-6">
-            <FormInput<OpenAccountFromData>
+            <MInput<OpenAccountFromData>
               label="Account Name"
               registerName="name"
               type="text"
@@ -63,7 +61,7 @@ const CreateOpenAccount = () => {
               errors={errors}
               maxLength={30}
             />
-            <FormInput<OpenAccountFromData>
+            <MInput<OpenAccountFromData>
               label="Register Link"
               registerName="external_url"
               type="text"
@@ -73,7 +71,7 @@ const CreateOpenAccount = () => {
             />
           </div>
           <div className="flex flex-col md:flex-row gap-x-6">
-            <FormInput<OpenAccountFromData>
+            <MInput<OpenAccountFromData>
               label="Title"
               registerName="title"
               type="text"
@@ -83,15 +81,17 @@ const CreateOpenAccount = () => {
             />
             <div className="w-full"/>
           </div>
-          <FormEditor<OpenAccountFromData>
+          <MInput<OpenAccountFromData>
             label="Description"
             registerName="description"
+            type="md-rich-text"
             control={control}
             errors={errors}
           />
-          <FormImage<OpenAccountFromData>
+          <MInput<OpenAccountFromData>
             label="Image Banner"
             registerName="banner.image_link"
+            type="image"
             register={register}
             errors={errors}
             imageURLPreview={imageURLPreview}

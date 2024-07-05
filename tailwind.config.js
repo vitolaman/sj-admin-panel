@@ -3,7 +3,7 @@ const withMT = require('@material-tailwind/react/utils/withMT');
 module.exports = withMT({
   darkMode: [],
   content: [
-    './src/**/*.{js,jsx,ts,tsx}',
+    './src/**/*.{js,ts,jsx,tsx}',
     './node_modules/daisyui/dist/**/*.js',
     './node_modules/react-daisyui/dist/**/*.js',
     './node_modules/@material-tailwind/react/components/**/*.{js,ts,jsx,tsx}',

@@ -20,6 +20,7 @@ export interface EventsI {
   location_name: string;
   name: string;
   updated_at: string;
+  reward:string
 }
 
 export interface EventDetailI {
@@ -32,10 +33,13 @@ export interface EventDetailI {
   status: string;
   created_at: string;
   updated_at: string;
+  notification_type: null;
+  check_in_time: string;
+  check_out_time: string;
 }
 
 export interface EventsFormDataI {
-  id?:string
+  id?: string;
   currency?: string;
   name: string;
   image_url: FileList | string;
@@ -46,10 +50,11 @@ export interface EventsFormDataI {
   location_name: string;
   event_status: string;
   ended_at: string;
+  reward: string;
 }
 
-export interface TicketFormDataI{
-  ticket_code:string
+export interface TicketFormDataI {
+  ticket_code: string;
 }
 
 export interface Metadata {
