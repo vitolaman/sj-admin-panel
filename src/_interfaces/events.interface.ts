@@ -20,6 +20,7 @@ export interface EventsI {
   location_name: string;
   name: string;
   updated_at: string;
+  reward:string
 }
 
 export interface EventDetailI {
@@ -49,6 +50,7 @@ export interface EventsFormDataI {
   location_name: string;
   event_status: string;
   ended_at: string;
+  reward: string;
 }
 
 export interface TicketFormDataI {
