@@ -84,14 +84,9 @@ const AddNewClassPopup: React.FC<{
                   <label className="font-semibold">
                     Price<span className="text-red-600">*</span>
                   </label>
-                  {/* <CInput
-                    {...register("price.idr")}
-                    error={errors.video}
-                    borderOffset
-                  /> */}
                   <Controller
                     control={control}
-                    name="price.idr"
+                    name="price"
                     render={({ field: { value, onChange } }) => (
                       <CurrencyInput
                         value={value}

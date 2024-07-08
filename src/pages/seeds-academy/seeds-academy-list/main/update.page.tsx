@@ -1,6 +1,9 @@
 import ContentContainer from "components/container";
 import CInput from "components/input";
-import { useClassByCategoryListQuery } from "services/modules/seeds-academy";
+import {
+  useClassByCategoryListQuery,
+  useDeleteCategoryMutation,
+} from "services/modules/seeds-academy";
 import useUpdateSeedsAcademyForm from "hooks/seeds-academy/useUpdateSeedsAcademyForm";
 import useFilePreview from "hooks/shared/useFilePreview";
 import { useEffect, useState } from "react";
@@ -38,16 +41,28 @@ const UpdateSeedsAcademy = () => {
   const { data, isLoading, refetch } =
     useClassByCategoryListQuery(searchParams);
 
-    const banner = watch("banner.image_link");
-    const [bannerPreview] = useFilePreview(
-      typeof banner === "string" ? undefined : (banner as FileList)
-    );
+  const [deleteCategory, { isLoading: isDeleting }] =
+    useDeleteCategoryMutation();
+
+  const banner = watch("banner.image_link");
+  const [bannerPreview] = useFilePreview(
+    typeof banner === "string" ? undefined : (banner as FileList)
+  );
   const handleAddNewLevel = () => {
     setLevels([...levels, ""]);
   };
 
   const handleCancel = () => {
     navigate(`/seeds-academy/seeds-academy-list`);
+  };
+
+  const handleDeleteCategory = async () => {
+    try {
+      await deleteCategory({ id: params.id! });
+      navigate(`/seeds-academy/seeds-academy-list`);
+    } catch (error) {
+      console.error("Failed to delete category:", error);
+    }
   };
 
   useEffect(() => {
@@ -71,9 +86,9 @@ const UpdateSeedsAcademy = () => {
             <div className="flex items-center justify-between gap-4 ml-4">
               <Button
                 type="button"
-                onClick={handleCancel}
+                onClick={handleDeleteCategory}
                 // loading={isLoading}
-                className="rounded-full flex gap-2 px-6 py-2 bg-[#DD2525] text-white  "
+                className="rounded-full flex gap-2 px-6 py-2 bg-[#DD2525] text-white hover:bg-[#DD2525] hover:text-white"
               >
                 <RiDeleteBinLine className=" h-4 w-4" />
                 Delete this Category
@@ -131,7 +146,7 @@ const UpdateSeedsAcademy = () => {
         <div className="col-span-2 my-3">
           <h1 className="font-semibold text-base">Add Category Banner</h1>
           <div className="w-full border-[#BDBDBD] border rounded-lg flex flex-col text-center items-center justify-center p-10 gap-3">
-          {bannerPreview ? (
+            {bannerPreview ? (
               <img
                 className="flex mx-auto w-[500px] h-[166px] object-fill"
                 src={bannerPreview}

@@ -162,10 +162,6 @@ export default function SeedsAcademyList(): React.ReactElement {
                 className="flex flex-row  items-center justify-center gap-x-1.5 rounded-full px-6 py-2 bg-seeds text-white hover:bg-seeds/90"
               >
                 Create New Seeds Academy
-                <ChevronDownIcon
-                  className="-mr-1 -mb-1 h-5 w-5 text-white "
-                  aria-hidden="true"
-                />
               </button>
             </div>
           </div>

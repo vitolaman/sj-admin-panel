@@ -2,6 +2,7 @@ import {
   SeedsAcademyListI,
   CreateClassPayloadRes,
   CreateClassPayload,
+  PatchPayload,
   GetClassByCatagoryRes,
   CreateCategoryPayloadRes,
   CreateCategoryPayload,
@@ -72,6 +73,23 @@ export const seedsAcademyApi = Api.injectEndpoints({
         `admin-academy/v1/class?search=${param.search}&status=${param.status}&type=${param.type}&limit=${param.limit}&page=${param.page}`,
       keepUnusedDataFor: 0,
     }),
+    updateStatus: build.mutation<string, { id: string; body: PatchPayload }>({
+      query({ id, body }) {
+        return {
+          url: `admin-academy/v1/category/${id}/status`,
+          method: "PATCH",
+          body,
+        };
+      },
+    }),
+    deleteCategory: build.mutation<void, { id: string }>({
+      query({ id }) {
+        return {
+          url: `admin-academy/v1/category/${id}`,
+          method: "DELETE",
+        };
+      },
+    }),
   }),
   overrideExisting: false,
 });
@@ -83,6 +101,8 @@ export const {
   useCreateCategoryMutation,
   // useCreateClassMutation,
   useUpdateCategoryMutation,
+  useUpdateStatusMutation,
+  useDeleteCategoryMutation
 } = seedsAcademyApi;
 
 const createClass = async (

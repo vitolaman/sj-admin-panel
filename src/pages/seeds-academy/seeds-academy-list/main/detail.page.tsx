@@ -10,6 +10,7 @@ import {
 import { useClassByCategoryListQuery } from "services/modules/seeds-academy";
 import { Columns, Table } from "components/table/table";
 import { CiFileOn } from "react-icons/ci";
+import {FiEdit} from "react-icons/fi"
 
 export const dcRouteName = "seeds-academy-list/detail/:id";
 export default function DetailCategory(): React.ReactElement {
@@ -26,8 +27,11 @@ export default function DetailCategory(): React.ReactElement {
   const { data, isLoading, refetch } =
     useClassByCategoryListQuery(searchParams);
 
-  const handleSave = () => {
+  const handleClose = () => {
     navigate(`/seeds-academy/seeds-academy-list`);
+  };
+  const handleEditSeedsAcademy = (id: string): void => {
+    void navigate(`/seeds-academy/seeds-academy-list/update/${id}`);
   };
 
   const defaultClass = [
@@ -108,21 +112,23 @@ export default function DetailCategory(): React.ReactElement {
       <div className="justify-between flex">
         <h3 className="text-2xl text-[#262626] font-semibold">
           {data?.title}:{" "}
-          <span className="text-[#7C7C7C]">Status: {data?.status}</span>
+          <span className="text-[#7C7C7C]">[ {data?.status} ]</span>
         </h3>
         <div className="flex items-center justify-end gap-4 ">
           <div className="flex items-center justify-between gap-4 ml-4">
-            {/* <Button
+            <Button
               type="button"
-              onClick={() => {}}
+              onClick={() => {
+                void handleEditSeedsAcademy(data?.id as string);
+              }}
               className="rounded-full px-6 py-2 flex gap-2 bg-seeds text-white hover:bg-seeds/90 "
             >
               <FiEdit className=" h-4 w-4" />
               Edit
-            </Button> */}
+            </Button>
             <Button
               type="button"
-              onClick={handleSave}
+              onClick={handleClose}
               // loading={isLoading}
               className="rounded-full flex gap-2 px-6 py-2 bg-seeds text-white hover:bg-seeds/90 "
             >
@@ -133,9 +139,9 @@ export default function DetailCategory(): React.ReactElement {
         </div>
       </div>
       {data?.level.map((el) => (
-        <div className="grid grid-cols-1 gap-6 my-5">
+        <div className="grid grid-cols-1 gap-6 mb-10 my-5">
           <div className="col-span-1">
-            <div className="flex w-full gap-4 mb-5">
+            <div className="flex w-full gap-4">
               <h3 className="text-xl text-[#27A590] border border-[#27A590] bg-[#DCFCE4] font-semibold rounded-md w-full p-1">
                 {el}
               </h3>

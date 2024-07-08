@@ -1,8 +1,9 @@
 import ContentContainer from "components/container";
+import { CreateCategoryPayload } from "_interfaces/seeds-academy.interfaces";
 import CInput from "components/input";
 import useCreateSeedsAcademyForm from "hooks/seeds-academy/useCreateSeedsAcademyForm";
 import useFilePreview from "hooks/shared/useFilePreview";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button, FileInput } from "react-daisyui";
 import { useNavigate } from "react-router-dom";
 import { Controller } from "react-hook-form";
@@ -23,7 +24,6 @@ const CreateSeedsAcademy = () => {
   } = useCreateSeedsAcademyForm();
   const [levels, setLevels] = useState([0, 1, 2]);
 
-
   const banner = watch("banner.image_link");
   const [bannerPreview] = useFilePreview(banner as FileList);
 
@@ -31,10 +31,23 @@ const CreateSeedsAcademy = () => {
     navigate(`/seeds-academy/seeds-academy-list`);
   };
 
+  useEffect(() => {
+    const firstError = Object.keys(errors)[0] as keyof CreateCategoryPayload;
+    if (firstError) {
+      setFocus(firstError);
+      const element = errors[firstError]?.ref;
+      if (element) {
+        element?.scrollIntoView?.({
+          behavior: "smooth",
+          block: "center",
+          inline: "nearest",
+        });
+      }
+    }
+  }, [errors, setFocus]);
 
-  
   const handleAddNewLevel = () => {
-    setLevels([...levels, levels[levels.length-1]+1]); 
+    setLevels([...levels, levels[levels.length - 1] + 1]);
   };
   return (
     <ContentContainer>
@@ -45,9 +58,7 @@ const CreateSeedsAcademy = () => {
           </h3>
         </div>
         <div className="flex flex-col gap-2 my-3">
-          <label className="font-semibold">
-            Category<span className="text-red-600">*</span>
-          </label>
+          <label className="font-semibold">Category</label>
           <CInput {...register("title")} error={errors.title} borderOffset />
         </div>
         <div className="flex gap-2 my-3">
@@ -59,14 +70,21 @@ const CreateSeedsAcademy = () => {
               control={control}
               name="about.id"
               render={({ field: { value, onChange } }) => (
-                <MDEditor
-                  height={200}
-                  commands={[...commands.getCommands()]}
-                  value={value}
-                  onChange={onChange}
-                  highlightEnable={false}
-                  preview="live"
-                />
+                <>
+                  <MDEditor
+                    height={200}
+                    commands={[...commands.getCommands()]}
+                    value={value}
+                    onChange={onChange}
+                    highlightEnable={false}
+                    preview="live"
+                  />
+                  {errors?.about?.id && (
+                    <span className="text-red-600">
+                      {errors?.about?.id?.message}
+                    </span>
+                  )}
+                </>
               )}
             />
           </div>
@@ -78,19 +96,25 @@ const CreateSeedsAcademy = () => {
               control={control}
               name="about.en"
               render={({ field: { value, onChange } }) => (
-                <MDEditor
-                  height={200}
-                  commands={[...commands.getCommands()]}
-                  value={value}
-                  onChange={onChange}
-                  highlightEnable={false}
-                  preview="live"
-                />
+                <>
+                  <MDEditor
+                    height={200}
+                    commands={[...commands.getCommands()]}
+                    value={value}
+                    onChange={onChange}
+                    highlightEnable={false}
+                    preview="live"
+                  />
+                  {errors.about?.en && (
+                    <span className="text-red-600">
+                      {errors.about.en.message}
+                    </span>
+                  )}
+                </>
               )}
             />
           </div>
         </div>
-
         <div className="col-span-2 my-3">
           <h1 className="font-semibold text-base">Add Category Banner</h1>
           <div className="w-full border-[#BDBDBD] border rounded-lg flex flex-col text-center items-center justify-center p-10 gap-3">
@@ -108,6 +132,11 @@ const CreateSeedsAcademy = () => {
               size="sm"
               accept="image/*"
             />
+            {errors.banner?.image_link && (
+              <span className="text-red-600">
+                {errors?.banner?.image_link?.message}
+              </span>
+            )}
           </div>
         </div>
         <div className="flex flex-col gap-2 my-3">
@@ -116,7 +145,12 @@ const CreateSeedsAcademy = () => {
             <div className="grid grid-cols-3 items-center gap-4" key={i}>
               <div className="font-semibold text-sm">{i + 1}</div>
               <div className="text-center col-span-2">
-                <CInput {...register(`level.${i}`)} error={errors.title} />
+                <CInput {...register(`level.${i}`)} />
+                {errors.level && (
+                  <span className="text-red-600 ms-auto">
+                    {errors.level[i]?.message}
+                  </span>
+                )}
               </div>
             </div>
           ))}

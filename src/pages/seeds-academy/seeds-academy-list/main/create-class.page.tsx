@@ -13,11 +13,13 @@ import { useClassByCategoryListQuery } from "services/modules/seeds-academy";
 import { Columns, Table } from "components/table/table";
 import AddNewClassPopUp from "./addNewClassPopUp";
 import { CiFileOn } from "react-icons/ci";
+import { useUpdateStatusMutation } from "services/modules/seeds-academy";
 
 export const ccRouteName = "seeds-academy-list/create-class";
 export default function CreateClass(): React.ReactElement {
   const navigate = useNavigate();
   const location = useLocation();
+  const [updateStatusMutation] = useUpdateStatusMutation();
   const [isWarningPopupOpen, setIsWarningPopupOpen] = useState(false);
   const [warningMessage, setWarningMessage] = useState<string | null>(null);
   const [isImagePopupOpen, setIsImagePopupOpen] = useState(false);
@@ -47,13 +49,22 @@ export default function CreateClass(): React.ReactElement {
     }
   }, [location.search]);
 
+  const handleSave = async (status: string) => {
+    try {
+      await updateStatusMutation({
+        id: searchParams.id!,
+        body: { status },
+      });
+      navigate(`/seeds-academy/seeds-academy-list`);
+    } catch (error) {
+      console.error("Error updating category status:", error);
+      // Handle error state or show error message
+    }
+  };
+
   const handleClosePopup = () => {
     setIsWarningPopupOpen(false);
     setIsImagePopupOpen(false);
-  };
-
-  const handleSave = () => {
-    navigate(`/seeds-academy/seeds-academy-list`);
   };
 
   const defaultClass = [
@@ -147,9 +158,9 @@ export default function CreateClass(): React.ReactElement {
     <div className="max-w-7xl mx-auto">
       <h3 className="text-2xl text-[#262626] font-semibold">Level</h3>
       {data?.level.map((el) => (
-        <div className="grid grid-cols-1 gap-6 mt-5">
+        <div className="grid grid-cols-1 gap-6 mb-10 mt-5">
           <div className="col-span-1">
-            <div className="flex w-full gap-4 mb-12">
+            <div className="flex w-full gap-4 mb-5">
               <h3 className="text-xl text-[#27A590] border border-[#27A590] bg-[#DCFCE4] font-semibold rounded-md w-full p-1">
                 {el}
               </h3>
@@ -231,21 +242,21 @@ export default function CreateClass(): React.ReactElement {
         <div className="flex items-center justify-between gap-4 ml-4">
           <Button
             type="button"
-            onClick={handleSave}
+            onClick={() => handleSave("DRAFTED")}
             className="rounded-full px-6 py-2 border-seeds text-seeds hover:bg-seeds/90 hover:text-white"
           >
             Cancel
           </Button>
           <Button
             type="button"
-            onClick={handleSave}
+            onClick={() => handleSave("DRAFTED")}
             className="rounded-full px-6 py-2 border-seeds text-seeds hover:bg-seeds/90 hover:text-white"
           >
             Draft
           </Button>
           <Button
             type="button"
-            onClick={handleSave}
+            onClick={() => handleSave("PUBLISHED")}
             className="rounded-full px-6 py-2 bg-seeds text-white hover:bg-seeds/90 "
           >
             Save

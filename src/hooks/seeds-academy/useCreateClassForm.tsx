@@ -82,28 +82,28 @@ const useCreateClassForm = ({
         moduleReq = "";
       }
 
-      let quizReq = "";
-      if (data.quiz.file_link !== "") {
-        const quiz = await uploadFile(
-          accessToken!,
-          data.quiz.file_link[0] as File
-        );
-        quizReq = quiz;
-      } else {
-        quizReq = "";
-      }
+      // let quizReq = "";
+      // if (data.quiz.file_link !== "") {
+      //   const quiz = await uploadFile(
+      //     accessToken!,
+      //     data.quiz.file_link[0] as File
+      //   );
+      //   quizReq = quiz;
+      // } else {
+      //   quizReq = "";
+      // }
 
       const formData = new FormData();
       formData.append("title", data.title);
       formData.append("description[id]", data.description.id);
       formData.append("description[en]", data.description.en);
       formData.append("module", moduleReq);
-      formData.append("price[idr]", data.price.idr);
+      formData.append("price", data.price);
       formData.append("level", levelName);
       formData.append("category_id", categoryId || "");
       formData.append("banner", bannerReq);
       formData.append("video", data.video);
-      formData.append("quiz", quizReq);
+      formData.append("quiz", data.quiz.file_link[0]);
 
       const response = await createClass(accessToken!, formData);
       onSuccess();

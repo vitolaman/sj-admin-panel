@@ -3,6 +3,9 @@ export interface MainSeedsAcademyRes {
   metadata: Metadata;
 }
 
+export interface PatchPayload {
+  status: string;
+}
 export interface MainSeedsAcademyReq {
   search: string;
   status: string;
@@ -155,9 +158,7 @@ export interface CreateClassPayload {
     file_url: string;
     file_link: string | FileList;
   };
-  price: {
-    idr: string;
-  };
+  price: string;
   category_id: string | undefined;
   level: string;
   banner: {
