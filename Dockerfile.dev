@@ -9,7 +9,7 @@
 ### click Add container
 ### fill Name with seeds-[your-name]
 ### select Registry & change to quadra-registry
-### fill Image with copy docker image name without domain in line 5 ex.(seeds-dion:v0.1)
+### fill Image with copy docker image name without domain in line 4 ex.(seeds-dion:v0.1)
 ### click (+ publish a new network port)
 ### fill host with your assigned port
 ### fill container with 80
