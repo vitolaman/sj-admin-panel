@@ -18,6 +18,7 @@ import useFilePreview from "hooks/shared/useFilePreview";
 import { OptChild, PaymentChannelOpt } from "_interfaces/admin-fee.interfaces";
 import { useGetPaymentChannelQuery } from "services/modules/admin-fee";
 import CurrencyInput from "components/currency-input";
+import { IoIosCloseCircleOutline } from "react-icons/io";
 
 export const cpRouteName = "create";
 const CreatePlay = () => {
@@ -58,7 +59,7 @@ const CreatePlay = () => {
   const paymentChannelState = useGetPaymentChannelQuery(undefined);
   const startTime = watch("play_time");
   const endTime = watch("end_time");
-  const { fields, append } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control,
     name: "prizes",
   });
@@ -176,6 +177,19 @@ const CreatePlay = () => {
       setPaymentChannelOpt(tempOpt);
     }
   }, [paymentChannelState.data]);
+
+  const handleAddWinner = () => {
+    if (fields.length < 10) {
+      append({
+        prize_fix_percentages: 0,
+        prize_pool_percentages: 0,
+      });
+    }
+  };
+
+  const handleDeleteWinner = (index: number) => {
+    remove(index);
+  };
 
   return (
     <ContentContainer>
@@ -520,13 +534,21 @@ const CreatePlay = () => {
           </div>
           <div className="flex flex-col gap-2">
             <label className="font-semibold">Winners</label>
-            <div className="grid grid-cols-5">
+            <div
+              className={`grid ${
+                fields.length < 4 ? "grid-cols-5" : "grid-cols-6"
+              }`}
+            >
               <div />
               <div className="text-center col-span-2">Fix Prize</div>
               <div className="text-center col-span-2">Prize Pool Money</div>
             </div>
             {fields.map((item, i) => (
-              <div className="grid grid-cols-5 items-center gap-4">
+              <div
+              className={`grid ${
+                fields.length < 4 ? "grid-cols-5" : "grid-cols-6"
+              } items-center gap-4`}
+            >
                 <div className="font-semibold text-sm">Winner {i + 1}</div>
                 <div className="text-center col-span-2">
                   <Controller
@@ -548,20 +570,31 @@ const CreatePlay = () => {
                     error={errors.prizes?.[i]?.prize_pool_percentages}
                   />
                 </div>
+                <div
+                  className={`col-span-1 ${
+                    fields.length < 4 ? "hidden" : "block"
+                  } flex items-center justify-center`}
+                >
+                  <IoIosCloseCircleOutline
+                    onClick={() => handleDeleteWinner(i)}
+                    className="text-2xl text-red-700 transform scale-100 hover:scale-125 transition-transform duration-300 cursor-pointer"
+                  />
+                </div>
               </div>
             ))}
-            <div className="grid grid-cols-5">
-              <div className=" col-span-3" />
-              <div className=" col-span-2">
+            <div className="grid grid-cols-6">
+            <div
+                className={`${fields.length < 4 ? "col-span-4" : "col-span-3"}`}
+              />
+              <div
+                className={`${
+                  fields.length > 9 ? "hidden" : "block"
+                } col-span-2`}
+              >
                 <Button
                   variant="outline"
                   className="border-seeds text-seeds rounded-full px-10 !w-full"
-                  onClick={() => {
-                    append({
-                      prize_fix_percentages: 0,
-                      prize_pool_percentages: 0,
-                    });
-                  }}
+                  onClick={handleAddWinner}
                   loading={isLoading}
                   type="button"
                 >
