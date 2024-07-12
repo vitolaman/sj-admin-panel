@@ -33,6 +33,7 @@ export interface QuizI {
   ended_at: string;
   created_at: string;
   payment_method: string[];
+  prizes: number[];
   tnc: {
     en: string;
     id: string;
@@ -48,6 +49,52 @@ export interface Meta {
   page: number;
   per_page: number;
   total: number;
+}
+
+export interface QuizForm {
+  name: string;
+  tnc: { id: string; en: string };
+  category: string;
+  min_participant: number;
+  max_participant: number;
+  duration_in_minute: number;
+  admission_fee: number;
+  is_recommended: boolean;
+  published_at: string;
+  started_at: string;
+  ended_at: string;
+  prizes: { prize: number }[];
+  communities: {
+    image_url: string;
+    image_link: string | FileList;
+  };
+  sponsors: {
+    image_url: string;
+    image_link: string | FileList;
+  };
+  banner: {
+    image_url: string;
+    image_link: string | FileList;
+  };
+  lifelines: [
+    {
+      name: string;
+      price: number;
+    },
+    {
+      name: string;
+      price: number;
+    },
+    {
+      name: string;
+      price: number;
+    }
+  ];
+  invitation_code: string;
+  promo_id: string;
+  featured_link: string;
+  total_questions: number;
+  payment_method: string[] | OptChild[];
 }
 
 export interface CreateQuizPayload {
