@@ -1,5 +1,6 @@
 import MDEditor, { commands } from "@uiw/react-md-editor";
 import CInput from "components/input";
+import { quilFormats, quilModules } from "data/quil";
 import { SelectI } from "hooks/shared/useRNCHelper";
 import { FileInput } from "react-daisyui";
 import {
@@ -11,6 +12,7 @@ import {
   SetFieldValue,
   UseFormRegister,
 } from "react-hook-form";
+import ReactQuill from "react-quill";
 
 interface Data {
   label: string;
@@ -63,7 +65,7 @@ export default function MInput<T extends FieldValues>({
   const radioStyling =
     "w-3 h-3 appearance-none checked:bg-[#3AC4A0] outline outline-2 outline-offset-2 checked:outline-[#3AC4A0] disabled:checked:outline-[#727272] disabled:checked:!bg-[#727272] outline-[#DADADA] rounded-full";
   const checkboxStyling =
-    "w-5 h-5 appearance-none rounded-md border-2 checked:border-none checked:bg-[#3AC4A0] relative after:checked:content-[' '] after:checked:absolute after:checked:w-2 after:checked:h-3 after:checked:border after:checked:border-white after:checked:border-t-0 after:checked:border-e-[3px] after:checked:border-b-[3px] after:checked:border-s-0 after:checked:rotate-45 after:checked:top-0.5 after:checked:left-1/2 after:checked:-translate-x-1/2 cursor-pointer";
+    "w-5 h-5 appearance-none rounded-md border-2 checked:border-none checked:bg-[#3AC4A0] disabled:checked:!bg-[#727272] relative after:checked:content-[' '] after:checked:absolute after:checked:w-2 after:checked:h-3 after:checked:border after:checked:border-white after:checked:border-t-0 after:checked:border-e-[3px] after:checked:border-b-[3px] after:checked:border-s-0 after:checked:rotate-45 after:checked:top-0.5 after:checked:left-1/2 after:checked:-translate-x-1/2 cursor-pointer";
   return (
     <div className="flex flex-col gap-2 w-full">
       {label && (
@@ -170,7 +172,7 @@ export default function MInput<T extends FieldValues>({
             })}
           </div>
         )}
-      {type === "rich-text" && (
+      {type === "md-rich-text" && (
         <Controller
           control={control}
           name={registerName}
@@ -188,6 +190,23 @@ export default function MInput<T extends FieldValues>({
             </div>
           )}
         />
+      )}
+      {type === "html-rich-text" && (
+        <div className="h-[200px]">
+          <Controller
+            control={control}
+            name={registerName}
+            render={({ field: { value, onChange } }) => (
+              <ReactQuill
+                className="h-[109px] sm:h-[134px] md:h-[159px]"
+                formats={quilFormats}
+                modules={quilModules}
+                onChange={onChange}
+                value={value}
+              />
+            )}
+          />
+        </div>
       )}
       {type === "image" && register && (
         <div className="w-full border-[#BDBDBD] border rounded-lg flex flex-col text-center items-center justify-center p-10 gap-3">
