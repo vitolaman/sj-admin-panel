@@ -7,6 +7,7 @@ import useUpsertPromoCodeForm from "hooks/promo-code/useUpsertPromoCodeForm";
 import { useCallback, useEffect, useState } from "react";
 import {
   levelExpOptions,
+  promoDateType,
   segmentUserOptions,
   statusPromo,
 } from "data/promo-code";
@@ -25,8 +26,7 @@ import moment from "moment";
 import { FiX } from "react-icons/fi";
 import { useCategoryState } from "hooks/promo-code/useCategoryState";
 import ReactQuill from "react-quill";
-import FormInput from "components/input/formInput";
-import FormRadio from "components/input/formRadio";
+import MInput from "components/multi-input/index";
 import CategoryModal from "./categoryModal.section";
 import LeftFormModal from "./leftFormModal.section";
 import { useLazyGetArticleByIdQuery } from "services/modules/article";
@@ -34,6 +34,7 @@ import { useLazyGetQuizByIdQuery } from "services/modules/quiz";
 import { useLazyPlayByIdQuery } from "services/modules/play";
 import { useLazyCircleDetailQuery } from "services/modules/circle";
 import { Loader } from "components/spinner/loader";
+import useRNCHelper from "hooks/shared/useRNCHelper";
 
 const PromoCodeModalForm = ({
   open,
@@ -42,16 +43,8 @@ const PromoCodeModalForm = ({
   setPromoCodeData,
   refetch,
 }: PromoCodeModalFormI) => {
+  const { select, setSelect, handleSelectChange } = useRNCHelper();
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const [discountSelect, setDiscountSelect] = useState<
-    string | number | boolean | undefined
-  >();
-  const [levelSelect, setLevelSelect] = useState<
-    string | number | boolean | undefined
-  >();
-  const [statusSelect, setStatusSelect] = useState<
-    string | number | boolean | undefined
-  >();
   const [richValue, setRichValue] = useState<string>();
   const [isLoadingFeatureIds, setIsLoadingFeatureIds] =
     useState<boolean>(false);
@@ -127,11 +120,9 @@ const PromoCodeModalForm = ({
   const handleResetForm = () => {
     reset({ ...defaultValues });
     setPromoCodeData(undefined);
-    setDiscountSelect(undefined);
+    setSelect(undefined);
     setRichValue(undefined);
-    setStatusSelect(undefined);
     setSegmentUser(null);
-    setLevelSelect(0);
     setDefaultValueSegmentUser(null);
     setSelectAll([]);
     setTypeCategoryPromo([]);
@@ -213,13 +204,13 @@ const PromoCodeModalForm = ({
   }, [isSuccess]);
 
   useEffect(() => {
-    if (discountSelect === "Nominal") {
+    if (select?.discount_type === "Nominal") {
       setValue("discount_percentage", 0);
       setValue("max_discount", 0);
-    } else if (discountSelect === "Percentage") {
+    } else if (select?.discount_type === "Percentage") {
       setValue("discount_amount", 0);
     }
-  }, [discountSelect]);
+  }, [select?.discount_type]);
   useEffect(() => {
     if (dataRef?.data === null) {
       setRefCodeSelection([]);
@@ -243,13 +234,27 @@ const PromoCodeModalForm = ({
       reset({
         ...promoCodeData,
         start_date: moment(promoCodeData.start_date).format("YYYY-MM-DD HH:mm"),
-        end_date: moment(promoCodeData.end_date).format("YYYY-MM-DD HH:mm"),
+        end_date:
+          promoCodeData.end_date !== "0001-01-01T00:00:00Z"
+            ? moment(promoCodeData.end_date).format("YYYY-MM-DD HH:mm")
+            : null,
       });
       setRichValue(promoCodeData?.tnc as string);
-      setStatusSelect(promoCodeData?.is_active);
       setSegmentUser(promoCodeData?.segment_user as string);
-      setDiscountSelect(promoCodeData?.discount_type as string);
-      setLevelSelect(promoCodeData?.min_exp);
+      setSelect((prev) => ({
+        ...prev,
+        discount_type: promoCodeData.discount_type,
+        min_exp: promoCodeData.min_exp,
+        is_active: promoCodeData.is_active,
+        quantity: promoCodeData.quantity && promoCodeData.quantity >= 0 ? 1 : 0,
+        max_redeem:
+          promoCodeData.max_redeem && promoCodeData.max_redeem >= 0 ? 1 : 0,
+        min_transaction:
+          promoCodeData.min_transaction && promoCodeData.min_transaction >= 0
+            ? 1
+            : 0,
+        end_date: promoCodeData.end_date !== "0001-01-01T00:00:00Z" ? "" : null,
+      }));
     }
   }, [promoCodeData]);
 
@@ -340,38 +345,55 @@ const PromoCodeModalForm = ({
                 register={register}
                 errors={errors}
                 promoCodeData={promoCodeData}
-                discountSelect={discountSelect}
-                setDiscountSelect={setDiscountSelect}
+                select={select}
                 setValue={setValue}
+                handleSelectChange={handleSelectChange}
               />
               <div className="border border-[#9B9B9B]"></div>
               <div className="flex flex-col gap-4 w-7/12">
-                <FormRadio<PromoCodeFormDataI>
+                <MInput<PromoCodeFormDataI>
                   label="Status"
                   registerName="is_active"
+                  type="radio"
                   data={statusPromo}
-                  select={statusSelect}
-                  setSelect={setStatusSelect}
+                  select={select?.is_active}
                   setValue={setValue}
                   errors={errors}
+                  handleSelectChange={handleSelectChange}
+                  register={register}
                 />
-                <div className="flex gap-4 w-full">
-                  <FormInput<PromoCodeFormDataI>
-                    label="Start Date"
-                    registerName="start_date"
-                    type="datetime-local"
-                    register={register}
-                    errors={errors}
-                  />
-                  <FormInput<PromoCodeFormDataI>
-                    label="End Date"
-                    registerName="end_date"
-                    type="datetime-local"
-                    register={register}
-                    errors={errors}
-                  />
-                </div>
-                <FormInput<PromoCodeFormDataI>
+                <MInput<PromoCodeFormDataI>
+                  label="Periode Promo"
+                  registerName="end_date"
+                  type="radio"
+                  data={promoDateType}
+                  select={select?.end_date}
+                  setValue={setValue}
+                  errors={errors}
+                  handleSelectChange={handleSelectChange}
+                  register={register}
+                />
+                {select?.end_date !== undefined && (
+                  <div className="flex gap-4 w-full">
+                    <MInput<PromoCodeFormDataI>
+                      label="Start Date"
+                      registerName="start_date"
+                      type="datetime-local"
+                      register={register}
+                      errors={errors}
+                    />
+                    {select?.end_date !== null && (
+                      <MInput<PromoCodeFormDataI>
+                        label="End Date"
+                        registerName="end_date"
+                        type="datetime-local"
+                        register={register}
+                        errors={errors}
+                      />
+                    )}
+                  </div>
+                )}
+                <MInput<PromoCodeFormDataI>
                   label="Description"
                   registerName="description"
                   type="text"
@@ -398,7 +420,7 @@ const PromoCodeModalForm = ({
                           }}
                           options={segmentUserOptions}
                           value={
-                            promoCodeData !== undefined && levelSelect !== 0
+                            promoCodeData !== undefined && select?.min_exp
                               ? segmentUserOptions.find(
                                   (item) => item.value === ""
                                 )
@@ -413,7 +435,10 @@ const PromoCodeModalForm = ({
                           onChange={(e) => {
                             onChange(e?.value);
                             if (e?.label !== "Tier Level (Xp Management)") {
-                              setLevelSelect(0);
+                              setSelect((prev) => ({
+                                ...prev,
+                                min_exp: undefined,
+                              }));
                               setValue("min_exp", 0);
                             } else {
                               setValue("segment_user", "All User");
@@ -432,17 +457,18 @@ const PromoCodeModalForm = ({
                     )}
                   />
                 </div>
-                {(segmentUser === segmentUserOptions[3].value ||
-                  (levelSelect !== 0 && segmentUser === "All User")) && (
-                  <FormRadio<PromoCodeFormDataI>
+                {/* {(segmentUser === segmentUserOptions[3].value ||
+                  (select?.min_exp && segmentUser === "All User")) && (
+                  <MInput<PromoCodeFormDataI>
                     label="Choose Level"
-                    data={levelExpOptions}
                     registerName="min_exp"
-                    select={levelSelect}
-                    setSelect={setLevelSelect}
+                    type="radio"
+                    data={levelExpOptions}
+                    select={select?.min_exp}
                     setValue={setValue}
+                    handleSelectChange={handleSelectChange}
                   />
-                )}
+                )} */}
                 {segmentUser === segmentUserOptions[2].value && (
                   <div className="flex flex-col gap-2 w-full">
                     <label className="font-semibold font-poppins text-base text-[#262626] cursor-pointer">

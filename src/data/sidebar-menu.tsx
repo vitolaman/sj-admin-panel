@@ -14,22 +14,23 @@ const menuItems: MenuItem[] = [
     name: "User",
     path: "#",
     child: [
-      { name: "Dashboard Monitoring", path: "/user/dashboard-monitoring" },
+      // hide for not spamming
+      // { name: "Dashboard Monitoring", path: "/user/dashboard-monitoring" },
       { name: "Control Panel", path: "/user/control-panel" },
-      {
-        name: "Internal Staff Monitoring",
-        path: "/user/internal-staff-monitoring",
-      },
+      // {
+      //   name: "Internal Staff Monitoring",
+      //   path: "/user/internal-staff-monitoring",
+      // },
     ],
   },
-  {
-    name: "Content",
-    path: "/content",
-  },
-  {
-    name: "Trading",
-    path: "/trading",
-  },
+  // {
+  //   name: "Content",
+  //   path: "/content",
+  // },
+  // {
+  //   name: "Trading",
+  //   path: "/trading",
+  // },
   {
     name: "Homepage Feature",
     path: "#",
@@ -87,14 +88,14 @@ const menuItems: MenuItem[] = [
     name: "Blog",
     path: "#",
     child: [
-      { name: "Event Highlight", path: "/blog/event-highlight" },
+      // { name: "Event Highlight", path: "/blog/event-highlight" },
       { name: "Article", path: "/blog/article" },
     ],
   },
-  {
-    name: "News",
-    path: "/news",
-  },
+  // {
+  //   name: "News",
+  //   path: "/news",
+  // },
   {
     name: "Withdrawal",
     path: "#",
@@ -107,10 +108,6 @@ const menuItems: MenuItem[] = [
         path: "/withdrawal/disbursement-request",
       },
     ],
-  },
-  {
-    name: "Referral Code",
-    path: "/referral-code",
   },
   {
     name: "Push Notification",
