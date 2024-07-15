@@ -48,6 +48,7 @@ const menuItems: MenuItem[] = [
     path: "#",
     child: [
       { name: "Seeds Academy List", path: "/seeds-academy/seeds-academy-list" },
+      // { name: "Subcription Plan", path: "/seeds-academy/seeds-academy-list" },
     ],
   },
   {

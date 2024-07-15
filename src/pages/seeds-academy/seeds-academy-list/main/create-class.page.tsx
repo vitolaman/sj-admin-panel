@@ -6,25 +6,41 @@ import { Button } from "react-daisyui";
 import WarningMaxPopUp from "components/modal/banner/WarningMaxPopUp";
 import PopUpImage from "components/modal/banner/PopUpImage";
 import {
+  Menu,
+  MenuHandler,
+  MenuItem,
+  MenuList,
+} from "@material-tailwind/react";
+import {
   ClassListI,
   MainSeedsAcademyReq,
 } from "_interfaces/seeds-academy.interfaces";
-import { useClassByCategoryListQuery } from "services/modules/seeds-academy";
+import {
+  useClassByCategoryListQuery,
+  useDeleteClassMutation,
+} from "services/modules/seeds-academy";
 import { Columns, Table } from "components/table/table";
 import AddNewClassPopUp from "./addNewClassPopUp";
+import UpdateClassPopUp from "./updateClassPopup";
 import { CiFileOn } from "react-icons/ci";
 import { useUpdateStatusMutation } from "services/modules/seeds-academy";
+import { FiEdit } from "react-icons/fi";
+import { RiDeleteBinLine } from "react-icons/ri";
 
 export const ccRouteName = "seeds-academy-list/create-class";
 export default function CreateClass(): React.ReactElement {
   const navigate = useNavigate();
   const location = useLocation();
   const [updateStatusMutation] = useUpdateStatusMutation();
+  const [isDropdownOpen, setIsDropdownOpen] = useState<string | null>(null);
   const [isWarningPopupOpen, setIsWarningPopupOpen] = useState(false);
+  const [idEdit, setIdEdit] = useState<string>("");
   const [warningMessage, setWarningMessage] = useState<string | null>(null);
   const [isImagePopupOpen, setIsImagePopupOpen] = useState(false);
   const [selectedImageUrl, setSelectedImageUrl] = useState<string | null>(null);
   const [isAddNewClassPopupOpen, setIsAddNewClassPopupOpen] = useState(false);
+  const [isUpdateClassPopupOpen, setIsUpdateClassPopupOpen] = useState(false);
+  const [isClassesComplete, setIsClassesComplete] = useState<boolean>(true);
   const [searchParams, setSearchParams] = useState<MainSeedsAcademyReq>({
     search: "",
     status: "",
@@ -35,6 +51,16 @@ export default function CreateClass(): React.ReactElement {
   });
   const { data, isLoading, refetch } =
     useClassByCategoryListQuery(searchParams);
+  const [deleteClass, { isLoading: isDeleting }] = useDeleteClassMutation();
+
+  const handleDeleteClass = async (id: string) => {
+    try {
+      await deleteClass({ id: id! });
+      refetch();
+    } catch (error) {
+      console.error("Failed to delete category:", error);
+    }
+  };
   const [levelName, setLevelName] = useState<string>("");
 
   useEffect(() => {
@@ -49,6 +75,28 @@ export default function CreateClass(): React.ReactElement {
     }
   }, [location.search]);
 
+  useEffect(() => {
+    refetch();
+  }, [isUpdateClassPopupOpen, isAddNewClassPopupOpen]);
+
+  useEffect(() => {
+    if (data) {
+      const incompleteClass = data.classes.some((classItem) => {
+        return (
+          classItem.banner === "" ||
+          classItem.description?.id === "" ||
+          classItem.video === "" ||
+          classItem.total_question === 0 ||
+          classItem.title === "" ||
+          classItem.price.idr === 0 ||
+          classItem.module === ""
+        );
+      });
+      setIsClassesComplete(!incompleteClass);
+    }
+    refetch();
+  }, [data]);
+
   const handleSave = async (status: string) => {
     try {
       await updateStatusMutation({
@@ -58,7 +106,6 @@ export default function CreateClass(): React.ReactElement {
       navigate(`/seeds-academy/seeds-academy-list`);
     } catch (error) {
       console.error("Error updating category status:", error);
-      // Handle error state or show error message
     }
   };
 
@@ -71,9 +118,7 @@ export default function CreateClass(): React.ReactElement {
     {
       title: "empty",
       video: "empty",
-      price: {
-        idr: 0,
-      },
+      price: "empty",
       banner: "empty",
       description: {
         id: "empty",
@@ -99,7 +144,7 @@ export default function CreateClass(): React.ReactElement {
     {
       fieldId: "price",
       label: "Price",
-      render: (data) => <>{data?.price?.idr}</>,
+      render: (data) => <>{data?.price}</>,
     },
     {
       fieldId: "banner",
@@ -151,6 +196,65 @@ export default function CreateClass(): React.ReactElement {
           return <>empty</>;
         }
       },
+    },
+    {
+      fieldId: "id",
+      label: "Action",
+      render: (data) => (
+        <>
+          <Menu>
+            <MenuHandler>
+              <Button
+                size="sm"
+                className="rounded text-center text-lg hover:bg-transparent text-[#3AC4A0] border-none"
+                onClick={() => {
+                  if (isDropdownOpen === data?.id) {
+                    setIsDropdownOpen(null);
+                  } else {
+                    setIsDropdownOpen(data?.id as string);
+                  }
+                }}
+              >
+                ...
+              </Button>
+            </MenuHandler>
+            <MenuList placeholder={""}>
+              <MenuItem
+                placeholder={""}
+                className="p-0"
+                onClick={() => {
+                  setIsUpdateClassPopupOpen(true);
+                  setIdEdit(data?.id!);
+                  // setLevel(data?.level)
+                }}
+              >
+                <label
+                  htmlFor="item-1"
+                  className="flex cursor-pointer items-center gap-2 p-2 hover:bg-gray-100 text-sm text-[#201B1C]"
+                >
+                  <FiEdit className="mt-1 me-3 h-4 w-4" />
+                  Edit
+                </label>
+              </MenuItem>
+              <MenuItem
+                placeholder={""}
+                className="p-0"
+                onClick={() => {
+                  void handleDeleteClass(data?.id!);
+                }}
+              >
+                <label
+                  htmlFor="item-1"
+                  className="flex cursor-pointer items-center gap-2 p-2 hover:bg-gray-100 text-sm text-[#201B1C]"
+                >
+                  <RiDeleteBinLine className="mt-1 me-3 h-4 w-4" />
+                  Delete
+                </label>
+              </MenuItem>
+            </MenuList>
+          </Menu>
+        </>
+      ),
     },
   ];
 
@@ -238,6 +342,13 @@ export default function CreateClass(): React.ReactElement {
         levelName={levelName}
         categoryId={searchParams.id}
       />
+      <UpdateClassPopUp
+        isOpen={isUpdateClassPopupOpen}
+        onClose={() => setIsUpdateClassPopupOpen(false)}
+        levelName={levelName}
+        categoryId={searchParams.id}
+        id={idEdit!}
+      />
       <div className="flex items-center justify-end gap-4 mb-8 mt-4">
         <div className="flex items-center justify-between gap-4 ml-4">
           <Button
@@ -257,7 +368,10 @@ export default function CreateClass(): React.ReactElement {
           <Button
             type="button"
             onClick={() => handleSave("PUBLISHED")}
-            className="rounded-full px-6 py-2 bg-seeds text-white hover:bg-seeds/90 "
+            disabled={!isClassesComplete}
+            className={`rounded-full px-6 py-2 bg-seeds text-white ${
+              !isClassesComplete && "opacity-50 cursor-not-allowed"
+            }`}
           >
             Save
           </Button>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "react-daisyui";
 import { IoClose } from "react-icons/io5";
@@ -6,16 +6,29 @@ import {
   ClassListI,
   MainSeedsAcademyReq,
 } from "_interfaces/seeds-academy.interfaces";
-
-import { useClassByCategoryListQuery } from "services/modules/seeds-academy";
+import {
+  Menu,
+  MenuHandler,
+  MenuItem,
+  MenuList,
+} from "@material-tailwind/react";
+import {
+  useClassByCategoryListQuery,
+  useDeleteClassMutation,
+} from "services/modules/seeds-academy";
 import { Columns, Table } from "components/table/table";
 import { CiFileOn } from "react-icons/ci";
-import {FiEdit} from "react-icons/fi"
+import { FiEdit } from "react-icons/fi";
+import { RiDeleteBinLine } from "react-icons/ri";
+import UpdateClassPopUp from "./updateClassPopup";
 
 export const dcRouteName = "seeds-academy-list/detail/:id";
 export default function DetailCategory(): React.ReactElement {
   const navigate = useNavigate();
   const params = useParams<{ id: string }>();
+  const [isUpdateClassPopupOpen, setIsUpdateClassPopupOpen] = useState(false);
+  const [levelName, setLevelName] = useState<string>("");
+  const [idEdit, setIdEdit] = useState<string>("");
   const [searchParams, setSearchParams] = useState<MainSeedsAcademyReq>({
     search: "",
     status: "",
@@ -24,12 +37,29 @@ export default function DetailCategory(): React.ReactElement {
     page: 1,
     id: params.id!,
   });
+  const [isDropdownOpen, setIsDropdownOpen] = useState<string | null>(null);
   const { data, isLoading, refetch } =
     useClassByCategoryListQuery(searchParams);
+
+  useEffect(() => {
+    refetch();
+  }, [isUpdateClassPopupOpen]);
 
   const handleClose = () => {
     navigate(`/seeds-academy/seeds-academy-list`);
   };
+
+  const [deleteClass, { isLoading: isDeleting }] = useDeleteClassMutation();
+
+  const handleDeleteClass = async (id: string) => {
+    try {
+      await deleteClass({ id: id! });
+      refetch();
+    } catch (error) {
+      console.error("Failed to delete category:", error);
+    }
+  };
+
   const handleEditSeedsAcademy = (id: string): void => {
     void navigate(`/seeds-academy/seeds-academy-list/update/${id}`);
   };
@@ -38,9 +68,7 @@ export default function DetailCategory(): React.ReactElement {
     {
       title: "empty",
       video: "empty",
-      price: {
-        idr: 0,
-      },
+      price: 0,
       banner: "empty",
       description: {
         id: "empty",
@@ -66,7 +94,7 @@ export default function DetailCategory(): React.ReactElement {
     {
       fieldId: "price",
       label: "Price",
-      render: (data) => <>{data?.price?.idr}</>,
+      render: (data) => <>{data?.price}</>,
     },
     {
       fieldId: "banner",
@@ -102,13 +130,86 @@ export default function DetailCategory(): React.ReactElement {
       label: "Modul",
     },
     {
-      fieldId: "assesment",
+      fieldId: "total_question",
       label: "Assesment",
+      render: (data) => {
+        if (data?.total_question !== 0) {
+          return <div className="">FileName.csv</div>;
+        } else {
+          return <>empty</>;
+        }
+      },
+    },
+    {
+      fieldId: "id",
+      label: "Action",
+      render: (data) => (
+        <>
+          <Menu>
+            <MenuHandler>
+              <Button
+                size="sm"
+                className="rounded text-center text-lg hover:bg-transparent text-[#3AC4A0] border-none"
+                onClick={() => {
+                  if (isDropdownOpen === data?.id) {
+                    setIsDropdownOpen(null);
+                  } else {
+                    setIsDropdownOpen(data?.id as string);
+                  }
+                }}
+              >
+                ...
+              </Button>
+            </MenuHandler>
+            <MenuList placeholder={""}>
+              <MenuItem
+                placeholder={""}
+                className="p-0"
+                onClick={() => {
+                  setIsUpdateClassPopupOpen(true);
+                  setIdEdit(data?.id!);
+                  // setLevel(data?.level)
+                }}
+              >
+                <label
+                  htmlFor="item-1"
+                  className="flex cursor-pointer items-center gap-2 p-2 hover:bg-gray-100 text-sm text-[#201B1C]"
+                >
+                  <FiEdit className="mt-1 me-3 h-4 w-4" />
+                  Edit
+                </label>
+              </MenuItem>
+              <MenuItem
+                placeholder={""}
+                className="p-0"
+                onClick={() => {
+                  void handleDeleteClass(data?.id!);
+                }}
+              >
+                <label
+                  htmlFor="item-1"
+                  className="flex cursor-pointer items-center gap-2 p-2 hover:bg-gray-100 text-sm text-[#201B1C]"
+                >
+                  <RiDeleteBinLine className="mt-1 me-3 h-4 w-4" />
+                  Delete
+                </label>
+              </MenuItem>
+            </MenuList>
+          </Menu>
+        </>
+      ),
     },
   ];
 
   return (
     <div className="max-w-7xl mx-auto">
+      <UpdateClassPopUp
+        isOpen={isUpdateClassPopupOpen}
+        onClose={() => setIsUpdateClassPopupOpen(false)}
+        levelName={levelName}
+        categoryId={searchParams.id}
+        id={idEdit!}
+      />
       <div className="justify-between flex">
         <h3 className="text-2xl text-[#262626] font-semibold">
           {data?.title}:{" "}

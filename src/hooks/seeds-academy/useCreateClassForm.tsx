@@ -82,17 +82,6 @@ const useCreateClassForm = ({
         moduleReq = "";
       }
 
-      // let quizReq = "";
-      // if (data.quiz.file_link !== "") {
-      //   const quiz = await uploadFile(
-      //     accessToken!,
-      //     data.quiz.file_link[0] as File
-      //   );
-      //   quizReq = quiz;
-      // } else {
-      //   quizReq = "";
-      // }
-
       const formData = new FormData();
       formData.append("title", data.title);
       formData.append("description[id]", data.description.id);

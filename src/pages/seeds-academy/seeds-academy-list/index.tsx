@@ -18,11 +18,13 @@ import { Columns, Table } from "components/table/table";
 import { FiEye } from "react-icons/fi";
 import { FiEyeOff } from "react-icons/fi";
 import { FiEdit } from "react-icons/fi";
+import { useUpdateStatusMutation } from "services/modules/seeds-academy";
 
 export const salRouteName = "seeds-academy-list";
 export default function SeedsAcademyList(): React.ReactElement {
   const push = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState<string | null>(null);
+  const [isArchive, setIsArchive] = useState<boolean>(false);
   const [searchParams, setSearchParams] = useState<MainSeedsAcademyReq>({
     search: "",
     status: "",
@@ -31,6 +33,20 @@ export default function SeedsAcademyList(): React.ReactElement {
     page: 1,
   });
   const { data, isLoading, refetch } = useSeedsAcademyListQuery(searchParams);
+  const [updateStatusMutation] = useUpdateStatusMutation();
+
+  const handleArchive = async (id: string, status: string) => {
+    try {
+      const newStatus = status === "ARCHIVED" ? "PUBLISHED" : "ARCHIVED";
+      await updateStatusMutation({
+        id: id!,
+        body: { status: newStatus },
+      });
+      refetch;
+    } catch (error) {
+      console.error("Error updating category status:", error);
+    }
+  };
 
   const handleCreateSeedsAcademy = (): void => {
     void push("/seeds-academy/seeds-academy-list/create");
@@ -109,13 +125,22 @@ export default function SeedsAcademyList(): React.ReactElement {
                   View Detail
                 </label>
               </MenuItem>
-              <MenuItem placeholder={""} className="p-0" onClick={() => {}}>
+              <MenuItem
+                placeholder={""}
+                className="p-0"
+                onClick={() => {
+                  void handleArchive(
+                    data?.id as string,
+                    data?.status as string
+                  );
+                }}
+              >
                 <label
                   htmlFor="item-1"
                   className="flex cursor-pointer items-center gap-2 p-2 hover:bg-gray-100 text-sm text-[#201B1C]"
                 >
                   <FiEyeOff className="mt-1 me-3 h-4 w-4" />
-                  Archieve
+                  {data?.status === "ARCHIVED" ? "Unarchive" : "Archive"}
                 </label>
               </MenuItem>
               <MenuItem
