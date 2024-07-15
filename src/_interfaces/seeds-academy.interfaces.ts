@@ -3,6 +3,9 @@ export interface MainSeedsAcademyRes {
   metadata: Metadata;
 }
 
+export interface PatchPayload {
+  status: string;
+}
 export interface MainSeedsAcademyReq {
   search: string;
   status: string;
@@ -114,6 +117,7 @@ export interface GetClassByCatagoryRes {
 }
 
 export interface ClassListI {
+  id: string;
   title: string;
   video: string;
   price: {
@@ -125,10 +129,27 @@ export interface ClassListI {
   };
   module: string;
   assesment: string;
-  total_question: number
+  total_question: number;
 }
 
-export interface CreateClassReq{
+export interface ClassListById {
+  id: string;
+  title: string;
+  video: string;
+  price: {
+    idr: number;
+  };
+  banner: string;
+  description: {
+    id: string;
+  };
+  module: string;
+  assesment: string;
+  total_question: number;
+  level: string;
+}
+
+export interface CreateClassReq {
   title: string;
   description: {
     id: string;
@@ -155,9 +176,7 @@ export interface CreateClassPayload {
     file_url: string;
     file_link: string | FileList;
   };
-  price: {
-    idr: string;
-  };
+  price: string;
   category_id: string | undefined;
   level: string;
   banner: {
@@ -165,7 +184,7 @@ export interface CreateClassPayload {
     image_link: string | FileList;
   };
   video: string;
-  quiz:  {
+  quiz: {
     file_url: string;
     file_link: string | FileList;
   };
@@ -178,11 +197,35 @@ export interface CreateClassPayloadRes {
   };
   module: string;
   price: {
-    idr: number;
+    idr: string;
   };
   category_id: string | undefined;
   level: string;
   banner: string;
   video: string;
   quiz: string | File;
+}
+
+export interface UpdateClassPayload {
+  title: string;
+  description: {
+    id: string;
+    en: string;
+  };
+  module: {
+    file_url: string;
+    file_link: string | FileList;
+  };
+  price: string;
+  category_id: string | undefined;
+  level: string;
+  banner: {
+    image_url: string;
+    image_link: string | FileList;
+  };
+  video: string;
+  quiz: {
+    file_url: string;
+    file_link: string | FileList;
+  };
 }

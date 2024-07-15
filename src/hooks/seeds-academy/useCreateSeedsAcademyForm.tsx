@@ -19,18 +19,28 @@ const useCreateSeedsAcademyForm = () => {
   const schema = yup.object().shape({
     title: yup.string().required("Category name cannot be empty"),
     level: yup
-      .array()
-      .of(yup.string().required("Please input level"))
-      .required("Levels are required"),
+    .array()
+    .of(yup.string().required("Please input level"))
+    .min(1, "Please input at least one level"),
     about: yup.object().shape({
       id: yup
         .string()
         .min(10, "Min 10 characters")
-        .required("Please input About"),
+        .required("Please input About id"),
       en: yup
         .string()
         .min(10, "Min 10 characters")
-        .required("Please input About"),
+        .required("Please input About en"),
+    }),
+    banner: yup.object().shape({
+      image_link: yup
+        .mixed()
+        .test(
+          "fileSize",
+          "Banner image is required",
+          (value) => value && value.length > 0
+        )
+        .required("Banner image is required"),
     }),
   });
 
@@ -58,7 +68,7 @@ const useCreateSeedsAcademyForm = () => {
       const payload :CreateCategoryReq = {
         ...data,
         published_at: dateNow.toISOString(),
-        status: "PUBLISHED",
+        status: "DRAFTED",
         banner: data.banner.image_url
       };
       if (data.banner.image_link !== "") {

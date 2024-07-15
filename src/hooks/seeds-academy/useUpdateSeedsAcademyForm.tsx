@@ -62,7 +62,7 @@ const useUpdateSeedsAcademyForm = (id: string) => {
       const payload = {
         ...data,
         published_at: dateNow.toISOString(),
-        status: "PUBLISHED",
+        status: "DRAFTED",
         banner: data.banner.image_url,
       };
       if (data.banner.image_link !== "") {
@@ -75,7 +75,9 @@ const useUpdateSeedsAcademyForm = (id: string) => {
         payload.banner = "";
       }
       await updateCategory({ id, body: payload }).unwrap();
-      navigate(-1);
+      navigate(
+        `/seeds-academy/seeds-academy-list/create-class?id=${id}`
+      );
     } catch (error) {
       errorHandler(error);
     } finally {
@@ -102,7 +104,9 @@ const useUpdateSeedsAcademyForm = (id: string) => {
         payload.banner = "";
       }
       await updateCategory({ id, body: payload }).unwrap();
-      navigate(-1);
+      navigate(
+        `/seeds-academy/seeds-academy-list/create-class?id=${id}`
+      );
     } catch (error) {
       errorHandler(error);
     } finally {

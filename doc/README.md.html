@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>README.md</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="doc-style.css" />
+  <script src="doc-filelist.js"></script>
+  <script>
+    var relativeDir = "";
+    var thisFile = "README.md";
+    var defaultSidebar = true;
+  </script>
+  <script src="doc-script.js"></script>
+
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+
+      <div class="heading h2">
+        <a href="#project-structure">Project Structure</a>
+      </div>
+
+      <div class="heading h2">
+        <a href="#project-setup">Project Setup</a>
+      </div>
+
+      <div class="heading h3">
+        <a href="#1.initialize-project">1. Initialize project</a>
+      </div>
+
+      <div class="heading h3">
+        <a href="#2.start-the-development-server">2. Start the development server</a>
+      </div>
+
+      <div class="heading h2">
+        <a href="#dependencies">Dependencies</a>
+      </div>
+
+      <div class="heading h2">
+        <a href="#getting-started">Getting Started</a>
+      </div>
+
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container">
+    <div class="docs markdown"><p>Certainly! Below is a basic structure for a Markdown document outlining a React.js project using TypeScript:</p>
+<pre><code class="markdown"><span class="hljs-section"># React.js TypeScript Project</span>
+
+This document provides an overview of the structure and setup of a React.js project using TypeScript.
+</code></pre>
+<div class="pilwrap" id="project-structure">
+  <h2>
+    <a href="#project-structure" name="project-structure" class="pilcrow"></a>
+Project Structure
+  </h2>
+</div>
+<pre><code>project-root/
+├── src/
+│   ├── _helper/
+│   │   ├── helper1.ts
+│   │   ├── helper2.ts
+│   │   └── ...
+│   ├── _interfaces/
+│   │   ├── interface-feature1.interfaces.ts
+│   │   ├── interface-feature2.interfaces.ts
+│   │   └── ...
+│   ├── assets/
+│   │   ├── images/
+│   │   │   └── image1.jpg
+│   │   └── ...
+│   ├── components/
+│   │   ├── Components1/
+│   │   │   └── index.tsx
+│   │   ├── Components2/
+│   │   │   └── index.tsx
+│   │   └── ...
+│   ├── data/
+│   │   ├── data1.tsx
+│   │   └── ...
+│   ├── hooks/
+│   │   ├── feature1/
+│   │   │   └── useHooks1.tsx
+│   │   ├── feature2/
+│   │   │   └── useHooks2.tsx
+│   │   └── ...
+│   ├── layout/
+│   │   ├── layout1/
+│   │   │   └── index.tsx
+│   │   ├── layout2/
+│   │   │   └── index.tsx
+│   │   └── ...
+│   ├── locale/
+│   │   ├── en/
+│   │   │   ├── page.json
+│   │   │   └── index.ts
+│   │   ├── id/
+│   │   │   ├── page.json
+│   │   │   └── index.tsx
+│   │   └── ...
+│   ├── pages/
+│   │   ├── module1/
+│   │   │   └── feature.tsx
+│   │   ├── module2/
+│   │   │   ├── feature.tsx
+│   │   │   └── feature.tsx
+│   │   └── ...
+│   ├── routes/
+│   │   ├── index.tsx
+│   │   ├── routes.tsx
+│   │   └── ...
+│   ├── services/
+│   │   ├── modules/
+│   │   │   ├── module1
+│   │   │   │   └── service.tsx
+│   │   │   ├── module2
+│   │   │   │   └── service.tsx
+│   │   ├── api.ts
+│   │   ├── errorHandler.ts
+│   │   └── ...
+│   ├── store/
+│   │   ├── store1/
+│   │   │   └── index.ts
+│   │   ├── store2/
+│   │   │   └── index.ts
+│   │   ├── cookieStore.js
+│   │   ├── index.ts
+│   │   └── ...
+│   ├── App.tsx
+│   ├── index.tsx
+│   ├── index.ss
+│   └── ...
+├── public/
+│   ├── index.html
+│   └── ...
+├── package.json
+├── tsconfig.json
+└── ...
+</code></pre>
+<p>FAQ:</p>
+<ul>
+<li>How to fetch data:
+<ol>
+<li>Create service inside <code>/src/services/modules/[modulesName]/index.tsx</code></li>
+<li>Use RTK Query that already wrapped <code>/src/services/api.ts</code></li>
+<li>Use build.mutation for DELETE, POST, PATCH, PUT</li>
+<li>Use build.query for GET</li>
+<li>Call wrapped mutation or query from page level like you call hooks</li>
+<li><strong>You don't need to re-setup authorization token inside service module!</strong></li>
+<li>Read the documentation https://redux-toolkit.js.org/rtk-query/overview</li>
+</ol>
+</li>
+<li>What should I do if i need to store data
+<ol>
+<li><strong>Important! Don't store all data</strong></li>
+<li><strong>Just store if you need to re-use the data from other modules OR multiple components OR you don't need to refetch</strong></li>
+<li>Create store <code>/src/store/[modulesName]/index.tsx</code></li>
+<li>Register store that you create inside combine reducer <code>/src/store/index.ts</code></li>
+<li>Read the documentation https://redux-toolkit.js.org/api/createslice</li>
+</ol>
+</li>
+</ul>
+<div class="pilwrap" id="project-setup">
+  <h2>
+    <a href="#project-setup" name="project-setup" class="pilcrow"></a>
+Project Setup
+  </h2>
+</div>
+<div class="pilwrap" id="1.initialize-project">
+  <h3>
+    <a href="#1.initialize-project" name="1.initialize-project" class="pilcrow"></a>
+1. Initialize project
+  </h3>
+</div>
+<pre><code class="bash">yarn
+</code></pre>
+<div class="pilwrap" id="2.start-the-development-server">
+  <h3>
+    <a href="#2.start-the-development-server" name="2.start-the-development-server" class="pilcrow"></a>
+2. Start the development server
+  </h3>
+</div>
+<pre><code class="bash">yarn start:dev
+</code></pre>
+<div class="pilwrap" id="dependencies">
+  <h2>
+    <a href="#dependencies" name="dependencies" class="pilcrow"></a>
+Dependencies
+  </h2>
+</div>
+<p>The primary dependencies for this project are:</p>
+<ul>
+<li><strong>React</strong>: JavaScript library for building user interfaces.</li>
+<li><strong>TypeScript</strong>: A typed superset of JavaScript that compiles to plain JavaScript.</li>
+<li><strong>react-scripts</strong>: Toolchain for creating React applications with no configuration.</li>
+</ul>
+<div class="pilwrap" id="getting-started">
+  <h2>
+    <a href="#getting-started" name="getting-started" class="pilcrow"></a>
+Getting Started
+  </h2>
+</div>
+<ol>
+<li><strong>Component Development</strong>: Develop your components inside the <code>src/components</code> directory.</li>
+<li><strong>Entry Point</strong>: The entry point of your application is <code>src/index.tsx</code>.</li>
+<li><strong>Run the Project</strong>: Start the development server using <code>yarn start:[env]</code>.</li>
+<li><strong>Build</strong>: Build your project for production using <code>yarn build:[env]</code>.</li>
+</ol>
+<p>Happy coding!</p>
+</div>
+  </div>
+</body>
+</html>

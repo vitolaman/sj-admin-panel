@@ -2,6 +2,7 @@ import {
   SeedsAcademyListI,
   CreateClassPayloadRes,
   CreateClassPayload,
+  PatchPayload,
   GetClassByCatagoryRes,
   CreateCategoryPayloadRes,
   CreateCategoryPayload,
@@ -25,15 +26,17 @@ export const seedsAcademyApi = Api.injectEndpoints({
         `admin-academy/v1/category?search=${param.search}&status=${param.status}&type=${param.type}&limit=${param.limit}&page=${param.page}`,
       keepUnusedDataFor: 0,
     }),
-    createCategory: build.mutation<CreateCategoryPayloadRes, CreateCategoryReq>({
-      query(body) {
-        return {
-          url: `admin-academy/v1/category`,
-          method: "POST",
-          body,
-        };
-      },
-    }),
+    createCategory: build.mutation<CreateCategoryPayloadRes, CreateCategoryReq>(
+      {
+        query(body) {
+          return {
+            url: `admin-academy/v1/category`,
+            method: "POST",
+            body,
+          };
+        },
+      }
+    ),
     updateCategory: build.mutation<
       string,
       { id: string; body: CreateCategoryReq }
@@ -61,6 +64,10 @@ export const seedsAcademyApi = Api.injectEndpoints({
         `admin-academy/v1/category/${param.id}/class?search=${param.search}&status=${param.status}&type=${param.type}&limit=${param.limit}&page=${param.page}`,
       keepUnusedDataFor: 0,
     }),
+    getClassById: build.query<CreateClassPayloadRes, string>({
+      query: (classId) => `admin-academy/v1/class/${classId}`,
+      keepUnusedDataFor: 0,
+    }),
     CreateClassList: build.query<MainSeedsAcademyRes, MainSeedsAcademyReq>({
       query: (param: {
         search: string;
@@ -72,6 +79,31 @@ export const seedsAcademyApi = Api.injectEndpoints({
         `admin-academy/v1/class?search=${param.search}&status=${param.status}&type=${param.type}&limit=${param.limit}&page=${param.page}`,
       keepUnusedDataFor: 0,
     }),
+    updateStatus: build.mutation<string, { id: string; body: PatchPayload }>({
+      query({ id, body }) {
+        return {
+          url: `admin-academy/v1/category/${id}/status`,
+          method: "PATCH",
+          body,
+        };
+      },
+    }),
+    deleteCategory: build.mutation<void, { id: string }>({
+      query({ id }) {
+        return {
+          url: `admin-academy/v1/category/${id}`,
+          method: "DELETE",
+        };
+      },
+    }),
+    deleteClass: build.mutation<void, { id: string }>({
+      query({ id }) {
+        return {
+          url: `admin-academy/v1/class/${id}`,
+          method: "DELETE",
+        };
+      },
+    }),
   }),
   overrideExisting: false,
 });
@@ -80,15 +112,16 @@ export const {
   useSeedsAcademyListQuery,
   useCreateClassListQuery,
   useClassByCategoryListQuery,
+  useGetClassByIdQuery,
   useCreateCategoryMutation,
   // useCreateClassMutation,
   useUpdateCategoryMutation,
+  useUpdateStatusMutation,
+  useDeleteCategoryMutation,
+  useDeleteClassMutation,
 } = seedsAcademyApi;
 
-const createClass = async (
-  accessToken: string,
-  formData: FormData,
-) => {
+const createClass = async (accessToken: string, formData: FormData) => {
   try {
     const response = await fetch(
       `${process.env.REACT_APP_REST_HOST}/admin-academy/v1/class`,
