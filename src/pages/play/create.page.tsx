@@ -583,6 +583,7 @@ const CreatePlay = () => {
               </div>
             ))}
             <div className="grid grid-cols-6">
+            <p className="text-red-500 col-span-6" hidden={fields.length < 10}>Maximum 10 winners allowed.</p>
             <div
                 className={`${fields.length < 4 ? "col-span-4" : "col-span-3"}`}
               />
