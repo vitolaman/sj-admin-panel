@@ -5,10 +5,13 @@ import { EditArenaPayloadI, PlayI } from "_interfaces/play.interfaces";
 import { useUpdatePlayMutation } from "services/modules/play";
 import { errorHandler } from "services/errorHandler";
 import { useNavigate } from "react-router-dom";
+import { uploadFile } from "services/modules/file";
+import { useAppSelector } from "store";
 
 const useUpdatePlayForm = (id: string) => {
   const navigate = useNavigate();
   const [updatePlay, { isLoading }] = useUpdatePlayMutation();
+  const { accessToken } = useAppSelector((state) => state.auth);
   const schema = yup
     .object({
       publish_time: yup
@@ -38,6 +41,7 @@ const useUpdatePlayForm = (id: string) => {
     reset,
     control,
     setFocus,
+    watch,
   } = useForm<PlayI>({
     mode: "onSubmit",
     resolver: yupResolver(schema),
@@ -46,7 +50,7 @@ const useUpdatePlayForm = (id: string) => {
   const update = async (data: PlayI) => {
     // NOTE: Cannot use data type because of react-select plugin data type doesn't match with the data type that I give
     const paymentMethodParsed = (data?.payment_method as any[]).map(
-      (item) => item.value,
+      (item) => item.value
     );
     const payload: EditArenaPayloadI = {
       name: data.name,
@@ -54,7 +58,7 @@ const useUpdatePlayForm = (id: string) => {
       asset_sub_type: data.raw_asset_sub_type!,
       publish_time: new Date(data.publish_time).toISOString(),
       open_registration_time: new Date(
-        data.open_registration_time,
+        data.open_registration_time
       ).toISOString(),
       play_time: new Date(data.play_time).toISOString(),
       end_time: new Date(data.end_time).toISOString(),
@@ -65,10 +69,10 @@ const useUpdatePlayForm = (id: string) => {
       admission_fee: data.admission_fee,
       prize_fix_amount: data.prize_fix_amount,
       prize_fix_percentages: data.prizes?.map(
-        (item) => +item.prize_fix_percentages,
+        (item) => +item.prize_fix_percentages
       ),
       prize_pool_percentages: data.prizes?.map(
-        (item) => +item.prize_pool_percentages,
+        (item) => +item.prize_pool_percentages
       ),
       tnc: data.tnc,
       reward_url: data.reward_url,
@@ -76,7 +80,33 @@ const useUpdatePlayForm = (id: string) => {
       promo_id: data.promo_id,
       invitation_code: data.invitation_code,
       payment_method: paymentMethodParsed,
+      community: {
+        name: data.community.name,
+        image_url: data.community.image_url as string,
+      },
+      sponsorship: {
+        name: data.sponsorship.name,
+        image_url: data.sponsorship.image_url as string,
+      },
     };
+    if (typeof data.banner !== "string") {
+      const banner = await uploadFile(accessToken!, data.banner[0] as File);
+      payload.banner = banner;
+    }
+    if (typeof data.sponsorship.image_url !== "string") {
+      const sponsorship = await uploadFile(
+        accessToken!,
+        data.sponsorship.image_url[0] as File
+      );
+      payload.sponsorship.image_url = sponsorship;
+    }
+    if (typeof data.community.image_url !== "string") {
+      const community = await uploadFile(
+        accessToken!,
+        data.community.image_url[0] as File
+      );
+      payload.community.image_url = community;
+    }
     // TODO: need upload image service configuration
     // banner: data.banner,
     // community: {
@@ -87,7 +117,6 @@ const useUpdatePlayForm = (id: string) => {
     //   name: data.sponsorship.name,
     //   image_url: data.sponsorship.image_url,
     // },
-
     try {
       await updatePlay({ id, payload });
       navigate(-1);
@@ -106,6 +135,7 @@ const useUpdatePlayForm = (id: string) => {
     reset,
     control,
     isLoading,
+    watch,
   };
 };
 
