@@ -216,7 +216,7 @@ export default function MInput<T extends FieldValues>({
               src={imageURLPreview}
               alt="imageURLPreview"
             />
-          ) : data !== undefined ? (
+          ) : dataImage !== undefined ? (
             <img
               className="flex mx-auto w-[500px] h-[166px] object-fill"
               src={dataImage}

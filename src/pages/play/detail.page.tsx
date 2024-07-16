@@ -21,6 +21,8 @@ import { OptChild, PaymentChannelOpt } from "_interfaces/admin-fee.interfaces";
 import { useGetPaymentChannelQuery } from "services/modules/admin-fee";
 import ValidationError from "components/validation/error";
 import CurrencyInput from "components/currency-input";
+import MInput from "components/multi-input";
+import useFilePreview from "hooks/shared/useFilePreview";
 
 export const pdRouteName = ":id/detail";
 const PlayDetail = () => {
@@ -41,8 +43,25 @@ const PlayDetail = () => {
     refetchOnMountOrArgChange: true,
   });
   const [cancelPlay, cancelPlayState] = useCancelPlayMutation();
-  const { handleUpdate, register, errors, reset, control, setFocus } =
+  const { handleUpdate, register, errors, reset, control, setFocus, watch } =
     useUpdatePlayForm(params.id!);
+
+  const imageBanner = watch("banner");
+  const [imageBannerPreview] = useFilePreview(
+    typeof imageBanner === "string" ? undefined : (imageBanner as FileList)
+  );
+  const imageSponsorship = watch("sponsorship.image_url");
+  const [imageSponsorshipPreview] = useFilePreview(
+    typeof imageSponsorship === "string"
+      ? undefined
+      : (imageSponsorship as FileList)
+  );
+  const imageCommunity = watch("community.image_url");
+  const [imageCommunityPreview] = useFilePreview(
+    typeof imageCommunity === "string"
+      ? undefined
+      : (imageCommunity as FileList)
+  );
   const { fields, append } = useFieldArray({
     control,
     name: "prizes",
@@ -61,7 +80,7 @@ const PlayDetail = () => {
       const days = Math.trunc(duration.asDays());
       const hours = Math.trunc(duration.asHours() - days * 24);
       const minutes = Math.trunc(
-        duration.asMinutes() - (days * 24 + hours) * 60,
+        duration.asMinutes() - (days * 24 + hours) * 60
       );
       setDays(days);
       setHours(hours);
@@ -146,7 +165,7 @@ const PlayDetail = () => {
               value: item.payment_method,
             };
           }
-        },
+        }
       );
       let selectedBank = paymentChannelState.data.type_va.map((item) => {
         if ((data.payment_method as string[])?.includes(item.payment_method)) {
@@ -165,9 +184,9 @@ const PlayDetail = () => {
         }
       });
       setPaymentChannelOpt(tempOpt);
-      selectedEWallet = selectedEWallet.filter(item => item != undefined);
-      selectedBank = selectedBank.filter(item => item != undefined);
-      selectedQris = selectedQris.filter(item => item != undefined);
+      selectedEWallet = selectedEWallet.filter((item) => item != undefined);
+      selectedBank = selectedBank.filter((item) => item != undefined);
+      selectedQris = selectedQris.filter((item) => item != undefined);
       reset({
         ...data,
         prizes: data?.prize_fix_percentages.map((item, i) => ({
@@ -237,7 +256,7 @@ const PlayDetail = () => {
                   : data?.status === "CANCELED"
                   ? "bg-[#FFEBEB] text-[#BB1616]"
                   : "bg-[#EDFCD3] text-[#378D12]",
-                "inline-flex items-center rounded px-2 py-1 text-sm",
+                "inline-flex items-center rounded px-2 py-1 text-sm"
               )}
             >
               {data?.status === "PUBLISH"
@@ -292,17 +311,11 @@ const PlayDetail = () => {
         <div className="grid grid-cols-2 gap-6">
           <div className="flex flex-col gap-2">
             <label className="font-semibold">Type</label>
-            <CInput
-              {...register("type")}
-              disabled
-            />
+            <CInput {...register("type")} disabled />
           </div>
           <div className="flex flex-col gap-2">
             <label className="font-semibold">ID Play Arena</label>
-            <CInput
-              {...register("play_id")}
-              disabled
-            />
+            <CInput {...register("play_id")} disabled />
           </div>
           <div className="flex flex-col gap-2">
             <label className="font-semibold">Promo Code</label>
@@ -313,17 +326,11 @@ const PlayDetail = () => {
           </div>
           <div className="flex flex-col gap-2">
             <label className="font-semibold">Invitation Code</label>
-            <CInput
-              {...register("invitation_code")}
-              disabled={!enableEdit}
-            />
+            <CInput {...register("invitation_code")} disabled={!enableEdit} />
           </div>
           <div className="flex flex-col gap-2">
             <label className="font-semibold">Link Claim Reward</label>
-            <CInput
-              {...register("reward_url")}
-              disabled={!enableEdit}
-            />
+            <CInput {...register("reward_url")} disabled={!enableEdit} />
           </div>
           <div className="flex flex-col gap-2">
             <label className="font-semibold">Social Media link</label>
@@ -334,19 +341,13 @@ const PlayDetail = () => {
           </div>
           <div className="flex flex-col gap-2">
             <label className="font-semibold">Play Arena Name</label>
-            <CInput
-              {...register("name")}
-              disabled={!enableEdit}
-            />
+            <CInput {...register("name")} disabled={!enableEdit} />
           </div>
           <div className="flex flex-col gap-2 col-span-2">
             <label className="font-semibold">Category</label>
             <div className="grid grid-cols-6 gap-6">
               {availableCategories.map((category) => (
-                <div
-                  key={category}
-                  className="inline-flex gap-4"
-                >
+                <div key={category} className="inline-flex gap-4">
                   <input
                     type="checkbox"
                     className="scale-150"
@@ -360,10 +361,7 @@ const PlayDetail = () => {
                 </div>
               ))}
               {subTypeCategories.map((category) => (
-                <div
-                  key={category}
-                  className="inline-flex gap-4"
-                >
+                <div key={category} className="inline-flex gap-4">
                   <input
                     type="checkbox"
                     className="scale-150"
@@ -380,49 +378,73 @@ const PlayDetail = () => {
           </div>
           <div className="col-span-2">
             <h1 className="font-semibold text-base">Upload Banner</h1>
-            <div className="w-full border-[#BDBDBD] border h-[200px] mt-2 rounded-lg flex flex-col text-center items-center justify-center p-10">
-              <>
-                <img
-                  className="flex mx-auto w-[500px] h-[166px] object-fill"
-                  src={data?.banner}
-                  alt=""
-                />
-              </>
-            </div>
+            {enableEdit ? (
+              <MInput<PlayI>
+                type="image"
+                registerName="banner"
+                register={register}
+                imageURLPreview={imageBannerPreview}
+                dataImage={data?.banner as string}
+              />
+            ) : (
+              <div className="w-full border-[#BDBDBD] border h-[200px] mt-2 rounded-lg flex flex-col text-center items-center justify-center p-10">
+                <>
+                  <img
+                    className="flex mx-auto w-[500px] h-[166px] object-fill"
+                    src={data?.banner as string}
+                    alt=""
+                  />
+                </>
+              </div>
+            )}
           </div>
           <div className="flex flex-col gap-2">
             <label className="font-semibold">Sponsor Name</label>
-            <CInput
-              {...register("sponsorship.name")}
-              disabled={!enableEdit}
-            />
+            <CInput {...register("sponsorship.name")} disabled={!enableEdit} />
           </div>
           <div className="flex flex-col gap-2">
             <label className="font-semibold">Community Name</label>
-            <CInput
-              {...register("community.name")}
-              disabled={!enableEdit}
-            />
+            <CInput {...register("community.name")} disabled={!enableEdit} />
           </div>
           <div className="flex flex-col gap-2">
             <label className="font-semibold">Upload Sponsor</label>
-            <div className="w-full border-[#BDBDBD] border h-[200px] mt-2 rounded-lg flex flex-col text-center items-center justify-center p-10">
-              <img
-                className="flex mx-auto w-[150px] h-[150px] object-fill"
-                src={data?.sponsorship?.image_url}
-                alt="sponsor image"
+            {enableEdit ? (
+              <MInput<PlayI>
+                type="image"
+                registerName="sponsorship.image_url"
+                register={register}
+                imageURLPreview={imageSponsorshipPreview}
+                dataImage={data?.sponsorship.image_url as string}
               />
-            </div>
+            ) : (
+              <div className="w-full border-[#BDBDBD] border h-[200px] mt-2 rounded-lg flex flex-col text-center items-center justify-center p-10">
+                <img
+                  className="flex mx-auto w-[150px] h-[150px] object-fill"
+                  src={data?.sponsorship?.image_url as string}
+                  alt="sponsor image"
+                />
+              </div>
+            )}
           </div>
           <div className="flex flex-col gap-2">
             <label className="font-semibold">Upload Community</label>
-            <div className="w-full border-[#BDBDBD] border h-[200px] mt-2 rounded-lg flex flex-col text-center items-center justify-center p-10">
-              <img
-                className="flex mx-auto w-[150px] h-[150px] object-fill"
-                src={data?.community?.image_url}
-                alt="community image"
+            {enableEdit ? (
+              <MInput<PlayI>
+                type="image"
+                registerName="community.image_url"
+                register={register}
+                imageURLPreview={imageCommunityPreview}
+                dataImage={data?.community.image_url as string}
               />
-            </div>
+            ) : (
+              <div className="w-full border-[#BDBDBD] border h-[200px] mt-2 rounded-lg flex flex-col text-center items-center justify-center p-10">
+                <img
+                  className="flex mx-auto w-[150px] h-[150px] object-fill"
+                  src={data?.community?.image_url as string}
+                  alt="community image"
+                />
+              </div>
+            )}
           </div>
           <div className="flex flex-col gap-2">
             <label className="font-semibold">Publish Time</label>
@@ -491,21 +513,9 @@ const PlayDetail = () => {
           <div className="flex flex-col gap-2">
             <label className="font-semibold">Duration</label>
             <div className="grid grid-cols-3 gap-6">
-              <CInput
-                value={days}
-                prefix="Days"
-                disabled
-              />
-              <CInput
-                value={hours}
-                prefix="Hours"
-                disabled
-              />
-              <CInput
-                value={minutes}
-                prefix="Minutes"
-                disabled
-              />
+              <CInput value={days} prefix="Days" disabled />
+              <CInput value={hours} prefix="Hours" disabled />
+              <CInput value={minutes} prefix="Minutes" disabled />
             </div>
           </div>
           <div className="flex flex-col gap-2">
@@ -540,17 +550,11 @@ const PlayDetail = () => {
           </div>
           <div className="flex flex-col gap-2">
             <label className="font-semibold">Minimum Participant</label>
-            <CInput
-              {...register("min_participant")}
-              disabled={!enableEdit}
-            />
+            <CInput {...register("min_participant")} disabled={!enableEdit} />
           </div>
           <div className="flex flex-col gap-2">
             <label className="font-semibold">Maximum Participant</label>
-            <CInput
-              {...register("max_participant")}
-              disabled={!enableEdit}
-            />
+            <CInput {...register("max_participant")} disabled={!enableEdit} />
           </div>
           <div className="flex flex-col gap-2">
             <label className="font-semibold">Total Prize</label>
@@ -651,10 +655,7 @@ const PlayDetail = () => {
           <div />
           <div className="flex flex-col gap-2">
             <label className="font-semibold">Opening Balance</label>
-            <CInput
-              {...register("opening_balance")}
-              disabled={!enableEdit}
-            />
+            <CInput {...register("opening_balance")} disabled={!enableEdit} />
           </div>
           {!enableEdit ? (
             <div className="flex flex-col gap-2">
@@ -681,10 +682,7 @@ const PlayDetail = () => {
           ) : (
             <div />
           )}
-          <div
-            data-color-mode="light"
-            className="flex flex-col gap-2"
-          >
+          <div data-color-mode="light" className="flex flex-col gap-2">
             <label className="font-semibold">
               Terms and Conditions (Indonesia)
             </label>
@@ -703,10 +701,7 @@ const PlayDetail = () => {
               )}
             />
           </div>
-          <div
-            data-color-mode="light"
-            className="flex flex-col gap-2"
-          >
+          <div data-color-mode="light" className="flex flex-col gap-2">
             <label className="font-semibold">
               Terms and Conditions (English)
             </label>
@@ -749,17 +744,11 @@ const PlayDetail = () => {
               </div>
               <div className="flex flex-col gap-2">
                 <label className="font-semibold">Created By</label>
-                <CInput
-                  disabled
-                  value={data?.created_by}
-                />
+                <CInput disabled value={data?.created_by} />
               </div>
               <div className="flex flex-col gap-2">
                 <label className="font-semibold">Updated By</label>
-                <CInput
-                  disabled
-                  value={data?.updated_by}
-                />
+                <CInput disabled value={data?.updated_by} />
               </div>
             </>
           ) : null}
