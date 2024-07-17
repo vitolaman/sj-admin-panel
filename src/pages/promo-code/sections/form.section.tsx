@@ -1,66 +1,58 @@
 import {
-  PromoCodeCustomInputI,
+  PromoCodeFormDataI,
   PromoCodeModalFormI,
-  PromoCodeRadioI,
 } from "_interfaces/promo-code.interfaces";
-import { Button, Modal, Tabs } from "react-daisyui";
+import { Button, Modal } from "react-daisyui";
 import useUpsertPromoCodeForm from "hooks/promo-code/useUpsertPromoCodeForm";
-import CInput from "components/input";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
-  discountType,
   levelExpOptions,
+  promoDateType,
   segmentUserOptions,
-  // statusPromo,
+  statusPromo,
 } from "data/promo-code";
 import { Controller } from "react-hook-form";
 import { useGetReferralCodesQuery } from "services/modules/referral-code";
 import Select from "react-select";
-import { useFilterRef } from "../../../hooks/promo-code/useFilterState";
-import { PlayReq } from "_interfaces/play.interfaces";
-import { GetQuizQuery } from "_interfaces/quiz.interfaces";
+import {
+  useFilterArticle,
+  useFilterCircle,
+  useFilterPlay,
+  useFilterQuiz,
+  useFilterRef,
+} from "../../../hooks/promo-code/useFilterState";
 import { useLazyGetPromoCodeByIdQuery } from "services/modules/promo-code";
 import moment from "moment";
 import { FiX } from "react-icons/fi";
-import {
-  useArticleSelection,
-  useCircleSelection,
-  usePlaySelection,
-  useQuizSelection,
-} from "hooks/promo-code/useCategoryState";
-import TabRadio from "./tabRadio.section";
+import { useCategoryState } from "hooks/promo-code/useCategoryState";
 import ReactQuill from "react-quill";
+import MInput from "components/multi-input/index";
+import CategoryModal from "./categoryModal.section";
+import LeftFormModal from "./leftFormModal.section";
+import { useLazyGetArticleByIdQuery } from "services/modules/article";
+import { useLazyGetQuizByIdQuery } from "services/modules/quiz";
+import { useLazyPlayByIdQuery } from "services/modules/play";
+import { useLazyCircleDetailQuery } from "services/modules/circle";
+import { Loader } from "components/spinner/loader";
+import useRNCHelper from "hooks/shared/useRNCHelper";
 
 const PromoCodeModalForm = ({
   open,
   setOpen,
-  id,
-  setPromoCodeId,
+  promoCodeData,
+  setPromoCodeData,
   refetch,
 }: PromoCodeModalFormI) => {
+  const { select, setSelect, handleSelectChange } = useRNCHelper();
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const [openTab, setOpenTab] = useState<string>("circle");
-  const [discountSelect, setDiscountSelect] = useState<string>("");
-  const [levelSelect, setLevelSelect] = useState<string>("");
-  // hide until endpoint updated
-  // const [statusSelect, setStatusSelect] = useState<string>("");
   const [richValue, setRichValue] = useState<string>();
+  const [isLoadingFeatureIds, setIsLoadingFeatureIds] =
+    useState<boolean>(false);
   const [segmentUser, setSegmentUser] = useState<string | null>(null);
   const [defaultValueSegmentUser, setDefaultValueSegmentUser] = useState<{
     label: string;
     value: string;
   } | null>(null);
-  const [playCategory, setPlayCategory] = useState<string>("Tournament");
-  const [selectAll, setSelectAll] = useState<string[]>([]);
-  const [selectIdType, setSelectIdType] = useState<string[]>([]);
-  const [typeCategoryPromo, setTypeCategoryPromo] = useState<string[]>([]);
-  const [checkedFeature, setCheckedFeature] = useState<
-    {
-      id: string;
-      name: string;
-      type: string;
-    }[]
-  >([]);
   const [refCodeSelection, setRefCodeSelection] = useState<
     {
       key: number;
@@ -68,42 +60,26 @@ const PromoCodeModalForm = ({
       value: string;
     }[]
   >([]);
+  const {
+    selectAll,
+    setSelectAll,
+    typeCategoryPromo,
+    setTypeCategoryPromo,
+    checkedFeature,
+    setCheckedFeature,
+  } = useCategoryState();
 
-  const {
-    circleSelection,
-    setCircleSelection,
-    filterCircle,
-    setFilterCircle,
-    dataCircle,
-    isLoadingCircle,
-  } = useCircleSelection();
-  const {
-    playSelection,
-    setPlaySelection,
-    filterPlay,
-    setFilterPlay,
-    dataPlay,
-    isLoadingPlay,
-  } = usePlaySelection();
-  const {
-    quizSelection,
-    setQuizSelection,
-    filterQuiz,
-    setFilterQuiz,
-    dataQuiz,
-    isLoadingQuiz,
-  } = useQuizSelection();
-  const {
-    articleSelection,
-    setArticleSelection,
-    filterArticle,
-    setFilterArticle,
-    dataArticle,
-    isLoadingArticle,
-  } = useArticleSelection();
+  const { filterCircle, setFilterCircle } = useFilterCircle();
+  const { filterPlay, setFilterPlay } = useFilterPlay();
+  const { filterQuiz, setFilterQuiz } = useFilterQuiz();
+  const { filterArticle, setFilterArticle } = useFilterArticle();
 
   const { paramsRef, setParamsRef } = useFilterRef();
-  const [getPromoCode, promoCodeDetailState] = useLazyGetPromoCodeByIdQuery();
+  const [getArticle] = useLazyGetArticleByIdQuery();
+  const [getQuiz] = useLazyGetQuizByIdQuery();
+  const [getPlay] = useLazyPlayByIdQuery();
+  const [getCircle] = useLazyCircleDetailQuery();
+
   const dataRef = useGetReferralCodesQuery(paramsRef).data;
 
   const {
@@ -118,6 +94,7 @@ const PromoCodeModalForm = ({
     setValue,
     trigger,
     isSuccess,
+    watch,
   } = useUpsertPromoCodeForm();
 
   //TODO: Handling
@@ -139,67 +116,101 @@ const PromoCodeModalForm = ({
       search_title: "",
     }));
   };
-  const handleCategoryPromo = (type: string) => {
-    if (selectAll.find((item) => item === type)) {
-      setSelectAll((prev) => prev.filter((item) => item !== type));
-    } else {
-      setSelectAll((prev) => [...prev, type]);
-      setCheckedFeature((prev) => prev.filter((item) => item.type !== type));
-    }
-  };
 
-  const handleSelectedIdType = (category: string) => {
-    if (
-      checkedFeature.find((item) => {
-        item.type === category;
-      }) === undefined
-    ) {
-      setSelectIdType((prev) => prev.filter((item) => item !== category));
-    }
-  };
   const handleResetForm = () => {
     reset({ ...defaultValues });
-    setPromoCodeId("");
-    setDiscountSelect("");
+    setPromoCodeData(undefined);
+    setSelect(undefined);
+    setRichValue(undefined);
     setSegmentUser(null);
-    setLevelSelect("");
     setDefaultValueSegmentUser(null);
     setSelectAll([]);
-    setSelectIdType([]);
     setTypeCategoryPromo([]);
     setCheckedFeature([]);
     setRefCodeSelection([]);
     handleResetFilter();
   };
+
+  const handleFeatureIds = useCallback(async () => {
+    setIsLoadingFeatureIds(true);
+    let completedRequests = 0;
+    if (promoCodeData?.feature_ids !== null && promoCodeData !== undefined) {
+      const result = await Promise.all(
+        promoCodeData.feature_ids.map(async (featureId) => {
+          const article = await getArticle(featureId);
+          const quiz = await getQuiz(featureId);
+          const play = await getPlay(featureId);
+          const circle = await getCircle({ id: featureId });
+
+          if (article.status === "fulfilled") {
+            completedRequests++;
+            return {
+              id: String(article.data.news.id),
+              name: article.data.news.title,
+              type: "Premium Content",
+            };
+          } else if (quiz.status === "fulfilled") {
+            completedRequests++;
+            return {
+              id: quiz.data.id,
+              name: quiz.data.name,
+              type: "Paid Quiz",
+            };
+          } else if (play.status === "fulfilled") {
+            completedRequests++;
+            return {
+              id: play.data.id,
+              name: play.data.name,
+              type: "Paid Tournament",
+            };
+          } else if (circle.status === "fulfilled") {
+            completedRequests++;
+            return {
+              id: circle.data.data.id,
+              name: circle.data.data.name,
+              type: "Premium Circle",
+            };
+          } else {
+            return { id: "", name: "", type: "" };
+          }
+        })
+      );
+      if (completedRequests === promoCodeData?.feature_ids.length) {
+        setIsLoadingFeatureIds(false);
+      }
+
+      setCheckedFeature(result);
+      setSelectAll(() => {
+        if (promoCodeData?.type.includes(",")) {
+          const checkedFeatureType = result.map((obj) => obj.type.toString());
+          const selectAllType = promoCodeData?.type.split(",");
+          const filteredTypes = selectAllType.filter((item) => {
+            return !checkedFeatureType.includes(item);
+          });
+          return filteredTypes;
+        } else {
+          return [`${promoCodeData?.type}`];
+        }
+      });
+    } else if (promoCodeData?.feature_ids === null) {
+      setIsLoadingFeatureIds(false);
+    }
+  }, [promoCodeData]);
   //TODO:UseEffect
   useEffect(() => {
     if (isSuccess) {
       refetch();
     }
   }, [isSuccess]);
-  useEffect(() => {
-    handleSelectedIdType("Premium Circle");
-    handleSelectedIdType("Paid Tournament");
-    handleSelectedIdType("Paid Quiz");
-    handleSelectedIdType("Premium Content");
-  }, [checkedFeature]);
 
   useEffect(() => {
-    if (discountSelect === "Nominal") {
+    if (select?.discount_type === "Nominal") {
       setValue("discount_percentage", 0);
       setValue("max_discount", 0);
-    } else if (discountSelect === "Percentage") {
+    } else if (select?.discount_type === "Percentage") {
       setValue("discount_amount", 0);
     }
-  }, [discountSelect]);
-  useEffect(() => {
-    const filteredTypeCategoryPromo = [...selectAll, ...selectIdType].filter(
-      (value, index, self) => {
-        return self.indexOf(value) === index;
-      }
-    );
-    setTypeCategoryPromo(filteredTypeCategoryPromo);
-  }, [checkedFeature]);
+  }, [select?.discount_type]);
   useEffect(() => {
     if (dataRef?.data === null) {
       setRefCodeSelection([]);
@@ -218,202 +229,63 @@ const PromoCodeModalForm = ({
   }, [dataRef]);
 
   useEffect(() => {
-    if (dataCircle?.data === null) {
-      setCircleSelection([]);
-    } else if (dataCircle) {
-      const tempOptPlay: {
-        id: string;
-        name: string;
-        type: string;
-      }[] = dataCircle?.data.map((item, i) => ({
-        id: item.id,
-        name: item.name,
-        type: "Premium Circle",
-      }));
-      setCircleSelection(tempOptPlay);
-    }
-  }, [dataCircle, filterCircle]);
-
-  useEffect(() => {
-    if (dataPlay?.playList === null) {
-      setPlaySelection([]);
-    } else if (dataPlay) {
-      const tempOptPlay: {
-        id: string;
-        name: string;
-        type: string;
-      }[] = dataPlay?.playList.map((item, i) => ({
-        id: item.id,
-        name: item.name,
-        type: "Paid Tournament",
-      }));
-      setPlaySelection(tempOptPlay);
-    }
-  }, [dataPlay, filterPlay]);
-
-  useEffect(() => {
-    if (dataQuiz?.data === null) {
-      setQuizSelection([]);
-    } else if (dataQuiz) {
-      const tempOptQuiz: {
-        id: string;
-        name: string;
-        type: string;
-      }[] = dataQuiz?.data.map((item, i) => ({
-        id: item.id,
-        name: item.name,
-        type: "Paid Quiz",
-      }));
-      setQuizSelection(tempOptQuiz);
-    }
-  }, [dataQuiz, filterQuiz]);
-
-  useEffect(() => {
-    if (dataArticle?.data === null) {
-      setArticleSelection([]);
-    } else if (dataArticle) {
-      const tempOptArticle: {
-        id: string;
-        name: string;
-        type: string;
-      }[] = dataArticle?.data.map((item, i) => ({
-        id: String(item.id),
-        name: item.title,
-        type: "Premium Content",
-      }));
-      setArticleSelection(tempOptArticle);
-    }
-  }, [dataArticle, filterArticle]);
-
-  useEffect(() => {
-    if (promoCodeDetailState.data && id) {
+    if (promoCodeData !== undefined) {
+      handleFeatureIds();
       reset({
-        ...promoCodeDetailState.data,
-        start_date: moment(promoCodeDetailState.data.start_date).format(
-          "YYYY-MM-DD"
-        ),
-        end_date: moment(promoCodeDetailState.data.start_date).format(
-          "YYYY-MM-DD"
-        ),
+        ...promoCodeData,
+        start_date: moment(promoCodeData.start_date).format("YYYY-MM-DD HH:mm"),
+        end_date:
+          promoCodeData.end_date !== "0001-01-01T00:00:00Z"
+            ? moment(promoCodeData.end_date).format("YYYY-MM-DD HH:mm")
+            : null,
+      });
+      setRichValue(promoCodeData?.tnc as string);
+      setSegmentUser(promoCodeData?.segment_user as string);
+      setSelect((prev) => ({
+        ...prev,
+        discount_type: promoCodeData.discount_type,
+        min_exp: promoCodeData.min_exp,
+        is_active: promoCodeData.is_active,
+        quantity: promoCodeData.quantity && promoCodeData.quantity >= 0 ? 1 : 0,
+        max_redeem:
+          promoCodeData.max_redeem && promoCodeData.max_redeem >= 0 ? 1 : 0,
+        min_transaction:
+          promoCodeData.min_transaction && promoCodeData.min_transaction >= 0
+            ? 1
+            : 0,
+        end_date: promoCodeData.end_date !== "0001-01-01T00:00:00Z" ? "" : null,
+      }));
+    }
+  }, [promoCodeData]);
+
+  useEffect(() => {
+    const filteredTypeCategoryPromo = [
+      ...selectAll,
+      ...checkedFeature.map((obj) => obj.type.toString()),
+    ].filter((value, index, self) => {
+      return self.indexOf(value) === index;
+    });
+    setTypeCategoryPromo(filteredTypeCategoryPromo);
+  }, [checkedFeature, selectAll]);
+
+  useEffect(() => {
+    if (promoCodeData !== undefined) {
+      setSelectAll(() => {
+        if (promoCodeData?.type.includes(",")) {
+          const checkedFeatureType = checkedFeature.map((obj) =>
+            obj.type.toString()
+          );
+          const selectAllType = promoCodeData?.type.split(",");
+          const filteredTypes = selectAllType.filter((item) => {
+            return !checkedFeatureType.includes(item);
+          });
+          return filteredTypes;
+        } else {
+          return [`${promoCodeData?.type}`];
+        }
       });
     }
-    if (id !== undefined && id !== "") {
-      getPromoCode(id);
-      setRichValue(promoCodeDetailState.data?.tnc as string);
-      setSegmentUser(promoCodeDetailState.data?.segment_user as string);
-      setDiscountSelect(promoCodeDetailState.data?.discount_type as string);
-      setLevelSelect(`${promoCodeDetailState.data?.min_exp}`);
-    }
-  }, [promoCodeDetailState.data, id]);
-
-  const CustomInput = ({
-    label,
-    registerName,
-    type,
-    maxLength,
-    placeholder,
-    extraElement,
-  }: PromoCodeCustomInputI) => {
-    return (
-      <div className="flex flex-col gap-2 w-full">
-        <label
-          className="font-semibold font-poppins text-base text-[#262626] cursor-pointer"
-          htmlFor={`${label} label`}
-        >
-          {label}
-        </label>
-        <CInput
-          onWheel={(e) => {
-            const target = e.target as HTMLInputElement;
-            target.blur();
-            e.stopPropagation();
-            setTimeout(() => {
-              target.focus();
-            }, 0);
-          }}
-          type={type}
-          maxLength={maxLength}
-          min={0}
-          disabled={
-            (label === "Title" ||
-              label === "Promo Code" ||
-              label === "Discount Nominal" ||
-              label === "Discount Percentage" ||
-              label === "Max Discount") &&
-            id !== ""
-              ? true
-              : false
-          }
-          style={{
-            fontWeight: "400",
-            fontFamily: "Poppins, sans-serif",
-            fontSize: "16px",
-            lineHeight: "24px",
-            color: "#201B1C",
-          }}
-          id={`${label} label`}
-          placeholder={placeholder}
-          {...register(registerName)}
-        />
-        {extraElement}
-        <p className="font-poppins font-normal text-sm text-[#EF5350] text-right">
-          {errors[registerName]?.message}
-        </p>
-      </div>
-    );
-  };
-  const RadioInput = ({
-    label,
-    registerName,
-    name,
-    disabled,
-    data,
-    select,
-    setSelect,
-  }: PromoCodeRadioI) => {
-    return (
-      <div className="flex flex-col gap-2">
-        <label className="font-semibold font-poppins text-base text-[#262626]">
-          {label}
-        </label>
-        <div className="flex gap-7 flex-wrap">
-          {data.map((value, index) => {
-            return (
-              <label
-                key={index}
-                onClick={() => {
-                  if (!disabled) {
-                    setSelect(value.value);
-                    setValue(registerName, value.value);
-                  }
-                }}
-                htmlFor={value.label}
-                className={`flex gap-5 font-normal font-poppins text-base ${
-                  disabled
-                    ? "text-[#727272] cursor-not-allowed"
-                    : select === value.value
-                    ? "text-[#007bff] cursor-pointer"
-                    : "text-[#262626] cursor-pointer"
-                }`}
-              >
-                <input
-                  type="radio"
-                  name={name}
-                  className={`w-6 h-6 ${
-                    disabled ? "cursor-not-allowed" : "cursor-pointer"
-                  }`}
-                  id={value.label}
-                  disabled={disabled}
-                  checked={select === value.value}
-                />
-                {value.label}
-              </label>
-            );
-          })}
-        </div>
-      </div>
-    );
-  };
+  }, [promoCodeData]);
 
   //TODO:Parent Element
   return (
@@ -422,7 +294,7 @@ const PromoCodeModalForm = ({
         <p className="font-semibold font-poppins text-xl text-black w-fit">
           {open && openModal
             ? "Choose Category Promo"
-            : `${id === undefined ? "Create" : "Edit"} Promo Code`}
+            : `${promoCodeData === undefined ? "Create" : "Edit"} Promo Code`}
         </p>
         <FiX
           onClick={() => {
@@ -436,281 +308,97 @@ const PromoCodeModalForm = ({
         />
       </Modal.Header>
       <Modal.Body className="flex flex-col gap-4">
-        {open && openModal ? (
-          <>
-            <Tabs className="w-full">
-              {circleSelection !== undefined && (
-                <TabRadio
-                  data={circleSelection}
-                  onSubmit={(formData) => {
-                    setFilterCircle((prev) => ({
-                      ...prev,
-                      search: formData.text,
-                    }));
-                  }}
-                  onClick={() => {
-                    setOpenTab("circle");
-                    handleResetFilter();
-                  }}
-                  onClickSelectAll={() => {
-                    handleCategoryPromo("Premium Circle");
-                  }}
-                  label="circle"
-                  isLoading={isLoadingCircle}
-                  typePromoCategory="Premium Circle"
-                  openTab={openTab}
-                  selectAll={selectAll}
-                  checkedFeature={checkedFeature}
-                  setCheckedFeature={setCheckedFeature}
-                  setSelectIdType={setSelectIdType}
-                />
-              )}
-              {playSelection !== undefined && (
-                <TabRadio
-                  data={
-                    playCategory === "Tournament"
-                      ? playSelection
-                      : quizSelection
-                  }
-                  onSubmit={(formData) => {
-                    if (playCategory === "Tournament") {
-                      setFilterPlay((prev: PlayReq) => ({
-                        ...prev,
-                        search: formData.text,
-                      }));
-                    } else {
-                      setFilterQuiz((prev: GetQuizQuery) => ({
-                        ...prev,
-                        search: formData.text,
-                      }));
-                    }
-                  }}
-                  onClick={() => {
-                    setOpenTab("play");
-                    handleResetFilter();
-                  }}
-                  onClickSelectAll={() => {
-                    if (playCategory === "Tournament") {
-                      handleCategoryPromo("Paid Tournament");
-                    } else {
-                      handleCategoryPromo("Paid Quiz");
-                    }
-                  }}
-                  label="play"
-                  isLoading={
-                    playCategory === "Tournament"
-                      ? isLoadingPlay
-                      : isLoadingQuiz
-                  }
-                  typePromoCategory={
-                    playCategory === "Tournament"
-                      ? "Paid Tournament"
-                      : "Paid Quiz"
-                  }
-                  openTab={openTab}
-                  selectAll={selectAll}
-                  checkedFeature={checkedFeature}
-                  setCheckedFeature={setCheckedFeature}
-                  setSelectIdType={setSelectIdType}
-                  extraElement={
-                    <div className="flex gap-5 items-center my-4">
-                      <p className="font-semibold font-poppins text-lg text-[#201B1C]">
-                        Play Category
-                      </p>
-                      <Button
-                        onClick={() => {
-                          setPlayCategory("Tournament");
-                          setFilterQuiz((prev: GetQuizQuery) => ({
-                            ...prev,
-                            search: "",
-                          }));
-                        }}
-                        className={`${
-                          playCategory === "Tournament"
-                            ? "bg-[#3AC4A0] text-white hover:bg-[#3AC4A0]"
-                            : "bg-[#E9E9E980] text-[#7C7C7C] hover:bg-[#E9E9E980]"
-                        } border-none w-[174px] font-normal  font-poppins text-sm`}
-                      >
-                        Play Tournament
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          setPlayCategory("Quiz");
-                          setFilterPlay((prev: PlayReq) => ({
-                            ...prev,
-                            search: "",
-                          }));
-                        }}
-                        className={`${
-                          playCategory === "Quiz"
-                            ? "bg-[#3AC4A0] text-white hover:bg-[#3AC4A0]"
-                            : "bg-[#E9E9E980] text-[#7C7C7C] hover:bg-[#E9E9E980]"
-                        } border-none w-[174px] font-normal font-poppins text-sm`}
-                      >
-                        Play Quiz
-                      </Button>
-                    </div>
-                  }
-                />
-              )}
-              {articleSelection !== undefined && (
-                <TabRadio
-                  data={articleSelection}
-                  onSubmit={(formData) => {
-                    setFilterArticle((prev) => ({
-                      ...prev,
-                      search_title: formData.text,
-                    }));
-                  }}
-                  onClick={() => {
-                    setOpenTab("article");
-                    handleResetFilter();
-                  }}
-                  onClickSelectAll={() => {
-                    handleCategoryPromo("Premium Content");
-                  }}
-                  label="article"
-                  isLoading={isLoadingArticle}
-                  typePromoCategory="Premium Content"
-                  openTab={openTab}
-                  selectAll={selectAll}
-                  checkedFeature={checkedFeature}
-                  setCheckedFeature={setCheckedFeature}
-                  setSelectIdType={setSelectIdType}
-                />
-              )}
-            </Tabs>
-            <div className="self-end flex gap-4">
-              <Button
-                onClick={() => {
-                  setOpenModal(!openModal);
-                  handleResetFilter();
-                }}
-                className="border-[#3AC4A0] bg-white rounded-full text-[#3AC4A0] w-[268px] hover:bg-white"
-              >
-                Back
-              </Button>
-              <Modal.Actions className="m-0">
-                <Button
-                  loading={loadingUpsert}
-                  onClick={async (e) => {
-                    setValue(
-                      "feature_ids",
-                      checkedFeature.map((obj) => obj.id.toString())
-                    );
-                    setValue("type", typeCategoryPromo.join(","));
-                    if (id !== undefined && id !== "") {
-                      await handleUpdate(e);
-                    } else {
-                      await handleCreate(e);
-                    }
-                    handleResetForm();
-                    setOpen(!open);
-                    setOpenModal(!openModal);
-                  }}
-                  className="border-none bg-[#3AC4A0] rounded-full text-white w-[268px] hover:bg-[#3AC4A0]"
-                >
-                  Save
-                </Button>
-              </Modal.Actions>
-            </div>
-          </>
+        {isLoadingFeatureIds ? (
+          <Loader />
+        ) : open && openModal ? (
+          <CategoryModal
+            open={open}
+            setOpen={setOpen}
+            openModal={openModal}
+            setOpenModal={setOpenModal}
+            loadingUpsert={loadingUpsert}
+            promoCodeData={promoCodeData}
+            setValue={setValue}
+            handleCreate={handleCreate}
+            handleUpdate={handleUpdate}
+            handleResetFilter={handleResetFilter}
+            handleResetForm={handleResetForm}
+            selectAll={selectAll}
+            setSelectAll={setSelectAll}
+            checkedFeature={checkedFeature}
+            setCheckedFeature={setCheckedFeature}
+            typeCategoryPromo={typeCategoryPromo}
+            filterCircle={filterCircle}
+            setFilterCircle={setFilterCircle}
+            filterPlay={filterPlay}
+            setFilterPlay={setFilterPlay}
+            filterQuiz={filterQuiz}
+            setFilterQuiz={setFilterQuiz}
+            filterArticle={filterArticle}
+            setFilterArticle={setFilterArticle}
+            watch={watch}
+          />
         ) : (
           <>
             <div className="flex justify-between gap-10">
-              <div className="flex flex-col gap-4 w-5/12">
-                <CustomInput
-                  label="Title"
-                  type="text"
-                  registerName="name_promo_code"
-                />
-                <CustomInput
-                  label="Promo Code"
-                  registerName="promo_code"
-                  type="text"
-                  maxLength={20}
-                  extraElement={
-                    <p className="font-light font-poppins text-sm text-[#7C7C7C]">
-                      Max 20 character
-                    </p>
-                  }
-                />
-                <CustomInput
-                  label="Quota"
-                  type="number"
-                  registerName="quantity"
-                />
-                <RadioInput
-                  label="Discount Type"
-                  registerName="discount_type"
-                  name="discount"
-                  disabled={id !== ""}
-                  data={discountType}
-                  select={discountSelect}
-                  setSelect={setDiscountSelect}
-                />
-                <div className="flex gap-4 w-full">
-                  {discountSelect === "Percentage" ? (
-                    <>
-                      <CustomInput
-                        label="Discount Percentage"
-                        registerName="discount_percentage"
-                        type="number"
-                        placeholder="%"
-                      />
-                      <CustomInput
-                        label="Max Discount"
-                        registerName="max_discount"
-                        type="number"
-                        placeholder="Rp"
-                      />
-                    </>
-                  ) : discountSelect === "Nominal" ? (
-                    <CustomInput
-                      label="Discount Nominal"
-                      registerName="discount_amount"
-                      type="number"
-                      placeholder="Rp"
-                    />
-                  ) : (
-                    <></>
-                  )}
-                </div>
-                {/* this registerName should change if endpoint already updated */}
-                {/* <CustomInput label="Max Redeem" type="number" registerName='' /> */}
-                <CustomInput
-                  label="Min Transaction"
-                  type="number"
-                  registerName="min_transaction"
-                />
-              </div>
+              <LeftFormModal
+                register={register}
+                errors={errors}
+                promoCodeData={promoCodeData}
+                select={select}
+                setValue={setValue}
+                handleSelectChange={handleSelectChange}
+              />
               <div className="border border-[#9B9B9B]"></div>
               <div className="flex flex-col gap-4 w-7/12">
-                {/* <RadioInput
-    label="Status"
-    // this registerName should change if endpoint already updated 
-    registerName=""
-    name="status"
-    data={statusPromo}
-    select={statusSelect}
-    setSelect={setStatusSelect}
-  /> */}
-                <div className="flex gap-4 w-full">
-                  <CustomInput
-                    label="Start Date"
-                    registerName="start_date"
-                    type="date"
-                  />
-                  <CustomInput
-                    label="End Date"
-                    registerName="end_date"
-                    type="date"
-                  />
-                </div>
-                <CustomInput
+                <MInput<PromoCodeFormDataI>
+                  label="Status"
+                  registerName="is_active"
+                  type="radio"
+                  data={statusPromo}
+                  select={select?.is_active}
+                  setValue={setValue}
+                  errors={errors}
+                  handleSelectChange={handleSelectChange}
+                  register={register}
+                />
+                <MInput<PromoCodeFormDataI>
+                  label="Periode Promo"
+                  registerName="end_date"
+                  type="radio"
+                  data={promoDateType}
+                  select={select?.end_date}
+                  setValue={setValue}
+                  errors={errors}
+                  handleSelectChange={handleSelectChange}
+                  register={register}
+                />
+                {select?.end_date !== undefined && (
+                  <div className="flex gap-4 w-full">
+                    <MInput<PromoCodeFormDataI>
+                      label="Start Date"
+                      registerName="start_date"
+                      type="datetime-local"
+                      register={register}
+                      errors={errors}
+                    />
+                    {select?.end_date !== null && (
+                      <MInput<PromoCodeFormDataI>
+                        label="End Date"
+                        registerName="end_date"
+                        type="datetime-local"
+                        register={register}
+                        errors={errors}
+                      />
+                    )}
+                  </div>
+                )}
+                <MInput<PromoCodeFormDataI>
                   label="Description"
                   registerName="description"
                   type="text"
+                  register={register}
+                  errors={errors}
                 />
                 <div className="flex flex-col gap-2 w-full">
                   <label className="font-semibold font-poppins text-base text-[#262626] cursor-pointer">
@@ -732,22 +420,25 @@ const PromoCodeModalForm = ({
                           }}
                           options={segmentUserOptions}
                           value={
-                            id !== "" && levelSelect !== "0"
+                            promoCodeData !== undefined && select?.min_exp
                               ? segmentUserOptions.find(
                                   (item) => item.value === ""
                                 )
-                              : id !== ""
+                              : promoCodeData !== undefined
                               ? segmentUserOptions.find(
                                   (item) => item.value === value
                                 )
                               : defaultValueSegmentUser
                           }
                           isSearchable={false}
-                          isDisabled={id !== ""}
+                          isDisabled={promoCodeData !== undefined}
                           onChange={(e) => {
                             onChange(e?.value);
                             if (e?.label !== "Tier Level (Xp Management)") {
-                              setLevelSelect("");
+                              setSelect((prev) => ({
+                                ...prev,
+                                min_exp: undefined,
+                              }));
                               setValue("min_exp", 0);
                             } else {
                               setValue("segment_user", "All User");
@@ -766,16 +457,18 @@ const PromoCodeModalForm = ({
                     )}
                   />
                 </div>
-                {segmentUser === segmentUserOptions[3].value && (
-                  <RadioInput
+                {/* {(segmentUser === segmentUserOptions[3].value ||
+                  (select?.min_exp && segmentUser === "All User")) && (
+                  <MInput<PromoCodeFormDataI>
                     label="Choose Level"
-                    name="level"
-                    data={levelExpOptions}
                     registerName="min_exp"
-                    select={levelSelect}
-                    setSelect={setLevelSelect}
+                    type="radio"
+                    data={levelExpOptions}
+                    select={select?.min_exp}
+                    setValue={setValue}
+                    handleSelectChange={handleSelectChange}
                   />
-                )}
+                )} */}
                 {segmentUser === segmentUserOptions[2].value && (
                   <div className="flex flex-col gap-2 w-full">
                     <label className="font-semibold font-poppins text-base text-[#262626] cursor-pointer">
@@ -808,9 +501,7 @@ const PromoCodeModalForm = ({
                             onChange(e?.value);
                             setValue(
                               "ref_code",
-                              promoCodeDetailState.data?.ref_code ??
-                                e?.value ??
-                                ""
+                              promoCodeData?.ref_code ?? e?.value ?? ""
                             );
                           }}
                         />
@@ -843,7 +534,7 @@ const PromoCodeModalForm = ({
                   setOpenModal(!openModal);
                 }
               }}
-              className="self-end border-none bg-[#3AC4A0] rounded-full text-white w-[268px] hover:bg-[#3AC4A0]"
+              className="self-end border-none bg-[#3AC4A0] rounded-full text-white w-[268px] hover:bg-[#3AC4A0] disabled:text-white disabled:bg-[#3AC4A0] font-semibold font-poppins text-base"
             >
               Next
             </Button>

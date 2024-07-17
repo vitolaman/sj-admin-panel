@@ -3,15 +3,21 @@ import {
   GetDisbursementRequestQuery,
 } from "_interfaces/disbursement-request.interface";
 import ContentContainer from "components/container";
+import CSVDownload from "components/csv-download-button";
 import SearchInput from "components/search-input";
 import Pagination from "components/table/pagination";
 import { Columns, Table } from "components/table/table";
 import { useEffect, useState } from "react";
 import { Button } from "react-daisyui";
+import { FiDownload } from "react-icons/fi";
+import { toast } from "react-toastify";
+import { errorHandler } from "services/errorHandler";
 import {
   useGetDisbursementRequestQuery,
+  useLazyGetDisbursementRequestQuery,
   useUpdateDisbursementRequestMutation,
 } from "services/modules/withdrawal";
+import * as XLSX from "xlsx";
 
 export const dRequestRouteName = "disbursement-request";
 const DisbursementRequest = () => {
@@ -21,10 +27,23 @@ const DisbursementRequest = () => {
     search: "",
   });
   const { data, isLoading, refetch } = useGetDisbursementRequestQuery(params);
+  const [getAllData, dataState] = useLazyGetDisbursementRequestQuery();
   const [updateDisbursementRequestById, updateState] =
     useUpdateDisbursementRequestMutation();
   const handlePageChange = (page: number): void => {
     setParams((prev) => ({ ...prev, page }));
+  };
+
+  const handleGetData = async () => {
+    try {
+      await getAllData({
+        page: 0,
+        limit: 0,
+        search: "",
+      }).unwrap();
+    } catch (error) {
+      errorHandler(error);
+    }
   };
 
   useEffect(() => {
@@ -141,13 +160,21 @@ const DisbursementRequest = () => {
   return (
     <ContentContainer>
       <div className="w-full flex flex-row justify-between items-center">
-        <h1 className="font-semibold text-2xl">Disbursement Request</h1>
+        <h1 className="font-semibold text-2xl font-poppins">
+          Disbursement Request
+        </h1>
         <div className="flex flex-row gap-3">
           <SearchInput
             placeholder="Search"
             onSubmit={({ text }) =>
-              setParams((prev) => ({ ...prev, search: text }))
+              setParams((prev) => ({ ...prev, page: 1, search: text }))
             }
+          />
+          <CSVDownload<DisbursementRequestI[]>
+            data={dataState.currentData?.configurations!}
+            onClick={handleGetData}
+            fileName="disbursement_request_data"
+            bookName="Disbursement Request Data"
           />
         </div>
       </div>

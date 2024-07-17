@@ -6,19 +6,15 @@ import Pagination from "components/table/pagination";
 import { Columns, Table } from "components/table/table";
 import moment from "moment";
 import { useState } from "react";
-import { Button, Dropdown, FileInput, Modal } from "react-daisyui";
+import { Button, Dropdown } from "react-daisyui";
 import { FaEllipsisH } from "react-icons/fa";
-import { IoClose } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import { errorHandler } from "services/errorHandler";
-import { uploadQuizQuestions } from "services/modules/file";
 import {
   useDeleteQuizMutation,
   useGetQuizListQuery,
   usePriorityQuizMutation,
 } from "services/modules/quiz";
-import { useAppSelector } from "store";
 
 export const qlRouteName = "";
 const QuizList = () => {
@@ -33,13 +29,9 @@ const QuizList = () => {
     id?: string;
     open: boolean;
   }>({ open: false });
-  const [uploadModal, setUploadModal] = useState(false);
-  const [questionsFile, setQuestionsFile] = useState<FileList | null>(null);
-  const [loadingUplaod, setLoadingUpload] = useState(false);
   const { data, isLoading, refetch } = useGetQuizListQuery(params);
   const [deleteQuiz] = useDeleteQuizMutation();
   const [setPrioritQuiz] = usePriorityQuizMutation();
-  const { accessToken } = useAppSelector((state) => state.auth);
   const updatePriority = async (
     id: string,
     priority: boolean
@@ -150,22 +142,6 @@ const QuizList = () => {
     },
   ];
 
-  const uploadQuestions = async () => {
-    try {
-      setLoadingUpload(true);
-      if (questionsFile) {
-        await uploadQuizQuestions(accessToken!, questionsFile[0]);
-        setUploadModal(false);
-      } else {
-        toast.error("Please choose questions file");
-      }
-    } catch (error) {
-      errorHandler(error);
-    } finally {
-      setLoadingUpload(false);
-    }
-  };
-
   const handlePageChange = (page: number): void => {
     setParams((prev) => ({ ...prev, page }));
   };
@@ -192,14 +168,6 @@ const QuizList = () => {
                 setParams((prev) => ({ ...prev, search: text }));
               }}
             />
-            <Button
-              className="border-seeds text-seeds rounded-full px-10"
-              onClick={() => {
-                setUploadModal(true);
-              }}
-            >
-              Upload Questions
-            </Button>
             <Button
               className="bg-seeds hover:bg-seeds-300 border-seeds hover:border-seeds-300 text-white rounded-full px-10"
               onClick={() => {
@@ -237,49 +205,6 @@ const QuizList = () => {
         title="Delete Quiz"
         subTitle="Are you sure want to delete this Quiz?"
       />
-
-      {/* Upload Questions Modal */}
-      <Modal className="bg-white w-2/3 max-w-[900px]" open={uploadModal}>
-        <Modal.Header className="flex flex-row justify-between">
-          Upload Questions
-          <IoClose
-            onClick={() => {
-              setUploadModal(false);
-            }}
-          />
-        </Modal.Header>
-        <Modal.Body className="overflow-scroll">
-          <div className="w-full border-seeds rounded-xl border py-40 flex items-center justify-center">
-            <FileInput
-              onChange={(e) => setQuestionsFile(e.target.files)}
-              className="border-seeds"
-              size="sm"
-              accept=".csv"
-            />
-          </div>
-        </Modal.Body>
-        <Modal.Actions>
-          <Button
-            type="reset"
-            className="border-seeds text-seeds rounded-full px-10"
-            onClick={() => {
-              setUploadModal(false);
-            }}
-            loading={loadingUplaod}
-            disabled={loadingUplaod}
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={uploadQuestions}
-            className="bg-seeds hover:bg-seeds-300 border-seeds hover:border-seeds-300 text-white rounded-full px-10"
-            loading={loadingUplaod}
-            disabled={loadingUplaod}
-          >
-            Upload
-          </Button>
-        </Modal.Actions>
-      </Modal>
     </>
   );
 };

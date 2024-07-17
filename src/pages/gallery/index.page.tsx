@@ -1,9 +1,10 @@
 import { useState } from "react";
 import ContentContainer from "components/container";
 import { Button, FileInput, Modal } from "react-daisyui";
-import { QuizGalleryI } from "_interfaces/quiz-gallery.interfaces";
+import { QuizGalleryI, QuizGalleryReq } from "_interfaces/quiz-gallery.interfaces";
 import { Columns, Table } from "components/table/table";
 import { IoClose } from "react-icons/io5";
+import { HiOutlineClipboardDocumentList } from "react-icons/hi2";
 import { Controller } from "react-hook-form";
 import Select from "components/select";
 import {
@@ -16,9 +17,11 @@ import ConfirmationModal from "components/confirmation-modal";
 import { errorHandler } from "services/errorHandler";
 import useFilePreview from "hooks/shared/useFilePreview";
 import { toast } from "react-toastify";
+import Pagination from "components/table/pagination";
+import SearchInput from "components/search-input";
+import { typeFile, optionsFile } from "data/gallery";
 
 export const galleryRouteName = "";
-const MAX_FILE_SIZE_MB = 3;
 
 const QuizGallery = () => {
   const [uploadModal, setUploadModal] = useState<boolean>(false);
@@ -26,7 +29,16 @@ const QuizGallery = () => {
     id?: string;
     open: boolean;
   }>({ open: false });
-  const { isLoading, data, refetch } = useGetQuizGalleryListQuery(undefined);
+  const [params, setParams] = useState<QuizGalleryReq>({
+    page: 1,
+    limit: 10,
+    search: "",
+    type: "",
+  });
+  const handlePageChange = (page: number): void => {
+    setParams((prev) => ({ ...prev, page }));
+  };
+  const { isLoading, data, refetch } = useGetQuizGalleryListQuery(params);
   const {
     handleCreate,
     register,
@@ -41,6 +53,17 @@ const QuizGallery = () => {
   const extensionFile = watch("type");
   const [galleryPreview] = useFilePreview(gallery as FileList);
   const [deleteGallery] = useDeleteQuizGalleryMutation();
+
+  const handleCopy = (url: string) => {
+    navigator.clipboard
+      .writeText(url)
+      .then(() => {
+        toast.success("Link copied to clipboard!");
+      })
+      .catch(() => {
+        toast.error("Failed to copy link.");
+      });
+  };
 
   const header: Columns<QuizGalleryI>[] = [
     {
@@ -58,6 +81,25 @@ const QuizGallery = () => {
     {
       fieldId: "url",
       label: "Link",
+      render: (data) => (
+        <>
+          {data && data.url ? (
+            <>
+              <div
+                className="relative cursor-pointer"
+                onClick={() => handleCopy(data.url)}
+              >
+                {data.url}
+                <div className="absolute top-[-12px] right-[-15px] text-xl cursor-pointer ms-10">
+                  <HiOutlineClipboardDocumentList />
+                </div>
+              </div>
+            </>
+          ) : (
+            <span>No URL available</span>
+          )}
+        </>
+      ),
     },
     {
       fieldId: "id",
@@ -71,25 +113,6 @@ const QuizGallery = () => {
           Delete
         </Button>
       ),
-    },
-  ];
-
-  const typeFile = [
-    {
-      key: 0,
-      label: "Select...",
-      value: "",
-      isDisabled: true,
-    },
-    {
-      key: 1,
-      label: "image",
-      value: "image",
-    },
-    {
-      key: 2,
-      label: "video",
-      value: "video",
     },
   ];
 
@@ -116,33 +139,53 @@ const QuizGallery = () => {
     ) as HTMLInputElement;
     if (!file) {
       toast.error("Please select a file.");
-      hideModal()
-      return
-    }
-    if (file.files && file.files[0]) {
-      const fileSizeMB = file.files[0].size / (1024 * 1024);
-      if (fileSizeMB > MAX_FILE_SIZE_MB) {
-        toast.error(`File size exceeds ${MAX_FILE_SIZE_MB} MB.`);
-        hideModal();
-        return
-      }
+      hideModal();
+      return;
     }
     try {
-      await handleCreate(e);
-      hideModal();
+      await handleCreate(e);;
     } catch (error) {
       errorHandler(error);
-      hideModal();
+    } finally {
+      hideModal()
     }
   };
+
+  console.log('lihat data meta data', data)
 
   return (
     <>
       {/* Start of UI Gallery Quiz */}
       <ContentContainer>
-        <div className="w-full flex flex-row justify-between items-center">
-          <h1 className="font-semibold text-2xl">Quiz Gallery</h1>
+      <div className="w-full flex flex-row justify-between items-end">
+            <div className="max-w-40 min-w-40">
+              <label
+                htmlFor="category-question-bank"
+                className="font-semibold text-[#7C7C7C] mb-3"
+              >
+                Type File
+              </label>
+              <Select
+                value={params.type}
+                onChange={(e) =>
+                  setParams((prev) => ({ ...prev, type: e.value }))
+                }
+                options={optionsFile}
+                rounded={true}
+              />
+            </div>
           <div className="flex flex-row gap-3">
+            <SearchInput
+              placeholder="Search"
+              onSubmit={({ text }) => {
+                setParams((prev) => ({
+                  ...prev,
+                  search: text,
+                  page: 1,
+                  limit: 10,
+                }));
+              }}
+            />
             <Button
               className="border-seeds text-seeds rounded-full px-10"
               onClick={() => {
@@ -160,6 +203,11 @@ const QuizGallery = () => {
             loading={isLoading}
           />
         </div>
+        <Pagination
+          currentPage={data?.metadata?.currentPage ?? 1}
+          totalPages={data?.metadata?.totalPage ?? 0}
+          onPageChange={handlePageChange}
+        />
       </ContentContainer>
       {/* End of UI Gallery Quiz */}
 
@@ -201,7 +249,7 @@ const QuizGallery = () => {
                 <div className="w-full border-[#BDBDBD] border rounded-lg flex flex-col text-center items-center justify-center p-10 gap-3">
                   {gallery ? (
                     <video
-                      className="flex mx-auto w-[500px] h-[166px] object-fill"
+                      className="flex mx-auto w-[500px] h-auto object-fill"
                       controls
                     >
                       <source src={galleryPreview} type="video/mp4" /> Your
@@ -223,7 +271,7 @@ const QuizGallery = () => {
                 <div className="w-full border-[#BDBDBD] border rounded-lg flex flex-col text-center items-center justify-center p-10 gap-3">
                   {gallery ? (
                     <img
-                      className="flex mx-auto w-[500px] h-[166px] object-fill"
+                      className="flex mx-auto w-[200px] h-[200px] object-fill"
                       src={galleryPreview}
                       alt=""
                     />
@@ -240,7 +288,8 @@ const QuizGallery = () => {
                 </div>
               )}
               <div className="text-sm text-[#3C49D6] font-normal my-2">
-                *Max File Size: 3 MB
+                <p>*Max File Size Image: 5 MB</p>
+                <p>*Max File Size Video: 64 MB</p>
               </div>
             </div>
           </Modal.Body>

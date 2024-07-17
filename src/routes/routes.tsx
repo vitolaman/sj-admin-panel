@@ -12,6 +12,7 @@ import WithdrawPlay, { wpRouteName } from "pages/play/withdraw.page";
 import QuizList, { qlRouteName } from "pages/quiz/index.page";
 import CreateQuiz, { cqRouteName } from "pages/quiz/create.page";
 import UpdateQuiz, { uqRouteName } from "pages/quiz/update.page";
+import QuestionBank, { qbRouteName } from "pages/quiz/question-bank.page";
 import QuizGallery from "pages/gallery/index.page";
 import ControlPanel from "pages/circle/ControlPanel";
 import CircleDetail, { circleDetailRouteName } from "pages/circle/CircleDetail";
@@ -44,6 +45,7 @@ import BlastPushNotification, {
   pushNotifRouteName,
 } from "pages/push-notification/blast-push-notification/index.page";
 import Article, { articleRouteName } from "pages/blog/article/index.page";
+import XPManagement, { xpRouteName } from "pages/xp-management/index.page";
 import FormArticle, {
   createArticleRouteName,
   editArticleRouteName,
@@ -54,6 +56,26 @@ import CategoryListPage, {
 import DisbursementRequest, {
   dRequestRouteName,
 } from "pages/withdrawal/disbursement-request/index.page";
+import Events, {
+  eventsRouteName,
+} from "pages/homepage-feature/events/index.page";
+import CreateEvent, {
+  cEventsRouteName,
+} from "pages/homepage-feature/events/create.page";
+import UpdateEvent, {
+  uEventsRouteName,
+} from "pages/homepage-feature/events/update.page";
+import DetailEvent, {
+  dEventsRouteName,
+} from "pages/homepage-feature/events/detail.page";
+import OpenAccount, {
+  openAccountRouteName,
+} from "pages/homepage-feature/open-account";
+import CreateOpenAccount, { cOpenAccountRouteName } from "pages/homepage-feature/open-account/create.page";
+import UpdateOpenAccount, { uOpenAccountRouteName } from "pages/homepage-feature/open-account/update.page";
+import WithdrawQuiz, { withdrawQuizRouteName } from "pages/quiz/withdraw.page";
+import Company, { companyRouteName } from "pages/company/index.page";
+import SeedsCoinManagement,{ seedsCoinRouteName } from "pages/seeds-coin-management/index.page";
 
 const protectedRoutes: RouteObject[] = [
   { path: "", element: <Navigate to="/user/control-panel" /> },
@@ -90,6 +112,18 @@ const protectedRoutes: RouteObject[] = [
             element: <FormArticle />,
             index: true,
           },
+        ],
+      },
+      {
+        path: "homepage-feature",
+        children: [
+          { path: eventsRouteName, element: <Events />, index: true },
+          { path: cEventsRouteName, element: <CreateEvent /> },
+          { path: uEventsRouteName, element: <UpdateEvent /> },
+          { path: dEventsRouteName, element: <DetailEvent /> },
+          { path: openAccountRouteName, element: <OpenAccount /> },
+          { path: cOpenAccountRouteName, element: <CreateOpenAccount /> },
+          { path: uOpenAccountRouteName, element: <UpdateOpenAccount /> },
         ],
       },
       {
@@ -134,10 +168,21 @@ const protectedRoutes: RouteObject[] = [
             path: categoryQuizRouteName,
             element: <CategoryListPage />,
           },
+          {
+            path: qbRouteName,
+            element: <QuestionBank />,
+          },
+          {
+            path: withdrawQuizRouteName,
+            element: <WithdrawQuiz />,
+          },
         ],
       },
       { path: promoCodeRouteName, element: <PromoCode /> },
+      {path:seedsCoinRouteName, element:<SeedsCoinManagement/>},
+      { path: xpRouteName, element: <XPManagement /> },
       { path: afRouteName, element: <AdminFee /> },
+      { path: companyRouteName, element: <Company /> },
       { path: "dashboard", element: <DashboardHome /> },
       {
         path: "circle",
@@ -248,7 +293,7 @@ const protectedRoutes: RouteObject[] = [
       //     },
       //   ]
       // }
-      { path: "quiz-gallery", element: <QuizGallery/> },
+      { path: "quiz-gallery", element: <QuizGallery /> },
     ],
   },
   { path: "*", element: <Navigate to="/not-found" /> },
