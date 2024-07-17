@@ -1,5 +1,4 @@
 import { MainBannerFormData } from "_interfaces/banner.interface";
-import { CreateQuizPayload } from "_interfaces/quiz.interfaces";
 import ContentContainer from "components/container";
 import CInput from "components/input";
 import CancelPopUp from "components/modal/other/Cancel";

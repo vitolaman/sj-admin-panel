@@ -5,7 +5,7 @@ import { errorHandler } from "services/errorHandler";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAppSelector } from "store";
-import { CreateQuizPayload, QuizForm } from "_interfaces/quiz.interfaces";
+import { QuizForm, QuizPayload } from "_interfaces/quiz.interfaces";
 import { useCreateQuizMutation } from "services/modules/quiz";
 import { uploadFile } from "services/modules/file";
 
@@ -115,7 +115,7 @@ const useCreateQuizForm = () => {
       const paymentMethodParsed = (data.payment_method as any[]).map(
         (item) => item.value
       );
-      const payload: CreateQuizPayload = {
+      const payload: QuizPayload = {
         ...data,
         prizes: data.prizes.map((item) => item.prize),
         payment_method: paymentMethodParsed,

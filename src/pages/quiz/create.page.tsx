@@ -1,6 +1,6 @@
 import MDEditor, { commands } from "@uiw/react-md-editor";
 import { OptChild, PaymentChannelOpt } from "_interfaces/admin-fee.interfaces";
-import { CreateQuizPayload } from "_interfaces/quiz.interfaces";
+import { QuizPayload } from "_interfaces/quiz.interfaces";
 import ContentContainer from "components/container";
 import CurrencyInput from "components/currency-input";
 import CInput from "components/input";
@@ -110,7 +110,7 @@ const CreateQuiz = () => {
   }, [promoCodeState.data]);
 
   useEffect(() => {
-    const firstError = Object.keys(errors)[0] as keyof CreateQuizPayload;
+    const firstError = Object.keys(errors)[0] as keyof QuizPayload;
     if (firstError) {
       setFocus(firstError);
       const element = errors[firstError]?.ref;
