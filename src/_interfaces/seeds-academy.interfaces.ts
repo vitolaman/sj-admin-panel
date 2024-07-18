@@ -3,6 +3,27 @@ export interface MainSeedsAcademyRes {
   metadata: Metadata;
 }
 
+export interface MainSubcriptionRes {
+  data: SubcriptionListI[];
+  metadata: Metadata;
+}
+
+export interface SubcriptionListI {
+  id: string;
+  price: number;
+  duration_month: number;
+  status: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface MainSubcriptionReq {
+  search: string;
+  status: string;
+  limit: number;
+  page: number;
+}
+
 export interface PatchPayload {
   status: string;
 }
@@ -228,4 +249,25 @@ export interface UpdateClassPayload {
     file_url: string;
     file_link: string | FileList;
   };
+}
+
+export interface SubscriptionConfig {
+  id: string;
+  name: string;
+}
+
+export interface CreateSubcriptionPayload {
+  price: number;
+  duration_month: number;
+  status: boolean;
+}
+
+export interface SubcriptionById {
+  data: SubcriptionByIdI;
+}
+
+export interface SubcriptionByIdI {
+  price: number;
+  duration_month: number;
+  status: boolean;
 }

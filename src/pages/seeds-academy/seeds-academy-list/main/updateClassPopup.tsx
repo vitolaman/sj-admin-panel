@@ -49,8 +49,6 @@ const UpdateNewClassPopup: React.FC<{
   const quiz = watch("quiz.file_link");
   const [quizPreview] = useFilePreview(quiz as unknown as FileList);
 
-  console.log(data, "dat");
-
   useEffect(() => {
     if (data) {
       reset({
