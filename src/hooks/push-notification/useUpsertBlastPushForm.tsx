@@ -16,7 +16,10 @@ import {
 } from "services/modules/push-notif";
 import moment from "moment";
 
-const useUpsertBlastPushForm = (id: string | undefined) => {
+const useUpsertBlastPushForm = (
+  id: string | undefined,
+  status: "DRAFT" | "normal"
+) => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [createBlastPush] = useCreateBlastPushNotifMutation();
@@ -38,6 +41,10 @@ const useUpsertBlastPushForm = (id: string | undefined) => {
       .max(250, "Notification Body cannot more than 250 char"),
     notification_image_url: yup.object().required("Please Add Image"),
     type: yup.string().required("Type cannot empty"),
+    target_notifications: yup
+      .array()
+      .of(yup.string())
+      .required("Target notification cannot"),
   });
 
   const {
@@ -151,6 +158,9 @@ const useUpsertBlastPushForm = (id: string | undefined) => {
       }
       if (!Array.isArray(data.recurring_days)) {
         payload.recurring_days = [];
+      }
+      if (status === "DRAFT") {
+        payload.status = status;
       }
       await createBlastPush(payload).unwrap();
       navigate(-1);

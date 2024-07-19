@@ -36,6 +36,7 @@ export const ubnRouteName = "blast/upsert";
 const UpsertBlastNotif = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [status, setStatus] = useState<"DRAFT" | "normal">("normal");
   const { handleSelectChange } = useRNCHelper();
   const [isSavePopupOpen, setIsSavePopupOpen] = useState(false);
   const [isCancelPopupOpen, setIsCancelPopupOpen] = useState(false);
@@ -49,7 +50,7 @@ const UpsertBlastNotif = () => {
     control,
     setValue,
     reset,
-  } = useUpsertBlastPushForm(id);
+  } = useUpsertBlastPushForm(id, status);
   const [disabledOptions, setDisabledOptions] = useState<string[]>([]);
 
   const banner = watch("notification_image_url.image_link");
@@ -192,12 +193,26 @@ const UpsertBlastNotif = () => {
                 navigate(-1);
                 handleCancelPopup();
               }}
-              menu={"Banner"}
+              menu={"Push Notification"}
             />
+            {!id ? (
+              <Button
+                type="button"
+                onClick={() => {
+                  void handleSavePopup();
+                  setStatus("DRAFT");
+                }}
+                loading={isLoading}
+                className="rounded-full px-6 py-2 bg-white text-seeds border border-seeds hover:bg-white/90"
+              >
+                Draft
+              </Button>
+            ) : null}
             <Button
               type="button"
               onClick={() => {
                 void handleSavePopup();
+                setStatus("normal");
               }}
               loading={isLoading}
               className="rounded-full px-6 py-2 bg-seeds text-white hover:bg-seeds/90"
@@ -211,7 +226,7 @@ const UpsertBlastNotif = () => {
               onEdit={() => {
                 setIsSavePopupOpen(false);
               }}
-              menu={"Banner"}
+              menu={"Push Notification"}
             />
           </div>
         </div>
@@ -330,6 +345,7 @@ const UpsertBlastNotif = () => {
               )}
             />
           </div>
+          <ValidationError error={errors.type} />
         </div>
         {type === "one_time_schedule" && (
           <div className="py-4">
@@ -686,6 +702,7 @@ const UpsertBlastNotif = () => {
                   )}
                 />
                 <p className="text-sm">{item.label}</p>
+                <ValidationError error={errors?.target_notifications?.[i]} />
               </div>
             ))}
           </div>
