@@ -38,13 +38,11 @@ const PlayDetail = () => {
     PaymentChannelOpt[]
   >([]);
 
-  const { data, isLoading } = usePlayByIdQuery(params.id ?? "", {
-    refetchOnReconnect: true,
-    refetchOnMountOrArgChange: true,
-  });
+  const { data, isLoading } = usePlayByIdQuery(params.id!);
   const [cancelPlay, cancelPlayState] = useCancelPlayMutation();
   const { handleUpdate, register, errors, reset, control, setFocus, watch } =
     useUpdatePlayForm(params.id!);
+  const { data: paymentChannelData } = useGetPaymentChannelQuery(undefined);
 
   const imageBanner = watch("banner");
   const [imageBannerPreview] = useFilePreview(
@@ -70,7 +68,6 @@ const PlayDetail = () => {
     control,
     name: "payment_method",
   });
-  const paymentChannelState = useGetPaymentChannelQuery(undefined);
 
   useEffect(() => {
     if (data?.play_time && data?.end_time) {
@@ -86,7 +83,7 @@ const PlayDetail = () => {
       setHours(hours);
       setMinutes(minutes);
     }
-    if (paymentChannelState.data && data) {
+    if (paymentChannelData && data) {
       const tempOpt: PaymentChannelOpt[] = [
         {
           label: (() => {
@@ -94,7 +91,7 @@ const PlayDetail = () => {
               <div
                 onClick={() => {
                   const ewallet =
-                    paymentChannelState?.data?.type_ewallet?.map((item) => ({
+                    paymentChannelData.type_ewallet?.map((item) => ({
                       label: item.payment_method,
                       value: item.payment_method,
                     })) ?? [];
@@ -105,7 +102,7 @@ const PlayDetail = () => {
               </div>
             );
           })(),
-          options: paymentChannelState.data.type_ewallet.map((item) => ({
+          options: paymentChannelData.type_ewallet.map((item) => ({
             label: item.payment_method,
             value: item.payment_method,
           })),
@@ -116,7 +113,7 @@ const PlayDetail = () => {
               <div
                 onClick={() => {
                   const bank =
-                    paymentChannelState?.data?.type_va?.map((item) => ({
+                    paymentChannelData.type_va?.map((item) => ({
                       label: item.payment_method,
                       value: item.payment_method,
                     })) ?? [];
@@ -127,7 +124,7 @@ const PlayDetail = () => {
               </div>
             );
           })(),
-          options: paymentChannelState.data.type_va.map((item) => ({
+          options: paymentChannelData.type_va.map((item) => ({
             label: item.payment_method,
             value: item.payment_method,
           })),
@@ -138,7 +135,7 @@ const PlayDetail = () => {
               <div
                 onClick={() => {
                   const qris =
-                    paymentChannelState?.data?.type_qris?.map((item) => ({
+                    paymentChannelData.type_qris?.map((item) => ({
                       label: item.payment_method,
                       value: item.payment_method,
                     })) ?? [];
@@ -149,25 +146,13 @@ const PlayDetail = () => {
               </div>
             );
           })(),
-          options: paymentChannelState.data.type_qris.map((item) => ({
+          options: paymentChannelData.type_qris.map((item) => ({
             label: item.payment_method,
             value: item.payment_method,
           })),
         },
       ];
-      let selectedEWallet = paymentChannelState.data.type_ewallet.map(
-        (item) => {
-          if (
-            (data.payment_method as string[])?.includes(item.payment_method)
-          ) {
-            return {
-              label: item.payment_method,
-              value: item.payment_method,
-            };
-          }
-        }
-      );
-      let selectedBank = paymentChannelState.data.type_va.map((item) => {
+      let selectedEWallet = paymentChannelData.type_ewallet.map((item) => {
         if ((data.payment_method as string[])?.includes(item.payment_method)) {
           return {
             label: item.payment_method,
@@ -175,7 +160,15 @@ const PlayDetail = () => {
           };
         }
       });
-      let selectedQris = paymentChannelState.data.type_qris.map((item) => {
+      let selectedBank = paymentChannelData.type_va.map((item) => {
+        if ((data.payment_method as string[])?.includes(item.payment_method)) {
+          return {
+            label: item.payment_method,
+            value: item.payment_method,
+          };
+        }
+      });
+      let selectedQris = paymentChannelData.type_qris.map((item) => {
         if ((data.payment_method as string[])?.includes(item.payment_method)) {
           return {
             label: item.payment_method,
@@ -197,7 +190,7 @@ const PlayDetail = () => {
         category: data?.all_category,
       });
     }
-  }, [data]);
+  }, [data, paymentChannelData]);
 
   const cancel = async () => {
     try {
@@ -647,6 +640,7 @@ const PlayDetail = () => {
                     onChange={(e) => {
                       onChange(e);
                     }}
+                    isDisabled={!enableEdit}
                   />
                 )}
               />
