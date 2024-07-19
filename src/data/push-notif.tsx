@@ -106,7 +106,6 @@ const recurringOption: SelectOrRadio[] = [
 const tergetNotificationOption: SelectOrRadio[] = [
   { label: "All User", value: "all" },
   { label: "Country", value: "country" },
-  { label: "City", value: "city" },
   { label: "Last App Engagement", value: "last_app_engagement" },
   { label: "Languages", value: "language" },
   { label: "User Registration Period", value: "new_user" },

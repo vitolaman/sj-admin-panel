@@ -193,7 +193,7 @@ const UpsertBlastNotif = () => {
                 navigate(-1);
                 handleCancelPopup();
               }}
-              menu={"Push Notification"}
+              menu={"Blast Push Notification"}
             />
             {!id ? (
               <Button
@@ -316,7 +316,10 @@ const UpsertBlastNotif = () => {
           </div>
         </div>
         <div className="flex flex-col gap-2 w-1/2 mt-4">
-          <label className="font-semibold">Scheduling</label>
+          <label className="font-semibold">
+            Scheduling
+            <span className="text-red-600">*</span>
+          </label>
           <div className="col-span-2">
             <Controller
               control={control}
@@ -380,7 +383,10 @@ const UpsertBlastNotif = () => {
         {type === "one_time_schedule" && scheduleType === "scheduled" && (
           <div className="flex flex-row gap-2">
             <div className="flex flex-col w-1/2 gap-2">
-              <label className="font-semibold">Started Time</label>
+              <label className="font-semibold">
+                Started Time
+                <span className="text-red-600">*</span>
+              </label>
               <Controller
                 control={control}
                 name="temp_date"
@@ -442,7 +448,10 @@ const UpsertBlastNotif = () => {
           <div className="flex flex-col gap-2">
             <div className="flex flex-row gap-2">
               <div className="flex flex-col w-1/2 gap-2">
-                <label className="font-semibold">Started Time</label>
+                <label className="font-semibold">
+                  Started Time
+                  <span className="text-red-600">*</span>
+                </label>
                 <Controller
                   control={control}
                   name="temp_date"
@@ -467,7 +476,10 @@ const UpsertBlastNotif = () => {
                 />
               </div>
               <div className="flex flex-col w-1/2 gap-2">
-                <label className="font-semibold">End Time</label>
+                <label className="font-semibold">
+                  End Time
+                  <span className="text-red-600">*</span>
+                </label>
                 <Controller
                   control={control}
                   name="temp_endDate"
@@ -583,7 +595,10 @@ const UpsertBlastNotif = () => {
             )}
             <div className="flex flex-row gap-2">
               <div className="flex flex-col w-1/2 gap-2">
-                <label className="font-semibold">Started Time</label>
+                <label className="font-semibold">
+                  Started Time
+                  <span className="text-red-600">*</span>
+                </label>
                 <Controller
                   control={control}
                   name="temp_date"
@@ -608,7 +623,10 @@ const UpsertBlastNotif = () => {
                 />
               </div>
               <div className="flex flex-col w-1/2 gap-2">
-                <label className="font-semibold">End Time</label>
+                <label className="font-semibold">
+                  End Time
+                  <span className="text-red-600">*</span>
+                </label>
                 <Controller
                   control={control}
                   name="temp_endDate"
@@ -660,7 +678,10 @@ const UpsertBlastNotif = () => {
           </div>
         )}
         <div className="flex flex-col mt-4">
-          <label className="font-semibold">Target Notification</label>
+          <label className="font-semibold">
+            Target Notification
+            <span className="text-red-600">*</span>
+          </label>
           <div className="grid grid-cols-4 gap-4 py-4">
             {tergetNotificationOption.map((item, i) => (
               <div
