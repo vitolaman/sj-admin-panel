@@ -5,10 +5,7 @@ import { errorHandler } from "services/errorHandler";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAppSelector } from "store";
-import {
-  CreateQuizPayload,
-  EditQuizPayload,
-} from "_interfaces/quiz.interfaces";
+import { QuizForm, QuizPayload } from "_interfaces/quiz.interfaces";
 import { useUpdateQuizMutation } from "services/modules/quiz";
 import { uploadFile } from "services/modules/file";
 import moment from "moment";
@@ -42,8 +39,11 @@ const useUpdateQuizForm = (id: string) => {
     max_participant: yup.number().max(999, "Max Participants = 999"),
     prizes: yup
       .array()
-      .of(yup.number().required("Please input prize"))
-      .required("Prizes are required"),
+      .of(
+        yup
+          .object()
+          .shape({ prize: yup.number().required("Please input prize") })
+      ),
     lifelines: yup
       .array()
       .of(
@@ -73,7 +73,7 @@ const useUpdateQuizForm = (id: string) => {
     setFocus,
     watch,
     reset,
-  } = useForm<CreateQuizPayload>({
+  } = useForm<QuizForm>({
     mode: "onSubmit",
     resolver: yupResolver(schema),
     defaultValues: {
@@ -98,14 +98,18 @@ const useUpdateQuizForm = (id: string) => {
     },
   });
 
-  const create = async (data: CreateQuizPayload) => {
+  const create = async (data: QuizForm) => {
     try {
       setIsLoadingUpdate(true);
       // cannot use data type causing error pluggin React Select
       const paymentMethodParsed = (data.payment_method as any[]).map(
-        (item) => item.value,
+        (item) => item.value
       );
-      const payload = { ...data, payment_method: paymentMethodParsed };
+      const payload: QuizPayload = {
+        ...data,
+        prizes: data.prizes.map((item) => item.prize),
+        payment_method: paymentMethodParsed,
+      };
       if (data.banner.image_link !== "") {
         const banner = await uploadFile(
           accessToken!,
