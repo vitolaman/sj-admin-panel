@@ -4,8 +4,10 @@ import {
   CreateBannerReq,
 } from "_interfaces/banner.interface";
 import {
+  BlastPushPayload,
   NotificationListReq,
   NotificationListRes,
+  PushNotificationList,
 } from "_interfaces/push-notif.interfaces";
 import { Api } from "services/api";
 
@@ -16,8 +18,8 @@ export const bannerApi = Api.injectEndpoints({
         `admin-portal/v1/notif_blast?limit=${param.limit}&page=${param.page}`,
       keepUnusedDataFor: 0,
     }),
-    BannerDetail: build.query<BannerList, { id: string }>({
-      query: (param) => `admin-portal/v1/banner/${param.id}`,
+    PushNotifDetail: build.query<PushNotificationList, { id: string }>({
+      query: (param) => `/admin-portal/v1/notif_blast/${param.id}`,
       keepUnusedDataFor: 0,
     }),
     changeStatusBanner: build.mutation<string, ChangeStatusBannerReq>({
@@ -42,21 +44,22 @@ export const bannerApi = Api.injectEndpoints({
         };
       },
     }),
-    updateBanner: build.mutation<string, { id: string; body: CreateBannerReq }>(
-      {
-        query({ id, body }) {
-          return {
-            url: `admin-portal/v1/banner/${id}`,
-            method: "PATCH",
-            body,
-          };
-        },
-      }
-    ),
-    createBanner: build.mutation<string, CreateBannerReq>({
+    updateBlastPushNotif: build.mutation<
+      string,
+      { id: string; body: BlastPushPayload }
+    >({
+      query({ id, body }) {
+        return {
+          url: `/admin-portal/v1/notif_blast/${id}`,
+          method: "PATCH",
+          body,
+        };
+      },
+    }),
+    createBlastPushNotif: build.mutation<string, BlastPushPayload>({
       query(body) {
         return {
-          url: `/admin-portal/v1/banner/create`,
+          url: `/admin-portal/v1/notif_blast/create`,
           method: "POST",
           body: {
             ...body,
@@ -68,4 +71,9 @@ export const bannerApi = Api.injectEndpoints({
   overrideExisting: false,
 });
 
-export const { usePushNotifListQuery } = bannerApi;
+export const {
+  usePushNotifListQuery,
+  useCreateBlastPushNotifMutation,
+  useUpdateBlastPushNotifMutation,
+  usePushNotifDetailQuery,
+} = bannerApi;
