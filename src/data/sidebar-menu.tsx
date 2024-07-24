@@ -126,7 +126,8 @@ const menuItems: MenuItem[] = [
   },
   {
     name: "B2B Company",
-    path: "/company",
+    path: "#",
+    child: [{ name: "Company Setting", path: "/company" }],
   },
 ];
 
