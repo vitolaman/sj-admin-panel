@@ -3,18 +3,33 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { errorHandler } from "services/errorHandler";
 import { useState } from "react";
-import { useUpdatePaymentListMutation } from "services/modules/admin-fee";
-import { AdminFeePayloadI } from "_interfaces/admin-fee.interfaces";
-import { useUpdateExpiryDateMutation } from "services/modules/company";
+import {
+  useGetCompanyByIdQuery,
+  useUpdateCompanyMutation,
+} from "services/modules/company";
 import { toast } from "react-toastify";
+import {
+  UpdateCompanyForm,
+  UpdateCompanyPayload,
+} from "_interfaces/company.interfaces";
 
-const useUpdateCompanyForm = (id?: string) => {
+const useUpdateCompanyForm = (id: string) => {
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
-  const [updateExpiry, updateExpiryState] = useUpdateExpiryDateMutation();
+  const [updateCompany] = useUpdateCompanyMutation();
+  const { refetch } = useGetCompanyByIdQuery(id);
 
+  const dateNow = new Date();
   const schema = yup.object().shape({
-    sandbox_expiration_date: yup.string().required(),
-    production_expiration_date: yup.string().required(),
+    payment: yup.boolean().required("Payment status cannot be empty"),
+    withdrawal: yup.boolean().required("Withdrawal status cannot be empty"),
+    share: yup.number().required("Share cannot be empty"),
+    share_percentage: yup.number().required("Share percentage cannot be empty"),
+    plan_expiry_date: yup
+      .date()
+      .required("Please input ended time")
+      .typeError("invalid date")
+      .min(dateNow, "Ended time must be greater than now"),
+    is_active: yup.boolean().required("Status cannot be empty"),
   });
 
   const {
@@ -22,34 +37,27 @@ const useUpdateCompanyForm = (id?: string) => {
     register,
     formState: { errors },
     control,
-    setFocus,
-    watch,
-    reset,
     setValue,
-  } = useForm<{
-    sandbox_expiration_date: string;
-    production_expiration_date: string;
-  }>({
+  } = useForm<UpdateCompanyForm>({
     mode: "onSubmit",
     resolver: yupResolver(schema),
     defaultValues: {
-      sandbox_expiration_date: "",
-      production_expiration_date: "",
+      share: 0,
+      share_percentage: 0,
     },
   });
 
-  const update = async (data: {
-    sandbox_expiration_date: string;
-    production_expiration_date: string;
-  }) => {
+  const update = async (data: UpdateCompanyForm) => {
     try {
       setIsLoadingUpdate(true);
-      await updateExpiry({
-        sandbox_expiration_date: new Date(data.sandbox_expiration_date),
-        production_expiration_date: new Date(data.production_expiration_date),
-        id: id!,
-      }).unwrap();
-      toast("Expiration date updated");
+      const payload: UpdateCompanyPayload = {
+        ...data,
+        plan_sandbox_expiry_date: data.plan_expiry_date,
+        is_production_eligible: data.is_active,
+      };
+      await updateCompany({ id, body: payload }).unwrap();
+      // refetch();
+      toast("Company setting updated");
     } catch (error) {
       errorHandler(error);
     } finally {
@@ -63,15 +71,10 @@ const useUpdateCompanyForm = (id?: string) => {
     handleUpdate,
     register,
     errors,
-    setFocus,
     control,
     isLoadingUpdate,
-    watch,
-    reset,
     setValue,
-    updateExpiryState,
   };
 };
 
 export default useUpdateCompanyForm;
-
