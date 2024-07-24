@@ -71,11 +71,20 @@ import DetailEvent, {
 import OpenAccount, {
   openAccountRouteName,
 } from "pages/homepage-feature/open-account";
-import CreateOpenAccount, { cOpenAccountRouteName } from "pages/homepage-feature/open-account/create.page";
-import UpdateOpenAccount, { uOpenAccountRouteName } from "pages/homepage-feature/open-account/update.page";
+import CreateOpenAccount, {
+  cOpenAccountRouteName,
+} from "pages/homepage-feature/open-account/create.page";
+import UpdateOpenAccount, {
+  uOpenAccountRouteName,
+} from "pages/homepage-feature/open-account/update.page";
 import WithdrawQuiz, { withdrawQuizRouteName } from "pages/quiz/withdraw.page";
-import Company, { companyRouteName } from "pages/company/index.page";
-import SeedsCoinManagement,{ seedsCoinRouteName } from "pages/seeds-coin-management/index.page";
+import Company from "pages/company/index.page";
+import SeedsCoinManagement, {
+  seedsCoinRouteName,
+} from "pages/seeds-coin-management/index.page";
+import UpdateCompany, {
+  updateCompanyRouteName,
+} from "pages/company/update.page";
 
 const protectedRoutes: RouteObject[] = [
   { path: "", element: <Navigate to="/user/control-panel" /> },
@@ -179,10 +188,16 @@ const protectedRoutes: RouteObject[] = [
         ],
       },
       { path: promoCodeRouteName, element: <PromoCode /> },
-      {path:seedsCoinRouteName, element:<SeedsCoinManagement/>},
+      { path: seedsCoinRouteName, element: <SeedsCoinManagement /> },
       { path: xpRouteName, element: <XPManagement /> },
       { path: afRouteName, element: <AdminFee /> },
-      { path: companyRouteName, element: <Company /> },
+      {
+        path: "company",
+        children: [
+          { path: "", element: <Company /> },
+          { path: updateCompanyRouteName, element: <UpdateCompany /> },
+        ],
+      },
       { path: "dashboard", element: <DashboardHome /> },
       {
         path: "circle",
