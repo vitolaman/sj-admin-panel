@@ -1,6 +1,8 @@
 import {
+  CompanyI,
   GetCompanyParams,
   GetCompanyResI,
+  UpdateCompanyPayload,
 } from "_interfaces/company.interfaces";
 import { Api } from "services/api";
 
@@ -8,44 +10,25 @@ export const CompanyApi = Api.injectEndpoints({
   endpoints: (build) => ({
     getCompanyList: build.query<GetCompanyResI, GetCompanyParams>({
       query: (params) => {
-        return { url: `/admin-portal/v1/company/list`, params };
+        return {
+          url: `/admin-portal/v1/company/list?page=${params.page}&limit=${params.limit}&search=${params.search}`,
+        };
       },
       keepUnusedDataFor: 0,
     }),
-    updateExpiryDate: build.mutation<
-      void,
-      {
-        production_expiration_date: Date;
-        sandbox_expiration_date: Date;
-        id: string;
-      }
-    >({
-      query({ production_expiration_date, sandbox_expiration_date, id }) {
-        return {
-          url: `admin-portal/v1/company/${id}/expiration`,
-          method: "PATCH",
-          body: { production_expiration_date, sandbox_expiration_date },
-        };
-      },
+    getCompanyById: build.query<CompanyI, string>({
+      query: (id) => `/admin-portal/v1/company/${id}`,
+      keepUnusedDataFor: 0,
     }),
-    updateEligibility: build.mutation<
+    updateCompany: build.mutation<
       void,
-      { is_production_eligible: boolean; id: string }
+      { id: string; body: UpdateCompanyPayload }
     >({
-      query({ is_production_eligible, id }) {
+      query({ id, body }) {
         return {
-          url: `admin-portal/v1/company/${id}/eligibility`,
+          url: `admin-portal/v1/company/${id}`,
           method: "PATCH",
-          body: { is_production_eligible },
-        };
-      },
-    }),
-    updateStatus: build.mutation<void, { is_active: boolean; id: string }>({
-      query({ is_active, id }) {
-        return {
-          url: `admin-portal/v1/company/${id}/status`,
-          method: "PATCH",
-          body: { is_active },
+          body,
         };
       },
     }),
@@ -55,8 +38,6 @@ export const CompanyApi = Api.injectEndpoints({
 
 export const {
   useGetCompanyListQuery,
-  useUpdateExpiryDateMutation,
-  useUpdateEligibilityMutation,
-  useUpdateStatusMutation,
+  useGetCompanyByIdQuery,
+  useUpdateCompanyMutation,
 } = CompanyApi;
-
