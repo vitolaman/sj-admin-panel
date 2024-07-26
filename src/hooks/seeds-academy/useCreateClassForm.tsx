@@ -56,8 +56,6 @@ const useCreateClassForm = ({
   });
 
   const create = async (data: CreateClassPayload) => {
-    console.log(data.module, data.quiz, "akdjk");
-
     try {
       setIsLoading(true);
       let bannerReq = "";

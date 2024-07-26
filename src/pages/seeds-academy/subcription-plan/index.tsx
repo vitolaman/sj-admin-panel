@@ -8,6 +8,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { Button } from "react-daisyui";
 import SearchInput from "components/search-input";
+import Pagination from "components/table/pagination";
 import {
   MainSubcriptionReq,
   SubcriptionListI,
@@ -24,6 +25,7 @@ import {
 import { RiDeleteBinLine } from "react-icons/ri";
 import CreateSubcriptionPopUp from "./createSubcriptionPopUp";
 import UpdateSubcriptionPopUp from "./updateSubcriptionPopUp";
+import { errorHandler } from "services/errorHandler";
 
 export const spRouteName = "subcription-plan";
 export default function SubcriptionPlan(): React.ReactElement {
@@ -58,7 +60,7 @@ export default function SubcriptionPlan(): React.ReactElement {
       });
       refetch();
     } catch (error) {
-      console.error("Failed to edit subscription:", error);
+      errorHandler(error)
     }
   };
 
@@ -67,8 +69,12 @@ export default function SubcriptionPlan(): React.ReactElement {
       await deleteSubscriptionMutation({ id });
       refetch();
     } catch (error) {
-      console.error("Failed to delete subscription:", error);
+      errorHandler(error)
     }
+  };
+
+  const handlePageChange = (page: number): void => {
+    setSearchParams((prev) => ({ ...prev, page }));
   };
 
   const header: Columns<SubcriptionListI>[] = [
@@ -224,6 +230,11 @@ export default function SubcriptionPlan(): React.ReactElement {
         isOpen={isUpdateSubcriptionOpen}
         onClose={() => setIsUpdateSubcriptionOpen(false)}
         id={idEdit}
+      />
+      <Pagination
+        currentPage={data?.metadata?.current_page ?? 1}
+        totalPages={data?.metadata?.total_page ?? 0}
+        onPageChange={handlePageChange}
       />
     </div>
   );

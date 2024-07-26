@@ -13,6 +13,7 @@ import { Controller } from "react-hook-form";
 import MDEditor, { commands } from "@uiw/react-md-editor";
 import { MainSeedsAcademyReq } from "_interfaces/seeds-academy.interfaces";
 import { RiDeleteBinLine } from "react-icons/ri";
+import { errorHandler } from "services/errorHandler";
 
 export const usaRouteName = "seeds-academy-list/update/:id";
 const UpdateSeedsAcademy = () => {
@@ -31,7 +32,6 @@ const UpdateSeedsAcademy = () => {
     register,
     errors,
     setFocus,
-    isLoadingUpdate,
     reset,
     control,
     watch,
@@ -61,7 +61,7 @@ const UpdateSeedsAcademy = () => {
       await deleteCategory({ id: params.id! });
       navigate(`/seeds-academy/seeds-academy-list`);
     } catch (error) {
-      console.error("Failed to delete category:", error);
+      errorHandler(error);
     }
   };
 

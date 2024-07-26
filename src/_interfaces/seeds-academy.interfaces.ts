@@ -5,7 +5,7 @@ export interface MainSeedsAcademyRes {
 
 export interface MainSubcriptionRes {
   data: SubcriptionListI[];
-  metadata: Metadata;
+  metadata: Metadata2;
 }
 
 export interface SubcriptionListI {
@@ -34,6 +34,13 @@ export interface MainSeedsAcademyReq {
   limit: number;
   page: number;
   id?: string;
+}
+
+export interface Metadata2 {
+  current_page: number;
+  limit: number;
+  total_page: number;
+  total: number;
 }
 
 export interface Metadata {
