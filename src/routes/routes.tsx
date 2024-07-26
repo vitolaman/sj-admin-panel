@@ -100,6 +100,9 @@ import Company, { companyRouteName } from "pages/company/index.page";
 import SeedsCoinManagement, {
   seedsCoinRouteName,
 } from "pages/seeds-coin-management/index.page";
+import UpsertBlastNotif, {
+  ubnRouteName,
+} from "pages/push-notification/blast-push-notification/upsert.page";
 
 const protectedRoutes: RouteObject[] = [
   { path: "", element: <Navigate to="/user/control-panel" /> },
@@ -308,6 +311,14 @@ const protectedRoutes: RouteObject[] = [
           {
             path: uwbRouteName,
             element: <UpdateWelcomeBanner />,
+          },
+          {
+            path: ubnRouteName,
+            element: <UpsertBlastNotif />,
+          },
+          {
+            path: `${ubnRouteName}/:id`,
+            element: <UpsertBlastNotif />,
           },
         ],
       },
