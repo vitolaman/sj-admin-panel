@@ -85,6 +85,9 @@ import SeedsCoinManagement, {
 import UpdateCompany, {
   updateCompanyRouteName,
 } from "pages/company/update.page";
+import DetailCompany, {
+  detailCompanyRouteName,
+} from "pages/company/detail.page";
 
 const protectedRoutes: RouteObject[] = [
   { path: "", element: <Navigate to="/user/control-panel" /> },
@@ -196,6 +199,7 @@ const protectedRoutes: RouteObject[] = [
         children: [
           { path: "", element: <Company /> },
           { path: updateCompanyRouteName, element: <UpdateCompany /> },
+          { path: detailCompanyRouteName, element: <DetailCompany /> },
         ],
       },
       { path: "dashboard", element: <DashboardHome /> },
