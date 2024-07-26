@@ -2,15 +2,21 @@ import { useState } from "react";
 import ContentContainer from "components/container";
 import { Button, Dropdown } from "react-daisyui";
 import { Columns, Table } from "components/table/table";
-import { useGetCompanyListQuery } from "services/modules/company";
+import {
+  useGetCompanyListQuery,
+  useUpdateEligibilityMutation,
+  useUpdateStatusMutation,
+} from "services/modules/company";
 import Pagination from "components/table/pagination";
 import { CompanyI, GetCompanyParams } from "_interfaces/company.interfaces";
 import moment from "moment";
-import { FiEdit, FiMoreHorizontal } from "react-icons/fi";
+import { FiEdit, FiFileText, FiMoreHorizontal } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import SearchInput from "components/search-input";
-import { currencyOptions } from "data/currency";
 import { rupiahFormatter } from "_helper/formatters";
+import { IoMdLock, IoMdUnlock } from "react-icons/io";
+import { MdBlock, MdOutlineVerified } from "react-icons/md";
+import { errorHandler } from "services/errorHandler";
 
 const Company = () => {
   const [params, setParams] = useState<GetCompanyParams>({
@@ -18,7 +24,9 @@ const Company = () => {
     limit: 10,
     search: "",
   });
-  const { data, isLoading } = useGetCompanyListQuery(params);
+  const { data, isLoading, refetch } = useGetCompanyListQuery(params);
+  const [updateStatus] = useUpdateStatusMutation();
+  const [updateEligibility] = useUpdateEligibilityMutation();
   const navigate = useNavigate();
 
   const header: Columns<CompanyI>[] = [
@@ -33,6 +41,56 @@ const Company = () => {
     {
       fieldId: "name",
       label: "Company Name",
+    },
+    {
+      fieldId: "is_active",
+      label: "Status",
+      render: (data) => (
+        <div className="flex justify-center items-center gap-3">
+          <div
+            className="tooltip tooltip-bottom"
+            data-tip={data?.is_active ? "Deactive Company" : "Active Company"}
+          >
+            <div
+              className="cursor-pointer text-xl w-1/2"
+              onClick={() => {
+                handleUpdateStatus(data!);
+              }}
+            >
+              {data?.is_active ? <IoMdUnlock /> : <IoMdLock />}
+            </div>
+          </div>
+          <div className="w-1/2">{data?.is_active ? "Active" : "Inactive"}</div>
+        </div>
+      ),
+    },
+    {
+      fieldId: "is_production_eligible",
+      label: "Production Eligible",
+      render: (data) => (
+        <div className="flex justify-center items-center gap-3">
+          <div
+            className="tooltip tooltip-bottom"
+            data-tip={
+              data?.is_production_eligible ? "Set not eligible" : "Set Eligible"
+            }
+          >
+            <div
+              className="cursor-pointer text-xl w-1/2"
+              onClick={() => handleUpdateEligibility(data!)}
+            >
+              {data?.is_production_eligible ? (
+                <MdOutlineVerified />
+              ) : (
+                <MdBlock />
+              )}
+            </div>
+          </div>
+          <div className="w-1/2">
+            {data?.is_production_eligible ? "Eligible" : "Not Eligible"}
+          </div>
+        </div>
+      ),
     },
     {
       fieldId: "payment",
@@ -57,9 +115,11 @@ const Company = () => {
       label: "Margin Share",
       render: (data) => (
         <div className="font-medium">
-          {data?.share !== 0
-            ? `Rp. ${rupiahFormatter(data?.share)} `
-            : `${data?.share_percentage}%`}
+          {data?.share !== 0 || data?.share_percentage !== 0
+            ? data?.share !== 0
+              ? `Rp. ${rupiahFormatter(data?.share)}`
+              : `${data?.share_percentage}%`
+            : `Rp. ${rupiahFormatter(data?.share)}`}
         </div>
       ),
     },
@@ -80,21 +140,25 @@ const Company = () => {
       fieldId: "id",
       label: "Action",
       render: (data) => (
-        <Dropdown horizontal="left" className="relative">
+        <Dropdown horizontal="left">
           <Dropdown.Toggle size="xs" button={false}>
             <Button size="xs" className="border-none p-0">
               <FiMoreHorizontal color="#27a590" size={24} />
             </Button>
           </Dropdown.Toggle>
-          <Dropdown.Menu className="absolute w-36 bg-white z-10">
-            <>
-              <Dropdown.Item
-                className="font-medium hover:bg-gray-300"
-                onClick={() => navigate(`/company/${data?.id}/edit`)}
-              >
-                <FiEdit /> Edit
-              </Dropdown.Item>
-            </>
+          <Dropdown.Menu className="w-36 bg-white z-50 -translate-y-9">
+            <Dropdown.Item
+              className="font-medium hover:bg-gray-300"
+              onClick={() => navigate(`/company/${data?.id}/edit`)}
+            >
+              <FiEdit /> Edit
+            </Dropdown.Item>
+            <Dropdown.Item
+              className="font-medium hover:bg-gray-300"
+              onClick={() => navigate(`/company/${data?.id}/detail`)}
+            >
+              <FiFileText /> Detail
+            </Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       ),
@@ -103,6 +167,30 @@ const Company = () => {
 
   const handlePageChange = (page: number): void => {
     setParams((prev) => ({ ...prev, page }));
+  };
+
+  const handleUpdateEligibility = async (company: CompanyI) => {
+    try {
+      await updateEligibility({
+        is_production_eligible: !company.is_production_eligible,
+        id: company.id,
+      }).unwrap();
+      refetch();
+    } catch (error) {
+      errorHandler(error);
+    }
+  };
+
+  const handleUpdateStatus = async (company: CompanyI) => {
+    try {
+      await updateStatus({
+        is_active: !company.is_active,
+        id: company.id,
+      }).unwrap();
+      refetch();
+    } catch (error) {
+      errorHandler(error);
+    }
   };
 
   return (
