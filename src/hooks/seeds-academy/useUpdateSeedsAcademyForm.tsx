@@ -14,7 +14,6 @@ import { uploadFile } from "services/modules/file";
 
 const useUpdateSeedsAcademyForm = (id: string) => {
   const navigate = useNavigate();
-  const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
   const [updateCategory] = useUpdateCategoryMutation();
   const { accessToken } = useAppSelector((state) => state.auth);
 
@@ -58,7 +57,6 @@ const useUpdateSeedsAcademyForm = (id: string) => {
 
   const create = async (data: CreateCategoryPayload) => {
     try {
-      setIsLoadingUpdate(true);
       const payload = {
         ...data,
         published_at: dateNow.toISOString(),
@@ -80,14 +78,11 @@ const useUpdateSeedsAcademyForm = (id: string) => {
       );
     } catch (error) {
       errorHandler(error);
-    } finally {
-      setIsLoadingUpdate(false);
     }
   };
 
   const draft = async (data: CreateCategoryPayload) => {
     try {
-      setIsLoadingUpdate(true);
       const payload = {
         ...data,
         published_at: dateNow.toISOString(),
@@ -109,8 +104,6 @@ const useUpdateSeedsAcademyForm = (id: string) => {
       );
     } catch (error) {
       errorHandler(error);
-    } finally {
-      setIsLoadingUpdate(false);
     }
   };
 
@@ -125,7 +118,6 @@ const useUpdateSeedsAcademyForm = (id: string) => {
     errors,
     setFocus,
     control,
-    isLoadingUpdate,
     watch,
   };
 };

@@ -19,6 +19,7 @@ import { FiEye } from "react-icons/fi";
 import { FiEyeOff } from "react-icons/fi";
 import { FiEdit } from "react-icons/fi";
 import { useUpdateStatusMutation } from "services/modules/seeds-academy";
+import { errorHandler } from "services/errorHandler";
 
 export const salRouteName = "seeds-academy-list";
 export default function SeedsAcademyList(): React.ReactElement {
@@ -44,7 +45,7 @@ export default function SeedsAcademyList(): React.ReactElement {
       });
       refetch;
     } catch (error) {
-      console.error("Error updating category status:", error);
+      errorHandler(error);
     }
   };
 

@@ -6,11 +6,24 @@ import UserControlPanel, {
   ucpRouteName,
 } from "pages/user/control-panel/control-panel.page";
 import Play, { playRouteName } from "pages/play/index.page";
-import SeedsAcademyList, { salRouteName } from "pages/seeds-academy/seeds-academy-list"
-import CreateSeedsAcademy, {csaRouteName} from "pages/seeds-academy/seeds-academy-list/main/create.page"
-import UpdateSeedsAcademy, {usaRouteName} from "pages/seeds-academy/seeds-academy-list/main/update.page"
-import DetailCategory, {dcRouteName} from "pages/seeds-academy/seeds-academy-list/main/detail.page"
-import CreateClass, {ccRouteName} from "pages/seeds-academy/seeds-academy-list/main/create-class.page"
+import SeedsAcademyList, {
+  salRouteName,
+} from "pages/seeds-academy/seeds-academy-list";
+import CreateSeedsAcademy, {
+  csaRouteName,
+} from "pages/seeds-academy/seeds-academy-list/main/create.page";
+import UpdateSeedsAcademy, {
+  usaRouteName,
+} from "pages/seeds-academy/seeds-academy-list/main/update.page";
+import DetailCategory, {
+  dcRouteName,
+} from "pages/seeds-academy/seeds-academy-list/main/detail.page";
+import CreateClass, {
+  ccRouteName,
+} from "pages/seeds-academy/seeds-academy-list/main/create-class.page";
+import SubcriptionPlan, {
+  spRouteName,
+} from "pages/seeds-academy/subcription-plan";
 import PlayDetail, { pdRouteName } from "pages/play/detail.page";
 import CreatePlay, { cpRouteName } from "pages/play/create.page";
 import WithdrawPlay, { wpRouteName } from "pages/play/withdraw.page";
@@ -76,11 +89,17 @@ import DetailEvent, {
 import OpenAccount, {
   openAccountRouteName,
 } from "pages/homepage-feature/open-account";
-import CreateOpenAccount, { cOpenAccountRouteName } from "pages/homepage-feature/open-account/create.page";
-import UpdateOpenAccount, { uOpenAccountRouteName } from "pages/homepage-feature/open-account/update.page";
+import CreateOpenAccount, {
+  cOpenAccountRouteName,
+} from "pages/homepage-feature/open-account/create.page";
+import UpdateOpenAccount, {
+  uOpenAccountRouteName,
+} from "pages/homepage-feature/open-account/update.page";
 import WithdrawQuiz, { withdrawQuizRouteName } from "pages/quiz/withdraw.page";
 import Company, { companyRouteName } from "pages/company/index.page";
-import SeedsCoinManagement,{ seedsCoinRouteName } from "pages/seeds-coin-management/index.page";
+import SeedsCoinManagement, {
+  seedsCoinRouteName,
+} from "pages/seeds-coin-management/index.page";
 
 const protectedRoutes: RouteObject[] = [
   { path: "", element: <Navigate to="/user/control-panel" /> },
@@ -158,7 +177,7 @@ const protectedRoutes: RouteObject[] = [
         children: [
           {
             path: salRouteName,
-            element: <SeedsAcademyList />
+            element: <SeedsAcademyList />,
           },
           {
             path: csaRouteName,
@@ -176,7 +195,11 @@ const protectedRoutes: RouteObject[] = [
             path: ccRouteName,
             element: <CreateClass />,
           },
-        ]
+          {
+            path: spRouteName,
+            element: <SubcriptionPlan />,
+          },
+        ],
       },
       {
         path: "quiz",
@@ -209,7 +232,7 @@ const protectedRoutes: RouteObject[] = [
         ],
       },
       { path: promoCodeRouteName, element: <PromoCode /> },
-      {path:seedsCoinRouteName, element:<SeedsCoinManagement/>},
+      { path: seedsCoinRouteName, element: <SeedsCoinManagement /> },
       { path: xpRouteName, element: <XPManagement /> },
       { path: afRouteName, element: <AdminFee /> },
       { path: companyRouteName, element: <Company /> },

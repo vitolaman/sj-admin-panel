@@ -26,6 +26,7 @@ import { CiFileOn } from "react-icons/ci";
 import { useUpdateStatusMutation } from "services/modules/seeds-academy";
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBinLine } from "react-icons/ri";
+import { errorHandler } from "services/errorHandler";
 
 export const ccRouteName = "seeds-academy-list/create-class";
 export default function CreateClass(): React.ReactElement {
@@ -58,7 +59,7 @@ export default function CreateClass(): React.ReactElement {
       await deleteClass({ id: id! });
       refetch();
     } catch (error) {
-      console.error("Failed to delete category:", error);
+      errorHandler(error)
     }
   };
   const [levelName, setLevelName] = useState<string>("");
@@ -105,7 +106,7 @@ export default function CreateClass(): React.ReactElement {
       });
       navigate(`/seeds-academy/seeds-academy-list`);
     } catch (error) {
-      console.error("Error updating category status:", error);
+      errorHandler(error)
     }
   };
 

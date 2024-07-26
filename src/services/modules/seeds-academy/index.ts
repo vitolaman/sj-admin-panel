@@ -1,14 +1,15 @@
 import {
-  SeedsAcademyListI,
   CreateClassPayloadRes,
-  CreateClassPayload,
   PatchPayload,
   GetClassByCatagoryRes,
   CreateCategoryPayloadRes,
-  CreateCategoryPayload,
   CreateCategoryReq,
   MainSeedsAcademyReq,
   MainSeedsAcademyRes,
+  MainSubcriptionRes,
+  MainSubcriptionReq,
+  CreateSubcriptionPayload,
+  SubcriptionById,
 } from "_interfaces/seeds-academy.interfaces";
 import { Api } from "services/api";
 import { errorHandler } from "services/errorHandler";
@@ -104,6 +105,55 @@ export const seedsAcademyApi = Api.injectEndpoints({
         };
       },
     }),
+    getSubscriptionList: build.query<MainSubcriptionRes, MainSubcriptionReq>({
+      query: (param: {
+        search: string;
+        status: string;
+        limit: number;
+        page: number;
+      }) => ({
+        url: `${process.env.REACT_APP_REST_HOST}/admin-academy/v1/subscription-config?search=${param.search}&status=${param.status}&limit=${param.limit}&page=${param.page}`,
+        method: "GET",
+      }),
+    }),
+    createSubscription: build.mutation<
+      MainSubcriptionRes,
+      { body: CreateSubcriptionPayload }
+    >({
+      query({ body }) {
+        return {
+          url: `${process.env.REACT_APP_REST_HOST}/admin-academy/v1/subscription-config`,
+          method: "POST",
+          body,
+        };
+      },
+    }),
+    deleteSubscription: build.mutation<void, { id: string }>({
+      query({ id }) {
+        return {
+          url: `${process.env.REACT_APP_REST_HOST}/admin-academy/v1/subscription-config/${id}`,
+          method: "DELETE",
+        };
+      },
+    }),
+    editSubscription: build.mutation<
+      MainSubcriptionRes,
+      { id: string; body: Partial<CreateSubcriptionPayload> }
+    >({
+      query({ id, body }) {
+        return {
+          url: `admin-academy/v1/subscription-config/${id}`,
+          method: "PATCH",
+          body,
+        };
+      },
+    }),
+    getSubscriptionById: build.query<SubcriptionById, string>({
+      query: (id) => ({
+        url: `admin-academy/v1/subscription-config/${id}`,
+        method: "GET",
+      }),
+    }),
   }),
   overrideExisting: false,
 });
@@ -119,6 +169,11 @@ export const {
   useUpdateStatusMutation,
   useDeleteCategoryMutation,
   useDeleteClassMutation,
+  useGetSubscriptionListQuery,
+  useCreateSubscriptionMutation,
+  useDeleteSubscriptionMutation,
+  useEditSubscriptionMutation,
+  useGetSubscriptionByIdQuery,
 } = seedsAcademyApi;
 
 const createClass = async (accessToken: string, formData: FormData) => {

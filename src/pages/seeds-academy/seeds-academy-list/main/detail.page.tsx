@@ -21,6 +21,7 @@ import { CiFileOn } from "react-icons/ci";
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBinLine } from "react-icons/ri";
 import UpdateClassPopUp from "./updateClassPopup";
+import { errorHandler } from "services/errorHandler";
 
 export const dcRouteName = "seeds-academy-list/detail/:id";
 export default function DetailCategory(): React.ReactElement {
@@ -56,7 +57,7 @@ export default function DetailCategory(): React.ReactElement {
       await deleteClass({ id: id! });
       refetch();
     } catch (error) {
-      console.error("Failed to delete category:", error);
+      errorHandler(error)
     }
   };
 
