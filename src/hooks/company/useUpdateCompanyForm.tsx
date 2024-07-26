@@ -3,20 +3,18 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { errorHandler } from "services/errorHandler";
 import { useState } from "react";
-import {
-  useGetCompanyByIdQuery,
-  useUpdateCompanyMutation,
-} from "services/modules/company";
+import { useUpdateCompanyMutation } from "services/modules/company";
 import { toast } from "react-toastify";
 import {
   UpdateCompanyForm,
   UpdateCompanyPayload,
 } from "_interfaces/company.interfaces";
+import { useNavigate } from "react-router-dom";
 
 const useUpdateCompanyForm = (id: string) => {
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
   const [updateCompany] = useUpdateCompanyMutation();
-  const { refetch } = useGetCompanyByIdQuery(id);
+  const navigate = useNavigate();
 
   const dateNow = new Date();
   const schema = yup.object().shape({
@@ -38,6 +36,7 @@ const useUpdateCompanyForm = (id: string) => {
     formState: { errors },
     control,
     setValue,
+    reset,
   } = useForm<UpdateCompanyForm>({
     mode: "onSubmit",
     resolver: yupResolver(schema),
@@ -53,11 +52,10 @@ const useUpdateCompanyForm = (id: string) => {
       const payload: UpdateCompanyPayload = {
         ...data,
         plan_sandbox_expiry_date: data.plan_expiry_date,
-        is_production_eligible: data.is_active,
       };
       await updateCompany({ id, body: payload }).unwrap();
-      // refetch();
       toast("Company setting updated");
+      navigate(-1);
     } catch (error) {
       errorHandler(error);
     } finally {
@@ -74,6 +72,7 @@ const useUpdateCompanyForm = (id: string) => {
     control,
     isLoadingUpdate,
     setValue,
+    reset,
   };
 };
 
