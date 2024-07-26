@@ -2,6 +2,7 @@ import ContentContainer from "components/container";
 import CurrencyInput from "components/currency-input";
 import CInput from "components/input";
 import MInput from "components/multi-input";
+import PercentageInput from "components/percentage-input";
 import { Loader } from "components/spinner/loader";
 import {
   marginShare,
@@ -12,6 +13,7 @@ import {
 import useUpdateCompanyForm from "hooks/company/useUpdateCompanyForm";
 import useRNCHelper from "hooks/shared/useRNCHelper";
 import moment from "moment";
+import { useEffect } from "react";
 import { Button } from "react-daisyui";
 import { Controller } from "react-hook-form";
 import { useParams } from "react-router-dom";
@@ -22,9 +24,34 @@ export const updateCompanyRouteName = ":id/edit";
 const UpdateCompany = () => {
   const params = useParams<{ id: string }>();
   const { data, isLoading } = useGetCompanyByIdQuery(params.id!);
-  const { select, handleSelectChange } = useRNCHelper();
-  const { handleUpdate, isLoadingUpdate, register, errors, control, setValue } =
-    useUpdateCompanyForm(params.id!);
+  const { select, setSelect, handleSelectChange } = useRNCHelper();
+  const {
+    handleUpdate,
+    isLoadingUpdate,
+    register,
+    errors,
+    control,
+    setValue,
+    reset,
+  } = useUpdateCompanyForm(params.id!);
+
+  useEffect(() => {
+    reset({
+      ...data,
+      plan_expiry_date: moment(data?.plan_expiry_date).format(
+        "YYYY-MM-DD HH:mm"
+      ),
+    });
+    setSelect((prev) => ({
+      ...prev,
+      is_active: data?.is_active,
+      share_option: data?.share !== 0 ? "share" : "share_percentage",
+      share: data?.share,
+      share_percentage: data?.share_percentage,
+      payment: data?.payment,
+      withdrawal: data?.withdrawal,
+    }));
+  }, [data, params.id]);
 
   return (
     <ContentContainer>
@@ -47,23 +74,6 @@ const UpdateCompany = () => {
                 <div className="flex flex-col gap-2">
                   <label className="font-semibold">Company Name</label>
                   <CInput value={data?.name} disabled />
-                </div>
-                <div className="flex flex-row justify-between items-center">
-                  <label className="font-semibold w-1/3">End Date</label>
-                  <Controller
-                    control={control}
-                    name="plan_expiry_date"
-                    render={({ field: { value, onChange } }) => (
-                      <CInput
-                        type="datetime-local"
-                        value={moment(value)
-                          .utc(true)
-                          .format("YYYY-MM-DD HH:mm")}
-                        onChange={onChange}
-                        error={errors?.plan_expiry_date}
-                      />
-                    )}
-                  />
                 </div>
               </div>
               <div className="border border-[#9B9B9B]"></div>
@@ -112,9 +122,9 @@ const UpdateCompany = () => {
                       name="share_percentage"
                       defaultValue={data?.share_percentage}
                       render={({ field: { onChange, value } }) => (
-                        <CInput
+                        <PercentageInput
                           value={value}
-                          onChange={(value) => onChange(value)}
+                          onValueChange={(value) => onChange(value)}
                           error={errors?.share_percentage}
                         />
                       )}
@@ -141,6 +151,13 @@ const UpdateCompany = () => {
                   setValue={setValue}
                   select={select?.withdrawal}
                   handleSelectChange={handleSelectChange}
+                  errors={errors}
+                />
+                <MInput
+                  label="Active Until"
+                  registerName="plan_expiry_date"
+                  register={register}
+                  type="datetime-local"
                   errors={errors}
                 />
               </div>
