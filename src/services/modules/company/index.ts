@@ -1,7 +1,12 @@
 import {
   CompanyI,
   GetCompanyParams,
-  GetCompanyResI,
+  GetCompanyRes,
+  GetTransactionHistoryRes,
+  GetTransactionHistoryParams,
+  GetSummaryReportByDateParams,
+  PeriodDataResult,
+  PeriodDateParams,
   SummaryReport,
   SummaryReportByDate,
   UpdateCompanyPayload,
@@ -10,7 +15,7 @@ import { Api } from "services/api";
 
 export const CompanyApi = Api.injectEndpoints({
   endpoints: (build) => ({
-    getCompanyList: build.query<GetCompanyResI, GetCompanyParams>({
+    getCompanyList: build.query<GetCompanyRes, GetCompanyParams>({
       query: (params) => {
         return {
           url: `/admin-portal/v1/company/list?page=${params.page}&limit=${params.limit}&search=${params.search}`,
@@ -59,6 +64,35 @@ export const CompanyApi = Api.injectEndpoints({
       query: (id) => `/admin-portal/v1/company/${id}/summary-report`,
       keepUnusedDataFor: 0,
     }),
+    getSummaryReportByDate: build.query<
+      SummaryReportByDate,
+      GetSummaryReportByDateParams
+    >({
+      query: (params) =>
+        `/admin-portal/v1/company/${params.id}/report?from=${params.start_date}&to=${params.end_date}`,
+      keepUnusedDataFor: 0,
+    }),
+    getIncomeReport: build.query<PeriodDataResult, PeriodDateParams>({
+      query: (params) =>
+        `/admin-portal/v1/company/${params.id}/income?frame=${params.frame}`,
+      keepUnusedDataFor: 0,
+    }),
+    getParticipantReport: build.query<PeriodDataResult, PeriodDateParams>({
+      query: (params) =>
+        `/admin-portal/v1/company/${params.id}/participant?frame=${params.frame}`,
+      keepUnusedDataFor: 0,
+    }),
+    GetTransactionHistory: build.query<
+      GetTransactionHistoryRes,
+      GetTransactionHistoryParams
+    >({
+      query: (params) => {
+        return {
+          url: `/admin-portal/v1/company/${params.id}/transactions?page=${params.page}&limit=${params.limit}`,
+        };
+      },
+      keepUnusedDataFor: 0,
+    }),
   }),
   overrideExisting: false,
 });
@@ -70,4 +104,8 @@ export const {
   useUpdateEligibilityMutation,
   useUpdateStatusMutation,
   useGetSummaryReportQuery,
+  useLazyGetSummaryReportByDateQuery,
+  useGetIncomeReportQuery,
+  useGetParticipantReportQuery,
+  useGetTransactionHistoryQuery,
 } = CompanyApi;
