@@ -100,14 +100,12 @@ const SummaryReport = ({ id }: { id: string }) => {
             bgcolor="bg-[#58A399]"
             title="Summary Income"
             amount={SummaryData?.income}
-            percentage={23}
             currency={true}
           />
           <SummaryCard
             bgcolor="bg-[#58A399]"
             title="Summary Income By Date"
             amount={summaryReportByDate?.data?.income}
-            percentage={-3}
             currency={true}
           />
         </div>
@@ -116,13 +114,11 @@ const SummaryReport = ({ id }: { id: string }) => {
             bgcolor="bg-[#3AC4A0]"
             title="Total Transaction"
             amount={SummaryData?.transaction}
-            percentage={23}
           />
           <SummaryCard
             bgcolor="bg-[#3AC4A0]"
             title="Total Transaction By Date"
             amount={summaryReportByDate?.data?.transaction}
-            percentage={-3}
           />
         </div>
         <div className="col-span-1 flex flex-col gap-4">
@@ -130,13 +126,11 @@ const SummaryReport = ({ id }: { id: string }) => {
             bgcolor="bg-[#106B6E]"
             title="Total Participant"
             amount={SummaryData?.participant}
-            percentage={23}
           />
           <SummaryCard
             bgcolor="bg-[#106B6E]"
             title="Total Participant By Date"
             amount={summaryReportByDate?.data?.participant}
-            percentage={23}
           />
         </div>
         <div className="col-span-1 flex flex-col gap-4">
@@ -144,13 +138,11 @@ const SummaryReport = ({ id }: { id: string }) => {
             bgcolor="bg-[#1A857D]"
             title="Total Quiz"
             amount={SummaryData?.quiz}
-            percentage={23}
           />
           <SummaryCard
             bgcolor="bg-[#1A857D]"
             title="Total Quiz By Date"
             amount={summaryReportByDate?.data?.quiz}
-            percentage={23}
           />
         </div>
         {IncomeLoading ? (

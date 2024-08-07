@@ -5,7 +5,7 @@ interface SummaryCardProps {
   bgcolor: string;
   title: string;
   amount?: number;
-  percentage?: number;
+  growthPercentage?: number;
   currency?: boolean;
 }
 
@@ -13,7 +13,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
   bgcolor,
   title,
   amount,
-  percentage,
+  growthPercentage,
   currency,
 }) => {
   return (
@@ -28,15 +28,15 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
             : amount
           : "-"}
       </div>
-      {percentage !== undefined && (
+      {growthPercentage !== undefined && (
         <div className="text-right text-[10px]">
           <span
             className={`font-bold text-base ${
-              percentage > 0 ? "text-[#FDD059]" : "text-[#DA2D1F]"
+              growthPercentage > 0 ? "text-[#FDD059]" : "text-[#DA2D1F]"
             }`}
           >
-            {percentage > 0 ? "+" : ""}
-            {percentage}%
+            {growthPercentage > 0 ? "+" : ""}
+            {growthPercentage}%
           </span>{" "}
           growth/lost
         </div>
