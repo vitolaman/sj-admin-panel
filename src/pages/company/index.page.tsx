@@ -115,11 +115,9 @@ const Company = () => {
       label: "Margin Share",
       render: (data) => (
         <div className="font-medium">
-          {data?.share !== 0 || data?.share_percentage !== 0
-            ? data?.share !== 0
-              ? `Rp. ${rupiahFormatter(data?.share)}`
-              : `${data?.share_percentage}%`
-            : `Rp. ${rupiahFormatter(data?.share)}`}
+          {data?.share_percentage === 0
+            ? `Rp. ${rupiahFormatter(data?.share)}`
+            : `${data?.share_percentage}%`}
         </div>
       ),
     },
