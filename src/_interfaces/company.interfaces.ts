@@ -4,7 +4,7 @@ export interface GetCompanyParams {
   search?: string;
 }
 
-export interface GetCompanyResI {
+export interface GetCompanyRes {
   data: CompanyI[];
   metadata: Metadata;
 }
@@ -55,3 +55,62 @@ export interface UpdateCompanyForm {
 }
 
 export type UpdateCompanyPayload = Omit<UpdateCompanyForm, "share_option">;
+
+export interface SummaryReport {
+  income: number;
+  transaction: number;
+  participant: number;
+  quiz: number;
+  transactions_detail?: TransactionStatus;
+}
+
+export type SummaryReportByDate = Omit<SummaryReport, "transactions_detail">;
+
+export interface GetSummaryReportByDateParams {
+  id: string;
+  start_date: string;
+  end_date: string;
+}
+
+export interface TransactionStatus {
+  success: number;
+  pending: number;
+  failed: number;
+}
+
+export interface GetTransactionHistoryParams {
+  id: string;
+  page: number;
+  limit: number;
+}
+
+export interface GetTransactionHistoryRes {
+  transactions: TransactionHistoryI[];
+  metadata: Metadata;
+}
+
+export interface TransactionHistoryI {
+  id: string;
+  user_id: string;
+  user_name: string;
+  item_id: string;
+  item_name: string;
+  transaction_status: string;
+  transaction_ref: string;
+  amount: number;
+  payment_method: string;
+  merchant_id: string;
+  payment_gateway: string;
+  va_number: string;
+  created_at: string;
+}
+
+export interface PeriodDateParams {
+  id: string;
+  frame: string;
+}
+
+export interface PeriodDataResult {
+  data: Record<string, number | null>;
+  total: number;
+}
