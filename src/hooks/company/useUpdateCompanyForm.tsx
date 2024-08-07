@@ -3,7 +3,10 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { errorHandler } from "services/errorHandler";
 import { useState } from "react";
-import { useUpdateCompanyMutation } from "services/modules/company";
+import {
+  useGetCompanyByIdQuery,
+  useUpdateCompanyMutation,
+} from "services/modules/company";
 import { toast } from "react-toastify";
 import {
   UpdateCompanyForm,
@@ -14,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 const useUpdateCompanyForm = (id: string) => {
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
   const [updateCompany] = useUpdateCompanyMutation();
+  const { refetch } = useGetCompanyByIdQuery(id);
   const navigate = useNavigate();
 
   const dateNow = new Date();
@@ -60,6 +64,7 @@ const useUpdateCompanyForm = (id: string) => {
       errorHandler(error);
     } finally {
       setIsLoadingUpdate(false);
+      refetch();
     }
   };
 
