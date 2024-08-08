@@ -40,7 +40,7 @@ const TransactionHistory = ({ id }: { id: string }) => {
       fieldId: "created_at",
       label: "Transaction Date",
       render: (item) => (
-        <div>{moment(item?.created_at).format("DD/MM/YYYY hh:mm")}</div>
+        <div>{moment(item?.created_at).format("DD/MM/YYYY HH:mm")}</div>
       ),
     },
     {
@@ -54,7 +54,15 @@ const TransactionHistory = ({ id }: { id: string }) => {
     {
       fieldId: "amount",
       label: "Amount",
-      render: (item) => <div>Rp. {rupiahFormatter(item?.amount)}</div>,
+      render: (item) => (
+        <div>
+          {item?.amount.toLocaleString("id-ID", {
+            style: "currency",
+            currency: "IDR",
+            maximumFractionDigits: 0,
+          })}
+        </div>
+      ),
     },
   ];
 

@@ -24,7 +24,11 @@ const SummaryCard: React.FC<SummaryCardProps> = ({
       <div className="font-semibold text-[28px]">
         {amount !== undefined
           ? currency
-            ? `Rp. ${rupiahFormatter(amount)}`
+            ? `${amount.toLocaleString("id-ID", {
+                style: "currency",
+                currency: "IDR",
+                maximumFractionDigits: 0,
+              })}`
             : amount
           : "-"}
       </div>

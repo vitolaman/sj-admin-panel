@@ -51,7 +51,13 @@ const BarLineChart: React.FC<BarLineChartProps> = ({ data, amountFormat }) => {
           <YAxis
             fontSize={10}
             tickFormatter={(value) =>
-              amountFormat ? `Rp. ${rupiahFormatter(value)}` : value
+              amountFormat
+                ? `${value.toLocaleString("id-ID", {
+                    style: "currency",
+                    currency: "IDR",
+                    maximumFractionDigits: 0,
+                  })}`
+                : value
             }
           />
           <Tooltip />
