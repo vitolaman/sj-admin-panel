@@ -124,7 +124,13 @@ const UpdateCompany = () => {
                       render={({ field: { onChange, value } }) => (
                         <PercentageInput
                           value={value}
-                          onValueChange={(value) => onChange(value)}
+                          onValueChange={(inputValue) => {
+                            let numericValue = parseFloat(inputValue ?? "0");
+                            if (numericValue > 100) {
+                              numericValue = 100;
+                            }
+                            onChange(numericValue.toString());
+                          }}
                           error={errors?.share_percentage}
                         />
                       )}
