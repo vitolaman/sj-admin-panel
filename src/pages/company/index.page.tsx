@@ -128,7 +128,7 @@ const Company = () => {
         <div className="flex flex-row gap-4 justify-center items-end">
           <div className="font-medium">
             {data?.is_active
-              ? moment(data.plan_expiry_date).format("DD/MM/YYYY hh:mm")
+              ? moment(data.plan_expiry_date).format("DD/MM/YYYY HH:mm")
               : "-"}
           </div>
         </div>
