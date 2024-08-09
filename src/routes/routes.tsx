@@ -275,6 +275,14 @@ const protectedRoutes: RouteObject[] = [
             path: uwbRouteName,
             element: <UpdateWelcomeBanner />,
           },
+          {
+            path: ubnRouteName,
+            element: <UpsertBlastNotif />,
+          },
+          {
+            path: `${ubnRouteName}/:id`,
+            element: <UpsertBlastNotif />,
+          },
         ],
       },
       {
