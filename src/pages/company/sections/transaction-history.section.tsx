@@ -1,4 +1,3 @@
-import { rupiahFormatter } from "_helper/formatters";
 import {
   GetTransactionHistoryParams,
   TransactionHistoryI,
