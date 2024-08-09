@@ -1,4 +1,3 @@
-import { GetSummaryReportByDateParams } from "_interfaces/company.interfaces";
 import BarLineChart from "components/b2b-company/BarLineChart";
 import PeriodeTime from "components/b2b-company/PeriodTime";
 import PieChartComponent from "components/b2b-company/PieChart";
@@ -11,7 +10,6 @@ import { FaChevronDown } from "react-icons/fa";
 import { MdDateRange } from "react-icons/md";
 import { toast } from "react-toastify";
 import {
-  useGetCompanyByIdQuery,
   useGetIncomeReportQuery,
   useGetParticipantReportQuery,
   useGetSummaryReportQuery,
@@ -19,17 +17,15 @@ import {
 } from "services/modules/company";
 
 const SummaryReport = ({ id }: { id: string }) => {
-  const [datePeriodLabel, setDatePeriodLabel] = useState<string>("Date");
-  const [incomePeriod, setIncomePeriod] = useState<string>("MONTHLY");
-  const [participantPeriod, setParticipantPeriod] = useState<string>("MONTHLY");
-
-  const { data: CompanyDetail } = useGetCompanyByIdQuery(id);
-
-  const summaryByDateParams: GetSummaryReportByDateParams = {
-    id: id,
-    start_date: moment(CompanyDetail?.created_at).format("YYYY-MM-DD"),
-    end_date: "",
-  };
+  const [dateLabels, setDateLabels] = useState({
+    fromDateLabel: "Start Date",
+    endDateLabel: "End Date",
+  });
+  const [dates, setDates] = useState({ startDate: "", endDate: "" });
+  const [periods, setPeriods] = useState({
+    incomePeriod: "MONTHLY",
+    participantPeriod: "MONTHLY",
+  });
 
   const { data: SummaryData, isLoading: SummaryLoading } =
     useGetSummaryReportQuery(id);
@@ -38,30 +34,57 @@ const SummaryReport = ({ id }: { id: string }) => {
     useLazyGetSummaryReportByDateQuery();
 
   const { data: IncomeData, isLoading: IncomeLoading } =
-    useGetIncomeReportQuery({ id: id, frame: incomePeriod });
+    useGetIncomeReportQuery({ id: id, frame: periods.incomePeriod });
 
   const { data: ParticipantData, isLoading: ParticipantLoading } =
-    useGetParticipantReportQuery({ id: id, frame: participantPeriod });
+    useGetParticipantReportQuery({ id: id, frame: periods.participantPeriod });
 
-  const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const endDate = moment(event?.target.value).format("YYYY-MM-DD");
-    setDatePeriodLabel(endDate);
-    getSummaryReportByDate({
-      ...summaryByDateParams,
-      end_date: endDate,
-    })
-      .unwrap()
-      .catch((error) => {
-        toast.error(error.data.message);
-      });
+  const handleDateChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    type: "start" | "end"
+  ) => {
+    const newDate = moment(event?.target.value).format(
+      "YYYY-MM-DDTHH:mm:ss[Z]"
+    );
+    const newLabel = moment(event?.target.value).format("YYYY-MM-DD");
+
+    if (type === "start") {
+      if (dates.endDate && moment(newDate).isAfter(dates.endDate)) {
+        toast.error("Start date cannot be later than end date");
+        return;
+      }
+      setDateLabels({ ...dateLabels, fromDateLabel: newLabel });
+      setDates({ ...dates, startDate: newDate });
+    } else {
+      if (dates.startDate && moment(newDate).isBefore(dates.startDate)) {
+        toast.error("End date cannot be earlier than start date");
+        return;
+      }
+      setDateLabels({ ...dateLabels, endDateLabel: newLabel });
+      setDates({ ...dates, endDate: newDate });
+    }
+
+    const isStartDateValid = type === "start" && newDate && dates.endDate;
+    const isEndDateValid = type === "end" && dates.startDate && newDate;
+
+    if (isStartDateValid || isEndDateValid) {
+      getSummaryReportByDate({
+        id: id,
+        start_date: type === "start" ? newDate : dates.startDate,
+        end_date: type === "end" ? newDate : dates.endDate,
+      })
+        .unwrap()
+        .catch((error) => {
+          toast.error(error?.data?.message);
+        });
+    }
   };
 
-  const handleIncomePeriodChange = (period: string) => {
-    setIncomePeriod(period);
-  };
-
-  const handleParticipantPeriodChange = (period: string) => {
-    setParticipantPeriod(period);
+  const handlePeriodChange = (
+    periodType: "income" | "participant",
+    period: string
+  ) => {
+    setPeriods({ ...periods, [`${periodType}Period`]: period });
   };
 
   const percent = SummaryData?.transactions_detail;
@@ -70,29 +93,54 @@ const SummaryReport = ({ id }: { id: string }) => {
     <>
       <div className="flex justify-between mb-10 items-center">
         <div className="font-semibold text-2xl">Company Detail Page</div>
-        <label
-          className="border rounded-xl relative w-48 bg-[#3AC4A0] text-white"
-          htmlFor="published_at"
-        >
-          <div className="flex items-center justify-between p-3">
-            <div className="flex items-center justify-center pe-5 font-semibold">
-              <MdDateRange size={25} className="mr-2" />
-              <div>{datePeriodLabel}</div>
+        <div className="flex items-center gap-4">
+          <label
+            className="border rounded-xl relative w-48 bg-[#3AC4A0] text-white"
+            htmlFor="started_at"
+          >
+            <div className="flex items-center justify-between p-3">
+              <div className="flex items-center justify-center pe-5 font-semibold">
+                <MdDateRange size={25} className="mr-2" />
+                <div>{dateLabels.fromDateLabel}</div>
+              </div>
+              <div>
+                <FaChevronDown />
+              </div>
             </div>
-            <div>
-              <FaChevronDown />
+            <div className="opacity-0 absolute top-0 right-0 w-48">
+              <CInput
+                type="date"
+                className="absolute top-0 right-0 w-48 cursor-pointer"
+                value={dates?.startDate}
+                onChange={(e) => handleDateChange(e, "start")}
+                onClick={(e) => e.currentTarget.showPicker()}
+              />
             </div>
-          </div>
-          <div className="opacity-0 absolute top-0 right-0 w-48">
-            <CInput
-              type="date"
-              className="absolute top-0 right-0 w-48 cursor-pointer"
-              value={summaryByDateParams?.end_date}
-              onChange={handleDateChange}
-              onClick={(e) => e.currentTarget.showPicker()}
-            />
-          </div>
-        </label>
+          </label>
+          <label
+            className="border rounded-xl relative w-48 bg-[#3AC4A0] text-white"
+            htmlFor="ended_at"
+          >
+            <div className="flex items-center justify-between p-3">
+              <div className="flex items-center justify-center pe-5 font-semibold">
+                <MdDateRange size={25} className="mr-2" />
+                <div>{dateLabels.endDateLabel}</div>
+              </div>
+              <div>
+                <FaChevronDown />
+              </div>
+            </div>
+            <div className="opacity-0 absolute top-0 right-0 w-48">
+              <CInput
+                type="date"
+                className="absolute top-0 right-0 w-48 cursor-pointer"
+                value={dates?.endDate}
+                onChange={(e) => handleDateChange(e, "end")}
+                onClick={(e) => e.currentTarget.showPicker()}
+              />
+            </div>
+          </label>
+        </div>
       </div>
       <div className="grid grid-cols-2 2xl:grid-cols-4 gap-4">
         <div className="col-span-1 flex flex-col gap-4">
@@ -152,9 +200,13 @@ const SummaryReport = ({ id }: { id: string }) => {
             <div className="bg-[#EDF0F3] p-3 rounded-xl">
               <div className="flex justify-between items-center px-4">
                 <div className="font-semibold text-2xl">Summary Income</div>
-                <PeriodeTime onPeriodChange={handleIncomePeriodChange} />
+                <PeriodeTime
+                  onPeriodChange={(period) =>
+                    handlePeriodChange("income", period)
+                  }
+                />
               </div>
-              <div className="h-[255px] 2xl:h-[500px] w-full">
+              <div className="h-[255px] 2xl:h-[505px] w-full">
                 <BarLineChart
                   data={IncomeData?.data || {}}
                   amountFormat={true}
@@ -235,7 +287,11 @@ const SummaryReport = ({ id }: { id: string }) => {
             <div className="bg-[#EDF0F3] p-3 rounded-xl">
               <div className="flex justify-between items-center px-2">
                 <div className="font-semibold text-2xl">Participants</div>
-                <PeriodeTime onPeriodChange={handleParticipantPeriodChange} />
+                <PeriodeTime
+                  onPeriodChange={(period) =>
+                    handlePeriodChange("participant", period)
+                  }
+                />
               </div>
               <div className="h-[255px] w-full">
                 <BarLineChart data={ParticipantData?.data || {}} />
