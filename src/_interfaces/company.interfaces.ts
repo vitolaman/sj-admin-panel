@@ -86,7 +86,7 @@ export interface GetTransactionHistoryParams {
 
 export interface GetTransactionHistoryRes {
   transactions: TransactionHistoryI[];
-  metadata: Metadata;
+  metadata: TransactionHistoryMetaData;
 }
 
 export interface TransactionHistoryI {
@@ -103,6 +103,13 @@ export interface TransactionHistoryI {
   payment_gateway: string;
   va_number: string;
   created_at: string;
+}
+
+export interface TransactionHistoryMetaData {
+  total: number;
+  current_page: number;
+  limit: number;
+  total_page: number;
 }
 
 export interface PeriodDateParams {

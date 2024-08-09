@@ -86,8 +86,8 @@ const TransactionHistory = ({ id }: { id: string }) => {
       </div>
       <div className="flex flex-col">
         <Pagination
-          currentPage={data?.metadata?.currentPage ?? 1}
-          totalPages={data?.metadata?.totalPage ?? 0}
+          currentPage={data?.metadata?.current_page ?? 1}
+          totalPages={data?.metadata?.total_page ?? 0}
           onPageChange={handlePageChange}
         />
       </div>
