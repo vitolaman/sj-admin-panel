@@ -88,6 +88,9 @@ import UpdateCompany, {
 import DetailCompany, {
   detailCompanyRouteName,
 } from "pages/company/detail.page";
+import UpsertBlastNotif, {
+  ubnRouteName,
+} from "pages/push-notification/blast-push-notification/upsert.page";
 
 const protectedRoutes: RouteObject[] = [
   { path: "", element: <Navigate to="/user/control-panel" /> },
