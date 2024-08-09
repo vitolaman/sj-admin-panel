@@ -47,7 +47,7 @@ const BarLineChart: React.FC<BarLineChartProps> = ({ data, amountFormat }) => {
           }}
         >
           <CartesianGrid stroke="#E0E0E0" />
-          <XAxis dataKey="name" scale="auto" fontSize={12} />
+          <XAxis dataKey="name" scale="auto" fontSize={10} />
           <YAxis
             fontSize={10}
             tickFormatter={(value) =>
@@ -61,7 +61,7 @@ const BarLineChart: React.FC<BarLineChartProps> = ({ data, amountFormat }) => {
             }
           />
           <Tooltip />
-          <Bar dataKey="total" barSize={25} fill="#1A857D" />
+          <Bar dataKey="total" barSize={24} fill="#1A857D" />
           <Line
             type="linear"
             dataKey="average"
