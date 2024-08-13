@@ -69,10 +69,24 @@ const OpenAccount = () => {
     {
       fieldId: "name",
       label: "Account Name",
+      render: (item) => (
+        <p className="font-poppins font-normal text-sm text-[#201B1C]">
+          {item?.name && item?.name.length > 40
+            ? `${item?.name.substring(0, 39)}...`
+            : item?.name}
+        </p>
+      ),
     },
     {
       fieldId: "external_url",
       label: "Register Link	",
+      render: (item) => (
+        <p className="font-poppins font-normal text-sm text-[#201B1C]">
+          {item?.external_url && item?.external_url.length > 40
+            ? `${item?.external_url.substring(0, 39)}...`
+            : item?.external_url}
+        </p>
+      ),
     },
     {
       fieldId: "is_active",
@@ -95,10 +109,7 @@ const OpenAccount = () => {
         const { status, color } = getStatusColor(!item?.is_active);
         return (
           <Dropdown horizontal="left">
-            <Dropdown.Toggle
-              size="xs"
-              button={false}
-            >
+            <Dropdown.Toggle size="xs" button={false}>
               <Button size="xs" className="border-none p-0">
                 <FiMoreHorizontal color="#27a590" size={20} />
               </Button>

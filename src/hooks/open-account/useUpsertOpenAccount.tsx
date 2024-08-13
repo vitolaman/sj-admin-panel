@@ -28,7 +28,7 @@ const useUpsertOpenAccount = (id?: string) => {
     description: yup
       .string()
       .required("Description cannot empty")
-      .max(200, "Description cannot be more than 200 characters"),
+      .max(1500, "Description cannot be more than 1500 characters"),
   });
 
   const defaultValues = {
