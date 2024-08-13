@@ -1,14 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ContentContainer from "components/container";
-import { Button, FileInput, Modal, Tooltip } from "react-daisyui";
+import { Button, Dropdown } from "react-daisyui";
 import { Columns, Table } from "components/table/table";
-import { IoClose } from "react-icons/io5";
-import { HiOutlineClipboardDocumentList } from "react-icons/hi2";
-import { Controller } from "react-hook-form";
-import Select from "components/select";
-import CInput from "components/input";
-import { errorHandler } from "services/errorHandler";
-import { toast } from "react-toastify";
 import {
   useGetCompanyListQuery,
   useUpdateEligibilityMutation,
@@ -17,42 +10,33 @@ import {
 import Pagination from "components/table/pagination";
 import { CompanyI, GetCompanyParams } from "_interfaces/company.interfaces";
 import moment from "moment";
-import {
-  MdBlock,
-  MdEdit,
-  MdLock,
-  MdLockOpen,
-  MdVerified,
-} from "react-icons/md";
-import useUpdateCompanyForm from "hooks/company/useUpdateCompanyForm";
-
-export const companyRouteName = "company";
+import { FiEdit, FiFileText, FiMoreHorizontal } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
+import SearchInput from "components/search-input";
+import { rupiahFormatter } from "_helper/formatters";
+import { IoMdLock, IoMdUnlock } from "react-icons/io";
+import { MdBlock, MdOutlineVerified } from "react-icons/md";
+import { errorHandler } from "services/errorHandler";
 
 const Company = () => {
-  const [dateModal, setDateModal] = useState<{
-    show: boolean;
-    company?: CompanyI;
-  }>({ show: false });
   const [params, setParams] = useState<GetCompanyParams>({
     page: 1,
     limit: 10,
+    search: "",
   });
   const { data, isLoading, refetch } = useGetCompanyListQuery(params);
-  const {
-    isLoadingUpdate,
-    updateExpiryState,
-    register,
-    errors,
-    handleUpdate,
-    reset,
-  } = useUpdateCompanyForm(dateModal?.company?.id);
-  const [udpateStatus] = useUpdateStatusMutation();
-  const [udpateEligibility] = useUpdateEligibilityMutation();
+  const [updateStatus] = useUpdateStatusMutation();
+  const [updateEligibility] = useUpdateEligibilityMutation();
+  const navigate = useNavigate();
 
   const header: Columns<CompanyI>[] = [
     {
       fieldId: "index",
       label: "No",
+    },
+    {
+      fieldId: "id",
+      label: "ID Company",
     },
     {
       fieldId: "name",
@@ -62,24 +46,21 @@ const Company = () => {
       fieldId: "is_active",
       label: "Status",
       render: (data) => (
-        <div className="flex flex-row gap-4 justify-center items-end">
-          <Tooltip
-            position="bottom"
-            message={
-              data?.is_active ? "Deactivate Company" : "Activate Company"
-            }
-            color="error"
+        <div className="flex justify-center items-center gap-3">
+          <div
+            className="tooltip tooltip-bottom"
+            data-tip={data?.is_active ? "Deactive Company" : "Active Company"}
           >
-            <Button
+            <div
+              className="cursor-pointer text-xl w-1/2"
               onClick={() => {
                 handleUpdateStatus(data!);
               }}
-              size="xs"
             >
-              {data?.is_active ? <MdLock /> : <MdLockOpen />}
-            </Button>
-          </Tooltip>
-          <div>{data?.is_active ? "Active" : "Inactive"}</div>
+              {data?.is_active ? <IoMdUnlock /> : <IoMdLock />}
+            </div>
+          </div>
+          <div className="w-1/2">{data?.is_active ? "Active" : "Inactive"}</div>
         </div>
       ),
     },
@@ -87,24 +68,56 @@ const Company = () => {
       fieldId: "is_production_eligible",
       label: "Production Eligible",
       render: (data) => (
-        <div className="flex flex-row gap-4 justify-center items-end">
-          <Tooltip
-            position="bottom"
-            message={data?.is_active ? "Set not eligible" : "Set Eligible"}
-            color="error"
+        <div className="flex justify-center items-center gap-3">
+          <div
+            className="tooltip tooltip-bottom"
+            data-tip={
+              data?.is_production_eligible ? "Set not eligible" : "Set Eligible"
+            }
           >
-            <Button
-              size="xs"
-              onClick={() => {
-                handleUpdateEligibility(data!);
-              }}
+            <div
+              className="cursor-pointer text-xl w-1/2"
+              onClick={() => handleUpdateEligibility(data!)}
             >
-              {data?.is_active ? <MdBlock /> : <MdVerified />}
-            </Button>
-          </Tooltip>
-          <div>
+              {data?.is_production_eligible ? (
+                <MdOutlineVerified />
+              ) : (
+                <MdBlock />
+              )}
+            </div>
+          </div>
+          <div className="w-1/2">
             {data?.is_production_eligible ? "Eligible" : "Not Eligible"}
           </div>
+        </div>
+      ),
+    },
+    {
+      fieldId: "payment",
+      label: "Payment Status",
+      render: (data) => (
+        <div className="font-medium">
+          {data?.payment ? "Active" : "Inactive"}
+        </div>
+      ),
+    },
+    {
+      fieldId: "withdrawal",
+      label: "Withdrawal Status",
+      render: (data) => (
+        <div className="font-medium">
+          {data?.withdrawal ? "Active" : "Inactive"}
+        </div>
+      ),
+    },
+    {
+      fieldId: "share",
+      label: "Margin Share",
+      render: (data) => (
+        <div className="font-medium">
+          {data?.share_percentage === 0
+            ? `Rp. ${rupiahFormatter(data?.share)}`
+            : `${data?.share_percentage}%`}
         </div>
       ),
     },
@@ -113,35 +126,50 @@ const Company = () => {
       label: "Active Until",
       render: (data) => (
         <div className="flex flex-row gap-4 justify-center items-end">
-          <div>
+          <div className="font-medium">
             {data?.is_active
-              ? moment(data.plan_expiry_date).format("D MMM YYYY")
+              ? moment(data.plan_expiry_date).format("DD/MM/YYYY HH:mm")
               : "-"}
           </div>
-          <Button
-            onClick={() => {
-              setDateModal({ show: true, company: data });
-              reset({
-                production_expiration_date: moment(
-                  data?.plan_expiry_date,
-                ).format("YYYY-MM-DD"),
-                sandbox_expiration_date: moment(
-                  data?.plan_sandbox_expiry_date,
-                ).format("YYYY-MM-DD"),
-              });
-            }}
-            size="xs"
-          >
-            <MdEdit />
-          </Button>
         </div>
+      ),
+    },
+    {
+      fieldId: "id",
+      label: "Action",
+      render: (data) => (
+        <Dropdown horizontal="left">
+          <Dropdown.Toggle size="xs" button={false}>
+            <Button size="xs" className="border-none p-0">
+              <FiMoreHorizontal color="#27a590" size={24} />
+            </Button>
+          </Dropdown.Toggle>
+          <Dropdown.Menu className="w-36 bg-white z-50 -translate-y-9">
+            <Dropdown.Item
+              className="font-medium hover:bg-gray-300"
+              onClick={() => navigate(`/company/${data?.id}/edit`)}
+            >
+              <FiEdit /> Edit
+            </Dropdown.Item>
+            <Dropdown.Item
+              className="font-medium hover:bg-gray-300"
+              onClick={() => navigate(`/company/${data?.id}/detail`)}
+            >
+              <FiFileText /> Detail
+            </Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
       ),
     },
   ];
 
+  const handlePageChange = (page: number): void => {
+    setParams((prev) => ({ ...prev, page }));
+  };
+
   const handleUpdateEligibility = async (company: CompanyI) => {
     try {
-      await udpateEligibility({
+      await updateEligibility({
         is_production_eligible: !company.is_production_eligible,
         id: company.id,
       }).unwrap();
@@ -153,7 +181,7 @@ const Company = () => {
 
   const handleUpdateStatus = async (company: CompanyI) => {
     try {
-      await udpateStatus({
+      await updateStatus({
         is_active: !company.is_active,
         id: company.id,
       }).unwrap();
@@ -163,22 +191,17 @@ const Company = () => {
     }
   };
 
-  const handlePageChange = (page: number): void => {
-    setParams((prev) => ({ ...prev, page }));
-  };
-
-  useEffect(() => {
-    if (updateExpiryState.isSuccess) {
-      setDateModal({ show: false });
-      refetch();
-    }
-  }, [updateExpiryState]);
-
   return (
     <>
       <ContentContainer>
         <div className="w-full flex flex-row justify-between items-center">
           <h1 className="font-semibold text-2xl">Company List</h1>
+          <SearchInput
+            placeholder="Search"
+            onSubmit={({ text }) => {
+              setParams((prev) => ({ ...prev, search: text }));
+            }}
+          />
         </div>
         <div className="mt-4 max-w-full overflow-x-auto overflow-y-hidden border border-[#BDBDBD] rounded-lg">
           <Table<CompanyI>
@@ -195,64 +218,8 @@ const Company = () => {
           />
         </div>
       </ContentContainer>
-
-      <Modal
-        className="bg-white w-2/3 max-w-[900px]"
-        open={dateModal.show}
-      >
-        <form onSubmit={handleUpdate}>
-          <Modal.Header className="flex flex-row justify-between">
-            Update Expiry Date
-            <IoClose onClick={() => setDateModal({ show: false })} />
-          </Modal.Header>
-          <Modal.Body className="overflow-scroll px-2">
-            <div className="flex flex-col gap-5">
-              <div className="flex flex-col gap-2">
-                <label className="font-semibold">
-                  Production Expiration Date
-                </label>
-                <CInput
-                  type="date"
-                  {...register("production_expiration_date")}
-                  error={errors.production_expiration_date}
-                />
-              </div>
-            </div>
-            <div className="flex flex-col gap-5">
-              <div className="flex flex-col gap-2">
-                <label className="font-semibold">Sandbox Expiration Date</label>
-                <CInput
-                  type="date"
-                  {...register("sandbox_expiration_date")}
-                  error={errors.sandbox_expiration_date}
-                />
-              </div>
-            </div>
-          </Modal.Body>
-          <Modal.Actions>
-            <Button
-              type="reset"
-              className="border-seeds text-seeds rounded-full px-10"
-              onClick={() => {
-                setDateModal({ show: false });
-              }}
-              loading={isLoadingUpdate}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              className="bg-seeds hover:bg-seeds-300 border-seeds hover:border-seeds-300 text-white rounded-full px-10"
-              loading={isLoadingUpdate}
-            >
-              Save
-            </Button>
-          </Modal.Actions>
-        </form>
-      </Modal>
     </>
   );
 };
 
 export default Company;
-

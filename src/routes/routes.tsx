@@ -78,10 +78,16 @@ import UpdateOpenAccount, {
   uOpenAccountRouteName,
 } from "pages/homepage-feature/open-account/update.page";
 import WithdrawQuiz, { withdrawQuizRouteName } from "pages/quiz/withdraw.page";
-import Company, { companyRouteName } from "pages/company/index.page";
+import Company from "pages/company/index.page";
 import SeedsCoinManagement, {
   seedsCoinRouteName,
 } from "pages/seeds-coin-management/index.page";
+import UpdateCompany, {
+  updateCompanyRouteName,
+} from "pages/company/update.page";
+import DetailCompany, {
+  detailCompanyRouteName,
+} from "pages/company/detail.page";
 import UpsertBlastNotif, {
   ubnRouteName,
 } from "pages/push-notification/blast-push-notification/upsert.page";
@@ -191,7 +197,14 @@ const protectedRoutes: RouteObject[] = [
       { path: seedsCoinRouteName, element: <SeedsCoinManagement /> },
       { path: xpRouteName, element: <XPManagement /> },
       { path: afRouteName, element: <AdminFee /> },
-      { path: companyRouteName, element: <Company /> },
+      {
+        path: "company",
+        children: [
+          { path: "", element: <Company /> },
+          { path: updateCompanyRouteName, element: <UpdateCompany /> },
+          { path: detailCompanyRouteName, element: <DetailCompany /> },
+        ],
+      },
       { path: "dashboard", element: <DashboardHome /> },
       {
         path: "circle",
