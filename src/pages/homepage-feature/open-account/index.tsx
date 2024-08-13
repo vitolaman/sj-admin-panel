@@ -108,7 +108,7 @@ const OpenAccount = () => {
       render: (item) => {
         const { status, color } = getStatusColor(!item?.is_active);
         return (
-          <Dropdown horizontal="left">
+          <Dropdown horizontal="left" vertical="top">
             <Dropdown.Toggle size="xs" button={false}>
               <Button size="xs" className="border-none p-0">
                 <FiMoreHorizontal color="#27a590" size={20} />

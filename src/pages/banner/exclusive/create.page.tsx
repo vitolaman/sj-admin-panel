@@ -184,7 +184,7 @@ const CreateExclussiveBanner = () => {
               className="
               text-sm text-[#3C49D6] font-normal mb-6"
             >
-              *Maximal 200 Characters
+              *Maximal 500 Characters
             </div>
           </div>
           <div data-color-mode="light" className="flex flex-col gap-2">
@@ -208,7 +208,7 @@ const CreateExclussiveBanner = () => {
               className="
               text-sm text-[#3C49D6] font-normal mb-6"
             >
-              *Maximal 200 Characters
+              *Maximal 1500 Characters
             </div>
           </div>
         </div>
