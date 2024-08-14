@@ -1,6 +1,6 @@
 import MDEditor, { commands } from "@uiw/react-md-editor";
 import { OptChild, PaymentChannelOpt } from "_interfaces/admin-fee.interfaces";
-import { EditQuizPayload } from "_interfaces/quiz.interfaces";
+import { QuizPayload } from "_interfaces/quiz.interfaces";
 import ContentContainer from "components/container";
 import CurrencyInput from "components/currency-input";
 import CInput from "components/input";
@@ -14,6 +14,7 @@ import moment from "moment";
 import { useEffect, useState } from "react";
 import { Button, FileInput } from "react-daisyui";
 import { Controller, useFieldArray } from "react-hook-form";
+import { IoIosCloseCircleOutline } from "react-icons/io";
 import { useNavigate, useParams } from "react-router-dom";
 import ReactSelect, { GroupBase } from "react-select";
 import { useGetPaymentChannelQuery } from "services/modules/admin-fee";
@@ -22,6 +23,7 @@ import {
   useGetQuizByIdQuery,
   useGetQuizCategoriesQuery,
 } from "services/modules/quiz";
+import { IoAdd } from "react-icons/io5";
 
 export const uqRouteName = ":id/edit";
 const UpdateQuiz = () => {
@@ -68,6 +70,10 @@ const UpdateQuiz = () => {
   const { fields: fieldsPayment, append: appendPayment } = useFieldArray({
     control,
     name: "payment_method",
+  });
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "prizes",
   });
 
   const banner = watch("banner.image_link");
@@ -118,7 +124,7 @@ const UpdateQuiz = () => {
   }, [promoCodeState.data]);
 
   useEffect(() => {
-    const firstError = Object.keys(errors)[0] as keyof EditQuizPayload;
+    const firstError = Object.keys(errors)[0] as keyof QuizPayload;
     if (firstError) {
       setFocus(firstError);
       const element = errors[firstError]?.ref;
@@ -231,13 +237,18 @@ const UpdateQuiz = () => {
         }
       });
       setPaymentChannelOpt(tempOpt);
-      selectedEWallet = selectedEWallet.filter(item => item != undefined);
-      selectedBank = selectedBank.filter(item => item != undefined);
-      selectedQris = selectedQris.filter(item => item != undefined);
+      selectedEWallet = selectedEWallet.filter((item) => item != undefined);
+      selectedBank = selectedBank.filter((item) => item != undefined);
+      selectedQris = selectedQris.filter((item) => item != undefined);
       setPaymentChannelOpt(tempOpt);
 
       reset({
         ...data,
+        prizes: data.prizes?.map((item) => {
+          return {
+            prize: item,
+          };
+        }),
         payment_method: [...selectedEWallet, ...selectedBank, ...selectedQris],
       });
     } else {
@@ -568,24 +579,61 @@ const UpdateQuiz = () => {
           </div>
           <div className="flex flex-col gap-2">
             <label className="font-semibold">Winner</label>
-            {[0, 1, 2].map((item, i) => (
+            {fields.map((item, i) => (
               <div className="grid grid-cols-3 items-center gap-4">
                 <div className="font-semibold text-sm">Rank {i + 1}</div>
-                <div className="text-center col-span-2">
-                  <Controller
-                    control={control}
-                    name={`prizes.${i}`}
-                    render={({ field: { onChange, value } }) => (
-                      <CurrencyInput
-                        value={value}
-                        onValueChange={(value) => onChange(value)}
-                      />
-                    )}
-                  />
-                  <ValidationError error={errors?.prizes?.[i]} />
+                <div className="text-center col-span-2 flex gap-2">
+                  <div className="flex flex-col">
+                    <Controller
+                      control={control}
+                      name={`prizes.${i}.prize`}
+                      defaultValue={data?.prizes?.[i]}
+                      render={({ field: { onChange, value } }) => (
+                        <CurrencyInput
+                          value={value}
+                          onValueChange={(value) => onChange(value)}
+                        />
+                      )}
+                    />
+                    <ValidationError error={errors?.prizes?.[i]?.prize} />
+                  </div>
+                  <div
+                    className={`${
+                      fields.length < 4 ? "hidden" : "block"
+                    } flex items-center`}
+                  >
+                    <IoIosCloseCircleOutline
+                      onClick={() => {
+                        remove(i);
+                      }}
+                      className="text-2xl text-red-700 transform scale-100 hover:scale-125 transition-transform duration-300 cursor-pointer"
+                    />
+                  </div>
                 </div>
               </div>
             ))}
+            {fields.length !== 10 ? (
+              <div className="grid grid-cols-4">
+                <div className="col-span-2" />
+                <div className="col-span-2">
+                  <Button
+                    variant="outline"
+                    className="border-seeds text-white bg-seeds rounded-full px-6 !w-full"
+                    onClick={() => {
+                      append({
+                        prize: 0,
+                      });
+                    }}
+                    loading={isLoading}
+                    type="button"
+                  >
+                    <IoAdd size={20} /> Add More Winner
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <p className="text-red-500">Maximum 10 winners allowed.</p>
+            )}
           </div>
           <div data-color-mode="light" className="flex flex-col gap-2">
             <label className="font-semibold">

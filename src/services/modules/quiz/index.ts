@@ -5,13 +5,15 @@ import {
   QuizCategoryRes,
 } from "_interfaces/quiz-category.interfaces";
 import {
-  CreateQuizPayload,
-  EditQuizPayload,
   GetQuizQuery,
   QuizI,
+  QuizPayload,
   QuizRes,
 } from "_interfaces/quiz.interfaces";
-import { QuestionBankRes, GetQuestionBankQuery } from "_interfaces/question-bank.interfaces";
+import {
+  QuestionBankRes,
+  GetQuestionBankQuery,
+} from "_interfaces/question-bank.interfaces";
 import { Api } from "services/api";
 
 export const quizApi = Api.injectEndpoints({
@@ -33,7 +35,7 @@ export const quizApi = Api.injectEndpoints({
         };
       },
     }),
-    updateQuiz: build.mutation<void, { id: string; body: EditQuizPayload }>({
+    updateQuiz: build.mutation<void, { id: string; body: QuizPayload }>({
       query({ id, body }) {
         return {
           url: `quiz/v1/${id}/update`,
@@ -42,7 +44,7 @@ export const quizApi = Api.injectEndpoints({
         };
       },
     }),
-    createQuiz: build.mutation<void, CreateQuizPayload>({
+    createQuiz: build.mutation<void, QuizPayload>({
       query(body) {
         return {
           url: `quiz/v1/create`,
@@ -128,5 +130,5 @@ export const {
   useDeleteQuizCategoryMutation,
   usePriorityQuizMutation,
   useGetQuestionBankListQuery,
-  useDeleteQuestionBankMutation
+  useDeleteQuestionBankMutation,
 } = quizApi;
