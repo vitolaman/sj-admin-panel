@@ -21,6 +21,8 @@ const SeedsCoinForm = ({ data, open, setOpen, refetch }: SeedsCoinModal) => {
     loading,
     setValue,
     trigger,
+    control,
+    watch,
   } = useUpdateSeedsCoinManagementForm();
   const handleResetForm = () => {
     if (data) {
@@ -28,7 +30,10 @@ const SeedsCoinForm = ({ data, open, setOpen, refetch }: SeedsCoinModal) => {
         ...data,
         coin_value: data.coins,
         started_at: moment(data.started_at).format("YYYY-MM-DD hh:mm"),
-        expired_at: data.expired_at===undefined?null:moment(data.expired_at).format("YYYY-MM-DD hh:mm"),
+        expired_at:
+          data.expired_at === undefined
+            ? null
+            : moment(data.expired_at).format("YYYY-MM-DD hh:mm"),
       });
     }
   };
@@ -44,16 +49,14 @@ const SeedsCoinForm = ({ data, open, setOpen, refetch }: SeedsCoinModal) => {
       setSelect((prev) => ({
         ...prev,
         is_active: data.is_active,
-        expired_at:data.expired_at===undefined?null:data.expired_at
+        expired_at: data.expired_at === undefined ? null : data.expired_at,
       }));
     }
   }, [data]);
   return (
     <Modal open={open} className="bg-white w-11/12 max-w-[2000px] p-4 md:p-8">
       <Modal.Header className="flex justify-between">
-        <p
-          className="font-semibold font-poppins text-xl text-black w-fit"
-        >
+        <p className="font-semibold font-poppins text-xl text-black w-fit">
           Detail Activity
         </p>
         <FiX
@@ -79,7 +82,8 @@ const SeedsCoinForm = ({ data, open, setOpen, refetch }: SeedsCoinModal) => {
               label="Coin Value"
               type="number"
               registerName="coin_value"
-              register={register}
+              control={control}
+              watch={watch}
               errors={errors}
             />
           </div>
@@ -92,7 +96,6 @@ const SeedsCoinForm = ({ data, open, setOpen, refetch }: SeedsCoinModal) => {
               data={status}
               select={select?.is_active}
               handleSelectChange={handleSelectChange}
-              register={register}
             />
             <div className="flex flex-col lg:flex-row gap-4 w-full">
               <MInput<SeedsCoinManagementReq>
@@ -121,7 +124,6 @@ const SeedsCoinForm = ({ data, open, setOpen, refetch }: SeedsCoinModal) => {
               select={select?.expired_at}
               setValue={setValue}
               handleSelectChange={handleSelectChange}
-              register={register}
             />
           </div>
         </div>

@@ -19,7 +19,7 @@ const useUpsertCodeForm = () => {
     promo_code: yup
       .string()
       .matches(
-        /^[^a-z\s]*$/,
+        /^[A-Z0-9]+$/,
         "Promo code cannot contain lowercase letters or spaces"
       )
       .required("Promo Code name cannot empty"),
