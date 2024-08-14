@@ -32,11 +32,11 @@ const useUpdateExclusiveBannerForm = (id: string) => {
     description: yup
       .string()
       .required("Description cannot empty")
-      .max(30, "Description cannot more than 200 char"),
+      .max(500, "Description cannot more than 500 char"),
     tnc: yup
       .string()
       .required("Terms and Condition cannot empty")
-      .max(30, "Terms and Condition cannot more than 200 char"),
+      .max(1500, "Terms and Condition cannot more than 1500 char"),
   });
 
   const {
