@@ -42,11 +42,11 @@ export default function BlastPushNotification(): React.ReactElement {
   const { data, isLoading } = usePushNotifListQuery(searchParams);
 
   const handleCreateBlastPush = (): void => {
-    void push("/push-notification/blast-push/createBlastPush");
+    void push("/push-notification/blast/upsert");
   };
 
   const handleEditBlastNotif = (id: string): void => {
-    void push(`/push-notification/blast-push/editBlastPush?id=${id}`);
+    void push(`/push-notification/blast/upsert/${id}`);
   };
 
   const handleClosePopup = () => {
@@ -149,21 +149,6 @@ export default function BlastPushNotification(): React.ReactElement {
               </Button>
             </MenuHandler>
             <MenuList placeholder={""}>
-              <MenuItem
-                placeholder={""}
-                className="p-0 w-36"
-                onClick={() => {
-                  void handleEditBlastNotif(data?.id as string);
-                }}
-              >
-                <label
-                  htmlFor="item-1"
-                  className="flex cursor-pointer items-center gap-2 p-2"
-                >
-                  <BsEye className="me-3 my-auto" size={20} />
-                  See Detail
-                </label>
-              </MenuItem>
               <MenuItem
                 placeholder={""}
                 className="p-0"

@@ -167,7 +167,9 @@ const DetailEvent = () => {
         );
         return (
           <p className="text-center font-normal font-poppins text-sm text-[#201B1C]">
-            {item?.check_out_time === "0001-01-01T00:00:00Z" ? '-' : `${day.replace(",", "")} ${month} ${year} ${hours}:${minutes}`}
+            {item?.check_out_time === "0001-01-01T00:00:00Z"
+              ? "-"
+              : `${day.replace(",", "")} ${month} ${year} ${hours}:${minutes}`}
           </p>
         );
       },

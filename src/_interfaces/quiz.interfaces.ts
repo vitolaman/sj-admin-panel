@@ -33,6 +33,7 @@ export interface QuizI {
   ended_at: string;
   created_at: string;
   payment_method: string[];
+  prizes: number[];
   tnc: {
     en: string;
     id: string;
@@ -50,7 +51,7 @@ export interface Meta {
   total: number;
 }
 
-export interface CreateQuizPayload {
+export interface QuizForm {
   name: string;
   tnc: { id: string; en: string };
   category: string;
@@ -62,7 +63,7 @@ export interface CreateQuizPayload {
   published_at: string;
   started_at: string;
   ended_at: string;
-  prizes: number[];
+  prizes: { prize: number }[];
   communities: {
     image_url: string;
     image_link: string | FileList;
@@ -96,45 +97,6 @@ export interface CreateQuizPayload {
   payment_method: string[] | OptChild[];
 }
 
-export interface EditQuizPayload {
-  name: string;
-  tnc: { id: string; en: string };
-  category: string;
-  min_participant: number;
-  max_participant: number;
-  duration_in_minute: number;
-  admission_fee: number;
-  is_recommended: boolean;
-  published_at: string;
-  started_at: string;
-  ended_at: string;
+export interface QuizPayload extends Omit<QuizForm, "prizes"> {
   prizes: number[];
-  communities: {
-    image_url: string;
-    image_link: string | FileList;
-  };
-  sponsors: {
-    image_url: string;
-    image_link: string | FileList;
-  };
-  banner: {
-    image_url: string;
-    image_link: string | FileList;
-  };
-  lifelines: [
-    {
-      name: string;
-      price: number;
-    },
-    {
-      name: string;
-      price: number;
-    },
-    {
-      name: string;
-      price: number;
-    }
-  ];
-  total_questions: number;
-  payment_method: string[] | GroupBase<OptChild>[];
 }

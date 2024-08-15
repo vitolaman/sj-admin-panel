@@ -10,7 +10,7 @@ type InputProps = {
   placeholder?: string;
 };
 
-const CurrencyInput = ({
+const PercentageInput = ({
   value,
   onValueChange,
   error,
@@ -21,9 +21,8 @@ const CurrencyInput = ({
     <div className="w-full">
       <Input
         className="input w-full input-bordered focus:outline-offset-0"
-        decimalsLimit={0}
-        allowDecimals={false}
-        prefix="Rp "
+        decimalsLimit={2}
+        suffix="%"
         value={value}
         onValueChange={onValueChange}
         disabled={disabled}
@@ -34,4 +33,4 @@ const CurrencyInput = ({
   );
 };
 
-export default CurrencyInput;
+export default PercentageInput;
