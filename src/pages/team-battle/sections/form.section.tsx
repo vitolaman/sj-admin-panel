@@ -8,7 +8,7 @@ import TBCategoryModal from "./category.section";
 import { Loader } from "components/spinner/loader";
 import FirstModal from "./firstModal.section";
 import SecondModal from "./secondModal.section";
-import useMultiCrop from "./useMultiCrop";
+import useMultiCrop from "../../../hooks/team-battle/useMultiCrop";
 import moment from "moment";
 import { toast } from "react-toastify";
 
@@ -166,7 +166,6 @@ const TeamBattleForm = ({
           <Modal.Header className="flex justify-between">
             <p
               className="font-semibold font-poppins text-xl text-black w-fit"
-              onClick={() => console.log(watch())}
             >
               {watch("id") !== undefined
                 ? "Edit Team Battle"

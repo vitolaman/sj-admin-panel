@@ -100,7 +100,6 @@ const useCropper = <T extends FieldValues>(
   file?: FileList
 ): UseCropper => {
   const [imgSrc, setImgSrc] = useState<Image>();
-  console.log(imgSrc?.new);
   const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
   const [zoom, setZoom] = useState<number>(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area>();
@@ -133,8 +132,6 @@ const useCropper = <T extends FieldValues>(
 
   useEffect(() => {
     if (file && file[0]) {
-      console.log(file[0].size);
-      console.log(imgSrc?.size);
       const newUrl = URL.createObjectURL(file[0]);
       if (newUrl !== imgSrc?.new && file[0].size !== imgSrc?.size) {
         setImgSrc({ new: newUrl, name: file[0].name });

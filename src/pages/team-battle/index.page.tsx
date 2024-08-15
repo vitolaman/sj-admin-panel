@@ -86,19 +86,28 @@ const TeamBattle = () => {
     {
       fieldId: "title",
       label: "Title",
+      render: (item) => (
+        <p className="font-poppins font-normal text-sm text-[#201B1C]">
+          {item?.title.length! > 20 ? `${item?.title.substring(0,19)}...` : item?.title!}
+        </p>
+      ),
     },
     {
       fieldId: "",
       label: "Participant",
       render: (item) => (
-        <p>{item?.joined_participant! > 0 ? item?.joined_participant : 0}</p>
+        <p className="font-poppins font-normal text-sm text-[#201B1C]">
+          {item?.joined_participant! > 0 ? item?.joined_participant : 0}
+        </p>
       ),
     },
     {
       fieldId: "",
       label: "Max Participant",
       render: (item) => (
-        <p>{item?.max_participant! > 0 ? item?.max_participant : 0}</p>
+        <p className="font-poppins font-normal text-sm text-[#201B1C]">
+          {item?.max_participant! > 0 ? item?.max_participant : 0}
+        </p>
       ),
     },
     {
@@ -153,7 +162,7 @@ const TeamBattle = () => {
       fieldId: "id",
       label: "Action",
       render: (item) => (
-        <Dropdown horizontal="left">
+        <Dropdown horizontal="left" vertical="top">
           <Dropdown.Toggle size="xs" button={false}>
             <Button size="xs" className="border-none p-0">
               <FiMoreHorizontal color="#27a590" size={20} />

@@ -1,8 +1,8 @@
 import { TeamBattleI, TeamBattleReq } from "_interfaces/team-battle.interface";
 import MInput from "components/multi-input";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import ButtonExpand from "./buttonExpand.section";
-import useDisplay from "./useDisplay.section";
+import useDisplay from "../../../hooks/team-battle/useDisplay";
 import ParticipantForm from "./participantForm.section";
 import StageForm from "./stageForm.section";
 import {
