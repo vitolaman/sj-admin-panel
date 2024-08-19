@@ -294,10 +294,7 @@ const PromoCodeModalForm = ({
   return (
     <Modal open={open} className="bg-white w-11/12 max-w-[2000px] p-8">
       <Modal.Header className="flex justify-between">
-        <p
-          className="font-semibold font-poppins text-xl text-black w-fit"
-          onClick={() => console.log(watch())}
-        >
+        <p className="font-semibold font-poppins text-xl text-black w-fit">
           {open && openModal
             ? "Choose Category Promo"
             : `${promoCodeData === undefined ? "Create" : "Edit"} Promo Code`}
