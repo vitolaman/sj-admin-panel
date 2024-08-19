@@ -246,7 +246,10 @@ const PromoCodeModalForm = ({
         discount_type: promoCodeData.discount_type,
         min_exp: promoCodeData.min_exp,
         is_active: promoCodeData.is_active,
-        quantity: promoCodeData.quantity && promoCodeData.quantity >= 0 ? 1 : 0,
+        initial_quantity:
+          promoCodeData.initial_quantity && promoCodeData.initial_quantity >= 0
+            ? 1
+            : 0,
         max_redeem:
           promoCodeData.max_redeem && promoCodeData.max_redeem >= 0 ? 1 : 0,
         min_transaction:
@@ -291,7 +294,10 @@ const PromoCodeModalForm = ({
   return (
     <Modal open={open} className="bg-white w-11/12 max-w-[2000px] p-8">
       <Modal.Header className="flex justify-between">
-        <p className="font-semibold font-poppins text-xl text-black w-fit">
+        <p
+          className="font-semibold font-poppins text-xl text-black w-fit"
+          onClick={() => console.log(watch())}
+        >
           {open && openModal
             ? "Choose Category Promo"
             : `${promoCodeData === undefined ? "Create" : "Edit"} Promo Code`}
