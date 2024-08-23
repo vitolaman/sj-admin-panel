@@ -5,6 +5,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "react-daisyui";
 import WarningMaxPopUp from "components/modal/banner/WarningMaxPopUp";
 import PopUpImage from "components/modal/banner/PopUpImage";
+import { useSearchParams } from "react-router-dom";
 import {
   Menu,
   MenuHandler,
@@ -33,6 +34,7 @@ export default function CreateClass(): React.ReactElement {
   const navigate = useNavigate();
   const location = useLocation();
   const [updateStatusMutation] = useUpdateStatusMutation();
+  const [id, setId] = useState<string>("");
   const [isDropdownOpen, setIsDropdownOpen] = useState<string | null>(null);
   const [isWarningPopupOpen, setIsWarningPopupOpen] = useState(false);
   const [idEdit, setIdEdit] = useState<string>("");
@@ -42,16 +44,15 @@ export default function CreateClass(): React.ReactElement {
   const [isAddNewClassPopupOpen, setIsAddNewClassPopupOpen] = useState(false);
   const [isUpdateClassPopupOpen, setIsUpdateClassPopupOpen] = useState(false);
   const [isClassesComplete, setIsClassesComplete] = useState<boolean>(true);
-  const [searchParams, setSearchParams] = useState<MainSeedsAcademyReq>({
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { data, isLoading, refetch } = useClassByCategoryListQuery({
     search: "",
     status: "",
     type: "main",
     limit: 10,
     page: 1,
-    id: "",
+    id,
   });
-  const { data, isLoading, refetch } =
-    useClassByCategoryListQuery(searchParams);
   const [deleteClass, { isLoading: isDeleting }] = useDeleteClassMutation();
 
   const handleDeleteClass = async (id: string) => {
@@ -59,26 +60,26 @@ export default function CreateClass(): React.ReactElement {
       await deleteClass({ id: id! });
       refetch();
     } catch (error) {
-      errorHandler(error)
+      errorHandler(error);
     }
   };
   const [levelName, setLevelName] = useState<string>("");
 
   useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
-    const idFromQuery = queryParams.get("id");
-
+    const idFromQuery = searchParams.get("id");
     if (idFromQuery) {
-      setSearchParams((prev) => ({
-        ...prev,
-        id: idFromQuery,
-      }));
+      setId(idFromQuery);
     }
-  }, [location.search]);
+  }, [searchParams]);
 
   useEffect(() => {
     refetch();
   }, [isUpdateClassPopupOpen, isAddNewClassPopupOpen]);
+
+  useEffect(() => {
+    setSearchParams({ id });
+    refetch();
+  }, [id, isUpdateClassPopupOpen, isAddNewClassPopupOpen]);
 
   useEffect(() => {
     if (data) {
@@ -101,15 +102,14 @@ export default function CreateClass(): React.ReactElement {
   const handleSave = async (status: string) => {
     try {
       await updateStatusMutation({
-        id: searchParams.id!,
+        id,
         body: { status },
       });
       navigate(`/seeds-academy/seeds-academy-list`);
     } catch (error) {
-      errorHandler(error)
+      errorHandler(error);
     }
   };
-
   const handleClosePopup = () => {
     setIsWarningPopupOpen(false);
     setIsImagePopupOpen(false);
@@ -341,13 +341,13 @@ export default function CreateClass(): React.ReactElement {
         isOpen={isAddNewClassPopupOpen}
         onClose={() => setIsAddNewClassPopupOpen(false)}
         levelName={levelName}
-        categoryId={searchParams.id}
+        categoryId={id}
       />
       <UpdateClassPopUp
         isOpen={isUpdateClassPopupOpen}
         onClose={() => setIsUpdateClassPopupOpen(false)}
         levelName={levelName}
-        categoryId={searchParams.id}
+        categoryId={id}
         id={idEdit!}
       />
       <div className="flex items-center justify-end gap-4 mb-8 mt-4">
@@ -370,7 +370,7 @@ export default function CreateClass(): React.ReactElement {
             type="button"
             onClick={() => handleSave("PUBLISHED")}
             disabled={!isClassesComplete}
-            className={`rounded-full px-6 py-2 bg-seeds text-white ${
+            className={`rounded-full px-6 py-2 bg-seeds text-white hover:text-seeds/90 hover:bg-white${
               !isClassesComplete && "opacity-50 cursor-not-allowed"
             }`}
           >
