@@ -180,6 +180,7 @@ export interface PromoCodeFormDataI {
   discount_percentage?: number;
   min_transaction: number;
   max_discount?: number;
+  initial_quantity?: number;
   quantity?: number;
   type: string;
   institution: string;

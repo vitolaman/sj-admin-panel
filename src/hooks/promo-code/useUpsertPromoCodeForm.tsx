@@ -28,10 +28,10 @@ const useUpsertCodeForm = () => {
       .required("Please input start date")
       .typeError("invalid date"),
     end_date: yup
-    .date()
-    .nullable()
-    .min(yup.ref("start_date"), "End date must be after start date")
-    .notRequired(),
+      .date()
+      .nullable()
+      .min(yup.ref("start_date"), "End date must be after start date")
+      .notRequired(),
     expired_date: yup.string().notRequired(),
     discount_amount: yup.number().when("discount_type", {
       is: "Nominal",
@@ -120,6 +120,13 @@ const useUpsertCodeForm = () => {
     resolver: yupResolver(schema),
     defaultValues,
   });
+  const convertNumber = (value: string | number): number => {
+    if (typeof value === "string") {
+      return Number(value);
+    } else {
+      return value;
+    }
+  };
   const update = async (data: PromoCodeFormDataI) => {
     try {
       const startDateUtc = new Date(data?.start_date!).toISOString();
@@ -134,26 +141,12 @@ const useUpsertCodeForm = () => {
         start_date: startDateUtc,
         end_date: endDateUtc,
         expired_date: endDateUtc,
-        discount_amount:
-          typeof data?.discount_amount === "string"
-            ? Number(data?.discount_amount)
-            : data?.discount_amount,
-        discount_percentage:
-          typeof data?.discount_percentage === "string"
-            ? Number(data?.discount_percentage)
-            : data?.discount_percentage,
-        min_transaction:
-          typeof data?.min_transaction === "string"
-            ? Number(data?.min_transaction)
-            : data?.min_transaction,
-        max_discount:
-          typeof data?.max_discount === "string"
-            ? Number(data?.max_discount)
-            : data?.max_discount,
-        quantity:
-          typeof data?.quantity === "string"
-            ? Number(data?.quantity)
-            : data?.quantity,
+        discount_amount: convertNumber(data?.discount_amount!),
+        discount_percentage: convertNumber(data?.discount_percentage!),
+        min_transaction: convertNumber(data?.min_transaction!),
+        max_discount: convertNumber(data?.max_discount!),
+        quantity: data.initial_quantity!==0?convertNumber(data?.quantity!):0,
+        initial_quantity: data.initial_quantity!==0?convertNumber(data?.quantity!):0,
         type: data?.type,
         institution: data?.institution,
         segment_user: data?.segment_user,
@@ -162,15 +155,9 @@ const useUpsertCodeForm = () => {
         discount_type: data?.discount_type,
         description: data?.description,
         category: data?.category,
-        min_exp:
-          typeof data?.min_exp === "string"
-            ? Number(data?.min_exp)
-            : data?.min_exp,
+        min_exp: convertNumber(data?.min_exp!),
         tnc: data?.tnc,
-        max_redeem:
-          typeof data?.max_redeem === "string"
-            ? Number(data?.max_redeem)
-            : data?.max_redeem,
+        max_redeem: convertNumber(data?.max_redeem!),
         is_active: data?.is_active,
       };
       await updatePromoCode(payload).unwrap();
@@ -193,26 +180,11 @@ const useUpsertCodeForm = () => {
         start_date: startDateUtc,
         end_date: endDateUtc,
         expired_date: endDateUtc,
-        discount_amount:
-          typeof data?.discount_amount === "string"
-            ? Number(data?.discount_amount)
-            : data?.discount_amount,
-        discount_percentage:
-          typeof data?.discount_percentage === "string"
-            ? Number(data?.discount_percentage)
-            : data?.discount_percentage,
-        min_transaction:
-          typeof data?.min_transaction === "string"
-            ? Number(data?.min_transaction)
-            : data?.min_transaction,
-        max_discount:
-          typeof data?.max_discount === "string"
-            ? Number(data?.max_discount)
-            : data?.max_discount,
-        quantity:
-          typeof data?.quantity === "string"
-            ? Number(data?.quantity)
-            : data?.quantity,
+        discount_amount: convertNumber(data?.discount_amount!),
+        discount_percentage: convertNumber(data?.discount_percentage!),
+        min_transaction: convertNumber(data?.min_transaction!),
+        max_discount: convertNumber(data?.max_discount!),
+        quantity: convertNumber(data?.quantity!),
         type: data.type,
         institution: data.institution,
         segment_user: data.segment_user,
@@ -221,15 +193,9 @@ const useUpsertCodeForm = () => {
         discount_type: data.discount_type,
         description: data.description,
         category: data.category,
-        min_exp:
-          typeof data?.min_exp === "string"
-            ? Number(data?.min_exp)
-            : data?.min_exp,
+        min_exp: convertNumber(data?.min_exp!),
         tnc: data.tnc,
-        max_redeem:
-          typeof data?.max_redeem === "string"
-            ? Number(data?.max_redeem)
-            : data?.max_redeem,
+        max_redeem: convertNumber(data?.max_redeem!),
         is_active: data?.is_active,
       };
 

@@ -245,7 +245,10 @@ const PromoCodeModalForm = ({
         discount_type: promoCodeData.discount_type,
         min_exp: promoCodeData.min_exp,
         is_active: promoCodeData.is_active,
-        quantity: promoCodeData.quantity && promoCodeData.quantity >= 0 ? 1 : 0,
+        initial_quantity:
+          promoCodeData.initial_quantity && promoCodeData.initial_quantity >= 0
+            ? 1
+            : 0,
         max_redeem:
           promoCodeData.max_redeem && promoCodeData.max_redeem >= 0 ? 1 : 0,
         min_transaction:

@@ -68,15 +68,15 @@ const LeftFormModal = ({
       />
       <MInput<PromoCodeFormDataI>
         label="Quota Type"
-        registerName="quantity"
+        registerName="initial_quantity"
         type="radio"
         data={quotaType}
-        select={select?.quantity}
+        select={select?.initial_quantity}
         setValue={setValue}
         errors={errors}
         handleSelectChange={handleSelectChange}
       />
-      {select?.quantity !== 0 && select?.quantity && (
+      {select?.initial_quantity !== 0 && select?.initial_quantity && (
         <MInput<PromoCodeFormDataI>
           label="Limit Quota"
           type="number"
