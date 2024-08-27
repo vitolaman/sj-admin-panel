@@ -26,13 +26,13 @@ export interface SeedsCoinManagementI {
 }
 
 export interface SeedsCoinManagementReq {
-    id:string
-    name: string;
-    coin_value: number,
-    started_at: string;
-    expired_at: string | null;
-    is_active: boolean;
-  }
+  id: string;
+  name: string;
+  coin_value: number;
+  started_at: string;
+  expired_at: string | null;
+  is_active: boolean;
+}
 
 export interface SeedsCoinRes {
   configurations: SeedsCoinManagementI[];

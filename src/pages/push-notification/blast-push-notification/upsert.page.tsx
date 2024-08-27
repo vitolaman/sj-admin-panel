@@ -361,7 +361,6 @@ const UpsertBlastNotif = () => {
               setValue={setValue}
               handleSelectChange={handleSelectChange}
               errors={errors}
-              register={register}
             />
           </div>
         )}
@@ -376,7 +375,6 @@ const UpsertBlastNotif = () => {
               setValue={setValue}
               handleSelectChange={handleSelectChange}
               errors={errors}
-              register={register}
             />
           </div>
         )}
@@ -804,7 +802,6 @@ const UpsertBlastNotif = () => {
               setValue={setValue}
               handleSelectChange={handleSelectChange}
               errors={errors}
-              register={register}
             />
             <p className="text-sm text-[#3C49D6] font-normal mt-2">
               *Languages Preferences is based on user language preference on

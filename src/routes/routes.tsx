@@ -79,6 +79,7 @@ import UpdateOpenAccount, {
 } from "pages/homepage-feature/open-account/update.page";
 import WithdrawQuiz, { withdrawQuizRouteName } from "pages/quiz/withdraw.page";
 import Company from "pages/company/index.page";
+import TeamBattle, { teamBattleRouteName } from "pages/team-battle/index.page";
 import SeedsCoinManagement, {
   seedsCoinRouteName,
 } from "pages/seeds-coin-management/index.page";
@@ -163,6 +164,7 @@ const protectedRoutes: RouteObject[] = [
           },
         ],
       },
+      { path: teamBattleRouteName, element: <TeamBattle /> },
       {
         path: "quiz",
         children: [

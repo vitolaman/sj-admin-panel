@@ -7,7 +7,8 @@ import { useUpdateSeedsCoinManagementMutation } from "services/modules/seeds-coi
 import { SeedsCoinManagementReq } from "_interfaces/seeds-coin-management.interfaces";
 
 const useUpdateSeedsCoinManagementForm = () => {
-  const [updateSeedsCoinManagement, updateState] = useUpdateSeedsCoinManagementMutation();
+  const [updateSeedsCoinManagement, updateState] =
+    useUpdateSeedsCoinManagementMutation();
   const loading = updateState.isLoading;
   const schema = yup.object().shape({
     name: yup.string().required("Name cannot empty"),
@@ -21,7 +22,7 @@ const useUpdateSeedsCoinManagementForm = () => {
       .date()
       .min(yup.ref("started_at"), "End date must be after start date")
       .nullable()
-      .notRequired()
+      .notRequired(),
   });
 
   const {
@@ -31,6 +32,8 @@ const useUpdateSeedsCoinManagementForm = () => {
     reset,
     setValue,
     trigger,
+    watch,
+    control,
   } = useForm<SeedsCoinManagementReq>({
     mode: "onSubmit",
     resolver: yupResolver(schema),
@@ -39,9 +42,12 @@ const useUpdateSeedsCoinManagementForm = () => {
   const update = async (data: SeedsCoinManagementReq) => {
     try {
       const startDateUtc = new Date(data?.started_at!).toISOString();
-      const endDateUtc = data.expired_at===null?null:new Date(data?.expired_at!).toISOString();
+      const endDateUtc =
+        data.expired_at === null
+          ? null
+          : new Date(data?.expired_at!).toISOString();
       const payload: SeedsCoinManagementReq = {
-        id:data.id,
+        id: data.id,
         name: data?.name,
         coin_value:
           typeof data?.coin_value === "string"
@@ -68,6 +74,8 @@ const useUpdateSeedsCoinManagementForm = () => {
     loading,
     setValue,
     trigger,
+    watch,
+    control,
   };
 };
 

@@ -48,6 +48,7 @@ const useUpdateXPManagementForm = () => {
     reset,
     setValue,
     trigger,
+    control, watch
   } = useForm<XPManagementI>({
     mode: "onSubmit",
     resolver: yupResolver(schema),
@@ -98,6 +99,7 @@ const useUpdateXPManagementForm = () => {
     defaultValues,
     setValue,
     trigger,
+    control, watch
   };
 };
 
