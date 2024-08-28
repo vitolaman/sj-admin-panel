@@ -80,7 +80,6 @@ const UpdateCompany = () => {
               <div className="flex flex-col w-6/12 gap-6">
                 <MInput
                   registerName="is_active"
-                  register={register}
                   label="Status Company"
                   type="radio"
                   data={statusCompany}
@@ -91,7 +90,6 @@ const UpdateCompany = () => {
                 />
                 <MInput
                   registerName="share_option"
-                  register={register}
                   label="Margin Share"
                   type="radio"
                   data={marginShare}
@@ -139,7 +137,6 @@ const UpdateCompany = () => {
                 </div>
                 <MInput
                   registerName="payment"
-                  register={register}
                   label="Payment Status"
                   type="radio"
                   data={paymentStatus}
@@ -150,7 +147,6 @@ const UpdateCompany = () => {
                 />
                 <MInput
                   registerName="withdrawal"
-                  register={register}
                   label="Withdrawal Status"
                   type="radio"
                   data={withdrawalStatus}

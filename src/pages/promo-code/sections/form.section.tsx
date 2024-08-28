@@ -21,7 +21,6 @@ import {
   useFilterQuiz,
   useFilterRef,
 } from "../../../hooks/promo-code/useFilterState";
-import { useLazyGetPromoCodeByIdQuery } from "services/modules/promo-code";
 import moment from "moment";
 import { FiX } from "react-icons/fi";
 import { useCategoryState } from "hooks/promo-code/useCategoryState";
@@ -246,7 +245,10 @@ const PromoCodeModalForm = ({
         discount_type: promoCodeData.discount_type,
         min_exp: promoCodeData.min_exp,
         is_active: promoCodeData.is_active,
-        quantity: promoCodeData.quantity && promoCodeData.quantity >= 0 ? 1 : 0,
+        initial_quantity:
+          promoCodeData.initial_quantity && promoCodeData.initial_quantity >= 0
+            ? 1
+            : 0,
         max_redeem:
           promoCodeData.max_redeem && promoCodeData.max_redeem >= 0 ? 1 : 0,
         min_transaction:
@@ -343,6 +345,8 @@ const PromoCodeModalForm = ({
             <div className="flex justify-between gap-10">
               <LeftFormModal
                 register={register}
+                watch={watch}
+                control={control}
                 errors={errors}
                 promoCodeData={promoCodeData}
                 select={select}
@@ -360,7 +364,6 @@ const PromoCodeModalForm = ({
                   setValue={setValue}
                   errors={errors}
                   handleSelectChange={handleSelectChange}
-                  register={register}
                 />
                 <MInput<PromoCodeFormDataI>
                   label="Periode Promo"
@@ -371,7 +374,6 @@ const PromoCodeModalForm = ({
                   setValue={setValue}
                   errors={errors}
                   handleSelectChange={handleSelectChange}
-                  register={register}
                 />
                 {select?.end_date !== undefined && (
                   <div className="flex gap-4 w-full">

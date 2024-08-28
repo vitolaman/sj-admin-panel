@@ -43,6 +43,7 @@ const menuItems: MenuItem[] = [
     name: "Play",
     path: "/play",
   },
+  {name:'Team Battle', path:"/team-battle"},
   {
     name: "Seeds Academy",
     path: "#",
