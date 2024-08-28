@@ -111,7 +111,7 @@ const UpdateSubcriptionPopUp: React.FC<{
                       setValue={setValue}
                       errors={errors}
                       handleSelectChange={handleSelectChange}
-                      register={register}
+                      // register={register}
                     />
                   </div>
                 </div>
