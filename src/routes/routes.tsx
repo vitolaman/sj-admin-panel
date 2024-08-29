@@ -6,6 +6,24 @@ import UserControlPanel, {
   ucpRouteName,
 } from "pages/user/control-panel/control-panel.page";
 import Play, { playRouteName } from "pages/play/index.page";
+import SeedsAcademyList, {
+  salRouteName,
+} from "pages/seeds-academy/seeds-academy-list";
+import CreateSeedsAcademy, {
+  csaRouteName,
+} from "pages/seeds-academy/seeds-academy-list/main/create.page";
+import UpdateSeedsAcademy, {
+  usaRouteName,
+} from "pages/seeds-academy/seeds-academy-list/main/update.page";
+import DetailCategory, {
+  dcRouteName,
+} from "pages/seeds-academy/seeds-academy-list/main/detail.page";
+import CreateClass, {
+  ccRouteName,
+} from "pages/seeds-academy/seeds-academy-list/main/create-class.page";
+import SubcriptionPlan, {
+  spRouteName,
+} from "pages/seeds-academy/subcription-plan";
 import PlayDetail, { pdRouteName } from "pages/play/detail.page";
 import CreatePlay, { cpRouteName } from "pages/play/create.page";
 import WithdrawPlay, { wpRouteName } from "pages/play/withdraw.page";
@@ -165,6 +183,35 @@ const protectedRoutes: RouteObject[] = [
         ],
       },
       { path: teamBattleRouteName, element: <TeamBattle /> },
+      {
+        path: "seeds-academy",
+        children: [
+          {
+            path: salRouteName,
+            element: <SeedsAcademyList />,
+          },
+          {
+            path: csaRouteName,
+            element: <CreateSeedsAcademy />,
+          },
+          {
+            path: usaRouteName,
+            element: <UpdateSeedsAcademy />,
+          },
+          {
+            path: dcRouteName,
+            element: <DetailCategory />,
+          },
+          {
+            path: ccRouteName,
+            element: <CreateClass />,
+          },
+          {
+            path: spRouteName,
+            element: <SubcriptionPlan />,
+          },
+        ],
+      },
       {
         path: "quiz",
         children: [
