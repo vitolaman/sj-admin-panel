@@ -1,5 +1,6 @@
 import {
   CreateClassPayloadRes,
+  GetClassPayloadRes,
   PatchPayload,
   GetClassByCatagoryRes,
   CreateCategoryPayloadRes,
@@ -65,7 +66,7 @@ export const seedsAcademyApi = Api.injectEndpoints({
         `admin-academy/v1/category/${param.id}/class?search=${param.search}&status=${param.status}&type=${param.type}&limit=${param.limit}&page=${param.page}`,
       keepUnusedDataFor: 0,
     }),
-    getClassById: build.query<CreateClassPayloadRes, string>({
+    getClassById: build.query<GetClassPayloadRes, string>({
       query: (classId) => `admin-academy/v1/class/${classId}`,
       keepUnusedDataFor: 0,
     }),
