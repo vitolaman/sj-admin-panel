@@ -30,6 +30,7 @@ export default function DetailCategory(): React.ReactElement {
   const [isUpdateClassPopupOpen, setIsUpdateClassPopupOpen] = useState(false);
   const [levelName, setLevelName] = useState<string>("");
   const [idEdit, setIdEdit] = useState<string>("");
+  const [editPopup, setEditPopup] = useState(false);
   const [searchParams, setSearchParams] = useState<MainSeedsAcademyReq>({
     search: "",
     status: "",
@@ -44,7 +45,7 @@ export default function DetailCategory(): React.ReactElement {
 
   useEffect(() => {
     refetch();
-  }, [isUpdateClassPopupOpen]);
+  }, [isUpdateClassPopupOpen, editPopup]);
 
   const handleClose = () => {
     navigate(`/seeds-academy/seeds-academy-list`);
@@ -57,12 +58,14 @@ export default function DetailCategory(): React.ReactElement {
       await deleteClass({ id: id! });
       refetch();
     } catch (error) {
-      errorHandler(error)
+      errorHandler(error);
     }
   };
 
   const handleEditSeedsAcademy = (id: string): void => {
     void navigate(`/seeds-academy/seeds-academy-list/update/${id}`);
+    setEditPopup(!editPopup);
+    refetch();
   };
 
   const defaultClass = [
@@ -257,7 +260,7 @@ export default function DetailCategory(): React.ReactElement {
                     <div className="overflow-hidden border border-[#BDBDBD] rounded-lg">
                       <Table<ClassListI>
                         columns={header}
-                        data={data?.classes}
+                        data={data?.classes.filter((item) => item.level === el)}
                         loading={isLoading}
                       />
                     </div>

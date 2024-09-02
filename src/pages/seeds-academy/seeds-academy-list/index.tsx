@@ -43,7 +43,7 @@ export default function SeedsAcademyList(): React.ReactElement {
         id: id!,
         body: { status: newStatus },
       });
-      refetch;
+      refetch();
     } catch (error) {
       errorHandler(error);
     }

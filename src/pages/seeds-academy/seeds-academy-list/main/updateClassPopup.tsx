@@ -21,7 +21,12 @@ const UpdateNewClassPopup: React.FC<{
   if (!isOpen) return null;
   const { data, isLoading, refetch } = useGetClassByIdQuery(id);
 
+  useEffect(() => {
+    refetch();
+  }, [isOpen]);
+
   const handleCreateSuccess = (): void => {
+    refetch();
     onClose();
   };
   const {
@@ -50,6 +55,7 @@ const UpdateNewClassPopup: React.FC<{
   const [quizPreview] = useFilePreview(quiz as unknown as FileList);
 
   useEffect(() => {
+    refetch();
     if (data) {
       reset({
         title: data.title,
@@ -61,7 +67,7 @@ const UpdateNewClassPopup: React.FC<{
           file_url: data.module,
           file_link: "",
         },
-        price: data.price.idr,
+        price: data.price,
         category_id: data.category_id,
         level: data.level,
         video: data.video,

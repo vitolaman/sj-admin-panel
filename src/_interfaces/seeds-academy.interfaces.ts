@@ -158,15 +158,14 @@ export interface ClassListI {
   module: string;
   assesment: string;
   total_question: number;
+  level: string;
 }
 
 export interface ClassListById {
   id: string;
   title: string;
   video: string;
-  price: {
-    idr: number;
-  };
+  price: string;
   banner: string;
   description: {
     id: string;
@@ -227,6 +226,21 @@ export interface CreateClassPayloadRes {
   price: {
     idr: string;
   };
+  category_id: string | undefined;
+  level: string;
+  banner: string;
+  video: string;
+  quiz: string | File;
+}
+
+export interface GetClassPayloadRes {
+  title: string;
+  description: {
+    id: string;
+    en: string;
+  };
+  module: string;
+  price: string;
   category_id: string | undefined;
   level: string;
   banner: string;
