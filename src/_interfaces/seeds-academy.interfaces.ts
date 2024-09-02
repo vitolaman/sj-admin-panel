@@ -158,6 +158,7 @@ export interface ClassListI {
   module: string;
   assesment: string;
   total_question: number;
+  level: string;
 }
 
 export interface ClassListById {
