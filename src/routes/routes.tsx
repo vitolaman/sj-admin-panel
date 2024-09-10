@@ -6,6 +6,24 @@ import UserControlPanel, {
   ucpRouteName,
 } from "pages/user/control-panel/control-panel.page";
 import Play, { playRouteName } from "pages/play/index.page";
+import SeedsAcademyList, {
+  salRouteName,
+} from "pages/seeds-academy/seeds-academy-list";
+import CreateSeedsAcademy, {
+  csaRouteName,
+} from "pages/seeds-academy/seeds-academy-list/main/create.page";
+import UpdateSeedsAcademy, {
+  usaRouteName,
+} from "pages/seeds-academy/seeds-academy-list/main/update.page";
+import DetailCategory, {
+  dcRouteName,
+} from "pages/seeds-academy/seeds-academy-list/main/detail.page";
+import CreateClass, {
+  ccRouteName,
+} from "pages/seeds-academy/seeds-academy-list/main/create-class.page";
+import SubcriptionPlan, {
+  spRouteName,
+} from "pages/seeds-academy/subcription-plan";
 import PlayDetail, { pdRouteName } from "pages/play/detail.page";
 import CreatePlay, { cpRouteName } from "pages/play/create.page";
 import WithdrawPlay, { wpRouteName } from "pages/play/withdraw.page";
@@ -71,11 +89,27 @@ import DetailEvent, {
 import OpenAccount, {
   openAccountRouteName,
 } from "pages/homepage-feature/open-account";
-import CreateOpenAccount, { cOpenAccountRouteName } from "pages/homepage-feature/open-account/create.page";
-import UpdateOpenAccount, { uOpenAccountRouteName } from "pages/homepage-feature/open-account/update.page";
+import CreateOpenAccount, {
+  cOpenAccountRouteName,
+} from "pages/homepage-feature/open-account/create.page";
+import UpdateOpenAccount, {
+  uOpenAccountRouteName,
+} from "pages/homepage-feature/open-account/update.page";
 import WithdrawQuiz, { withdrawQuizRouteName } from "pages/quiz/withdraw.page";
-import Company, { companyRouteName } from "pages/company/index.page";
-import SeedsCoinManagement,{ seedsCoinRouteName } from "pages/seeds-coin-management/index.page";
+import Company from "pages/company/index.page";
+import TeamBattle, { teamBattleRouteName } from "pages/team-battle/index.page";
+import SeedsCoinManagement, {
+  seedsCoinRouteName,
+} from "pages/seeds-coin-management/index.page";
+import UpdateCompany, {
+  updateCompanyRouteName,
+} from "pages/company/update.page";
+import DetailCompany, {
+  detailCompanyRouteName,
+} from "pages/company/detail.page";
+import UpsertBlastNotif, {
+  ubnRouteName,
+} from "pages/push-notification/blast-push-notification/upsert.page";
 
 const protectedRoutes: RouteObject[] = [
   { path: "", element: <Navigate to="/user/control-panel" /> },
@@ -148,6 +182,36 @@ const protectedRoutes: RouteObject[] = [
           },
         ],
       },
+      { path: teamBattleRouteName, element: <TeamBattle /> },
+      {
+        path: "seeds-academy",
+        children: [
+          {
+            path: salRouteName,
+            element: <SeedsAcademyList />,
+          },
+          {
+            path: csaRouteName,
+            element: <CreateSeedsAcademy />,
+          },
+          {
+            path: usaRouteName,
+            element: <UpdateSeedsAcademy />,
+          },
+          {
+            path: dcRouteName,
+            element: <DetailCategory />,
+          },
+          {
+            path: ccRouteName,
+            element: <CreateClass />,
+          },
+          {
+            path: spRouteName,
+            element: <SubcriptionPlan />,
+          },
+        ],
+      },
       {
         path: "quiz",
         children: [
@@ -179,10 +243,17 @@ const protectedRoutes: RouteObject[] = [
         ],
       },
       { path: promoCodeRouteName, element: <PromoCode /> },
-      {path:seedsCoinRouteName, element:<SeedsCoinManagement/>},
+      { path: seedsCoinRouteName, element: <SeedsCoinManagement /> },
       { path: xpRouteName, element: <XPManagement /> },
       { path: afRouteName, element: <AdminFee /> },
-      { path: companyRouteName, element: <Company /> },
+      {
+        path: "company",
+        children: [
+          { path: "", element: <Company /> },
+          { path: updateCompanyRouteName, element: <UpdateCompany /> },
+          { path: detailCompanyRouteName, element: <DetailCompany /> },
+        ],
+      },
       { path: "dashboard", element: <DashboardHome /> },
       {
         path: "circle",
@@ -255,6 +326,14 @@ const protectedRoutes: RouteObject[] = [
           {
             path: uwbRouteName,
             element: <UpdateWelcomeBanner />,
+          },
+          {
+            path: ubnRouteName,
+            element: <UpsertBlastNotif />,
+          },
+          {
+            path: `${ubnRouteName}/:id`,
+            element: <UpsertBlastNotif />,
           },
         ],
       },

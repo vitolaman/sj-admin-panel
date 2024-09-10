@@ -15,18 +15,19 @@ const CurrencyInput = ({
   onValueChange,
   error,
   disabled = false,
-  placeholder
+  placeholder,
 }: InputProps) => {
   return (
     <div className="w-full">
       <Input
         className="input w-full input-bordered focus:outline-offset-0"
         decimalsLimit={0}
+        allowDecimals={false}
         prefix="Rp "
         value={value}
         onValueChange={onValueChange}
         disabled={disabled}
-        placeholder={placeholder ?? ''}
+        placeholder={placeholder ?? ""}
       />
       <ValidationError error={error} />
     </div>

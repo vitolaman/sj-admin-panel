@@ -10,10 +10,18 @@ import {
   redeemType,
 } from "data/promo-code";
 import { SelectI } from "hooks/shared/useRNCHelper";
-import { FieldErrors, UseFormRegister, UseFormSetValue } from "react-hook-form";
+import {
+  Control,
+  FieldErrors,
+  UseFormRegister,
+  UseFormSetValue,
+  UseFormWatch,
+} from "react-hook-form";
 
 interface Props {
   register: UseFormRegister<PromoCodeFormDataI>;
+  watch: UseFormWatch<PromoCodeFormDataI>;
+  control: Control<PromoCodeFormDataI, any>;
   errors: FieldErrors<PromoCodeFormDataI>;
   promoCodeData?: PromoCodeI;
   select: SelectI | undefined;
@@ -26,6 +34,8 @@ interface Props {
 
 const LeftFormModal = ({
   register,
+  watch,
+  control,
   errors,
   promoCodeData,
   select,
@@ -58,20 +68,21 @@ const LeftFormModal = ({
       />
       <MInput<PromoCodeFormDataI>
         label="Quota Type"
-        registerName="quantity"
+        registerName="initial_quantity"
         type="radio"
         data={quotaType}
-        select={select?.quantity}
+        select={select?.initial_quantity}
         setValue={setValue}
         errors={errors}
         handleSelectChange={handleSelectChange}
       />
-      {select?.quantity !== 0 && select?.quantity && (
+      {select?.initial_quantity !== 0 && select?.initial_quantity && (
         <MInput<PromoCodeFormDataI>
           label="Limit Quota"
           type="number"
           registerName="quantity"
-          register={register}
+          control={control}
+          watch={watch}
           errors={errors}
         />
       )}
@@ -96,7 +107,8 @@ const LeftFormModal = ({
                 type="number"
                 disabled={promoCodeData !== undefined}
                 placeholder="%"
-                register={register}
+                control={control}
+                watch={watch}
                 errors={errors}
               />
               <MInput<PromoCodeFormDataI>
@@ -105,7 +117,8 @@ const LeftFormModal = ({
                 type="number"
                 disabled={promoCodeData !== undefined}
                 placeholder="Rp"
-                register={register}
+                control={control}
+                watch={watch}
                 errors={errors}
               />
             </>
@@ -116,7 +129,8 @@ const LeftFormModal = ({
               type="number"
               disabled={promoCodeData !== undefined}
               placeholder="Rp"
-              register={register}
+              control={control}
+              watch={watch}
               errors={errors}
             />
           ) : (
@@ -139,7 +153,8 @@ const LeftFormModal = ({
           label="Max Redeem"
           type="number"
           registerName="max_redeem"
-          register={register}
+          control={control}
+          watch={watch}
           errors={errors}
         />
       )}
@@ -158,7 +173,8 @@ const LeftFormModal = ({
           label="Minimum Transaction"
           type="number"
           registerName="min_transaction"
-          register={register}
+          control={control}
+          watch={watch}
           errors={errors}
         />
       )}

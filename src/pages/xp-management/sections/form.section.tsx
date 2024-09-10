@@ -28,6 +28,8 @@ const XPForm = ({ id, setId, open, setOpen, refetch }: XPManagementModal) => {
     defaultValues,
     setValue,
     trigger,
+    control,
+    watch,
   } = useUpdateXPManagementForm();
   const handleResetForm = () => {
     reset({ ...defaultValues });
@@ -87,7 +89,8 @@ const XPForm = ({ id, setId, open, setOpen, refetch }: XPManagementModal) => {
               label="XP Gained"
               type="number"
               registerName="exp_gained"
-              register={register}
+              control={control}
+              watch={watch}
               errors={errors}
             />
             <MInput<XPManagementI>
@@ -104,7 +107,8 @@ const XPForm = ({ id, setId, open, setOpen, refetch }: XPManagementModal) => {
                 label="Max Activity"
                 type="number"
                 registerName="max_exp"
-                register={register}
+                control={control}
+                watch={watch}
                 errors={errors}
               />
             )}

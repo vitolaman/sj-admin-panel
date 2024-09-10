@@ -43,6 +43,15 @@ const menuItems: MenuItem[] = [
     name: "Play",
     path: "/play",
   },
+  {name:'Team Battle', path:"/team-battle"},
+  {
+    name: "Seeds Academy",
+    path: "#",
+    child: [
+      { name: "Seeds Academy List", path: "/seeds-academy/seeds-academy-list" },
+      { name: "Subcription Plan", path: "/seeds-academy/subcription-plan" },
+    ],
+  },
   {
     name: "Quiz",
     path: "#",
@@ -108,10 +117,6 @@ const menuItems: MenuItem[] = [
         path: "/withdrawal/disbursement-request",
       },
     ],
-  },
-  {
-    name: "Referral Code",
-    path: "/referral-code",
   },
   {
     name: "Push Notification",

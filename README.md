@@ -1,6 +1,3 @@
-
-Certainly! Below is a basic structure for a Markdown document outlining a React.js project using TypeScript:
-
 ```markdown
 # React.js TypeScript Project
 
@@ -49,14 +46,24 @@ project-root/
 │   │   │   └── index.ts
 │   │   ├── id/
 │   │   │   ├── page.json
-│   │   │   └── index.tsx
+│   │   │   └── index.ts
 │   │   └── ...
 │   ├── pages/
-│   │   ├── module1/
-│   │   │   └── feature.tsx
-│   │   ├── module2/
-│   │   │   ├── feature.tsx
-│   │   │   └── feature.tsx
+│   │   ├── example-simple-module/
+│   │   │   ├── feature.page.tsx
+│   │   │   └── index.page.tsx
+│   │   ├── example-modular-section-module/
+│   │   │   ├── feature.page.tsx
+│   │   │   ├── sections
+│   │   │   │		├── example-modal.section.tsx
+│   │   │   │   └── example.section.tsx
+│   │   │   └── index.page.tsx
+│   │   ├── example-modular-private-component-module/
+│   │   │   ├── feature.page.tsx
+│   │   │   ├── components
+│   │   │   │		├── unique-button-example.component.tsx
+│   │   │   │   └── custom-select.component.tsx
+│   │   │   └── index.page.tsx
 │   │   └── ...
 │   ├── routes/
 │   │   ├── index.tsx
@@ -105,6 +112,10 @@ FAQ:
 	3. Create store `/src/store/[modulesName]/index.tsx`
 	4. Register store that you create inside combine reducer `/src/store/index.ts`
 	5. Read the documentation https://redux-toolkit.js.org/api/createslice
+- How to post form data:
+	1. Unfortunately, for RTK version 2.2.1, there are still bugs when posting data with form data type
+	2. For the time being, you may utilize the 'fetch' provided by JavaScript
+	3. **'fetch' is only allowed for posting form data; for other types, you must use RTK Query.**
 
 ## Project Setup
 
@@ -135,4 +146,5 @@ The primary dependencies for this project are:
 3. **Run the Project**: Start the development server using `yarn start:[env]`.
 4. **Build**: Build your project for production using `yarn build:[env]`.
 
-Happy coding!
+## PLEASE FOLLOW THE RULES!!! 😡😡😡
+# Happy coding! 🎉🎉🎉

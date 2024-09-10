@@ -1,0 +1,278 @@
+import React from "react";
+import { Button, Modal, FileInput } from "react-daisyui";
+import CInput from "components/input";
+import { Controller } from "react-hook-form";
+import { FiX } from "react-icons/fi";
+import useUpdateClassForm from "hooks/seeds-academy/useUpdateClassForm";
+import { useState, useEffect } from "react";
+import { useGetClassByIdQuery } from "services/modules/seeds-academy";
+import useFilePreview from "hooks/shared/useFilePreview";
+import MDEditor, { commands } from "@uiw/react-md-editor";
+import CurrencyInput from "components/currency-input";
+import { ClassListById } from "_interfaces/seeds-academy.interfaces";
+
+const UpdateNewClassPopup: React.FC<{
+  isOpen: boolean;
+  onClose: () => void;
+  levelName: string;
+  categoryId: string | undefined;
+  id: string;
+}> = ({ isOpen, onClose, levelName, categoryId, id }) => {
+  if (!isOpen) return null;
+  const { data, isLoading, refetch } = useGetClassByIdQuery(id);
+
+  useEffect(() => {
+    refetch();
+  }, [isOpen]);
+
+  const handleCreateSuccess = (): void => {
+    refetch();
+    onClose();
+  };
+  const {
+    register,
+    errors,
+    setFocus,
+    control,
+    watch,
+    handleCreate,
+    reset,
+    setValue,
+  } = useUpdateClassForm({
+    levelName: data?.level!,
+    categoryId,
+    id,
+    onSuccess: handleCreateSuccess,
+  });
+
+  const banner = watch("banner.image_link");
+  const [bannerPreview] = useFilePreview(banner as unknown as FileList);
+
+  const module = watch("module.file_link");
+  const [modulePreview] = useFilePreview(module as unknown as FileList);
+
+  const quiz = watch("quiz.file_link");
+  const [quizPreview] = useFilePreview(quiz as unknown as FileList);
+
+  useEffect(() => {
+    refetch();
+    if (data) {
+      reset({
+        title: data.title,
+        description: {
+          id: data.description.id,
+          en: data.description.en,
+        },
+        module: {
+          file_url: data.module,
+          file_link: "",
+        },
+        price: data.price,
+        category_id: data.category_id,
+        level: data.level,
+        video: data.video,
+        quiz: {
+          file_url: data.quiz as string,
+          file_link: "",
+        },
+        banner: {
+          image_url: data.banner,
+          image_link: "",
+        },
+      });
+    }
+  }, [data]);
+
+  return (
+    <Modal open={isOpen} className="bg-white w-11/12 max-w-[2000px] p-8">
+      <Modal.Header className="flex justify-between">
+        <p className="font-semibold font-poppins text-xl text-black w-fit">
+          Edit Class
+        </p>
+        <FiX onClick={onClose} className="cursor-pointer" />
+      </Modal.Header>
+      <Modal.Body className="flex flex-col gap-4">
+        <form onSubmit={handleCreate}>
+          <div className="flex justify-between gap-10">
+            <div className="flex flex-col gap-4 w-full">
+              <div className="flex gap-4 w-full justify-between">
+                <div className="flex flex-col gap-2 my-3 w-full">
+                  <label className="font-semibold">
+                    Title<span className="text-red-600">*</span>
+                  </label>
+                  <CInput
+                    {...register("title")}
+                    error={errors.title}
+                    borderOffset
+                  />
+                </div>
+                <div className="flex flex-col gap-2 my-3 w-full">
+                  <label className="font-semibold">
+                    Video<span className="text-red-600">*</span>
+                  </label>
+                  <CInput
+                    {...register("video")}
+                    error={errors.video}
+                    borderOffset
+                  />
+                </div>
+              </div>
+              <div className="flex gap-4 w-[40%] justify-left">
+                <div className="flex flex-col gap-2 my-3 w-full">
+                  <label className="font-semibold">
+                    Price<span className="text-red-600">*</span>
+                  </label>
+                  <Controller
+                    control={control}
+                    name="price"
+                    render={({ field: { value, onChange } }) => (
+                      <CurrencyInput
+                        value={value}
+                        onValueChange={(val) => onChange(val)}
+                      />
+                    )}
+                  />
+                </div>
+              </div>
+              <div className="flex gap-4 w-full justify-between">
+                <div className="flex flex-col gap-2 w-full">
+                  <label className="font-semibold font-poppins text-base text-[#262626] cursor-pointer">
+                    Deskripsi (Indonesia)
+                  </label>
+                  <Controller
+                    control={control}
+                    name="description.id"
+                    render={({ field: { value, onChange } }) => (
+                      <MDEditor
+                        height={200}
+                        commands={[...commands.getCommands()]}
+                        value={value}
+                        onChange={onChange}
+                        highlightEnable={false}
+                        preview="live"
+                      />
+                    )}
+                  />
+                </div>
+                <div className="flex flex-col gap-2 w-full">
+                  <label className="font-semibold font-poppins text-base text-[#262626] cursor-pointer">
+                    Deskripsi (English)
+                  </label>
+                  <Controller
+                    control={control}
+                    name="description.en"
+                    render={({ field: { value, onChange } }) => (
+                      <MDEditor
+                        height={200}
+                        commands={[...commands.getCommands()]}
+                        value={value}
+                        onChange={onChange}
+                        highlightEnable={false}
+                        preview="live"
+                      />
+                    )}
+                  />
+                </div>
+              </div>
+              <div className="flex gap-2 w-full justify-between mt-5">
+                <div className="col-span-3 my-3 w-1/3">
+                  <h1 className="font-semibold text-base my-3">Modul</h1>
+                  <div className="w-full border-[#BDBDBD] border rounded-lg flex flex-col text-center items-center justify-center p-10 gap-3">
+                    {modulePreview ? (
+                      <img
+                        className="flex mx-auto w-[500px] h-[166px] object-fill"
+                        src={modulePreview}
+                        alt=""
+                      />
+                    ) : data?.module === "" ? (
+                      <div className="text-seeds">Drag Your Image Here</div>
+                    ) : (
+                      <img
+                        className="flex mx-auto w-[500px] h-[166px] object-fill"
+                        src={data?.module}
+                        alt=""
+                      />
+                    )}
+                    <FileInput
+                      {...register("module.file_link")}
+                      size="sm"
+                      accept=".pdf"
+                    />
+                  </div>
+                </div>
+                <div className="col-span-3 my-3 w-1/3">
+                  <h1 className="font-semibold text-base my-3">Assesment</h1>
+                  <div className="w-full border-[#BDBDBD] border rounded-lg flex flex-col text-center items-center justify-center p-10 gap-3">
+                    {quizPreview ? (
+                      <img
+                        className="flex mx-auto w-[500px] h-[166px] object-fill"
+                        src={quizPreview}
+                        alt=""
+                      />
+                    ) : data?.quiz === "" ? (
+                      <div className="text-seeds">Drag Your Quiz Here</div>
+                    ) : (
+                      <img
+                        className="flex mx-auto w-[500px] h-[166px] object-fill"
+                        src={data?.quiz as string}
+                        alt=""
+                      />
+                    )}
+                    <FileInput
+                      {...register("quiz.file_link")}
+                      size="sm"
+                      accept=".csv"
+                    />
+                  </div>
+                </div>
+                <div className="col-span-3 my-3 w-1/3">
+                  <h1 className="font-semibold text-base my-3">Banner</h1>
+                  <div className="w-full border-[#BDBDBD] border rounded-lg flex flex-col text-center items-center justify-center p-10 gap-3">
+                    {bannerPreview ? (
+                      <img
+                        className="flex mx-auto w-[500px] h-[166px] object-fill"
+                        src={bannerPreview}
+                        alt=""
+                      />
+                    ) : data?.banner === "" ? (
+                      <div className="text-seeds">Choose your banner here</div>
+                    ) : (
+                      <img
+                        className="flex mx-auto w-[500px] h-[166px] object-fill"
+                        src={data?.banner}
+                        alt=""
+                      />
+                    )}
+                    <FileInput
+                      {...register("banner.image_link")}
+                      size="sm"
+                      accept="image/*"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="flex gap-3 self-end justify-end">
+            <Button
+              onClick={onClose}
+              className="border border-[#3AC4A0] rounded-full text-[#3AC4A0] w-[268px] hover:bg-[#3AC4A0] hover:text-white disabled:text-white disabled:bg-[#3AC4A0] font-semibold font-poppins text-base"
+            >
+              Cancel
+            </Button>
+            <Button
+              // onClick={handleCreate}
+              type="submit"
+              loading={isLoading}
+              className="border-none bg-[#3AC4A0] rounded-full text-white w-[268px] hover:bg-[#3AC4A0] font-semibold font-poppins text-base"
+            >
+              Save
+            </Button>
+          </div>
+        </form>
+      </Modal.Body>
+    </Modal>
+  );
+};
+
+export default UpdateNewClassPopup;
