@@ -38,6 +38,7 @@ export interface QuizI {
     en: string;
     id: string;
   };
+  prize_type: string;
 }
 
 export interface Banner {

@@ -79,6 +79,7 @@ const CreateQuiz = () => {
   const [bannerPreview] = useFilePreview(banner as FileList);
   const [communityPreview] = useFilePreview(community as FileList);
   const [sponsorPreview] = useFilePreview(sponsor as FileList);
+
   const handleAddWinner = () => {
     if (winnerLinkUrls.length < 10 && winnerImageUrls.length < 10) {
       append({
@@ -88,11 +89,13 @@ const CreateQuiz = () => {
       setValue("winner_image_url", [...winnerImageUrls, ""]);
     }
   };
+
   useEffect(() => {
     setValue("prizes", [{ prize: 0 }, { prize: 0 }, { prize: 0 }]);
     setValue("winner_link_url", ["", "", ""]);
     setValue("winner_image_url", ["", "", ""]);
   }, [prizeTypeValue]);
+
   const handleDeleteWinner = (index: number) => {
     remove(index);
     setValue(
@@ -104,6 +107,7 @@ const CreateQuiz = () => {
       winnerImageUrls.filter((_, i) => i !== index)
     );
   };
+
   useEffect(() => {
     if (quizCategoryState.data) {
       const tempOpt = quizCategoryState.data.data.map((item, i) => ({
