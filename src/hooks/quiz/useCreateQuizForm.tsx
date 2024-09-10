@@ -73,6 +73,33 @@ const useCreateQuizForm = () => {
         .min(10, "min 10 characters")
         .required("Please input TnC"),
     }),
+    prize_type: yup.string().required("Prize type cannot be empty"),
+    winner_link_url: yup
+      .array()
+      .of(yup.string().url("Must be a valid URL"))
+      .when("prize_type", {
+        is: "link",
+        then: yup
+          .array()
+          .of(
+            yup
+              .string()
+              .url("Must be a valid URL")
+              .required("Each link must be filled")
+          )
+          .required("Links are required for link prize type"),
+      }),
+    winner_image_url: yup
+      .array()
+      .of(yup.mixed())
+      .nullable()
+      .when("prize_type", {
+        is: "link",
+        then: yup
+          .array()
+          .of(yup.mixed().required("Each image must be filled"))
+          .required("Images are required for image prize type"),
+      }),
   });
 
   const {
@@ -82,6 +109,7 @@ const useCreateQuizForm = () => {
     control,
     setFocus,
     watch,
+    setValue,
   } = useForm<QuizForm>({
     mode: "onSubmit",
     resolver: yupResolver(schema),
@@ -105,6 +133,8 @@ const useCreateQuizForm = () => {
       ],
       duration_in_minute: 0,
       prizes: [{ prize: 0 }, { prize: 0 }, { prize: 0 }],
+      winner_link_url: ["", "", ""],
+      winner_image_url: ["", "", ""],
     },
   });
 
@@ -119,6 +149,24 @@ const useCreateQuizForm = () => {
         ...data,
         prizes: data.prizes.map((item) => item.prize),
         payment_method: paymentMethodParsed,
+        winner_link_url: data?.winner_link_url,
+        winner_image_url: await Promise.all(
+          data?.winner_image_url?.map(async (linkOrFile) => {
+            if (data?.prize_type === "link") {
+              if (linkOrFile !== "" && typeof linkOrFile !== "string") {
+                const image = await uploadFile(
+                  accessToken!,
+                  linkOrFile[0] as File
+                );
+                return image;
+              } else {
+                return linkOrFile as string;
+              }
+            } else {
+              return "";
+            }
+          })
+        ),
       };
       if (data.banner.image_link !== "") {
         const banner = await uploadFile(
@@ -184,6 +232,7 @@ const useCreateQuizForm = () => {
     control,
     isLoading,
     watch,
+    setValue,
   };
 };
 

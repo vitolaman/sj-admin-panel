@@ -95,6 +95,9 @@ export interface QuizForm {
   featured_link: string;
   total_questions: number;
   payment_method: string[] | OptChild[];
+  prize_type: string;
+  winner_link_url: string[];
+  winner_image_url: string[];
 }
 
 export interface QuizPayload extends Omit<QuizForm, "prizes"> {
