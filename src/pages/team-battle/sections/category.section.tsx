@@ -13,12 +13,21 @@ interface Props {
 interface ButtonPros {
   onClick: MouseEventHandler<HTMLButtonElement>;
   title: string;
+  stringState: string;
+  value: string;
 }
 
-const ButtonCategory = ({ onClick, title }: ButtonPros) => (
+const ButtonCategory = ({
+  onClick,
+  title,
+  stringState,
+  value,
+}: ButtonPros) => (
   <Button
     fullWidth
-    className="font-poppins text-base font-semibold text-[#7C7C7C] focus:text-[#3AC4A0]"
+    className={`font-poppins text-base font-semibold ${
+      value !== stringState ? "text-[#7C7C7C]" : "text-[#3AC4A0]"
+    }`}
     onClick={onClick}
   >
     {title}
@@ -51,10 +60,14 @@ const TBCategoryModal = ({
       {state ? (
         <>
           <ButtonCategory
+            value="PROVINCE"
+            stringState={mode}
             onClick={() => handleTypeChange("PROVINCE")}
             title="Regional Clash"
           />
           <ButtonCategory
+            value="UNIKOM"
+            stringState={mode}
             onClick={() => handleTypeChange("UNIKOM")}
             title="Campus & Community Clash"
           />
@@ -62,14 +75,20 @@ const TBCategoryModal = ({
       ) : (
         <>
           <ButtonCategory
+            value="ID_STOCK"
+            stringState={category}
             onClick={() => handleCategoryChange("ID_STOCK")}
             title="ID Stock"
           />
           <ButtonCategory
+            value="US_STOCK"
+            stringState={category}
             onClick={() => handleCategoryChange("US_STOCK")}
             title="US Stock"
           />
           <ButtonCategory
+            value="CRYPTO"
+            stringState={category}
             onClick={() => handleCategoryChange("CRYPTO")}
             title="Crypto"
           />

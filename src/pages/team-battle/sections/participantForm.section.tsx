@@ -26,7 +26,7 @@ const ParticipantForm = ({ register, control, watch, errors }: Props) => {
   useEffect(() => {
     if (regionState.data) {
       setRegionList(
-        regionState.data?.data.map((item) => ({
+        regionState.data?.data?.map((item) => ({
           label: item.name,
           value: item.id,
         }))

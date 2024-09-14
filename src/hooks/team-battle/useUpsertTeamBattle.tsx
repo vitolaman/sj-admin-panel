@@ -76,9 +76,12 @@ const useUpsertTeamBattle = () => {
           "Invitation code cannot contain symbols and spaces"
         ),
     }),
-    province_ids:yup.array().when("type", {
+    province_ids: yup.array().when("type", {
       is: "PROVINCE",
-      then:yup.array().min(1, "Province must be selected").required("Province must be selected")
+      then: yup
+        .array()
+        .min(1, "Province must be selected")
+        .required("Province must be selected"),
     }),
     community_max_participant: yup.number().when("type", {
       is: "UNIKOM",
@@ -338,7 +341,19 @@ const useUpsertTeamBattle = () => {
           payload.banner = imageUrl;
         }
       }
-      if (data.sponsors && data.sponsors.length > 0) {
+      if (
+        data.sponsors &&
+        data.sponsors.length === 1 &&
+        data.sponsors[0].name === "" &&
+        data.sponsors[0].logo === ""
+      ) {
+        payload.sponsors = [
+          {
+            name: "Seeds",
+            logo: "https://assets.seeds.finance/storage/cloud/c6b4fe92-1f53-40fa-b2be-a2dcd8dbd2bc.png",
+          },
+        ];
+      } else if (data.sponsors && data.sponsors.length > 0) {
         for (let i = 0; i < data.sponsors.length; i++) {
           if (
             typeof data.sponsors[i].logo[0] !== "string" &&
@@ -351,8 +366,6 @@ const useUpsertTeamBattle = () => {
             payload.sponsors[i].logo = logoUrl;
           }
         }
-      } else if (data.sponsors && data.sponsors.length === 0) {
-        payload.sponsors = [{ name: "Seeds", logo: "" }];
       }
 
       delete payload.community;
