@@ -279,7 +279,7 @@ export default function CreateClass(): React.ReactElement {
                     <div className="overflow-hidden border border-[#BDBDBD] rounded-lg">
                       <Table<ClassListI>
                         columns={header}
-                        data={data?.classes}
+                        data={data?.classes.filter((item) => item.level === el)}
                         loading={isLoading}
                       />
                     </div>

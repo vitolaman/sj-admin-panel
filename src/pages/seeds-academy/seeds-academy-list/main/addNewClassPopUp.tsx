@@ -147,7 +147,7 @@ const AddNewClassPopup: React.FC<{
                         alt=""
                       />
                     ) : (
-                      <div className="text-seeds">Drag Your Image Here</div>
+                      <div className="text-seeds">Drag Your File pdf Here</div>
                     )}
                     <FileInput
                       {...register("module.file_link")}
@@ -166,7 +166,7 @@ const AddNewClassPopup: React.FC<{
                         alt=""
                       />
                     ) : (
-                      <div className="text-seeds">Drag Your Image Here</div>
+                      <div className="text-seeds">Drag Your File csv Here</div>
                     )}
                     <FileInput
                       {...register("quiz.file_link")}
