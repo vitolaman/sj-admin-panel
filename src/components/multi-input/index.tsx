@@ -23,7 +23,7 @@ export default function MInput<T extends FieldValues>(props: MultiProps<T>) {
               ? ""
               : "cursor-pointer"
           }`}
-          htmlFor={`${label} label`}
+          htmlFor={`${registerName} label`}
         >
           {label}
         </label>
@@ -59,7 +59,7 @@ const CommonInput = <T extends FieldValues>(props: MultiProps<T>) =>
         lineHeight: "24px",
         color: "#201B1C",
       }}
-      id={`${props.label} label`}
+      id={`${props.registerName} label`}
       placeholder={props.placeholder}
       className={props.className}
       {...props.register(props.registerName)}
@@ -73,6 +73,7 @@ const NumberInput = <T extends FieldValues>(props: MultiProps<T>) =>
       name={props.registerName}
       render={({ field: { value, onChange } }) => (
         <CurrencyInput
+        id={`${props.registerName} label`}
           className="w-full font-poppins font-normal text-base text-[#201B1C] border border-[#BDBDBD] rounded-lg px-4 py-[11px] disabled:cursor-not-allowed"
           intlConfig={{ locale: "id-ID" }}
           decimalsLimit={props.decimalsLimit ? props.decimalsLimit : 0}

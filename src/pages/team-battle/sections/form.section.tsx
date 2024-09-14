@@ -10,7 +10,6 @@ import FirstModal from "./firstModal.section";
 import SecondModal from "./secondModal.section";
 import useMultiCrop from "../../../hooks/team-battle/useMultiCrop";
 import moment from "moment";
-import { toast } from "react-toastify";
 
 const TeamBattleForm = ({
   data,
@@ -38,20 +37,19 @@ const TeamBattleForm = ({
   >({ sponsor: false, university: false, community: false });
 
   const {
-    handleCreate,
-    handleUpdate,
+    handleUpsert,
     register,
     errors,
     reset,
     loadingUpsert,
     setValue,
-    trigger,
     watch,
     defaultValues,
     control,
+    firstTrigger,
+    secondTrigger,
   } = useUpsertTeamBattle();
   const category = watch("category");
-
   const [SDataState, UDataState, CDataState] = useMultiCrop({
     tmpNumber,
     setValue,
@@ -79,6 +77,27 @@ const TeamBattleForm = ({
     reset({ ...defaultValues });
   };
 
+  const handleSubmit = async () => {
+    if (watch("type") === "UNIKOM") {
+      if ((await firstTrigger()) && sectionModal === 0) {
+        setSectionModal(1);
+      } else if ((await secondTrigger()) && sectionModal === 1) {
+        await handlePostSub();
+      }
+    } else {
+      if (await firstTrigger()) {
+        await handlePostSub();
+      }
+    }
+  };
+
+  const handlePostSub = async () => {
+    await handleUpsert();
+    refetch();
+    handleResetForm();
+    setOpen(!open);
+  };
+
   useEffect(() => {
     if (data) {
       const dateFormat = (date: string) =>
@@ -87,6 +106,13 @@ const TeamBattleForm = ({
         data?.groups?.filter((item) => item.type === group);
       reset({
         ...data,
+        province_ids: data.groups
+          ?.filter((item) => item.type === "PROVINCE")
+          ?.map((item) => ({ label: item.name, value: item.id })),
+        participant:
+          data.public_max_participant +
+          data.community_max_participant +
+          data.university_max_participant,
         min_participant: data.min_participant === -1 ? 0 : data.min_participant,
         registration_start: dateFormat(data?.registration_start),
         registration_end: dateFormat(data?.registration_end),
@@ -164,9 +190,7 @@ const TeamBattleForm = ({
           className="bg-white w-11/12 max-w-[2000px] p-4 md:p-8"
         >
           <Modal.Header className="flex justify-between">
-            <p
-              className="font-semibold font-poppins text-xl text-black w-fit"
-            >
+            <p className="font-semibold font-poppins text-xl text-black w-fit">
               {watch("id") !== undefined
                 ? "Edit Team Battle"
                 : "Create New Team Battle"}
@@ -222,28 +246,13 @@ const TeamBattleForm = ({
             <Button
               className="self-end border-none bg-[#3AC4A0] rounded-full text-white w-[128px] hover:bg-[#3AC4A0]"
               loading={loadingUpsert}
-              onClick={async (e) => {
-                if (await trigger()) {
-                  if (sectionModal === 0) {
-                    if (watch("banner").length > 0) {
-                      setSectionModal(1);
-                    } else {
-                      toast.error("Banner cannot empty");
-                    }
-                  } else {
-                    if (watch("id") !== undefined ? true : false) {
-                      await handleUpdate(e);
-                    } else {
-                      await handleCreate(e);
-                    }
-                    refetch();
-                    handleResetForm();
-                    setOpen(!open);
-                  }
-                }
+              onClick={async () => {
+                await handleSubmit();
               }}
             >
-              {sectionModal === 0 ? "Next" : "Save"}
+              {sectionModal === 0 && watch("type") === "UNIKOM"
+                ? "Next"
+                : "Save"}
             </Button>
           </Modal.Actions>
         </Modal>
