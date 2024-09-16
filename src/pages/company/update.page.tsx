@@ -24,15 +24,14 @@ export const updateCompanyRouteName = ":id/edit";
 const UpdateCompany = () => {
   const params = useParams<{ id: string }>();
   const { data, isLoading } = useGetCompanyByIdQuery(params.id!);
-  const { select, setSelect, handleSelectChange } = useRNCHelper();
   const {
     handleUpdate,
     isLoadingUpdate,
     register,
     errors,
     control,
-    setValue,
     reset,
+    watch,
   } = useUpdateCompanyForm(params.id!);
 
   useEffect(() => {
@@ -41,16 +40,11 @@ const UpdateCompany = () => {
       plan_expiry_date: moment(data?.plan_expiry_date).format(
         "YYYY-MM-DD HH:mm"
       ),
+      share_option: data?.share_percentage === 0 ? "share" : "share_percentage",
+      is_active: data?.is_active.toString(),
+      payment: data?.payment.toString(),
+      withdrawal: data?.withdrawal.toString(),
     });
-    setSelect((prev) => ({
-      ...prev,
-      is_active: data?.is_active,
-      share_option: data?.share !== 0 ? "share" : "share_percentage",
-      share: data?.share,
-      share_percentage: data?.share_percentage,
-      payment: data?.payment,
-      withdrawal: data?.withdrawal,
-    }));
   }, [data, params.id]);
 
   return (
@@ -83,24 +77,20 @@ const UpdateCompany = () => {
                   label="Status Company"
                   type="radio"
                   data={statusCompany}
-                  setValue={setValue}
-                  select={select?.is_active}
-                  handleSelectChange={handleSelectChange}
                   errors={errors}
+                  register={register}
                 />
                 <MInput
                   registerName="share_option"
                   label="Margin Share"
                   type="radio"
                   data={marginShare}
-                  setValue={setValue}
-                  select={select?.share_option}
-                  handleSelectChange={handleSelectChange}
                   errors={errors}
+                  register={register}
                 />
                 <div className="flex flex-col gap-2">
                   <label className="font-semibold">Input Margin Share</label>
-                  {select?.share_option === "share" && (
+                  {watch("share_option") === "share" && (
                     <Controller
                       control={control}
                       name="share"
@@ -114,7 +104,7 @@ const UpdateCompany = () => {
                       )}
                     />
                   )}
-                  {select?.share_option === "share_percentage" && (
+                  {watch("share_option") === "share_percentage" && (
                     <Controller
                       control={control}
                       name="share_percentage"
@@ -140,20 +130,16 @@ const UpdateCompany = () => {
                   label="Payment Status"
                   type="radio"
                   data={paymentStatus}
-                  setValue={setValue}
-                  select={select?.payment}
-                  handleSelectChange={handleSelectChange}
                   errors={errors}
+                  register={register}
                 />
                 <MInput
                   registerName="withdrawal"
                   label="Withdrawal Status"
                   type="radio"
                   data={withdrawalStatus}
-                  setValue={setValue}
-                  select={select?.withdrawal}
-                  handleSelectChange={handleSelectChange}
                   errors={errors}
+                  register={register}
                 />
                 <MInput
                   label="Active Until"

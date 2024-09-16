@@ -26,9 +26,9 @@ export interface XPManagementI {
   exp_gained: number;
   exp_required: number;
   max_exp: number;
-  is_daily_task: boolean;
+  is_daily_task: boolean | string;
   is_treasure: boolean;
-  is_active: boolean;
+  is_active: boolean | string;
   started_at: string;
   expired_at: string;
 }

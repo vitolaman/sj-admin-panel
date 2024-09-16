@@ -101,8 +101,11 @@ const useUpsertCodeForm = () => {
     description: "",
     category: "",
     min_exp: 0,
+    max_redeem: 0,
+    min_transaction: 0,
     tnc: "",
-    is_active: undefined,
+    is_active: "",
+    is_expired: "",
   };
 
   const {
@@ -127,91 +130,53 @@ const useUpsertCodeForm = () => {
       return value;
     }
   };
-  const update = async (data: PromoCodeFormDataI) => {
+  const upsert = async (data: PromoCodeFormDataI) => {
+    const startDateUtc = new Date(data?.start_date!).toISOString();
+    const endDateUtc =
+      data?.is_expired === "true"
+        ? new Date(data?.end_date!).toISOString()
+        : null;
+
     try {
-      const startDateUtc = new Date(data?.start_date!).toISOString();
-      const endDateUtc =
-        data?.end_date !== null
-          ? new Date(data?.end_date!).toISOString()
-          : null;
       const payload: PromoCodeFormDataI = {
-        id: data?.id,
-        name_promo_code: data?.name_promo_code,
-        promo_code: data?.promo_code,
+        ...data,
         start_date: startDateUtc,
         end_date: endDateUtc,
         expired_date: endDateUtc,
         discount_amount: convertNumber(data?.discount_amount!),
         discount_percentage: convertNumber(data?.discount_percentage!),
-        min_transaction: convertNumber(data?.min_transaction!),
+        min_transaction:
+          data.is_transaction === "true"
+            ? convertNumber(data?.min_transaction!)
+            : 0,
         max_discount: convertNumber(data?.max_discount!),
-        quantity: data.initial_quantity!==0?convertNumber(data?.quantity!):0,
-        initial_quantity: data.initial_quantity!==0?convertNumber(data?.quantity!):0,
-        type: data?.type,
-        institution: data?.institution,
-        segment_user: data?.segment_user,
-        ref_code: data?.ref_code,
-        feature_ids: data?.feature_ids,
-        discount_type: data?.discount_type,
-        description: data?.description,
-        category: data?.category,
+        quantity: data.is_quota === "true" ? convertNumber(data?.quantity!) : 0,
+        initial_quantity:
+          data.is_quota === "true" ? convertNumber(data?.quantity!) : 0,
         min_exp: convertNumber(data?.min_exp!),
-        tnc: data?.tnc,
-        max_redeem: convertNumber(data?.max_redeem!),
-        is_active: data?.is_active,
+        max_redeem:
+          data.is_redeem === "true" ? convertNumber(data?.max_redeem!) : 0,
       };
-      await updatePromoCode(payload).unwrap();
-      toast.success("Updating a promo code was successful");
+      delete payload.is_expired;
+      delete payload.is_quota;
+      delete payload.is_redeem;
+      delete payload.is_transaction;
+      if (data.id) {
+        await updatePromoCode(payload).unwrap();
+        toast.success("Updating a promo code was successful");
+      } else {
+        await createPromoCode(payload).unwrap();
+        toast.success("Creating a promo code was successful");
+      }
     } catch (error) {
       errorHandler(error);
     }
   };
 
-  const create = async (data: PromoCodeFormDataI) => {
-    try {
-      const startDateUtc = new Date(data?.start_date!).toISOString();
-      const endDateUtc =
-        data?.end_date !== null
-          ? new Date(data?.end_date!).toISOString()
-          : null;
-      const payload: PromoCodeFormDataI = {
-        name_promo_code: data.name_promo_code,
-        promo_code: data.promo_code,
-        start_date: startDateUtc,
-        end_date: endDateUtc,
-        expired_date: endDateUtc,
-        discount_amount: convertNumber(data?.discount_amount!),
-        discount_percentage: convertNumber(data?.discount_percentage!),
-        min_transaction: convertNumber(data?.min_transaction!),
-        max_discount: convertNumber(data?.max_discount!),
-        quantity: convertNumber(data?.quantity!),
-        type: data.type,
-        institution: data.institution,
-        segment_user: data.segment_user,
-        ref_code: data.ref_code,
-        feature_ids: data.feature_ids,
-        discount_type: data.discount_type,
-        description: data.description,
-        category: data.category,
-        min_exp: convertNumber(data?.min_exp!),
-        tnc: data.tnc,
-        max_redeem: convertNumber(data?.max_redeem!),
-        is_active: data?.is_active,
-      };
-
-      await createPromoCode(payload).unwrap();
-      toast.success("Creating a promo code was successful");
-    } catch (error) {
-      errorHandler(error);
-    }
-  };
-
-  const handleUpdate = handleSubmit(update);
-  const handleCreate = handleSubmit(create);
+  const handleUpsert = handleSubmit(upsert);
 
   return {
-    handleCreate,
-    handleUpdate,
+    handleUpsert,
     register,
     errors,
     setFocus,

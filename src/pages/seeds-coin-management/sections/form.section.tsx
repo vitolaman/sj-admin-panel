@@ -2,9 +2,8 @@ import { useEffect, useState } from "react";
 import { Button, Modal } from "react-daisyui";
 import { FiX } from "react-icons/fi";
 import MInput from "components/multi-input/index";
-import { noExp, status } from "data/seeds-coin-management";
+import { status } from "data/seeds-coin-management";
 import moment from "moment";
-import useRNCHelper from "hooks/shared/useRNCHelper";
 import {
   SeedsCoinManagementReq,
   SeedsCoinModal,
@@ -12,7 +11,6 @@ import {
 import useUpdateSeedsCoinManagementForm from "hooks/seeds-coin-management/useUpdateSeedsCoinManagement";
 
 const SeedsCoinForm = ({ data, open, setOpen, refetch }: SeedsCoinModal) => {
-  const { select, setSelect, handleSelectChange } = useRNCHelper();
   const {
     handleUpdate,
     register,
@@ -24,12 +22,15 @@ const SeedsCoinForm = ({ data, open, setOpen, refetch }: SeedsCoinModal) => {
     control,
     watch,
   } = useUpdateSeedsCoinManagementForm();
+
   const handleResetForm = () => {
     if (data) {
       reset({
         ...data,
         coin_value: data.coins,
         started_at: moment(data.started_at).format("YYYY-MM-DD hh:mm"),
+        is_expired: data.expired_at === undefined ? true : false,
+        is_active: `${data.is_active}`,
         expired_at:
           data.expired_at === undefined
             ? null
@@ -39,24 +40,14 @@ const SeedsCoinForm = ({ data, open, setOpen, refetch }: SeedsCoinModal) => {
   };
 
   useEffect(() => {
-    if (data) {
-      reset({
-        ...data,
-        coin_value: data.coins,
-        started_at: moment(data.started_at).format("YYYY-MM-DD hh:mm"),
-        expired_at: moment(data.expired_at).format("YYYY-MM-DD hh:mm"),
-      });
-      setSelect((prev) => ({
-        ...prev,
-        is_active: data.is_active,
-        expired_at: data.expired_at === undefined ? null : data.expired_at,
-      }));
-    }
+handleResetForm();
   }, [data]);
   return (
     <Modal open={open} className="bg-white w-11/12 max-w-[2000px] p-4 md:p-8">
       <Modal.Header className="flex justify-between">
-        <p className="font-semibold font-poppins text-xl text-black w-fit">
+        <p
+          className="font-semibold font-poppins text-xl text-black w-fit"
+        >
           Detail Activity
         </p>
         <FiX
@@ -89,14 +80,14 @@ const SeedsCoinForm = ({ data, open, setOpen, refetch }: SeedsCoinModal) => {
           </div>
           <div className="hidden md:block border border-[#9B9B9B]"></div>
           <div className="flex flex-col gap-4 w-full md:w-7/12">
-            <MInput<SeedsCoinManagementReq>
-              registerName="is_active"
-              type="radio"
-              setValue={setValue}
-              data={status}
-              select={select?.is_active}
-              handleSelectChange={handleSelectChange}
-            />
+                <MInput<SeedsCoinManagementReq>
+                  data={status}
+                  label="Status"
+                  registerName="is_active"
+                  register={register}
+                  type="radio"
+                />
+
             <div className="flex flex-col lg:flex-row gap-4 w-full">
               <MInput<SeedsCoinManagementReq>
                 label="Start Date"
@@ -106,7 +97,7 @@ const SeedsCoinForm = ({ data, open, setOpen, refetch }: SeedsCoinModal) => {
                 type="datetime-local"
               />
 
-              {select?.expired_at !== null && (
+              {!watch("is_expired") && (
                 <MInput<SeedsCoinManagementReq>
                   label="Expired Date"
                   registerName="expired_at"
@@ -117,13 +108,12 @@ const SeedsCoinForm = ({ data, open, setOpen, refetch }: SeedsCoinModal) => {
               )}
             </div>
             <MInput<SeedsCoinManagementReq>
-              registerName="expired_at"
+              labelCheckbox="No Expired"
+              registerName="is_expired"
+              value={true}
               type="checkbox"
-              data={noExp}
+              register={register}
               errors={errors}
-              select={select?.expired_at}
-              setValue={setValue}
-              handleSelectChange={handleSelectChange}
             />
           </div>
         </div>
@@ -143,7 +133,6 @@ const SeedsCoinForm = ({ data, open, setOpen, refetch }: SeedsCoinModal) => {
             onClick={async () => {
               if (await trigger()) {
                 await handleUpdate();
-                handleResetForm();
                 setOpen(!open);
                 refetch();
               }

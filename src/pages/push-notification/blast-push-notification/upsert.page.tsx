@@ -37,7 +37,6 @@ const UpsertBlastNotif = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [status, setStatus] = useState<"DRAFT" | "normal">("normal");
-  const { handleSelectChange } = useRNCHelper();
   const [isSavePopupOpen, setIsSavePopupOpen] = useState(false);
   const [isCancelPopupOpen, setIsCancelPopupOpen] = useState(false);
   const {
@@ -357,10 +356,8 @@ const UpsertBlastNotif = () => {
               registerName="schedule_type"
               type="radio"
               data={oneTimeScheduledOption}
-              select={scheduleType}
-              setValue={setValue}
-              handleSelectChange={handleSelectChange}
               errors={errors}
+              register={register}
             />
           </div>
         )}
@@ -371,10 +368,8 @@ const UpsertBlastNotif = () => {
               registerName="schedule_type"
               type="radio"
               data={recurringOption}
-              select={scheduleType}
-              setValue={setValue}
-              handleSelectChange={handleSelectChange}
               errors={errors}
+              register={register}
             />
           </div>
         )}
@@ -798,10 +793,8 @@ const UpsertBlastNotif = () => {
               registerName="target_language"
               type="radio"
               data={languageOption}
-              select={language}
-              setValue={setValue}
-              handleSelectChange={handleSelectChange}
               errors={errors}
+              register={register}
             />
             <p className="text-sm text-[#3C49D6] font-normal mt-2">
               *Languages Preferences is based on user language preference on
