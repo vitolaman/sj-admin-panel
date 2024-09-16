@@ -14,10 +14,10 @@ import CurrencyInput from "components/currency-input";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "store";
 import { setStatusState } from "store/events/statusSlice";
-import { platformOptions } from "data/platformOptions";
+import { platformOptions } from "data/platform-options";
 import { setPaidState } from "store/events/paidSlice";
 import FormCheckbox from "components/input/formCheckbox";
-import EventStatusSelector from "./sections/formStatus.section";
+import EventStatusSelector from "./sections/form-status.section";
 
 export const uEventsRouteName = "events/:id/edit";
 const UpdateEvent = () => {
@@ -241,7 +241,7 @@ const UpdateEvent = () => {
           type="checkbox"
           value="E-CERTIFICATE"
           registerName="reward"
-          register={register} 
+          register={register}
           errors={errors}
           disabled
         />

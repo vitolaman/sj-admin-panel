@@ -4,10 +4,10 @@ import {
 } from "_interfaces/team-battle.interface";
 import MInput from "components/multi-input";
 import { Dispatch, SetStateAction, useEffect } from "react";
-import ButtonExpand from "./buttonExpand.section";
+import ButtonExpand from "./button-expand.section";
 import { Dependency, useDisplay } from "../../../hooks/team-battle/useDisplay";
-import ParticipantForm from "./participantForm.section";
-import StageForm from "./stageForm.section";
+import ParticipantForm from "./participant.section";
+import StageForm from "./stage.section";
 import {
   Control,
   FieldErrors,
@@ -18,7 +18,7 @@ import {
 } from "react-hook-form";
 import { FiX } from "react-icons/fi";
 import { Button } from "react-daisyui";
-import PeriodeForm from "./periodeForm.section";
+import PeriodeForm from "./periode.section";
 import useFilePreview from "hooks/shared/useFilePreview";
 
 interface Props {

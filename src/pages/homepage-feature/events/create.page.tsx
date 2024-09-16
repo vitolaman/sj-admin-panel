@@ -10,9 +10,8 @@ import CurrencyInput from "components/currency-input";
 import Select from "components/select";
 import { useSelector } from "react-redux";
 import { RootState } from "store";
-import { platformOptions } from "data/platformOptions";
-import EventStatusSelector from "./sections/formStatus.section";
-import useRNCHelper from "hooks/shared/useRNCHelper";
+import { platformOptions } from "data/platform-options";
+import EventStatusSelector from "./sections/form-status.section";
 
 export const cEventsRouteName = "events/create";
 const CreateEvent = () => {

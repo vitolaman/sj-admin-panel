@@ -12,7 +12,6 @@ import MDEditor, { commands } from "@uiw/react-md-editor";
 import CurrencyInput from "components/currency-input";
 import ReactSelect, { GroupBase } from "react-select";
 import { statusSubcription } from "data/seeds-academy";
-import useRNCHelper from "hooks/shared/useRNCHelper";
 
 const optionQuestion = [
   {

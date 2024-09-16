@@ -9,7 +9,6 @@ import { CreateSubcriptionPayload } from "_interfaces/seeds-academy.interfaces";
 import CurrencyInput from "components/currency-input";
 import ReactSelect, { GroupBase } from "react-select";
 import { statusSubcription } from "data/seeds-academy";
-import useRNCHelper from "hooks/shared/useRNCHelper";
 import { useGetSubscriptionByIdQuery } from "services/modules/seeds-academy";
 import { optionQuestion } from "../../../data/seeds-academy";
 

@@ -6,8 +6,8 @@ import { TeamBattleModal } from "_interfaces/team-battle.interface";
 import CropperComponent from "components/cropper";
 import TBCategoryModal from "./category.section";
 import { Loader } from "components/spinner/loader";
-import FirstModal from "./firstModal.section";
-import SecondModal from "./secondModal.section";
+import FirstModal from "./description-modal.section";
+import SecondModal from "./community-modal.section";
 import useMultiCrop from "../../../hooks/team-battle/useMultiCrop";
 import moment from "moment";
 

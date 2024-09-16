@@ -16,7 +16,7 @@ import {
   useLazyGetEventDetailQuery,
 } from "services/modules/events";
 import QrScanner from "qr-scanner";
-import ScanModal from "./sections/scanModal.section";
+import ScanModal from "./sections/scan-modal.section";
 import MInput from "components/multi-input/index";
 import useCreateCheckInOut from "hooks/events/useCreateCheckInOut";
 import CSVDownload from "components/csv-download-button";
