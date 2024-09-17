@@ -38,6 +38,7 @@ interface NumberIProps<T extends FieldValues> extends CommonProps<T> {
   prefix?: string;
   suffix?: string;
   decimalsLimit?: number;
+  max?:number
 }
 
 interface CheckboxIProps<T extends FieldValues> extends CommonProps<T> {
