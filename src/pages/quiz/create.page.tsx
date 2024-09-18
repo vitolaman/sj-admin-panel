@@ -5,7 +5,7 @@ import ContentContainer from "components/container";
 import CurrencyInput from "components/currency-input";
 import CInput from "components/input";
 import ValidationError from "components/validation/error";
-import { optionQuestion } from "data/quiz";
+import { optionQuestion, prizeType } from "data/quiz";
 import useCreateQuizForm from "hooks/quiz/useCreateQuizForm";
 import useDebounce from "hooks/shared/useDebounce";
 import useFilePreview from "hooks/shared/useFilePreview";
@@ -58,6 +58,7 @@ const CreateQuiz = () => {
     control,
     isLoading,
     watch,
+    setValue,
   } = useCreateQuizForm();
   const { fields: fieldsPayment, append: appendPayment } = useFieldArray({
     control,
@@ -67,15 +68,45 @@ const CreateQuiz = () => {
     control,
     name: "prizes",
   });
-
+  const winnerLinkUrls = watch("winner_link_url") || [];
+  const winnerImageUrls = watch("winner_image_url") || [];
   const banner = watch("banner.image_link");
   const community = watch("communities.image_link");
   const sponsor = watch("sponsors.image_link");
   const startTime = watch("started_at");
   const endTime = watch("ended_at");
+  const prizeTypeValue = watch("prize_type");
   const [bannerPreview] = useFilePreview(banner as FileList);
   const [communityPreview] = useFilePreview(community as FileList);
   const [sponsorPreview] = useFilePreview(sponsor as FileList);
+
+  const handleAddWinner = () => {
+    if (winnerLinkUrls.length < 10 && winnerImageUrls.length < 10) {
+      append({
+        prize: 0,
+      });
+      setValue("winner_link_url", [...winnerLinkUrls, ""]);
+      setValue("winner_image_url", [...winnerImageUrls, ""]);
+    }
+  };
+
+  useEffect(() => {
+    setValue("prizes", [{ prize: 0 }, { prize: 0 }, { prize: 0 }]);
+    setValue("winner_link_url", ["", "", ""]);
+    setValue("winner_image_url", ["", "", ""]);
+  }, [prizeTypeValue]);
+
+  const handleDeleteWinner = (index: number) => {
+    remove(index);
+    setValue(
+      "winner_link_url",
+      winnerLinkUrls.filter((_, i) => i !== index)
+    );
+    setValue(
+      "winner_image_url",
+      winnerImageUrls.filter((_, i) => i !== index)
+    );
+  };
 
   useEffect(() => {
     if (quizCategoryState.data) {
@@ -520,63 +551,184 @@ const CreateQuiz = () => {
               </div>
             ))}
           </div>
-          <div className="flex flex-col gap-2">
-            <label className="font-semibold">Winner</label>
-            {fields.map((item, i) => (
-              <div className="grid grid-cols-3 items-center gap-4">
-                <div className="font-semibold text-sm">Rank {i + 1}</div>
-                <div className="text-center col-span-2 flex gap-2">
-                  <div className="flex flex-col">
-                    <Controller
-                      control={control}
-                      name={`prizes.${i}.prize`}
-                      render={({ field: { onChange, value } }) => (
-                        <CurrencyInput
-                          value={value}
-                          onValueChange={(value) => onChange(value)}
-                        />
-                      )}
-                    />
-                    <ValidationError error={errors?.prizes?.[i]?.prize} />
-                  </div>
-                  <div
-                    className={`${
-                      fields.length < 4 ? "hidden" : "block"
-                    } flex items-center`}
-                  >
-                    <IoIosCloseCircleOutline
-                      onClick={() => {
-                        remove(i);
-                      }}
-                      className="text-2xl text-red-700 transform scale-100 hover:scale-125 transition-transform duration-300 cursor-pointer"
-                    />
+          {prizeTypeValue === "cash" && (
+            <div className="flex flex-col gap-2">
+              <label className="font-semibold">Winner</label>
+              {fields.map((item, i) => (
+                <div className="grid grid-cols-3 items-center gap-4">
+                  <div className="font-semibold text-sm">Rank {i + 1}</div>
+                  <div className="text-center col-span-2 flex gap-2">
+                    <div className="flex flex-col">
+                      <Controller
+                        control={control}
+                        name={`prizes.${i}.prize`}
+                        render={({ field: { onChange, value } }) => (
+                          <CurrencyInput
+                            value={value}
+                            onValueChange={(value) => onChange(value)}
+                          />
+                        )}
+                      />
+                      <ValidationError error={errors?.prizes?.[i]?.prize} />
+                    </div>
+                    <div
+                      className={`${
+                        fields.length < 4 ? "hidden" : "block"
+                      } flex items-center`}
+                    >
+                      <IoIosCloseCircleOutline
+                        onClick={() => {
+                          remove(i);
+                        }}
+                        className="text-2xl text-red-700 transform scale-100 hover:scale-125 transition-transform duration-300 cursor-pointer"
+                      />
+                    </div>
                   </div>
                 </div>
+              ))}
+              {fields.length !== 10 ? (
+                <div className="grid grid-cols-4">
+                  <div className="col-span-2" />
+                  <div className="col-span-2">
+                    <Button
+                      variant="outline"
+                      className="border-seeds text-white bg-seeds rounded-full px-6 !w-full"
+                      onClick={() => {
+                        append({
+                          prize: 0,
+                        });
+                      }}
+                      loading={isLoading}
+                      type="button"
+                    >
+                      <IoAdd size={20} /> Add More Winner
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-red-500">Maximum 10 winners allowed.</p>
+              )}
+            </div>
+          )}
+          <div className="flex flex-col gap-2">
+            <label className="font-semibold">Prize Type</label>
+            <Controller
+              control={control}
+              name="prize_type"
+              render={({ field: { value, onChange } }) => (
+                <ReactSelect
+                  styles={{
+                    control: (baseStyle) => ({
+                      ...baseStyle,
+                      padding: 5,
+                      borderColor: "#BDBDBD",
+                      borderRadius: "0.5rem",
+                    }),
+                  }}
+                  options={prizeType}
+                  value={prizeType.find((item) => item.value === value)}
+                  onChange={(e) => onChange(e?.value)}
+                />
+              )}
+            />
+            <ValidationError error={errors?.prize_type} />
+          </div>
+          <div className="flex flex-col gap-2">
+            {prizeTypeValue === "link" && (
+              <label className="font-semibold">Winner Link</label>
+            )}
+            {prizeTypeValue === "link" && (
+              <div className="flex flex-col gap-2">
+                <div className="grid grid-cols-5 gap-3 items-center">
+                  {fields?.map((item, i) => (
+                    <>
+                      <div className="font-semibold text-sm cols-span-1">
+                        Winner {i + 1}
+                      </div>
+                      <div
+                        className={`text-center ${
+                          fields.length < 4 ? "col-span-4" : "col-span-3"
+                        }
+                          `}
+                      >
+                        <CInput
+                          placeholder={`Input Winner ${i + 1} Link URL`}
+                          {...register(`winner_link_url.${i}`)}
+                          error={errors?.winner_link_url?.[i]}
+                        />
+                      </div>
+                      <div
+                        className={`col-span-1 ${
+                          fields.length < 4 ? "hidden" : "block"
+                        } flex items-center justify-center`}
+                      >
+                        <IoIosCloseCircleOutline
+                          onClick={() => handleDeleteWinner(i)}
+                          className="text-2xl text-red-700 transform scale-100 hover:scale-125 transition-transform duration-300 cursor-pointer"
+                        />
+                      </div>
+                    </>
+                  ))}
+                </div>
               </div>
-            ))}
-            {fields.length !== 10 ? (
-              <div className="grid grid-cols-4">
-                <div className="col-span-2" />
-                <div className="col-span-2">
+            )}
+          </div>
+          {prizeTypeValue === "link" && (
+            <div className="flex flex-col gap-2">
+              <label className="font-semibold">Winner Image</label>
+              <div>
+                <div className="grid grid-cols-5 gap-3 items-center">
+                  {fields?.map((item, i) => (
+                    <>
+                      <div className="font-semibold text-sm cols-span-1">
+                        Winner {i + 1}
+                      </div>
+                      <div
+                        className={`text-center ${
+                          fields.length < 4 ? "col-span-4" : "col-span-3"
+                        }
+                          `}
+                      >
+                        <FileInput
+                          {...register(`winner_image_url.${i}`)}
+                          size="md"
+                          accept="image/*"
+                          className="w-full"
+                        />
+                      </div>
+                      <div
+                        className={`col-span-1 ${
+                          fields.length < 4 ? "hidden" : "block"
+                        } flex items-center justify-center`}
+                      >
+                        <IoIosCloseCircleOutline
+                          onClick={() => handleDeleteWinner(i)}
+                          className="text-2xl text-red-700 transform scale-100 hover:scale-125 transition-transform duration-300 cursor-pointer"
+                        />
+                      </div>
+                    </>
+                  ))}
+                </div>
+              </div>
+              <p
+                className="text-red-500 col-span-6"
+                hidden={fields.length < 10}
+              >
+                Maximum 10 winners allowed.
+              </p>
+              <div className={`${fields.length > 9 ? "hidden" : "block"}`}>
+                <div className={`flex justify-end mt-6`}>
                   <Button
-                    variant="outline"
-                    className="border-seeds text-white bg-seeds rounded-full px-6 !w-full"
-                    onClick={() => {
-                      append({
-                        prize: 0,
-                      });
-                    }}
-                    loading={isLoading}
                     type="button"
+                    onClick={handleAddWinner}
+                    className="bg-seeds hover:bg-seeds-300 border-seeds hover:border-seeds-300 text-white rounded-full px-10"
                   >
-                    <IoAdd size={20} /> Add More Winner
+                    Add More Winner
                   </Button>
                 </div>
               </div>
-            ) : (
-              <p className="text-red-500">Maximum 10 winners allowed.</p>
-            )}
-          </div>
+            </div>
+          )}
           <div data-color-mode="light" className="flex flex-col gap-2">
             <label className="font-semibold">
               Terms and Conditions (Indonesia)
