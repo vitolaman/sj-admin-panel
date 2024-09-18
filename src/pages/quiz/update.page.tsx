@@ -240,6 +240,28 @@ const UpdateQuiz = () => {
             value: item.payment_method,
           })),
         },
+        {
+          label: (() => {
+            return (
+              <div
+                onClick={() => {
+                  const cc =
+                    paymentChannelState?.data?.type_cc?.map((item) => ({
+                      label: item.payment_method,
+                      value: item.payment_method,
+                    })) ?? [];
+                  appendPayment(cc);
+                }}
+              >
+                International Payment
+              </div>
+            );
+          })(),
+          options: paymentChannelState.data.type_cc.map((item) => ({
+            label: item.payment_method,
+            value: item.payment_method,
+          })),
+        },
       ];
       let selectedEWallet = paymentChannelState.data.type_ewallet.map(
         (item) => {
@@ -269,10 +291,19 @@ const UpdateQuiz = () => {
           };
         }
       });
+      let selectedCc = paymentChannelState.data.type_cc.map((item) => {
+        if ((data.payment_method as string[])?.includes(item.payment_method)) {
+          return {
+            label: item.payment_method,
+            value: item.payment_method,
+          };
+        }
+      });
       setPaymentChannelOpt(tempOpt);
       selectedEWallet = selectedEWallet.filter((item) => item != undefined);
       selectedBank = selectedBank.filter((item) => item != undefined);
       selectedQris = selectedQris.filter((item) => item != undefined);
+      selectedCc = selectedCc.filter((item) => item != undefined);
       setPaymentChannelOpt(tempOpt);
 
       reset({
@@ -282,7 +313,12 @@ const UpdateQuiz = () => {
             prize: item,
           };
         }),
-        payment_method: [...selectedEWallet, ...selectedBank, ...selectedQris],
+        payment_method: [
+          ...selectedEWallet,
+          ...selectedBank,
+          ...selectedQris,
+          ...selectedCc,
+        ],
         prize_type: data.prize_type.toLowerCase(),
       });
     } else {

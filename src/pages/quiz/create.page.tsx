@@ -224,6 +224,28 @@ const CreateQuiz = () => {
             value: item.payment_method,
           })),
         },
+        {
+          label: (() => {
+            return (
+              <div
+                onClick={() => {
+                  const cc =
+                    paymentChannelState?.data?.type_cc?.map((item) => ({
+                      label: item.payment_method,
+                      value: item.payment_method,
+                    })) ?? [];
+                  appendPayment(cc);
+                }}
+              >
+                International Payment
+              </div>
+            );
+          })(),
+          options: paymentChannelState.data.type_cc.map((item) => ({
+            label: item.payment_method,
+            value: item.payment_method,
+          })),
+        },
       ];
       setPaymentChannelOpt(tempOpt);
     }
