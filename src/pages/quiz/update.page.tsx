@@ -220,7 +220,7 @@ const UpdateQuiz = () => {
                   appendPayment(cc);
                 }}
               >
-                CC
+                International Payment
               </div>
             );
           })(),

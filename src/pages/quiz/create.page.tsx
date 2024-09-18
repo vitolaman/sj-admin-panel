@@ -206,7 +206,7 @@ const CreateQuiz = () => {
                   appendPayment(cc);
                 }}
               >
-                CC
+                International Payment
               </div>
             );
           })(),

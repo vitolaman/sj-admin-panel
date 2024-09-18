@@ -186,7 +186,7 @@ const CreatePlay = () => {
                   appendPayment(cc);
                 }}
               >
-                CC
+                International Payment
               </div>
             );
           })(),

@@ -148,7 +148,7 @@ const PlayDetail = () => {
                   appendPayment(cc);
                 }}
               >
-                CC
+                International Payment
               </div>
             );
           })(),
