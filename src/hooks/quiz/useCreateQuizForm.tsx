@@ -135,6 +135,7 @@ const useCreateQuizForm = () => {
       prizes: [{ prize: 0 }, { prize: 0 }, { prize: 0 }],
       winner_link_url: ["", "", ""],
       winner_image_url: ["", "", ""],
+      prize_type: "cash",
     },
   });
 
