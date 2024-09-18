@@ -61,6 +61,7 @@ export interface PaymentChannelRes {
   total: number;
   recommendation: Recommendation[];
   type_va: TypeVa[];
+  type_cc: TypeCc[];
   type_ewallet: TypeEwallet[];
   type_qris: TypeQri[];
 }
@@ -108,6 +109,20 @@ export interface TypeEwallet {
 }
 
 export interface TypeQri {
+  id: string;
+  payment_gateway: string;
+  payment_method: string;
+  logo_url: string;
+  payment_type: string;
+  admin_fee: number;
+  service_fee: number;
+  promo_price: number;
+  is_active: boolean;
+  is_promo_available: boolean;
+  is_priority: boolean;
+}
+
+export interface TypeCc {
   id: string;
   payment_gateway: string;
   payment_method: string;
