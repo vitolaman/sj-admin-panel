@@ -63,6 +63,33 @@ const useUpdateQuizForm = (id: string) => {
         .min(10, "min 10 characters")
         .required("Please input TnC"),
     }),
+    prize_type: yup.string().required("Prize type cannot be empty"),
+    winner_link_url: yup
+      .array()
+      .of(yup.string().url("Must be a valid URL"))
+      .when("prize_type", {
+        is: "link",
+        then: yup
+          .array()
+          .of(
+            yup
+              .string()
+              .url("Must be a valid URL")
+              .required("Each link must be filled")
+          )
+          .required("Links are required for link prize type"),
+      }),
+    winner_image_url: yup
+      .array()
+      .of(yup.mixed())
+      .nullable()
+      .when("prize_type", {
+        is: "link",
+        then: yup
+          .array()
+          .of(yup.mixed().required("Each image must be filled"))
+          .required("Images are required for image prize type"),
+      }),
   });
 
   const {
@@ -73,6 +100,7 @@ const useUpdateQuizForm = (id: string) => {
     setFocus,
     watch,
     reset,
+    setValue,
   } = useForm<QuizForm>({
     mode: "onSubmit",
     resolver: yupResolver(schema),
@@ -95,6 +123,9 @@ const useUpdateQuizForm = (id: string) => {
         { name: "THIRD", price: 0 },
       ],
       duration_in_minute: 0,
+      prizes: [{ prize: 0 }, { prize: 0 }, { prize: 0 }],
+      winner_link_url: ["", "", ""],
+      winner_image_url: [{ link: "" }, { link: "" }, { link: "" }],
     },
   });
 
@@ -105,10 +136,13 @@ const useUpdateQuizForm = (id: string) => {
       const paymentMethodParsed = (data.payment_method as any[]).map(
         (item) => item.value
       );
+      const imagesTemp = data.winner_image_url.map((item) => item.link!);
       const payload: QuizPayload = {
         ...data,
         prizes: data.prizes.map((item) => item.prize),
         payment_method: paymentMethodParsed,
+        winner_link_url: data?.winner_link_url,
+        winner_image_url: imagesTemp,
       };
       if (data.banner.image_link !== "") {
         const banner = await uploadFile(
@@ -140,6 +174,21 @@ const useUpdateQuizForm = (id: string) => {
           image_url: communities,
         };
       }
+      const promises: Promise<string>[] = [];
+      const newImage: number[] = [];
+      data.winner_image_url.forEach((item, i) => {
+        if (item.file && item.file[0]) {
+          newImage.push(i);
+          promises.push(uploadFile(accessToken!, item.file[0]));
+        }
+      });
+      if (promises.length > 0) {
+        const images = await Promise.all(promises);
+        images.forEach((item, i) => {
+          imagesTemp[newImage[i]] = item;
+        });
+        payload.winner_image_url = imagesTemp;
+      }
       await updateQuiz({ id, body: payload }).unwrap();
       navigate(-1);
     } catch (error) {
@@ -160,6 +209,7 @@ const useUpdateQuizForm = (id: string) => {
     isLoadingUpdate,
     watch,
     reset,
+    setValue,
   };
 };
 

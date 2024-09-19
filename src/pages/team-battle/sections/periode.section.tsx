@@ -9,6 +9,15 @@ interface Props {
 }
 
 const PeriodeForm = ({ register, errors, watch }: Props) => {
+  const dateValidation =
+    watch("id") &&
+    new Date().getTime() - new Date(watch("elimination_start")).getTime() > 0 &&
+    watch("joined_participant") < watch("participant")!
+      ? true
+      : watch("id") &&
+        new Date().getTime() - new Date(watch("final_end")).getTime() > 0
+      ? true
+      : false;
   return (
     <>
       <div className="flex flex-col xl:flex-row gap-4 w-full">
@@ -18,6 +27,7 @@ const PeriodeForm = ({ register, errors, watch }: Props) => {
           registerName="registration_start"
           register={register}
           errors={errors}
+          disabled={dateValidation}
         />
         <MInput<TeamBattleReq>
           label="Registration End Date"
@@ -25,6 +35,7 @@ const PeriodeForm = ({ register, errors, watch }: Props) => {
           registerName="registration_end"
           register={register}
           errors={errors}
+          disabled={dateValidation}
         />
       </div>
       <div className="flex flex-col xl:flex-row gap-4 w-full">
@@ -34,6 +45,7 @@ const PeriodeForm = ({ register, errors, watch }: Props) => {
           registerName="elimination_start"
           register={register}
           errors={errors}
+          disabled={dateValidation}
         />
         <MInput<TeamBattleReq>
           label="Elimination End Date"
@@ -41,6 +53,7 @@ const PeriodeForm = ({ register, errors, watch }: Props) => {
           registerName="elimination_end"
           register={register}
           errors={errors}
+          disabled={dateValidation}
         />
       </div>
       {watch("type") === "UNIKOM" && (
@@ -51,6 +64,7 @@ const PeriodeForm = ({ register, errors, watch }: Props) => {
             registerName="semifinal_start"
             register={register}
             errors={errors}
+            disabled={dateValidation}
           />
           <MInput<TeamBattleReq>
             label="Semifinal End Date"
@@ -58,6 +72,7 @@ const PeriodeForm = ({ register, errors, watch }: Props) => {
             registerName="semifinal_end"
             register={register}
             errors={errors}
+            disabled={dateValidation}
           />
         </div>
       )}
@@ -68,6 +83,7 @@ const PeriodeForm = ({ register, errors, watch }: Props) => {
           registerName="final_start"
           register={register}
           errors={errors}
+          disabled={dateValidation}
         />
         <MInput<TeamBattleReq>
           label="Final End Date"
@@ -75,6 +91,7 @@ const PeriodeForm = ({ register, errors, watch }: Props) => {
           registerName="final_end"
           register={register}
           errors={errors}
+          disabled={dateValidation}
         />
       </div>
     </>

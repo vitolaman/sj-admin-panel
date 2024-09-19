@@ -69,8 +69,7 @@ export interface TeamBattleI {
   joined_participant: number;
 }
 
-export interface TeamBattleId
-  extends Omit<TeamBattleI, "max_participant" | "joined_participant"> {
+export interface TeamBattleId extends Omit<TeamBattleI, "max_participant"> {
   public_max_participant: number;
   community_max_participant: number;
   university_max_participant: number;
@@ -80,10 +79,7 @@ export interface TeamBattleId
 
 export interface TeamBattleReq
   extends ExtraDisplay,
-    Omit<
-      TeamBattleI,
-      "id" | "groups" | "max_participant" | "joined_participant" | "status"
-    >,
+    Omit<TeamBattleI, "id" | "groups" | "max_participant" | "status">,
     Partial<Pick<TeamBattleI, "id">> {
   groups: Omit<Groups, "id">[];
   public_max_participant: number;

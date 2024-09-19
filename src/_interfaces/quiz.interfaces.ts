@@ -38,6 +38,9 @@ export interface QuizI {
     en: string;
     id: string;
   };
+  prize_type: string;
+  winner_image_url: string[];
+  winner_link_url: string[];
 }
 
 export interface Banner {
@@ -95,8 +98,17 @@ export interface QuizForm {
   featured_link: string;
   total_questions: number;
   payment_method: string[] | OptChild[];
+  prize_type: string;
+  winner_link_url: string[];
+  winner_image_url: FileType[];
+}
+export interface FileType {
+  file?: FileList;
+  link?: string;
 }
 
-export interface QuizPayload extends Omit<QuizForm, "prizes"> {
+export interface QuizPayload
+  extends Omit<QuizForm, "prizes" | "winner_image_url"> {
   prizes: number[];
+  winner_image_url: string[];
 }

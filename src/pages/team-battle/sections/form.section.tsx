@@ -48,6 +48,7 @@ const TeamBattleForm = ({
     control,
     firstTrigger,
     secondTrigger,
+    clearErrors,
   } = useUpsertTeamBattle();
   const category = watch("category");
   const [SDataState, UDataState, CDataState] = useMultiCrop({
@@ -81,12 +82,13 @@ const TeamBattleForm = ({
     if (watch("type") === "UNIKOM") {
       if ((await firstTrigger()) && sectionModal === 0) {
         setSectionModal(1);
+        clearErrors(["community", "university"]);
       } else if ((await secondTrigger()) && sectionModal === 1) {
-        await handlePostSub();
+        handlePostSub();
       }
     } else {
       if (await firstTrigger()) {
-        await handlePostSub();
+        handlePostSub();
       }
     }
   };

@@ -93,5 +93,17 @@ const optionCategory = [
     value: "EDUCATION",
   },
 ];
+const prizeType = [
+  {
+    key: 1,
+    label: "Cash",
+    value: "cash",
+  },
+  {
+    key: 2,
+    label: "Link",
+    value: "link",
+  },
+];
 
-export { optionCategory, optionQuestion };
+export { optionCategory, optionQuestion, prizeType };
