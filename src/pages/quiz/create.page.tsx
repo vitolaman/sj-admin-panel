@@ -68,6 +68,14 @@ const CreateQuiz = () => {
     control,
     name: "prizes",
   });
+  const {
+    fields: fieldsImage,
+    remove: removeImage,
+    append: appendImage,
+  } = useFieldArray({
+    control,
+    name: "winner_image_url",
+  });
   const winnerLinkUrls = watch("winner_link_url") || [];
   const winnerImageUrls = watch("winner_image_url") || [];
   const banner = watch("banner.image_link");
@@ -79,21 +87,25 @@ const CreateQuiz = () => {
   const [bannerPreview] = useFilePreview(banner as FileList);
   const [communityPreview] = useFilePreview(community as FileList);
   const [sponsorPreview] = useFilePreview(sponsor as FileList);
-
+  const imagePreview = winnerImageUrls.map(({ file }) => {
+    if (file && file[0]) {
+      return URL.createObjectURL(file[0]);
+    }
+  });
   const handleAddWinner = () => {
     if (winnerLinkUrls.length < 10 && winnerImageUrls.length < 10) {
       append({
         prize: 0,
       });
       setValue("winner_link_url", [...winnerLinkUrls, ""]);
-      setValue("winner_image_url", [...winnerImageUrls, ""]);
+      appendImage({ link: "" });
     }
   };
 
   useEffect(() => {
     setValue("prizes", [{ prize: 0 }, { prize: 0 }, { prize: 0 }]);
     setValue("winner_link_url", ["", "", ""]);
-    setValue("winner_image_url", ["", "", ""]);
+    setValue("winner_image_url", [{ link: "" }, { link: "" }, { link: "" }]);
   }, [prizeTypeValue]);
 
   const handleDeleteWinner = (index: number) => {
@@ -102,10 +114,7 @@ const CreateQuiz = () => {
       "winner_link_url",
       winnerLinkUrls.filter((_, i) => i !== index)
     );
-    setValue(
-      "winner_image_url",
-      winnerImageUrls.filter((_, i) => i !== index)
-    );
+    removeImage(index);
   };
 
   useEffect(() => {
@@ -678,19 +687,26 @@ const CreateQuiz = () => {
               <label className="font-semibold">Winner Image</label>
               <div>
                 <div className="grid grid-cols-5 gap-3 items-center">
-                  {fields?.map((item, i) => (
+                  {fieldsImage?.map((item, i) => (
                     <>
                       <div className="font-semibold text-sm cols-span-1">
                         Winner {i + 1}
                       </div>
                       <div
-                        className={`text-center ${
+                        className={`flex gap-4 items-center text-center ${
                           fields.length < 4 ? "col-span-4" : "col-span-3"
                         }
                           `}
                       >
+                        {(imagePreview[i] || item.link) && (
+                          <img
+                            src={imagePreview[i] ?? item.link}
+                            alt="image-preview"
+                            className="w-8 h-8"
+                          />
+                        )}
                         <FileInput
-                          {...register(`winner_image_url.${i}`)}
+                          {...register(`winner_image_url.${i}.file`)}
                           size="md"
                           accept="image/*"
                           className="w-full"
