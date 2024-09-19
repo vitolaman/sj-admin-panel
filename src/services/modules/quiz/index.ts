@@ -24,7 +24,7 @@ export const quizApi = Api.injectEndpoints({
       keepUnusedDataFor: 0,
     }),
     getQuizById: build.query<QuizI, string>({
-      query: (id) => `quiz/v1/${id}`,
+      query: (id) => `quiz/v1/admin/${id}`,
       keepUnusedDataFor: 0,
     }),
     deleteQuiz: build.mutation<void, string>({
