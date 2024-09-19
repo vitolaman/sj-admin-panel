@@ -21,24 +21,24 @@ export const levelExpOptions = [
 
 export const categoryPromo = ["Play", "Circle", "Article"];
 export const quotaType = [
-  { label: "Input limit quota", value: 1 },
-  { label: "No limit quota", value: 0 },
+  { label: "Input limit quota", value: true },
+  { label: "No limit quota", value: false },
 ];
 export const discountType = [
   { label: "Nominal", value: "Nominal" },
   { label: "Percentage", value: "Percentage" },
 ];
 export const redeemType = [
-  { label: "Input max Redeem", value: 1 },
-  { label: "No limit max Redeem", value: 0 },
+  { label: "Input max Redeem", value: true },
+  { label: "No limit max Redeem", value: false },
 ];
 export const minTransactionType = [
-  { label: "Input min Transaction", value: 1 },
-  { label: "No min Transaction", value: 0 },
+  { label: "Input min Transaction", value: true },
+  { label: "No min Transaction", value: false },
 ];
 export const promoDateType = [
-  { label: "Date Periode", value: '' },
-  { label: "No Expired Date", value: null },
+  { label: "Date Periode", value: true },
+  { label: "No Expired Date", value: false },
 ];
 export const statusPromo = [
   { label: "Active", value: true },

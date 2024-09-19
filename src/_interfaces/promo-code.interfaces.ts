@@ -17,14 +17,8 @@ export interface CategoryModalPromoCodeI {
   openModal: boolean;
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
   loadingUpsert: boolean;
-  promoCodeData?: PromoCodeI;
   setValue: UseFormSetValue<PromoCodeFormDataI>;
-  handleCreate: (
-    e?: BaseSyntheticEvent<object, any, any> | undefined
-  ) => Promise<void>;
-  handleUpdate: (
-    e?: BaseSyntheticEvent<object, any, any> | undefined
-  ) => Promise<void>;
+  handleUpsert: (e?: React.BaseSyntheticEvent) => Promise<void>
   handleResetFilter: () => void;
   handleResetForm: () => void;
   selectAll: string[];
@@ -169,7 +163,14 @@ export interface GetPromoCodeQuery {
   start_date_until: string;
 }
 
-export interface PromoCodeFormDataI {
+interface PromoCodeRadio {
+  is_expired?: string | boolean;
+  is_quota?: string | boolean;
+  is_redeem?: string | boolean;
+  is_transaction?: string | boolean;
+}
+
+export interface PromoCodeFormDataI extends PromoCodeRadio {
   id?: string;
   name_promo_code?: string;
   promo_code?: string;
@@ -178,10 +179,10 @@ export interface PromoCodeFormDataI {
   expired_date: string | null;
   discount_amount?: number;
   discount_percentage?: number;
-  min_transaction: number;
+  min_transaction: number | string;
   max_discount?: number;
   initial_quantity?: number;
-  quantity?: number;
+  quantity?: number | string;
   type: string;
   institution: string;
   segment_user?: string;
@@ -192,6 +193,6 @@ export interface PromoCodeFormDataI {
   category: string;
   min_exp: number;
   tnc: string;
-  max_redeem: number;
-  is_active: boolean;
+  max_redeem: number | string;
+  is_active: boolean | string;
 }

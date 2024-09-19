@@ -1,8 +1,11 @@
-import { TeamBattleI, TeamBattleReq } from "_interfaces/team-battle.interface";
+import {
+  TeamBattleId,
+  TeamBattleReq,
+} from "_interfaces/team-battle.interface";
 import MInput from "components/multi-input";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import ButtonExpand from "./buttonExpand.section";
-import useDisplay from "../../../hooks/team-battle/useDisplay";
+import { Dependency, useDisplay } from "../../../hooks/team-battle/useDisplay";
 import ParticipantForm from "./participantForm.section";
 import StageForm from "./stageForm.section";
 import {
@@ -19,7 +22,7 @@ import PeriodeForm from "./periodeForm.section";
 import useFilePreview from "hooks/shared/useFilePreview";
 
 interface Props {
-  data: TeamBattleI;
+  data: TeamBattleId;
   register: UseFormRegister<TeamBattleReq>;
   errors: FieldErrors<TeamBattleReq>;
   watch: UseFormWatch<TeamBattleReq>;
@@ -57,6 +60,16 @@ const FirstModal = ({
   setOpenInput,
   handleOpen,
 }: Props) => {
+  const imageURL = watch("banner");
+  const [imageURLPreview] = useFilePreview(
+    typeof imageURL === "string" ? undefined : (imageURL as FileList)
+  );
+  const {
+    watchDependencies,
+    participantDependencies,
+    periodeDependencies,
+    stageDependencies,
+  } = Dependency(watch, errors);
   const { fields, append, remove } = useFieldArray({
     control,
     name: "sponsors",
@@ -76,44 +89,29 @@ const FirstModal = ({
       [key]: !status,
     }));
   };
-  const imageURL = watch("banner");
-  const [imageURLPreview] = useFilePreview(
-    typeof imageURL === "string" ? undefined : (imageURL as FileList)
-  );
 
   useEffect(() => {
     useDisplay(watch, setValue);
-  }, [
-    watch("public_max_participant"),
-    watch("community_max_participant"),
-    watch("university_max_participant"),
-    watch("semifinal_participant"),
-    watch("final_participant"),
-    watch("registration_start"),
-    watch("final_end"),
-    watch(`sponsors`),
-  ]);
+  }, watchDependencies);
 
   useEffect(() => {
-    if (
-      errors.registration_start !== undefined ||
-      errors.registration_end !== undefined ||
-      errors.elimination_start !== undefined ||
-      errors.elimination_end !== undefined ||
-      errors.semifinal_start !== undefined ||
-      errors.semifinal_end !== undefined ||
-      errors.final_start !== undefined ||
-      errors.final_end !== undefined
-    ) {
+    if (participantDependencies.some((error) => error !== undefined)) {
+      handleExpand("participant", false);
+    }
+  }, participantDependencies);
+
+  useEffect(() => {
+    if (periodeDependencies.some((error) => error !== undefined)) {
       handleExpand("periode", false);
     }
-    if (
-      errors.semifinal_participant !== undefined ||
-      errors.final_participant !== undefined
-    ) {
+  }, periodeDependencies);
+
+  useEffect(() => {
+    if (stageDependencies.some((error) => error !== undefined)) {
       handleExpand("stage", false);
     }
-  }, [errors]);
+  }, stageDependencies);
+
   return (
     <>
       <div className="flex flex-col md:flex-row md:justify-between gap-4 md:gap-10">
@@ -126,6 +124,16 @@ const FirstModal = ({
             errors={errors}
             placeholder="Input Title"
             disabled={watch("id") === undefined ? false : true}
+          />
+          <MInput<TeamBattleReq>
+            label="Open Balance"
+            type="number"
+            registerName="initial_balance"
+            watch={watch}
+            control={control}
+            errors={errors}
+            placeholder="Input Open Balance"
+            prefix="Rp "
           />
           <MInput<TeamBattleReq>
             label="Min Participant"
@@ -253,6 +261,7 @@ const FirstModal = ({
                       onClick={() => {
                         if (fields.length !== 1) {
                           remove(index);
+                          tmpImgArray.splice(index, 1);
                         }
                       }}
                     />
@@ -283,7 +292,7 @@ const FirstModal = ({
             />
           </div>
           {openInput.periode && (
-            <PeriodeForm register={register} errors={errors} />
+            <PeriodeForm register={register} errors={errors} watch={watch} />
           )}
           <MInput<TeamBattleReq>
             label="Upload Banner"

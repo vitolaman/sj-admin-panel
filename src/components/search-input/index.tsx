@@ -21,11 +21,11 @@ const SearchInput = ({
   return (
     <form
       onSubmit={handleSubmit(onSubmit!)}
-      className={`flex border rounded-full items-center p-2 ${formClassName}`}
+      className={`flex border rounded-full items-center p-2 ${formClassName? formClassName : ""}`}
     >
       <input
         type="text"
-        className={`outline-none ${className}`}
+        className={`outline-none ${className? className : ""}`}
         {...register("text")}
         placeholder={placeholder}
         disabled={disabled}
