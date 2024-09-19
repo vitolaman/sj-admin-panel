@@ -223,6 +223,7 @@ const useUpsertTeamBattle = () => {
     watch,
     reset,
     setValue,
+    clearErrors
   } = useForm<TeamBattleReq>({
     mode: "onSubmit",
     resolver: yupResolver(schema),
@@ -400,6 +401,7 @@ const useUpsertTeamBattle = () => {
     defaultValues,
     firstTrigger,
     secondTrigger,
+    clearErrors
   };
 };
 
