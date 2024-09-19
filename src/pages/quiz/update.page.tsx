@@ -93,7 +93,7 @@ const UpdateQuiz = () => {
   const sponsor = watch("sponsors.image_link");
   const startTime = watch("started_at");
   const endTime = watch("ended_at");
-  const imagePreview = winnerImageUrls.map(({ file }) => {
+  const imagePreview = winnerImageUrls?.map(({ file }) => {
     if (file && file[0]) {
       return URL.createObjectURL(file[0]);
     }
@@ -130,7 +130,7 @@ const UpdateQuiz = () => {
 
   useEffect(() => {
     if (quizCategoryState.data) {
-      const tempOpt = quizCategoryState.data.data.map((item, i) => ({
+      const tempOpt = quizCategoryState.data.data?.map((item, i) => ({
         key: i,
         label: item.category_id,
         value: item.category_id,
@@ -152,7 +152,7 @@ const UpdateQuiz = () => {
 
   useEffect(() => {
     if (promoCodeState.data?.data && promoCodeState.data.data.length > 0) {
-      const newPromoCodeList = promoCodeState.data.data.map((item) => ({
+      const newPromoCodeList = promoCodeState.data.data?.map((item) => ({
         label: `${item.name_promo_code} - ${item.promo_code}`,
         data: item.id,
       }));
@@ -195,7 +195,7 @@ const UpdateQuiz = () => {
               </div>
             );
           })(),
-          options: paymentChannelState.data.type_ewallet.map((item) => ({
+          options: paymentChannelState.data.type_ewallet?.map((item) => ({
             label: item.payment_method,
             value: item.payment_method,
           })),
@@ -217,7 +217,7 @@ const UpdateQuiz = () => {
               </div>
             );
           })(),
-          options: paymentChannelState.data.type_va.map((item) => ({
+          options: paymentChannelState.data.type_va?.map((item) => ({
             label: item.payment_method,
             value: item.payment_method,
           })),
@@ -239,7 +239,7 @@ const UpdateQuiz = () => {
               </div>
             );
           })(),
-          options: paymentChannelState.data.type_qris.map((item) => ({
+          options: paymentChannelState.data.type_qris?.map((item) => ({
             label: item.payment_method,
             value: item.payment_method,
           })),
@@ -261,13 +261,13 @@ const UpdateQuiz = () => {
               </div>
             );
           })(),
-          options: paymentChannelState.data.type_cc.map((item) => ({
+          options: paymentChannelState.data.type_cc?.map((item) => ({
             label: item.payment_method,
             value: item.payment_method,
           })),
         },
       ];
-      let selectedEWallet = paymentChannelState.data.type_ewallet.map(
+      let selectedEWallet = paymentChannelState.data.type_ewallet?.map(
         (item) => {
           if (
             (data.payment_method as string[])?.includes(item.payment_method)
@@ -279,7 +279,7 @@ const UpdateQuiz = () => {
           }
         }
       );
-      let selectedBank = paymentChannelState.data.type_va.map((item) => {
+      let selectedBank = paymentChannelState.data.type_va?.map((item) => {
         if ((data.payment_method as string[])?.includes(item.payment_method)) {
           return {
             label: item.payment_method,
@@ -287,7 +287,7 @@ const UpdateQuiz = () => {
           };
         }
       });
-      let selectedQris = paymentChannelState.data.type_qris.map((item) => {
+      let selectedQris = paymentChannelState.data.type_qris?.map((item) => {
         if ((data.payment_method as string[])?.includes(item.payment_method)) {
           return {
             label: item.payment_method,
@@ -295,7 +295,7 @@ const UpdateQuiz = () => {
           };
         }
       });
-      let selectedCc = paymentChannelState.data.type_cc.map((item) => {
+      let selectedCc = paymentChannelState.data.type_cc?.map((item) => {
         if ((data.payment_method as string[])?.includes(item.payment_method)) {
           return {
             label: item.payment_method,
@@ -309,7 +309,7 @@ const UpdateQuiz = () => {
       selectedQris = selectedQris.filter((item) => item != undefined);
       selectedCc = selectedCc.filter((item) => item != undefined);
       setPaymentChannelOpt(tempOpt);
-      let tempImages = data.winner_image_url.map((item) => ({ link: item }));
+      let tempImages = data.winner_image_url?.map((item) => ({ link: item }));
       reset({
         ...data,
         prizes: data.prizes?.map((item) => {
@@ -655,7 +655,7 @@ const UpdateQuiz = () => {
           {prizeTypeValue === "cash" && (
             <div className="flex flex-col gap-2">
               <label className="font-semibold">Winner</label>
-              {fields.map((item, i) => (
+              {fields?.map((item, i) => (
                 <div className="grid grid-cols-3 items-center gap-4">
                   <div className="font-semibold text-sm">Rank {i + 1}</div>
                   <div className="text-center col-span-2 flex gap-2">
