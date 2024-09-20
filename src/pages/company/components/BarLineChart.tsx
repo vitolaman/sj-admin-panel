@@ -1,4 +1,3 @@
-import { rupiahFormatter } from "_helper/formatters";
 import React from "react";
 import {
   ComposedChart,

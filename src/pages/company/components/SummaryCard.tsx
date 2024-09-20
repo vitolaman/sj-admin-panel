@@ -1,6 +1,3 @@
-import { rupiahFormatter } from "_helper/formatters";
-import React from "react";
-
 interface SummaryCardProps {
   bgcolor: string;
   title: string;
