@@ -110,6 +110,7 @@ import DetailCompany, {
 import UpsertBlastNotif, {
   ubnRouteName,
 } from "pages/push-notification/blast-push-notification/upsert.page";
+import DetailQuiz, { dqRouteName } from "pages/quiz/detail.page";
 
 const protectedRoutes: RouteObject[] = [
   { path: "", element: <Navigate to="/user/control-panel" /> },
@@ -227,6 +228,10 @@ const protectedRoutes: RouteObject[] = [
           {
             path: uqRouteName,
             element: <UpdateQuiz />,
+          },
+          {
+            path: dqRouteName,
+            element: <DetailQuiz />,
           },
           {
             path: categoryQuizRouteName,
