@@ -7,7 +7,7 @@ import { Columns, Table } from "components/table/table";
 import moment from "moment";
 import { useState } from "react";
 import { Button, Dropdown } from "react-daisyui";
-import { FaEllipsisH } from "react-icons/fa";
+import { FiEdit, FiFileText, FiMoreHorizontal, FiTrash2 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { errorHandler } from "services/errorHandler";
 import {
@@ -118,22 +118,37 @@ const QuizList = () => {
       label: "Action",
       render: (data) => (
         <Dropdown horizontal="left">
-          <Dropdown.Toggle>
-            <FaEllipsisH />
+          <Dropdown.Toggle size="xs" button={false}>
+            <Button size="xs" className="border-none p-0">
+              <FiMoreHorizontal color="#27a590" size={24} />
+            </Button>
           </Dropdown.Toggle>
-          <Dropdown.Menu className="w-52 bg-white z-50">
+          <Dropdown.Menu className="w-36 bg-white z-50 -translate-y-16">
             <Dropdown.Item
+              className="font-medium hover:bg-gray-300"
               onClick={() => {
                 navigate(`/quiz/${data?.id}/edit`);
               }}
             >
-              Edit
+              <FiEdit /> Edit
             </Dropdown.Item>
+            {data?.status === "ENDED" && (
+              <Dropdown.Item
+                className="font-medium hover:bg-gray-300"
+                onClick={() => {
+                  navigate(`/quiz/${data?.id}/detail`);
+                }}
+              >
+                <FiFileText /> Detail
+              </Dropdown.Item>
+            )}
             <Dropdown.Item
+              className="font-medium text-red-500 hover:bg-gray-300"
               onClick={() => {
                 setConfirmationModal({ id: data?.id, open: true });
               }}
             >
+              <FiTrash2 />
               Delete
             </Dropdown.Item>
           </Dropdown.Menu>
