@@ -34,9 +34,6 @@ const useUpdateXPManagementForm = () => {
     exp_gained: 0,
     exp_required: 0,
     max_exp: 0,
-    is_daily_task: false,
-    is_treasure: false,
-    is_active: false,
     expired_at: "",
     started_at: "",
   };
@@ -48,7 +45,8 @@ const useUpdateXPManagementForm = () => {
     reset,
     setValue,
     trigger,
-    control, watch
+    control,
+    watch,
   } = useForm<XPManagementI>({
     mode: "onSubmit",
     resolver: yupResolver(schema),
@@ -60,9 +58,7 @@ const useUpdateXPManagementForm = () => {
       const startDateUtc = new Date(data?.started_at!).toISOString();
       const endDateUtc = new Date(data?.expired_at!).toISOString();
       const payload: XPManagementI = {
-        task_code: data?.task_code,
-        name: data?.name,
-        description: data?.description,
+        ...data,
         exp_gained:
           typeof data?.exp_gained === "string"
             ? Number(data?.exp_gained)
@@ -71,13 +67,11 @@ const useUpdateXPManagementForm = () => {
           typeof data?.exp_required === "string"
             ? Number(data?.exp_required)
             : data?.exp_required,
-        max_exp:
-          typeof data?.max_exp === "string"
-            ? Number(data?.max_exp)
-            : data?.max_exp,
-        is_daily_task: data?.is_daily_task,
-        is_treasure: data?.is_treasure,
-        is_active: data?.is_active,
+        max_exp: !data.is_daily_task
+          ? 0
+          : typeof data?.max_exp === "string"
+          ? Number(data?.max_exp)
+          : data?.max_exp,
         started_at: startDateUtc,
         expired_at: endDateUtc,
       };
@@ -99,7 +93,8 @@ const useUpdateXPManagementForm = () => {
     defaultValues,
     setValue,
     trigger,
-    control, watch
+    control,
+    watch,
   };
 };
 

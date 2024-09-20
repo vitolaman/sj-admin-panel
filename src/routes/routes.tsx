@@ -88,7 +88,7 @@ import DetailEvent, {
 } from "pages/homepage-feature/events/detail.page";
 import OpenAccount, {
   openAccountRouteName,
-} from "pages/homepage-feature/open-account";
+} from "pages/homepage-feature/open-account/index.page";
 import CreateOpenAccount, {
   cOpenAccountRouteName,
 } from "pages/homepage-feature/open-account/create.page";

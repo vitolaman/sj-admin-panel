@@ -13,13 +13,17 @@ import {
 import {
   useDeleteTeamBattleMutation,
   useGetTeamBattlesQuery,
+  useLazyGetRegionListQuery,
   useLazyGetTeamBattleByIdQuery,
 } from "services/modules/team-battle";
 import ConfirmationModal from "components/confirmation-modal";
+import ItemCategory from "./sections/item-category.section";
+import RegionManagement from "./sections/region.section";
 
 export const teamBattleRouteName = "team-battle";
 const TeamBattle = () => {
   const [open, setOpen] = useState<boolean>(false);
+  const [openRegion, setOpenRegion] = useState<boolean>(false);
   const [confirmationModal, setConfirmationModal] = useState<{
     id?: string;
     open: boolean;
@@ -28,10 +32,11 @@ const TeamBattle = () => {
     page: 1,
     limit: 10,
     category: "",
+    type: "UNIKOM",
   });
-
   const [getTeamBattle, TeamBattleDetailState] =
     useLazyGetTeamBattleByIdQuery();
+  const [getRegion, RegionState] = useLazyGetRegionListQuery();
   const { data, isLoading, refetch } = useGetTeamBattlesQuery(params);
   const [deleteTeamBattleById] = useDeleteTeamBattleMutation();
 
@@ -40,6 +45,9 @@ const TeamBattle = () => {
   };
   const handleCategoryChange = (category: string): void => {
     setParams((prev) => ({ ...prev, page: 1, category }));
+  };
+  const handleTypeChange = (type: string): void => {
+    setParams((prev) => ({ ...prev, page: 1, category: "", type }));
   };
   const handleEdit = async (id: string) => {
     try {
@@ -55,15 +63,17 @@ const TeamBattle = () => {
   ): { bgColor: string; textColor: string } => {
     if (status === "OPEN") {
       return {
-        bgColor: "bg-[#DCFCE4]",
-        textColor: "text-persian-green",
+        bgColor: "bg-[#FFF7D2]",
+        textColor: "text-[#D89918]",
       };
     } else if (status === "ENDED") {
+      return { bgColor: "bg-[#E9E9E9]", textColor: "text-[#7C7C7C]" };
+    } else if (status === "CANCELED") {
       return { bgColor: "bg-[#FFEBEB]", textColor: "text-[#BB1616]" };
     } else {
       return {
-        bgColor: "bg-[#FFF7D2]",
-        textColor: "text-[#D89918]",
+        bgColor: "bg-[#DCFCE4]",
+        textColor: "text-persian-green",
       };
     }
   };
@@ -88,7 +98,9 @@ const TeamBattle = () => {
       label: "Title",
       render: (item) => (
         <p className="font-poppins font-normal text-sm text-[#201B1C]">
-          {item?.title.length! > 20 ? `${item?.title.substring(0,19)}...` : item?.title!}
+          {item?.title.length! > 16
+            ? `${item?.title.substring(0, 15)}...`
+            : item?.title!}
         </p>
       ),
     },
@@ -219,6 +231,12 @@ const TeamBattle = () => {
         yesText="Delete"
         noText="Cancel"
       />
+      <RegionManagement
+        open={openRegion}
+        setOpen={setOpenRegion}
+        getRegion={getRegion}
+        data={RegionState.data?.data}
+      />
       <TeamBattleForm
         data={TeamBattleDetailState.data!}
         requestId={TeamBattleDetailState.requestId!}
@@ -228,11 +246,20 @@ const TeamBattle = () => {
         refetch={refetch}
       />
       <div className="flex flex-col gap-6">
-        <div className="w-full flex flex-col sm:flex-row justify-between items-center gap-4">
-          <h1 className="self-start sm:self-center font-semibold md:text-2xl text-lg font-poppins">
+        <div className="w-full flex flex-col lg:flex-row justify-between items-center gap-4">
+          <h1 className="self-start font-semibold md:text-2xl text-lg font-poppins">
             Team Battle
           </h1>
-          <div className="flex flex-col md:flex-row gap-3">
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-fit">
+            <Button
+              className="bg-seeds hover:bg-seeds-300 border-seeds hover:border-seeds-300 text-white rounded-full md:px-10"
+              onClick={() => {
+                setOpenRegion(!openRegion);
+                getRegion({ limit: 10, page: 1, search: "" });
+              }}
+            >
+              Add Region
+            </Button>
             <Button
               className="bg-seeds hover:bg-seeds-300 border-seeds hover:border-seeds-300 text-white rounded-full md:px-10"
               onClick={() => {
@@ -243,62 +270,69 @@ const TeamBattle = () => {
             </Button>
           </div>
         </div>
-        <div className="flex justify-center">
+        <div className="flex flex-col items-center gap-2">
           <Tabs className="w-fit font-semibold text-base font-poppins overflow-auto">
             <Tabs.Tab
-              active={"" === params.category}
+              active={"UNIKOM" === params.type}
               onClick={() => {
-                handleCategoryChange("");
+                handleTypeChange("UNIKOM");
               }}
               className={`${
-                "" === params.category
+                "UNIKOM" === params.type
                   ? "border-b-4 !border-[#27A590] text-[#27A590]"
                   : "border-b border-[#BDBDBD] text-[#BDBDBD]"
               }`}
             >
-              ALL
+              Campus & Community Clash
             </Tabs.Tab>
             <Tabs.Tab
-              active={"ID_STOCKS" === params.category}
+              active={"PROVINCE" === params.type}
               onClick={() => {
-                handleCategoryChange("ID_STOCKS");
+                handleTypeChange("PROVINCE");
               }}
               className={`${
-                "ID_STOCKS" === params.category
+                "PROVINCE" === params.type
                   ? "border-b-4 !border-[#27A590] text-[#27A590]"
                   : "border-b border-[#BDBDBD] text-[#BDBDBD]"
               }`}
             >
-              ID Stock
-            </Tabs.Tab>
-            <Tabs.Tab
-              active={"US_STOCKS" === params.category}
-              onClick={() => {
-                handleCategoryChange("US_STOCKS");
-              }}
-              className={`${
-                "US_STOCKS" === params.category
-                  ? "border-b-4 !border-[#27A590] text-[#27A590]"
-                  : "border-b border-[#BDBDBD] text-[#BDBDBD]"
-              }`}
-            >
-              US Stock
-            </Tabs.Tab>
-            <Tabs.Tab
-              active={"CRYPTO" === params.category}
-              onClick={() => {
-                handleCategoryChange("CRYPTO");
-              }}
-              className={`${
-                "CRYPTO" === params.category
-                  ? "border-b-4 !border-[#27A590] text-[#27A590]"
-                  : "border-b border-[#BDBDBD] text-[#BDBDBD]"
-              }`}
-            >
-              Crypto
+              Regional Clash
             </Tabs.Tab>
           </Tabs>
+          <Dropdown className="sm:self-end sm:w-[160px]">
+            <Dropdown.Toggle
+              button={false}
+              className="font-poppins text-[#201B1C] cursor-pointer"
+            >{`Category: ${
+              params.category === "ID_STOCK"
+                ? "ID Stock"
+                : params.category === "US_STOCK"
+                ? "US Stock"
+                : params.category === "CRYPTO"
+                ? "Crypto"
+                : "ALL"
+            }`}</Dropdown.Toggle>
+            <Dropdown.Menu className="bg-white w-[140px] z-10 rounded-[10px] flex flex-col gap-2">
+              <ItemCategory
+                onClick={() => handleCategoryChange("")}
+                type={"ALL"}
+              />
+              <ItemCategory
+                onClick={() => handleCategoryChange("ID_STOCK")}
+                type={"ID Stock"}
+              />
+              <ItemCategory
+                onClick={() => handleCategoryChange("US_STOCK")}
+                type={"US Stock"}
+              />
+              <ItemCategory
+                onClick={() => handleCategoryChange("CRYPTO")}
+                type={"Crypto"}
+              />
+            </Dropdown.Menu>
+          </Dropdown>
         </div>
+
         <div className="max-w-full overflow-x-auto overflow-y-hidden border border-[#BDBDBD] rounded-lg">
           <Table<TeamBattleI>
             columns={header}
@@ -310,10 +344,8 @@ const TeamBattle = () => {
         </div>
         <div className="flex flex-col">
           <Pagination
-            currentPage={data?.metadata?.currentPage ?? 1}
-            totalPages={
-              Math.ceil((data?.metadata?.totalPage ?? 0) / params.limit) ?? 0
-            }
+            currentPage={data?.metadata?.current_page ?? 1}
+            totalPages={data?.metadata.total_page ?? 0}
             onPageChange={handlePageChange}
           />
         </div>

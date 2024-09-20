@@ -1,7 +1,7 @@
 import { PromoCodeTabI } from "_interfaces/promo-code.interfaces";
 import SearchInput from "components/search-input";
 import { Tabs } from "react-daisyui";
-import FeatureId from "./featureId.section";
+import FeatureId from "./feature-id.section";
 
 const TabRadio = ({
   data,

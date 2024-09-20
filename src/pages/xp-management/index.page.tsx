@@ -27,7 +27,7 @@ const XPManagement = () => {
     setParams((prev) => ({ ...prev, page }));
   };
   const getStatusColor = (
-    is_active: boolean
+    is_active: boolean | string
   ): { bgColor: string; textColor: string; status: string } => {
     if (is_active) {
       return {

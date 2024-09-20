@@ -39,8 +39,8 @@ const useUpdateCompanyForm = (id: string) => {
     register,
     formState: { errors },
     control,
-    setValue,
     reset,
+    watch
   } = useForm<UpdateCompanyForm>({
     mode: "onSubmit",
     resolver: yupResolver(schema),
@@ -76,8 +76,8 @@ const useUpdateCompanyForm = (id: string) => {
     errors,
     control,
     isLoadingUpdate,
-    setValue,
     reset,
+    watch
   };
 };
 

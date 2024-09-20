@@ -1,19 +1,15 @@
-import { SelectI } from "hooks/shared/useRNCHelper";
 import {
   Control,
   FieldErrors,
   FieldValues,
   Path,
-  PathValue,
-  SetFieldValue,
   UseFormRegister,
   UseFormWatch,
 } from "react-hook-form";
 
 interface Data {
   label: string;
-  value: string | number | boolean | null | undefined;
-  falseValue?: string | number | boolean | null | undefined;
+  value: any
 }
 
 interface CommonProps<T extends FieldValues> {
@@ -36,24 +32,28 @@ interface NumberIProps<T extends FieldValues> extends CommonProps<T> {
   type: "number";
   watch: UseFormWatch<T>;
   control: Control<T, any>;
+  locale?: string;
   disabled?: boolean;
   placeholder?: string;
   prefix?: string;
   suffix?: string;
   decimalsLimit?: number;
+  max?:number
+}
+
+interface CheckboxIProps<T extends FieldValues> extends CommonProps<T> {
+  type: "checkbox";
+  labelCheckbox: string;
+  value: any;
+  register: UseFormRegister<T>;
+  disabled?: boolean;
 }
 
 interface RadioIProps<T extends FieldValues> extends CommonProps<T> {
-  type: "radio" | "checkbox";
-
-  setValue: SetFieldValue<T>;
-  handleSelectChange: (
-    field: keyof SelectI,
-    value: string | number | boolean | null | undefined
-  ) => void;
+  type: "radio";
   data: Data[];
+  register: UseFormRegister<T>;
   disabled?: boolean;
-  select: string | number | boolean | null | undefined;
 }
 interface MarkdownIProps<T extends FieldValues> extends CommonProps<T> {
   type: "md-rich-text";
@@ -67,14 +67,15 @@ interface ImageIProps<T extends FieldValues> extends CommonProps<T> {
   type: "image";
   imageURLPreview: string | undefined;
   dataImage?: string;
-  isCrop?:boolean;
-  handleOpen?:()=>void
+  isCrop?: boolean;
+  handleOpen?: () => void;
   register: UseFormRegister<T>;
 }
 
 export type MultiProps<T extends FieldValues> =
   | CommonIProps<T>
   | NumberIProps<T>
+  | CheckboxIProps<T>
   | RadioIProps<T>
   | MarkdownIProps<T>
   | HtmlIProps<T>

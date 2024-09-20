@@ -15,7 +15,7 @@ import {
   useGetEventsQuery,
 } from "services/modules/events";
 import { setStatusState } from "store/events/statusSlice";
-import CreateEventModal from "./sections/createModal.section";
+import CreateEventModal from "./sections/create-modal.section";
 
 export const eventsRouteName = "events";
 const Events = () => {

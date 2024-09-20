@@ -2,7 +2,11 @@ import {
   GetTeamBattleQuery,
   TeamBattleReq,
   TeamBattleRes,
-  TeamBattleI,
+  TeamBattleId,
+  GetRegionListQuery,
+  RegionListRes,
+  RegionListReq,
+  RegionListI,
 } from "_interfaces/team-battle.interface";
 import { Api } from "services/api";
 
@@ -15,7 +19,7 @@ export const teamBattleApi = Api.injectEndpoints({
       }),
       keepUnusedDataFor: 0,
     }),
-    getTeamBattleById: build.query<TeamBattleI, string>({
+    getTeamBattleById: build.query<TeamBattleId, string>({
       query: (id) => `/admin-portal/v1/battle/${id}`,
       keepUnusedDataFor: 0,
     }),
@@ -45,15 +49,56 @@ export const teamBattleApi = Api.injectEndpoints({
         };
       },
     }),
+    getRegionList: build.query<RegionListRes, GetRegionListQuery>({
+      query: (params) => ({
+        url: `/admin-portal/v1/province`,
+        params,
+      }),
+      keepUnusedDataFor: 0,
+    }),
+    getRegionById: build.query<RegionListI, string>({
+      query: (id) => `/admin-portal/v1/province/${id}`,
+      keepUnusedDataFor: 0,
+    }),
+    createRegion: build.mutation<void, RegionListReq>({
+      query(body) {
+        return {
+          url: `/admin-portal/v1/province/create`,
+          method: "POST",
+          body,
+        };
+      },
+    }),
+    updateRegion: build.mutation<void, RegionListReq>({
+      query(body) {
+        return {
+          url: `/admin-portal/v1/province/${body.id}/update`,
+          method: "PATCH",
+          body,
+        };
+      },
+    }),
+    deleteRegion: build.mutation<void, string>({
+      query(id) {
+        return {
+          url: `/admin-portal/v1/province/${id}/delete`,
+          method: "DELETE",
+        };
+      },
+    }),
   }),
   overrideExisting: false,
 });
 
 export const {
   useGetTeamBattlesQuery,
-  useGetTeamBattleByIdQuery,
   useLazyGetTeamBattleByIdQuery,
   useUpdateTeamBattleMutation,
   useCreateTeamBattleMutation,
   useDeleteTeamBattleMutation,
+  useLazyGetRegionListQuery,
+  useLazyGetRegionByIdQuery,
+  useCreateRegionMutation,
+  useUpdateRegionMutation,
+  useDeleteRegionMutation,
 } = teamBattleApi;

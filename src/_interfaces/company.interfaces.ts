@@ -43,15 +43,15 @@ export interface Metadata {
 }
 
 export interface UpdateCompanyForm {
-  payment: boolean;
-  withdrawal: boolean;
+  payment: boolean | string;
+  withdrawal: boolean | string;
   share?: number;
   share_percentage?: number;
   share_option?: string;
   plan_expiry_date: string;
   plan_sandbox_expiry_date?: string;
   is_production_eligible?: boolean;
-  is_active: boolean;
+  is_active: boolean | string;
 }
 
 export type UpdateCompanyPayload = Omit<UpdateCompanyForm, "share_option">;

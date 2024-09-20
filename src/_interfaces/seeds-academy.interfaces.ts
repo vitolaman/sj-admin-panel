@@ -280,7 +280,7 @@ export interface SubscriptionConfig {
 export interface CreateSubcriptionPayload {
   price: number;
   duration_month: number;
-  status: boolean;
+  status: boolean|string;
 }
 
 export interface SubcriptionById {

@@ -22,50 +22,52 @@ const useUpsertEvents = (id?: string) => {
   const [updateEvents, updateState] = useUpdateEventsMutation();
   const [createEvents, createState] = useCreateEventsMutation();
   const loadingUpsert = createState.isLoading || updateState.isLoading;
-  const { isPaidEvent } = useSelector((state: RootState) => state?.isPaid ?? {});
-  const { isStatusEvent } = useSelector((state: RootState) => state?.isStatus ?? {});
-  const schema = (
-    yup.object().shape({
-      name: yup.string().required("Name cannot empty"),
-      external_url: yup
-        .string()
-        .required("Link cannot empty")
-        .matches(/^https:\/\//, "Link must start with https://"),
-      description: yup.string().required("Description cannot empty"),
-      event_date: yup
-        .date()
-        .required("Please input event date")
-        .typeError("invalid date"),
-      event_status: yup.string().required("Status cannot empty"),
-      location_name: yup.string().required("Location cannot empty"),
-      ended_at: yup
-        .date()
-        .required("Please input event date")
-        .typeError("Invalid date")
-        .test(
-          "is-same-date",
-          "End date must be on the same day as start date",
-          function (value) {
-            const { event_date } = this.parent;
-            if (!event_date || !value) return true;
-            return (
-              event_date.getFullYear() === value.getFullYear() &&
-              event_date.getMonth() === value.getMonth() &&
-              event_date.getDate() === value.getDate()
-            );
-          }
-        )
-        .test(
-          "is-after-start-date",
-          "End date must be after start date",
-          function (value) {
-            const { event_date } = this.parent;
-            if (!event_date || !value) return true;
-            return value > event_date;
-          }
-        ),
-    })
+  const { isPaidEvent } = useSelector(
+    (state: RootState) => state?.isPaid ?? {}
   );
+  const { isStatusEvent } = useSelector(
+    (state: RootState) => state?.isStatus ?? {}
+  );
+  const schema = yup.object().shape({
+    name: yup.string().required("Name cannot empty"),
+    external_url: yup
+      .string()
+      .required("Link cannot empty")
+      .matches(/^https:\/\//, "Link must start with https://"),
+    description: yup.string().required("Description cannot empty"),
+    event_date: yup
+      .date()
+      .required("Please input event date")
+      .typeError("invalid date"),
+    event_status: yup.string().required("Status cannot empty"),
+    location_name: yup.string().required("Location cannot empty"),
+    ended_at: yup
+      .date()
+      .required("Please input event date")
+      .typeError("Invalid date")
+      .test(
+        "is-same-date",
+        "End date must be on the same day as start date",
+        function (value) {
+          const { event_date } = this.parent;
+          if (!event_date || !value) return true;
+          return (
+            event_date.getFullYear() === value.getFullYear() &&
+            event_date.getMonth() === value.getMonth() &&
+            event_date.getDate() === value.getDate()
+          );
+        }
+      )
+      .test(
+        "is-after-start-date",
+        "End date must be after start date",
+        function (value) {
+          const { event_date } = this.parent;
+          if (!event_date || !value) return true;
+          return value > event_date;
+        }
+      ),
+  });
   const defaultValues = {
     name: "",
     external_url: "",
@@ -73,7 +75,7 @@ const useUpsertEvents = (id?: string) => {
     event_date: "",
     ended_at: "",
     location_name: "",
-    event_status: isStatusEvent ?? "OFFLINE"
+    event_status: isStatusEvent ?? "OFFLINE",
   };
   const {
     handleSubmit,
@@ -94,14 +96,15 @@ const useUpsertEvents = (id?: string) => {
     try {
       const eventDateUtc = new Date(data?.event_date!).toISOString();
       const endedAtUtc = new Date(data?.ended_at!).toISOString();
-      const payload: EventsFormDataI = { 
-        ...data, 
-        event_status: isStatusEvent, 
+      const payload: EventsFormDataI = {
+        ...data,
+        reward: data.reward ? data.reward : "",
+        event_status: isStatusEvent,
         event_date: eventDateUtc,
-        ended_at: endedAtUtc
+        ended_at: endedAtUtc,
       };
       if (isPaidEvent) {
-        payload.event_price = parseFloat(payload.id as string)
+        payload.event_price = parseFloat(payload.id as string);
       }
       if (data.image_url && data.image_url[0]) {
         const image_url = await uploadFile(
@@ -118,7 +121,7 @@ const useUpsertEvents = (id?: string) => {
     } catch (error) {
       errorHandler(error);
     } finally {
-      dispatch(setStatusState("OFFLINE"))
+      dispatch(setStatusState("OFFLINE"));
     }
   };
 
@@ -130,10 +133,12 @@ const useUpsertEvents = (id?: string) => {
         ...data,
         event_status: isStatusEvent,
         event_date: eventDateUtc,
-        ended_at: endedAtUtc
+        ended_at: endedAtUtc,
       };
       if (isPaidEvent) {
-        payload.event_price = parseFloat(payload.event_price as unknown as string);
+        payload.event_price = parseFloat(
+          payload.event_price as unknown as string
+        );
       } else {
         payload.event_price = 0;
         delete payload.currency;
@@ -144,8 +149,8 @@ const useUpsertEvents = (id?: string) => {
           data.image_url[0] as File
         );
         payload.image_url = image_url;
-        if (data.image_url[0] === 'h') {
-          payload.image_url = data.image_url
+        if (data.image_url[0] === "h") {
+          payload.image_url = data.image_url;
         }
       }
       if (id !== undefined) {
@@ -156,7 +161,7 @@ const useUpsertEvents = (id?: string) => {
     } catch (error) {
       errorHandler(error);
     } finally {
-      dispatch(setStatusState("OFFLINE"))
+      dispatch(setStatusState("OFFLINE"));
     }
   };
   const handleUpdate = handleSubmit(update);

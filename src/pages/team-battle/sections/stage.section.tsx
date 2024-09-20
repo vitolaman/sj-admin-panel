@@ -11,15 +11,17 @@ interface Props {
 const StageForm = ({ control, watch, errors }: Props) => {
   return (
     <div className="flex flex-col lg:flex-row gap-4 w-full">
-      <MInput<TeamBattleReq>
-        label="Semifinal"
-        type="number"
-        registerName="semifinal_participant"
-        placeholder="Amount Participant"
-        control={control}
-        watch={watch}
-        errors={errors}
-      />
+      {watch("type") === "UNIKOM" && (
+        <MInput<TeamBattleReq>
+          label="Semifinal"
+          type="number"
+          registerName="semifinal_participant"
+          placeholder="Amount Participant"
+          control={control}
+          watch={watch}
+          errors={errors}
+        />
+      )}
       <MInput<TeamBattleReq>
         label="Final"
         type="number"

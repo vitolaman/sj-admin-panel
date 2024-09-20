@@ -14,12 +14,10 @@ import CurrencyInput from "components/currency-input";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "store";
 import { setStatusState } from "store/events/statusSlice";
-import { platformOptions } from "data/platformOptions";
+import { platformOptions } from "data/platform-options";
 import { setPaidState } from "store/events/paidSlice";
 import FormCheckbox from "components/input/formCheckbox";
-import EventStatusSelector from "./sections/formStatus.section";
-import { certificate } from "data/events";
-import useRNCHelper from "hooks/shared/useRNCHelper";
+import EventStatusSelector from "./sections/form-status.section";
 
 export const uEventsRouteName = "events/:id/edit";
 const UpdateEvent = () => {
@@ -36,7 +34,6 @@ const UpdateEvent = () => {
     watch,
     reset,
   } = useUpsertEvents(params.id);
-  const { select, setSelect, handleSelectChange } = useRNCHelper();
   const dispatch = useDispatch();
   const imageURL = watch("image_url");
   const [imageURLPreview] = useFilePreview(
@@ -65,10 +62,6 @@ const UpdateEvent = () => {
       event_date: moment(data?.event_date).format("YYYY-MM-DD HH:mm"),
       ended_at: moment(data?.ended_at).format("YYYY-MM-DD HH:mm"),
     });
-    setSelect((prev) => ({
-      ...prev,
-      reward: data?.reward
-    }));
 
     dispatch(setStatusState(data?.event_status));
 
@@ -244,13 +237,12 @@ const UpdateEvent = () => {
           </div>
         )}
         <MInput<EventsFormDataI>
+          labelCheckbox="Certificate"
           type="checkbox"
-          handleSelectChange={handleSelectChange}
-          setValue={setValue}
-          data={certificate}
+          value="E-CERTIFICATE"
           registerName="reward"
+          register={register}
           errors={errors}
-          select={select?.reward}
           disabled
         />
         <MInput<EventsFormDataI>

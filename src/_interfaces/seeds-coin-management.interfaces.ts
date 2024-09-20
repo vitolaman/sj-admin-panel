@@ -31,7 +31,8 @@ export interface SeedsCoinManagementReq {
   coin_value: number;
   started_at: string;
   expired_at: string | null;
-  is_active: boolean;
+  is_active: boolean | string;
+  is_expired?: boolean;
 }
 
 export interface SeedsCoinRes {

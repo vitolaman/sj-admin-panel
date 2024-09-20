@@ -9,7 +9,6 @@ import { CreateSubcriptionPayload } from "_interfaces/seeds-academy.interfaces";
 import CurrencyInput from "components/currency-input";
 import ReactSelect, { GroupBase } from "react-select";
 import { statusSubcription } from "data/seeds-academy";
-import useRNCHelper from "hooks/shared/useRNCHelper";
 import { useGetSubscriptionByIdQuery } from "services/modules/seeds-academy";
 import { optionQuestion } from "../../../data/seeds-academy";
 
@@ -19,7 +18,6 @@ const UpdateSubcriptionPopUp: React.FC<{
   id: string;
 }> = ({ isOpen, onClose, id }) => {
   if (!isOpen) return null;
-  const { select, setSelect, handleSelectChange } = useRNCHelper();
   const { data, isLoading, refetch } = useGetSubscriptionByIdQuery(id);
 
   const handleCreateSuccess = (): void => {
@@ -45,7 +43,7 @@ const UpdateSubcriptionPopUp: React.FC<{
       reset({
         price: data.data.price,
         duration_month: data.data.duration_month,
-        status: data.data.status,
+        status: `${data.data.status}`,
       });
     }
   }, [data]);
@@ -107,11 +105,8 @@ const UpdateSubcriptionPopUp: React.FC<{
                       registerName="status"
                       type="radio"
                       data={statusSubcription}
-                      select={select?.status}
-                      setValue={setValue}
                       errors={errors}
-                      handleSelectChange={handleSelectChange}
-                      // register={register}
+                      register={register}
                     />
                   </div>
                 </div>

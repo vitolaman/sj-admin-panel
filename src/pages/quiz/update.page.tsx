@@ -76,6 +76,14 @@ const UpdateQuiz = () => {
     control,
     name: "prizes",
   });
+  const {
+    fields: fieldsImage,
+    remove: removeImage,
+    append: appendImage,
+  } = useFieldArray({
+    control,
+    name: "winner_image_url",
+  });
 
   const winnerLinkUrls = watch("winner_link_url") || [];
   const winnerImageUrls = watch("winner_image_url") || [];
@@ -85,6 +93,11 @@ const UpdateQuiz = () => {
   const sponsor = watch("sponsors.image_link");
   const startTime = watch("started_at");
   const endTime = watch("ended_at");
+  const imagePreview = winnerImageUrls?.map(({ file }) => {
+    if (file && file[0]) {
+      return URL.createObjectURL(file[0]);
+    }
+  });
 
   const handleAddWinner = () => {
     if (winnerLinkUrls.length < 10 && winnerImageUrls.length < 10) {
@@ -92,15 +105,9 @@ const UpdateQuiz = () => {
         prize: 0,
       });
       setValue("winner_link_url", [...winnerLinkUrls, ""]);
-      setValue("winner_image_url", [...winnerImageUrls, ""]);
+      appendImage({ link: "" });
     }
   };
-
-  useEffect(() => {
-    setValue("prizes", [{ prize: 0 }, { prize: 0 }, { prize: 0 }]);
-    setValue("winner_link_url", ["", "", ""]);
-    setValue("winner_image_url", ["", "", ""]);
-  }, [prizeTypeValue]);
 
   const handleDeleteWinner = (index: number) => {
     remove(index);
@@ -108,10 +115,7 @@ const UpdateQuiz = () => {
       "winner_link_url",
       winnerLinkUrls.filter((_, i) => i !== index)
     );
-    setValue(
-      "winner_image_url",
-      winnerImageUrls.filter((_, i) => i !== index)
-    );
+    removeImage(index);
   };
 
   const [bannerPreview] = useFilePreview(
@@ -126,7 +130,7 @@ const UpdateQuiz = () => {
 
   useEffect(() => {
     if (quizCategoryState.data) {
-      const tempOpt = quizCategoryState.data.data.map((item, i) => ({
+      const tempOpt = quizCategoryState.data.data?.map((item, i) => ({
         key: i,
         label: item.category_id,
         value: item.category_id,
@@ -148,7 +152,7 @@ const UpdateQuiz = () => {
 
   useEffect(() => {
     if (promoCodeState.data?.data && promoCodeState.data.data.length > 0) {
-      const newPromoCodeList = promoCodeState.data.data.map((item) => ({
+      const newPromoCodeList = promoCodeState.data.data?.map((item) => ({
         label: `${item.name_promo_code} - ${item.promo_code}`,
         data: item.id,
       }));
@@ -191,7 +195,7 @@ const UpdateQuiz = () => {
               </div>
             );
           })(),
-          options: paymentChannelState.data.type_ewallet.map((item) => ({
+          options: paymentChannelState.data.type_ewallet?.map((item) => ({
             label: item.payment_method,
             value: item.payment_method,
           })),
@@ -213,7 +217,7 @@ const UpdateQuiz = () => {
               </div>
             );
           })(),
-          options: paymentChannelState.data.type_va.map((item) => ({
+          options: paymentChannelState.data.type_va?.map((item) => ({
             label: item.payment_method,
             value: item.payment_method,
           })),
@@ -235,7 +239,7 @@ const UpdateQuiz = () => {
               </div>
             );
           })(),
-          options: paymentChannelState.data.type_qris.map((item) => ({
+          options: paymentChannelState.data.type_qris?.map((item) => ({
             label: item.payment_method,
             value: item.payment_method,
           })),
@@ -257,13 +261,13 @@ const UpdateQuiz = () => {
               </div>
             );
           })(),
-          options: paymentChannelState.data.type_cc.map((item) => ({
+          options: paymentChannelState.data.type_cc?.map((item) => ({
             label: item.payment_method,
             value: item.payment_method,
           })),
         },
       ];
-      let selectedEWallet = paymentChannelState.data.type_ewallet.map(
+      let selectedEWallet = paymentChannelState.data.type_ewallet?.map(
         (item) => {
           if (
             (data.payment_method as string[])?.includes(item.payment_method)
@@ -275,7 +279,7 @@ const UpdateQuiz = () => {
           }
         }
       );
-      let selectedBank = paymentChannelState.data.type_va.map((item) => {
+      let selectedBank = paymentChannelState.data.type_va?.map((item) => {
         if ((data.payment_method as string[])?.includes(item.payment_method)) {
           return {
             label: item.payment_method,
@@ -283,7 +287,7 @@ const UpdateQuiz = () => {
           };
         }
       });
-      let selectedQris = paymentChannelState.data.type_qris.map((item) => {
+      let selectedQris = paymentChannelState.data.type_qris?.map((item) => {
         if ((data.payment_method as string[])?.includes(item.payment_method)) {
           return {
             label: item.payment_method,
@@ -291,7 +295,7 @@ const UpdateQuiz = () => {
           };
         }
       });
-      let selectedCc = paymentChannelState.data.type_cc.map((item) => {
+      let selectedCc = paymentChannelState.data.type_cc?.map((item) => {
         if ((data.payment_method as string[])?.includes(item.payment_method)) {
           return {
             label: item.payment_method,
@@ -305,7 +309,7 @@ const UpdateQuiz = () => {
       selectedQris = selectedQris.filter((item) => item != undefined);
       selectedCc = selectedCc.filter((item) => item != undefined);
       setPaymentChannelOpt(tempOpt);
-
+      let tempImages = data.winner_image_url?.map((item) => ({ link: item }));
       reset({
         ...data,
         prizes: data.prizes?.map((item) => {
@@ -320,6 +324,7 @@ const UpdateQuiz = () => {
           ...selectedCc,
         ],
         prize_type: data.prize_type.toLowerCase(),
+        winner_image_url: tempImages,
       });
     } else {
       setRefetchID(refetchID + 1);
@@ -650,7 +655,7 @@ const UpdateQuiz = () => {
           {prizeTypeValue === "cash" && (
             <div className="flex flex-col gap-2">
               <label className="font-semibold">Winner</label>
-              {fields.map((item, i) => (
+              {fields?.map((item, i) => (
                 <div className="grid grid-cols-3 items-center gap-4">
                   <div className="font-semibold text-sm">Rank {i + 1}</div>
                   <div className="text-center col-span-2 flex gap-2">
@@ -774,19 +779,27 @@ const UpdateQuiz = () => {
               <label className="font-semibold">Winner Image</label>
               <div>
                 <div className="grid grid-cols-5 gap-3 items-center">
-                  {fields?.map((item, i) => (
+                  {fieldsImage?.map((item, i) => (
                     <>
                       <div className="font-semibold text-sm cols-span-1">
                         Winner {i + 1}
                       </div>
+
                       <div
-                        className={`text-center ${
+                        className={`flex gap-4 items-center text-center ${
                           fields.length < 4 ? "col-span-4" : "col-span-3"
                         }
                           `}
                       >
+                        {(imagePreview[i] || item.link) && (
+                          <img
+                            src={imagePreview[i] ?? item.link}
+                            alt="image-preview"
+                            className="w-8 h-8"
+                          />
+                        )}
                         <FileInput
-                          {...register(`winner_image_url.${i}`)}
+                          {...register(`winner_image_url.${i}.file`)}
                           size="md"
                           accept="image/*"
                           className="w-full"

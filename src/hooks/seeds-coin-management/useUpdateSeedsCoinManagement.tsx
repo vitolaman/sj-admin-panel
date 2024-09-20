@@ -18,11 +18,16 @@ const useUpdateSeedsCoinManagementForm = () => {
       .date()
       .required("Please input start date")
       .typeError("invalid date"),
-    expired_at: yup
-      .date()
-      .min(yup.ref("started_at"), "End date must be after start date")
-      .nullable()
-      .notRequired(),
+    expired_at: yup.date().when("is_expired", {
+      is: true,
+      then: yup.date().nullable().notRequired(),
+
+      otherwise: yup
+        .date()
+        .min(yup.ref("started_at"), "End date must be after start date")
+        .required("Please input expired date")
+        .typeError("Invalid date"),
+    }),
   });
 
   const {
@@ -42,21 +47,19 @@ const useUpdateSeedsCoinManagementForm = () => {
   const update = async (data: SeedsCoinManagementReq) => {
     try {
       const startDateUtc = new Date(data?.started_at!).toISOString();
-      const endDateUtc =
-        data.expired_at === null
-          ? null
-          : new Date(data?.expired_at!).toISOString();
+      const endDateUtc = data.is_expired
+        ? null
+        : new Date(data?.expired_at!).toISOString();
       const payload: SeedsCoinManagementReq = {
-        id: data.id,
-        name: data?.name,
+        ...data,
         coin_value:
           typeof data?.coin_value === "string"
             ? Number(data?.coin_value)
             : data?.coin_value,
-        is_active: data?.is_active,
         started_at: startDateUtc,
         expired_at: endDateUtc,
       };
+      delete payload.is_expired;
       await updateSeedsCoinManagement(payload).unwrap();
       toast.success("Updating an activity was successful");
     } catch (error) {

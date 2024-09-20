@@ -134,7 +134,7 @@ const useCreateQuizForm = () => {
       duration_in_minute: 0,
       prizes: [{ prize: 0 }, { prize: 0 }, { prize: 0 }],
       winner_link_url: ["", "", ""],
-      winner_image_url: ["", "", ""],
+      winner_image_url: [{ link: "" }, { link: "" }, { link: "" }],
       prize_type: "cash",
     },
   });
@@ -146,28 +146,13 @@ const useCreateQuizForm = () => {
       const paymentMethodParsed = (data.payment_method as any[]).map(
         (item) => item.value
       );
+      const imagesTemp = data.winner_image_url.map((item) => item.link!);
       const payload: QuizPayload = {
         ...data,
         prizes: data.prizes.map((item) => item.prize),
         payment_method: paymentMethodParsed,
         winner_link_url: data?.winner_link_url,
-        winner_image_url: await Promise.all(
-          data?.winner_image_url?.map(async (linkOrFile) => {
-            if (data?.prize_type === "link") {
-              if (linkOrFile !== "" && typeof linkOrFile !== "string") {
-                const image = await uploadFile(
-                  accessToken!,
-                  linkOrFile[0] as File
-                );
-                return image;
-              } else {
-                return linkOrFile as string;
-              }
-            } else {
-              return "";
-            }
-          })
-        ),
+        winner_image_url: imagesTemp,
       };
       if (data.banner.image_link !== "") {
         const banner = await uploadFile(
@@ -213,6 +198,21 @@ const useCreateQuizForm = () => {
           image_link: "",
           image_url: "",
         };
+      }
+      const promises: Promise<string>[] = [];
+      const newImage: number[] = [];
+      data.winner_image_url.forEach((item, i) => {
+        if (item.file && item.file[0]) {
+          newImage.push(i);
+          promises.push(uploadFile(accessToken!, item.file[0]));
+        }
+      });
+      if (promises.length > 0) {
+        const images = await Promise.all(promises);
+        images.forEach((item, i) => {
+          imagesTemp[newImage[i]] = item;
+        });
+        payload.winner_image_url = imagesTemp;
       }
       await createQuiz(payload).unwrap();
       navigate(-1);

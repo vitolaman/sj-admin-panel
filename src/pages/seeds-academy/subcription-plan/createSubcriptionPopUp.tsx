@@ -12,7 +12,6 @@ import MDEditor, { commands } from "@uiw/react-md-editor";
 import CurrencyInput from "components/currency-input";
 import ReactSelect, { GroupBase } from "react-select";
 import { statusSubcription } from "data/seeds-academy";
-import useRNCHelper from "hooks/shared/useRNCHelper";
 
 const optionQuestion = [
   {
@@ -72,7 +71,6 @@ const CreateSubcriptionPopUp: React.FC<{
   onClose: () => void;
 }> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
-  const { select, setSelect, handleSelectChange } = useRNCHelper();
 
   const handleCreateSuccess = (): void => {
     onClose();
@@ -148,11 +146,8 @@ const CreateSubcriptionPopUp: React.FC<{
                       registerName="status"
                       type="radio"
                       data={statusSubcription}
-                      select={select?.status}
-                      setValue={setValue}
                       errors={errors}
-                      handleSelectChange={handleSelectChange}
-                      // register={register}
+                      register={register}
                     />
                   </div>
                 </div>

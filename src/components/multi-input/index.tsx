@@ -23,13 +23,14 @@ export default function MInput<T extends FieldValues>(props: MultiProps<T>) {
               ? ""
               : "cursor-pointer"
           }`}
-          htmlFor={`${label} label`}
+          htmlFor={`${registerName} label`}
         >
           {label}
         </label>
       )}
       <CommonInput {...props} />
       <NumberInput {...props} />
+      <CheckboxInput {...props} />
       <RadioInput {...props} />
       <MarkdownInput {...props} />
       <HtmlInput {...props} />
@@ -59,92 +60,106 @@ const CommonInput = <T extends FieldValues>(props: MultiProps<T>) =>
         lineHeight: "24px",
         color: "#201B1C",
       }}
-      id={`${props.label} label`}
+      id={`${props.registerName} label`}
       placeholder={props.placeholder}
       className={props.className}
       {...props.register(props.registerName)}
     />
   ) : null;
 
-const NumberInput = <T extends FieldValues>(props: MultiProps<T>) =>
-  props.type === "number" ? (
+const NumberInput = <T extends FieldValues>(props: MultiProps<T>) => {
+  if (props.type !== "number") return null;
+  const { locale = "id-ID" } = props;
+  return (
     <Controller
       control={props.control}
       name={props.registerName}
       render={({ field: { value, onChange } }) => (
         <CurrencyInput
+          id={`${props.registerName} label`}
           className="w-full font-poppins font-normal text-base text-[#201B1C] border border-[#BDBDBD] rounded-lg px-4 py-[11px] disabled:cursor-not-allowed"
-          intlConfig={{ locale: "id-ID" }}
+          intlConfig={{ locale }}
           decimalsLimit={props.decimalsLimit ? props.decimalsLimit : 0}
           disableAbbreviations
           prefix={props.prefix}
           suffix={props.suffix}
           placeholder={props.placeholder}
           disabled={props.disabled}
-          value={props.watch(props.registerName) ? value : ""}
+          value={
+            props.watch(props.registerName)
+              ? props.max && value > props.max
+                ? props.max
+                : value
+              : ""
+          }
           onValueChange={(val) => onChange(val)}
+          max={props.max}
         />
       )}
     />
+  );
+};
+
+const CheckboxInput = <T extends FieldValues>(props: MultiProps<T>) =>
+  props.type === "checkbox" ? (
+    <div className="flex items-center gap-3">
+      <input
+        type={props.type}
+        className={`w-5 h-5 appearance-none rounded-md border-2 checked:border-none checked:bg-[#3AC4A0] disabled:checked:!bg-[#727272] relative after:checked:content-[' '] after:checked:absolute after:checked:w-2 after:checked:h-3 after:checked:border after:checked:border-white after:checked:border-t-0 after:checked:border-e-[3px] after:checked:border-b-[3px] after:checked:border-s-0 after:checked:rotate-45 after:checked:top-0.5 after:checked:left-1/2 after:checked:-translate-x-1/2 cursor-pointer peer ${
+          props.disabled ? "cursor-not-allowed" : "cursor-pointer"
+        }`}
+        disabled={props.disabled}
+        id={`${props.registerName}LabelCheckbox`}
+        value={props.value}
+        {...props.register(props.registerName)}
+      />
+      <label
+        className={`font-normal font-poppins text-base ${
+          props.disabled
+            ? "text-[#727272] cursor-not-allowed"
+            : "peer-checked:text-[#3AC4A0] text-[#262626] cursor-pointer"
+        }`}
+        htmlFor={`${props.registerName}LabelCheckbox`}
+      >
+        {props.labelCheckbox}
+      </label>
+    </div>
   ) : null;
 
 const RadioInput = <T extends FieldValues>(props: MultiProps<T>) =>
-  props.type === "radio" || props.type === "checkbox" ? (
+  props.type === "radio" ? (
     <div className="flex gap-7 flex-wrap">
-      {props.data?.map((value, index) => {
-        const handleClick = () => {
-          if (!props.disabled) {
-            props.handleSelectChange(
-              props.registerName,
-              props.type === "radio"
-                ? value.value
-                : props.select === value.value
-                ? value.falseValue
-                : value.value
-            );
-            props.setValue(
-              props.registerName,
-              props.type === "radio"
-                ? value.value
-                : props.select === value.value
-                ? value.falseValue
-                : value.value
-            );
-          }
-        };
-        return (
-          <div
-            className={`flex items-center ${
-              props.type === "radio" ? "gap-5" : "gap-3"
+      {props.data.map((item, index) => (
+        <label
+          className="flex items-center gap-5"
+          key={index}
+          htmlFor={`${props.registerName}${item.label}Label`}
+        >
+          <input
+            type={props.type}
+            className={`w-3 h-3 appearance-none checked:bg-[#3AC4A0] outline outline-2 outline-offset-2 checked:outline-[#3AC4A0] disabled:checked:outline-[#727272] disabled:checked:!bg-[#727272] outline-[#DADADA] rounded-full peer ${
+              props.disabled ? "cursor-not-allowed" : "cursor-pointer"
             }`}
-            onClick={handleClick}
+            disabled={props.disabled}
+            id={`${props.registerName}${item.label}Label`}
+            value={
+              typeof item.value === "object"
+                ? JSON.stringify(item.value)
+                : item.value
+            }
+            {...props.register(props.registerName)}
+          />
+          <p
+            className={`font-normal font-poppins text-base ${
+              props.disabled
+                ? "text-[#727272] cursor-not-allowed"
+                : "peer-checked:text-[#3AC4A0] text-[#262626] cursor-pointer"
+            }`}
           >
-            <input
-              type={props.type}
-              name={props.label}
-              className={`${
-                props.type === "radio"
-                  ? "w-3 h-3 appearance-none checked:bg-[#3AC4A0] outline outline-2 outline-offset-2 checked:outline-[#3AC4A0] disabled:checked:outline-[#727272] disabled:checked:!bg-[#727272] outline-[#DADADA] rounded-full"
-                  : "w-5 h-5 appearance-none rounded-md border-2 checked:border-none checked:bg-[#3AC4A0] disabled:checked:!bg-[#727272] relative after:checked:content-[' '] after:checked:absolute after:checked:w-2 after:checked:h-3 after:checked:border after:checked:border-white after:checked:border-t-0 after:checked:border-e-[3px] after:checked:border-b-[3px] after:checked:border-s-0 after:checked:rotate-45 after:checked:top-0.5 after:checked:left-1/2 after:checked:-translate-x-1/2 cursor-pointer"
-              } ${props.disabled ? "cursor-not-allowed" : "cursor-pointer"}`}
-              disabled={props.disabled}
-              checked={props.select === value.value}
-            />
-            <label
-              key={index}
-              className={`font-normal font-poppins text-base ${
-                props.disabled
-                  ? "text-[#727272] cursor-not-allowed"
-                  : props.select === value.value
-                  ? "text-[#3AC4A0] cursor-pointer"
-                  : "text-[#262626] cursor-pointer"
-              }`}
-            >
-              {value.label}
-            </label>
-          </div>
-        );
-      })}
+            {item.label}
+          </p>
+        </label>
+      ))}
     </div>
   ) : null;
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button, Modal, Tabs } from "react-daisyui";
-import TabRadio from "./tabRadio.section";
+import TabRadio from "./tab-radio.section";
 import {
   useArticleSelection,
   useCircleSelection,
@@ -19,10 +19,8 @@ export default function CategoryModal({
   openModal,
   setOpenModal,
   loadingUpsert,
-  promoCodeData,
   setValue,
-  handleCreate,
-  handleUpdate,
+  handleUpsert,
   handleResetFilter,
   handleResetForm,
   selectAll,
@@ -286,7 +284,7 @@ export default function CategoryModal({
             <Modal.Actions className="m-0">
               <Button
                 loading={loadingUpsert}
-                onClick={async (e) => {
+                onClick={async () => {
                   if (checkedFeature.length !== 0) {
                     setValue(
                       "feature_ids",
@@ -297,11 +295,7 @@ export default function CategoryModal({
                   }
                   setValue("type", typeCategoryPromo.join(","));
                   if (watch("type") !== "") {
-                    if (promoCodeData !== undefined) {
-                      await handleUpdate(e);
-                    } else {
-                      await handleCreate(e);
-                    }
+                 await handleUpsert()
                     handleResetForm();
                     setOpen(!open);
                     setOpenModal(!openModal);

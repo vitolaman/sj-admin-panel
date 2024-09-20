@@ -21,7 +21,8 @@ const useCreateSubcriptionForm = ({
 
   const dateNow = new Date();
   const schema = yup.object().shape({
-    price: yup.number().required("Category name cannot be empty"),
+    price: yup.number().required("Price cannot be empty"),
+    status: yup.boolean().required("Status cannot empty")
   });
 
   const {

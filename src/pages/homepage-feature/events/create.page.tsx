@@ -10,11 +10,8 @@ import CurrencyInput from "components/currency-input";
 import Select from "components/select";
 import { useSelector } from "react-redux";
 import { RootState } from "store";
-import { platformOptions } from "data/platformOptions";
-import EventStatusSelector from "./sections/formStatus.section";
-import useRNCHelper from "hooks/shared/useRNCHelper";
-import { certificate } from "data/events";
-
+import { platformOptions } from "data/platform-options";
+import EventStatusSelector from "./sections/form-status.section";
 
 export const cEventsRouteName = "events/create";
 const CreateEvent = () => {
@@ -30,7 +27,6 @@ const CreateEvent = () => {
     watch,
     reset,
   } = useUpsertEvents();
-  const { select, handleSelectChange } = useRNCHelper();
   const imageURL = watch("image_url");
   const [imageURLPreview] = useFilePreview(imageURL as FileList);
   const { isPaidEvent } = useSelector(
@@ -193,13 +189,12 @@ const CreateEvent = () => {
           </div>
         )}
         <MInput<EventsFormDataI>
+          labelCheckbox="Certificate"
           type="checkbox"
-          handleSelectChange={handleSelectChange}
-          setValue={setValue}
-          data={certificate}
+          value="E-CERTIFICATE"
           registerName="reward"
+          register={register}
           errors={errors}
-          select={select?.reward}
         />
         <MInput<EventsFormDataI>
           label="Body Message"

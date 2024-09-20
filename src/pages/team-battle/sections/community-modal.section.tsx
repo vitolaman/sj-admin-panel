@@ -1,4 +1,4 @@
-import { TeamBattleI, TeamBattleReq } from "_interfaces/team-battle.interface";
+import { TeamBattleId, TeamBattleReq } from "_interfaces/team-battle.interface";
 import MInput from "components/multi-input";
 import { Dispatch, SetStateAction } from "react";
 import {
@@ -12,7 +12,7 @@ import { FiX } from "react-icons/fi";
 import { Button } from "react-daisyui";
 
 interface Props {
-  data: TeamBattleI;
+  data: TeamBattleId;
   register: UseFormRegister<TeamBattleReq>;
   watch: UseFormWatch<TeamBattleReq>;
   errors: FieldErrors<TeamBattleReq>;
@@ -106,6 +106,7 @@ const SecondModal = ({
                   onClick={() => {
                     if (fields.length !== 1) {
                       remove(index);
+                      tmpImgArrayUniv.splice(index, 1);
                     }
                   }}
                 />
@@ -179,6 +180,7 @@ const SecondModal = ({
                   onClick={() => {
                     if (fieldsCommunity.length !== 1) {
                       removeCommunity(index);
+                      tmpImgArrayCom.splice(index, 1);
                     }
                   }}
                 />
