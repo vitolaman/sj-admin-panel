@@ -17,7 +17,7 @@ import {
   useLazyGetTeamBattleByIdQuery,
 } from "services/modules/team-battle";
 import ConfirmationModal from "components/confirmation-modal";
-import ItemCategory from "./sections/itemCategory.section";
+import ItemCategory from "./sections/item-category.section";
 import RegionManagement from "./sections/region.section";
 
 export const teamBattleRouteName = "team-battle";

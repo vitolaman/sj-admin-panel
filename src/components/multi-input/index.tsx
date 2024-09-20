@@ -76,7 +76,7 @@ const NumberInput = <T extends FieldValues>(props: MultiProps<T>) => {
       name={props.registerName}
       render={({ field: { value, onChange } }) => (
         <CurrencyInput
-        id={`${props.registerName} label`}
+          id={`${props.registerName} label`}
           className="w-full font-poppins font-normal text-base text-[#201B1C] border border-[#BDBDBD] rounded-lg px-4 py-[11px] disabled:cursor-not-allowed"
           intlConfig={{ locale }}
           decimalsLimit={props.decimalsLimit ? props.decimalsLimit : 0}
@@ -85,8 +85,15 @@ const NumberInput = <T extends FieldValues>(props: MultiProps<T>) => {
           suffix={props.suffix}
           placeholder={props.placeholder}
           disabled={props.disabled}
-          value={props.watch(props.registerName) ? value : ""}
+          value={
+            props.watch(props.registerName)
+              ? props.max && value > props.max
+                ? props.max
+                : value
+              : ""
+          }
           onValueChange={(val) => onChange(val)}
+          max={props.max}
         />
       )}
     />
@@ -135,7 +142,11 @@ const RadioInput = <T extends FieldValues>(props: MultiProps<T>) =>
             }`}
             disabled={props.disabled}
             id={`${props.registerName}${item.label}Label`}
-            value={typeof item.value==='object'?JSON.stringify(item.value):item.value}
+            value={
+              typeof item.value === "object"
+                ? JSON.stringify(item.value)
+                : item.value
+            }
             {...props.register(props.registerName)}
           />
           <p

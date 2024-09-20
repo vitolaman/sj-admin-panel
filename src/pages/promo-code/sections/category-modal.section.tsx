@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button, Modal, Tabs } from "react-daisyui";
-import TabRadio from "./tabRadio.section";
+import TabRadio from "./tab-radio.section";
 import {
   useArticleSelection,
   useCircleSelection,
