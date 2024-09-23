@@ -5,7 +5,6 @@ import { quilFormats, quilModules } from "data/quil";
 import CurrencyInput from "react-currency-input-field";
 import { FileInput } from "react-daisyui";
 import { Controller, FieldValues } from "react-hook-form";
-
 import ReactQuill from "react-quill";
 
 const getNestedValue = (obj: any, path: string) => {
@@ -23,7 +22,7 @@ export default function MInput<T extends FieldValues>(props: MultiProps<T>) {
               ? ""
               : "cursor-pointer"
           }`}
-          htmlFor={`${registerName} label`}
+          htmlFor={`${registerName}-label`}
         >
           {label}
         </label>
@@ -60,7 +59,7 @@ const CommonInput = <T extends FieldValues>(props: MultiProps<T>) =>
         lineHeight: "24px",
         color: "#201B1C",
       }}
-      id={`${props.registerName} label`}
+      id={`${props.registerName}-label`}
       placeholder={props.placeholder}
       className={props.className}
       {...props.register(props.registerName)}
@@ -109,7 +108,7 @@ const CheckboxInput = <T extends FieldValues>(props: MultiProps<T>) =>
           props.disabled ? "cursor-not-allowed" : "cursor-pointer"
         }`}
         disabled={props.disabled}
-        id={`${props.registerName}LabelCheckbox`}
+        id={`${props.registerName}-${props.value}-label-checkbox`}
         value={props.value}
         {...props.register(props.registerName)}
       />
@@ -119,7 +118,7 @@ const CheckboxInput = <T extends FieldValues>(props: MultiProps<T>) =>
             ? "text-[#727272] cursor-not-allowed"
             : "peer-checked:text-[#3AC4A0] text-[#262626] cursor-pointer"
         }`}
-        htmlFor={`${props.registerName}LabelCheckbox`}
+        htmlFor={`${props.registerName}-${props.value}-label-checkbox`}
       >
         {props.labelCheckbox}
       </label>
@@ -133,7 +132,7 @@ const RadioInput = <T extends FieldValues>(props: MultiProps<T>) =>
         <label
           className="flex items-center gap-5"
           key={index}
-          htmlFor={`${props.registerName}${item.label}Label`}
+          htmlFor={`${props.registerName}-${item.label}-label`}
         >
           <input
             type={props.type}
@@ -141,7 +140,7 @@ const RadioInput = <T extends FieldValues>(props: MultiProps<T>) =>
               props.disabled ? "cursor-not-allowed" : "cursor-pointer"
             }`}
             disabled={props.disabled}
-            id={`${props.registerName}${item.label}Label`}
+            id={`${props.registerName}-${item.label}-label`}
             value={
               typeof item.value === "object"
                 ? JSON.stringify(item.value)

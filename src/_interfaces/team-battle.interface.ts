@@ -32,10 +32,11 @@ interface Groups {
   name: string;
   type: string;
   logo: string | FileList;
+  province_id?: string;
 }
 
 interface ExtraDisplay {
-  participant?: number;
+  participant?: number | string;
   periode?: string;
   stage?: string;
   sponsor?: string;
@@ -79,7 +80,7 @@ export interface TeamBattleId extends Omit<TeamBattleI, "max_participant"> {
 
 export interface TeamBattleReq
   extends ExtraDisplay,
-    Omit<TeamBattleI, "id" | "groups" | "max_participant" | "status">,
+    Omit<TeamBattleI, "id" | "groups" | "max_participant" | "joined_participant">,
     Partial<Pick<TeamBattleI, "id">> {
   groups: Omit<Groups, "id">[];
   public_max_participant: number;
@@ -89,7 +90,7 @@ export interface TeamBattleReq
   community_invitation_code: string;
   university_invitation_code: string;
   province_invitation_code: string;
-  province_ids: string[] | { label: string; value: string }[];
+  province_ids: string[];
   type: string;
 }
 
@@ -131,9 +132,9 @@ export interface RegionListReq extends Omit<RegionListI, "id"> {
 }
 
 export interface GetRegionListQuery {
-  page: number;
-  limit: number;
-  search: string;
+  page?: number;
+  limit?: number;
+  search?: string;
 }
 
 export interface RegionListRes {

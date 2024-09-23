@@ -11,8 +11,9 @@ import {
 } from "services/modules/team-battle";
 import { TeamBattleReq } from "_interfaces/team-battle.interface";
 import { useState } from "react";
+import Reference from "yup/lib/Reference";
 
-const useUpsertTeamBattle = () => {
+const useUpsertTeamBattle = (modal: number) => {
   const { accessToken } = useAppSelector((state) => state.auth);
   const [updateTeamBattle] = useUpdateTeamBattleMutation();
   const [createTeamBattle] = useCreateTeamBattleMutation();
@@ -23,8 +24,8 @@ const useUpsertTeamBattle = () => {
     max = 9007199254740991,
     text,
   }: {
-    min?: number;
-    max?: number;
+    min?: number | Reference<number>;
+    max?: number | Reference<number>;
     text: string;
   }) => {
     return yup
@@ -56,9 +57,28 @@ const useUpsertTeamBattle = () => {
   const schema = yup.object().shape({
     title: yup.string().required("Title cannot empty"),
     initial_balance: yupNumberValidation({ text: "Initial Balance" }),
-    min_participant: yup
-      .number()
-      .max(yup.ref("participant"), `Minimum Participant value over max limit`),
+    min_participant: yup.number().when("type", {
+      is: "UNIKOM",
+      then: yupNumberValidation({
+        min: 0,
+        max: yup.ref("participant"),
+        text: "Minimum Participant",
+      }),
+      otherwise: yup
+        .number()
+        .when(["public_max_participant", "province_max_participant"], {
+          is: (publicMax: number, provinceMax: number) =>
+            publicMax > provinceMax,
+          then: yupNumberValidation({
+            max: yup.ref("province_max_participant"),
+            text: "Minimum Participant",
+          }),
+          otherwise: yupNumberValidation({
+            max: yup.ref("public_max_participant"),
+            text: "Minimum Participant",
+          }),
+        }),
+    }),
     public_max_participant: yupNumberValidation({
       text: "Public Participant",
     }),
@@ -78,10 +98,13 @@ const useUpsertTeamBattle = () => {
     }),
     province_ids: yup.array().when("type", {
       is: "PROVINCE",
-      then: yup
-        .array()
-        .min(1, "Province must be selected")
-        .required("Province must be selected"),
+      then: yup.array().when("$modal", {
+        is: 1,
+        then: yup
+          .array()
+          .min(1, "Province must be selected")
+          .required("Province must be selected"),
+      }),
     }),
     community_max_participant: yup.number().when("type", {
       is: "UNIKOM",
@@ -113,44 +136,32 @@ const useUpsertTeamBattle = () => {
     }),
     semifinal_participant: yup.number().when("type", {
       is: "UNIKOM",
-      then: yupNumberValidation({ text: "Semifinal Participant" }),
-    }),
-    final_participant: yup
-      .number()
-      .typeError("Final Participant must be a number")
-      .required("Final Participant cannot be empty")
-      .when("type", {
-        is: "UNIKOM",
-        then: yup
-          .number()
-          .max(
-            yup.ref("semifinal_participant"),
-            "Final Participant value over max limit"
-          ),
-        otherwise: yup
-          .number()
-          .max(
-            yup.ref("participant"),
-            "Final Participant value over max limit"
-          ),
+      then: yupNumberValidation({
+        max: yup.ref("participant"),
+        text: "Semifinal Participant",
       }),
-    stage: yup
-      .string()
-      .test(
-        "calculation",
-        "Stage Qualification should not be greater than Maximum Participant",
-        function () {
-          const parentParticipant = this.parent.participant;
-          const parentSemifinal = this.parent.semifinal_participant;
-          const parentFinal = this.parent.final_participant;
-          const participant =
-            parentParticipant === undefined ? 0 : parentParticipant;
-          const semifinalParticipant =
-            parentSemifinal === undefined ? 0 : parentSemifinal;
-          const finalParticipant = parentFinal === undefined ? 0 : parentFinal;
-          return semifinalParticipant + finalParticipant <= participant;
-        }
-      ),
+    }),
+    final_participant: yup.number().when("type", {
+      is: "UNIKOM",
+      then: yupNumberValidation({
+        max: yup.ref("semifinal_participant"),
+        text: "Final Participant",
+      }),
+      otherwise: yup
+        .number()
+        .when(["public_max_participant", "province_max_participant"], {
+          is: (publicMax: number, provinceMax: number) =>
+            publicMax > provinceMax,
+          then: yupNumberValidation({
+            max: yup.ref("province_max_participant"),
+            text: "Final Participant",
+          }),
+          otherwise: yupNumberValidation({
+            max: yup.ref("public_max_participant"),
+            text: "Final Participant",
+          }),
+        }),
+    }),
     registration_start: yup
       .date()
       .required("Please input date")
@@ -185,21 +196,27 @@ const useUpsertTeamBattle = () => {
     }),
     university: yup.array().when("type", {
       is: "UNIKOM",
-      then: yup.array().of(
-        yup.object().shape({
-          name: yup.string().required("Name cannot be empty"),
-          logo: yupImageValidation("univ-type", "Logo cannot be empty"),
-        })
-      ),
+      then: yup.array().when("$modal", {
+        is: 1,
+        then: yup.array().of(
+          yup.object().shape({
+            name: yup.string().required("Name cannot be empty"),
+            logo: yupImageValidation("univ-type", "Logo cannot be empty"),
+          })
+        ),
+      }),
     }),
     community: yup.array().when("type", {
       is: "UNIKOM",
-      then: yup.array().of(
-        yup.object().shape({
-          name: yup.string().required("Name cannot be empty"),
-          logo: yupImageValidation("com-type", "Logo cannot be empty"),
-        })
-      ),
+      then: yup.array().when("$modal", {
+        is: 1,
+        then: yup.array().of(
+          yup.object().shape({
+            name: yup.string().required("Name cannot be empty"),
+            logo: yupImageValidation("com-type", "Logo cannot be empty"),
+          })
+        ),
+      }),
     }),
   });
   const defaultValues = {
@@ -223,49 +240,11 @@ const useUpsertTeamBattle = () => {
     watch,
     reset,
     setValue,
-    clearErrors
   } = useForm<TeamBattleReq>({
     mode: "onSubmit",
-    resolver: yupResolver(schema),
+    resolver: yupResolver(schema, { context: { modal } }),
     defaultValues,
   });
-
-  const firstTrigger = async () => {
-    if (watch("type") === "UNIKOM") {
-      return await trigger([
-        "title",
-        "initial_balance",
-        "min_participant",
-        "public_max_participant",
-        "community_max_participant",
-        "university_max_participant",
-        "community_invitation_code",
-        "university_invitation_code",
-        "stage",
-        "semifinal_participant",
-        "final_participant",
-        "registration_start",
-        "registration_end",
-        "elimination_start",
-        "elimination_end",
-        "semifinal_start",
-        "semifinal_end",
-        "final_start",
-        "final_end",
-        "banner",
-        "tnc",
-        "prize",
-      ]);
-    } else {
-      return await trigger();
-    }
-  };
-
-  const secondTrigger = async () => {
-    if (watch("type") === "UNIKOM") {
-      return await trigger(["university", "community"]);
-    }
-  };
 
   const upsert = async (data: TeamBattleReq) => {
     try {
@@ -328,9 +307,6 @@ const useUpsertTeamBattle = () => {
       } else {
         payload.province_invitation_code =
           data.province_invitation_code?.toUpperCase();
-        payload.province_ids = (data.province_ids as any[])?.map(
-          (item) => item.value
-        );
       }
 
       if (data.banner.length > 0) {
@@ -399,9 +375,7 @@ const useUpsertTeamBattle = () => {
     reset,
     setValue,
     defaultValues,
-    firstTrigger,
-    secondTrigger,
-    clearErrors
+    trigger,
   };
 };
 

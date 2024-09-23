@@ -96,6 +96,7 @@ export const {
   useUpdateTeamBattleMutation,
   useCreateTeamBattleMutation,
   useDeleteTeamBattleMutation,
+  useGetRegionListQuery,
   useLazyGetRegionListQuery,
   useLazyGetRegionByIdQuery,
   useCreateRegionMutation,
