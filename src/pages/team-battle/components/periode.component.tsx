@@ -11,11 +11,7 @@ interface Props {
 const PeriodeForm = ({ register, errors, watch }: Props) => {
   const dateValidation =
     watch("id") &&
-    new Date().getTime() - new Date(watch("elimination_start")).getTime() > 0 &&
-    watch("joined_participant") < watch("participant")!
-      ? true
-      : watch("id") &&
-        new Date().getTime() - new Date(watch("final_end")).getTime() > 0
+    (watch("status") === "ENDED" || watch("status") === "CANCELED")
       ? true
       : false;
   return (

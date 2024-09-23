@@ -9,7 +9,6 @@ export const useDisplay = (
   const communityMax = watch("community_max_participant");
   const universityMax = watch("university_max_participant");
   const provinceMax = watch("province_max_participant");
-  const provinceIds = watch("province_ids");
   const semifinal = watch("semifinal_participant");
   const final = watch("final_participant");
   const registrationStart = watch("registration_start");
@@ -24,11 +23,9 @@ export const useDisplay = (
         (universityMax === undefined ? 0 : Number(universityMax))
       );
     } else {
-      return (
-        (publicMax === undefined ? 0 : Number(publicMax)) +
-        (provinceMax === undefined ? 0 : Number(provinceMax)) *
-          (provinceIds?.length === undefined ? 0 : provinceIds?.length)
-      );
+      return `${publicMax === undefined ? 0 : Number(publicMax)} public + ${
+        provinceMax === undefined ? 0 : Number(provinceMax)
+      } per region`;
     }
   };
 
@@ -91,7 +88,6 @@ export const Dependency = (
   const watchDepend = [
     watch("public_max_participant"),
     watch("province_max_participant"),
-    watch("province_ids"),
     watch("final_participant"),
     watch("registration_start"),
     watch("final_end"),

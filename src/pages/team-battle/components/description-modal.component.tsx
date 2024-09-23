@@ -1,13 +1,10 @@
-import {
-  TeamBattleId,
-  TeamBattleReq,
-} from "_interfaces/team-battle.interface";
+import { TeamBattleId, TeamBattleReq } from "_interfaces/team-battle.interface";
 import MInput from "components/multi-input";
 import { Dispatch, SetStateAction, useEffect } from "react";
-import ButtonExpand from "./button-expand.section";
+import ButtonExpand from "./button-expand.component";
 import { Dependency, useDisplay } from "../../../hooks/team-battle/useDisplay";
-import ParticipantForm from "./participant.section";
-import StageForm from "./stage.section";
+import ParticipantForm from "./participant.component";
+import StageForm from "./stage.component";
 import {
   Control,
   FieldErrors,
@@ -18,7 +15,7 @@ import {
 } from "react-hook-form";
 import { FiX } from "react-icons/fi";
 import { Button } from "react-daisyui";
-import PeriodeForm from "./periode.section";
+import PeriodeForm from "./periode.component";
 import useFilePreview from "hooks/shared/useFilePreview";
 
 interface Props {
@@ -47,19 +44,20 @@ interface Props {
   handleOpen: (key: "sponsor" | "university" | "community") => void;
 }
 
-const FirstModal = ({
-  data,
-  register,
-  errors,
-  watch,
-  setValue,
-  control,
-  tmpImgArray,
-  setTmpNumber,
-  openInput,
-  setOpenInput,
-  handleOpen,
-}: Props) => {
+const FirstModal = (props: Props) => {
+  const {
+    data,
+    register,
+    errors,
+    watch,
+    setValue,
+    control,
+    tmpImgArray,
+    setTmpNumber,
+    openInput,
+    setOpenInput,
+    handleOpen,
+  } = props;
   const imageURL = watch("banner");
   const [imageURLPreview] = useFilePreview(
     typeof imageURL === "string" ? undefined : (imageURL as FileList)
@@ -147,10 +145,9 @@ const FirstModal = ({
           <div className="flex gap-3 items-end">
             <MInput<TeamBattleReq>
               label="Participant"
-              type="number"
+              type="text"
               registerName="participant"
-              control={control}
-              watch={watch}
+              register={register}
               errors={errors}
               disabled
             />
