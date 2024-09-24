@@ -95,7 +95,7 @@ const TeamBattleForm = (props: TeamBattleModal) => {
         >
           <Modal.Header className="flex justify-between">
             <p
-              className="font-semibold font-poppins text-xl text-black w-fit" onClick={()=>{console.log(watch())}}>
+              className="font-semibold font-poppins text-xl text-black w-fit">
               {watch("id") !== undefined
                 ? "Edit Team Battle"
                 : "Create New Team Battle"}

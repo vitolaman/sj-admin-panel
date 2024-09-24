@@ -8,7 +8,6 @@ const useTeamBattleForm = (props: Omit<TeamBattleModal, "loading">) => {
   const { data, refetch, open, requestId, setOpen } = props;
   const [sectionModal, setSectionModal] = useState<number>(0);
   const [tmpNumber, setTmpNumber] = useState<number>();
-  console.log(tmpNumber)
   const [tmpImgArray, setTmpImgArray] = useState<{
     sponsor: { new: string; cropped: string }[];
     university: { new: string; cropped: string }[];
