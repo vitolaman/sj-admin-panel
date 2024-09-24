@@ -82,7 +82,7 @@ export interface TeamBattleReq
   extends ExtraDisplay,
     Omit<TeamBattleI, "id" | "groups" | "max_participant" | "joined_participant">,
     Partial<Pick<TeamBattleI, "id">> {
-  groups: Omit<Groups, "id">[];
+  groups?: Omit<Groups, "id">[];
   public_max_participant: number;
   community_max_participant: number;
   university_max_participant: number;
