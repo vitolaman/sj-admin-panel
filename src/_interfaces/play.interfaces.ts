@@ -39,7 +39,7 @@ export interface PlayI {
     id: string;
     en: string;
   };
-  banner: string;
+  banner: string |FileList;
   rank: number;
   created_at: string;
   updated_at: string;
@@ -71,12 +71,12 @@ export interface Participant {
 
 export interface Sponsorship {
   name: string;
-  image_url: string;
+  image_url: string | FileList;
 }
 
 export interface Community {
   name: string;
-  image_url: string;
+  image_url: string| FileList;
 }
 
 export interface Metadata {
@@ -107,13 +107,13 @@ export interface EditArenaPayloadI {
   max_participant?: number;
   currency?: string;
   banner?: string;
-  community?: {
+  community: {
     name?: string;
-    image_url?: string;
+    image_url: string;
   };
-  sponsorship?: {
+  sponsorship: {
     name?: string;
-    image_url?: string;
+    image_url: string;
   };
   gain_percentage?: number;
   opening_balance?: number;

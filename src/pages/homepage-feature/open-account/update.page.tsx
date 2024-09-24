@@ -78,7 +78,7 @@ const UpdateOpenAccount = () => {
               type="text"
               register={register}
               errors={errors}
-              maxLength={30}
+              maxLength={200}
             />
             <MInput<OpenAccountFromData>
               label="Register Link"
@@ -86,7 +86,7 @@ const UpdateOpenAccount = () => {
               type="text"
               register={register}
               errors={errors}
-              maxLength={30}
+              maxLength={200}
             />
           </div>
           <div className="flex flex-col md:flex-row gap-x-6">
@@ -96,14 +96,14 @@ const UpdateOpenAccount = () => {
               type="text"
               register={register}
               errors={errors}
-              maxLength={30}
+              maxLength={200}
             />
             <div className="w-full" />
           </div>
           <MInput<OpenAccountFromData>
             label="Description"
             registerName="description"
-            type="md-rich-text"
+            type="html-rich-text"
             control={control}
             errors={errors}
           />
