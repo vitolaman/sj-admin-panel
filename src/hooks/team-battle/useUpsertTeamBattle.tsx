@@ -307,6 +307,7 @@ const useUpsertTeamBattle = (modal: number) => {
       } else {
         payload.province_invitation_code =
           data.province_invitation_code?.toUpperCase();
+          delete payload.groups
       }
 
       if (data.banner.length > 0) {
