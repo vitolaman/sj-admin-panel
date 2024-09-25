@@ -129,7 +129,6 @@ const TeamBattleForm = (props: TeamBattleModal) => {
           zoom={SDataState.propsCrop.zoom}
           aspect={1 / 1}
           open={openCropper.sponsor}
-          handleOpen={() => handleOpen("sponsor")}
           onCrop={SDataState.propsCrop.onCrop}
           onCropChange={SDataState.propsCrop.onCropChange}
           onZoomChange={SDataState.propsCrop.onZoomChange}
@@ -142,7 +141,6 @@ const TeamBattleForm = (props: TeamBattleModal) => {
           zoom={UDataState.propsCrop.zoom}
           aspect={1 / 1}
           open={openCropper.university}
-          handleOpen={() => handleOpen("university")}
           onCrop={UDataState.propsCrop.onCrop}
           onCropChange={UDataState.propsCrop.onCropChange}
           onZoomChange={UDataState.propsCrop.onZoomChange}
@@ -155,7 +153,6 @@ const TeamBattleForm = (props: TeamBattleModal) => {
           zoom={CDataState.propsCrop.zoom}
           aspect={1 / 1}
           open={openCropper.community}
-          handleOpen={() => handleOpen("community")}
           onCrop={CDataState.propsCrop.onCrop}
           onCropChange={CDataState.propsCrop.onCropChange}
           onZoomChange={CDataState.propsCrop.onZoomChange}

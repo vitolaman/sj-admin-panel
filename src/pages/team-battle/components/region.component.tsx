@@ -128,7 +128,6 @@ const RegionManagement = ({ open, setOpen, getRegion, data }: Props) => {
           zoom={propsCrop.zoom}
           aspect={1 / 1}
           open={openCropper}
-          handleOpen={() => setOpenCropper(!openCropper)}
           onCrop={propsCrop.onCrop}
           onCropChange={propsCrop.onCropChange}
           onZoomChange={propsCrop.onZoomChange}
