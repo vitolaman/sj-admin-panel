@@ -59,24 +59,32 @@ const useUpsertTeamBattle = (modal: number) => {
     initial_balance: yupNumberValidation({ text: "Initial Balance" }),
     min_participant: yup.number().when("type", {
       is: "UNIKOM",
-      then: yupNumberValidation({
-        min: 0,
-        max: yup.ref("participant"),
-        text: "Minimum Participant",
-      }),
+      then: yup
+        .number()
+        .typeError(`Minimum Participant must be a number`)
+        .max(
+          yup.ref("participant"),
+          `Minimum Participant value over max limit`
+        ),
       otherwise: yup
         .number()
         .when(["public_max_participant", "province_max_participant"], {
           is: (publicMax: number, provinceMax: number) =>
             publicMax > provinceMax,
-          then: yupNumberValidation({
-            max: yup.ref("province_max_participant"),
-            text: "Minimum Participant",
-          }),
-          otherwise: yupNumberValidation({
-            max: yup.ref("public_max_participant"),
-            text: "Minimum Participant",
-          }),
+          then: yup
+            .number()
+            .typeError(`Minimum Participant must be a number`)
+            .max(
+              yup.ref("province_max_participant"),
+              `Minimum Participant value over max limit`
+            ),
+          otherwise: yup
+            .number()
+            .typeError(`Minimum Participant must be a number`)
+            .max(
+              yup.ref("public_max_participant"),
+              `Minimum Participant value over max limit`
+            ),
         }),
     }),
     public_max_participant: yupNumberValidation({
@@ -307,7 +315,7 @@ const useUpsertTeamBattle = (modal: number) => {
       } else {
         payload.province_invitation_code =
           data.province_invitation_code?.toUpperCase();
-          delete payload.groups
+        delete payload.groups;
       }
 
       if (data.banner.length > 0) {

@@ -20,6 +20,13 @@ export interface CropProps {
   onCrop: () => Promise<void>;
 }
 
+interface CropperProps<T extends FieldValues> {
+  registerName: string;
+  setValue: SetFieldValue<T>;
+  handleOpen: () => void;
+  file?: FileList;
+}
+
 type UseCropper = [Image | undefined, CropProps];
 
 const createImage = (url: string): Promise<HTMLImageElement> =>
@@ -94,11 +101,12 @@ export const getCroppedImg = async (
   }
 };
 
-const useCropper = <T extends FieldValues>(
-  registerName: string,
-  setValue: SetFieldValue<T>,
-  file?: FileList
-): UseCropper => {
+const useCropper = <T extends FieldValues>({
+  registerName,
+  setValue,
+  handleOpen,
+  file,
+}: CropperProps<T>): UseCropper => {
   const [imgSrc, setImgSrc] = useState<Image>();
   const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
   const [zoom, setZoom] = useState<number>(1);
@@ -136,6 +144,7 @@ const useCropper = <T extends FieldValues>(
       if (newUrl !== imgSrc?.new && file[0].size !== imgSrc?.size) {
         setImgSrc({ new: newUrl, name: file[0].name });
       }
+      handleOpen();
     }
   }, [file]);
 

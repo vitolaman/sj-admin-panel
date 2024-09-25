@@ -53,7 +53,7 @@ const CropperComponent = ({
             className="border-none bg-[#3AC4A0] rounded-full text-white w-[128px] hover:bg-[#3AC4A0]"
             onClick={() => {
               onCrop();
-              handleOpen()
+              // handleOpen()
             }}
           >
             Crop
