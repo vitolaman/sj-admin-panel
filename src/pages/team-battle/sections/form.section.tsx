@@ -218,8 +218,10 @@ const TeamBattleForm = (props: TeamBattleModal) => {
             {sectionModal === 1 && (
               <Button
                 className="font-poppins text-base font-semibold text-[#3AC4A0] rounded-full w-[128px]"
-                onClick={() => {
-                  setSectionModal(0);
+                onClick={async () => {
+                  if (await trigger()) {
+                    setSectionModal(0);
+                  }
                 }}
               >
                 Back
