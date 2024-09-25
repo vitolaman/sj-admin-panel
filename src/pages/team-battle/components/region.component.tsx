@@ -63,11 +63,12 @@ const RegionManagement = ({ open, setOpen, getRegion, data }: Props) => {
     trigger,
   } = useUpsertRegionList();
   const image = watch("logo");
-  const [imageURL, propsCrop] = useCropper(
-    `logo`,
+  const [imageURL, propsCrop] = useCropper({
+    registerName: `logo`,
     setValue,
-    typeof image === "string" ? undefined : (image as FileList)
-  );
+    handleOpen: () => setOpenCropper(!openCropper),
+    file: typeof image === "string" ? undefined : (image as FileList),
+  });
 
   const handleResetForm = () => {
     setTmpImgArray({
@@ -127,7 +128,6 @@ const RegionManagement = ({ open, setOpen, getRegion, data }: Props) => {
           zoom={propsCrop.zoom}
           aspect={1 / 1}
           open={openCropper}
-          handleOpen={() => setOpenCropper(!openCropper)}
           onCrop={propsCrop.onCrop}
           onCropChange={propsCrop.onCropChange}
           onZoomChange={propsCrop.onZoomChange}

@@ -7,7 +7,6 @@ interface Props {
   crop: Point;
   aspect: number;
   open: boolean;
-  handleOpen:()=>void
   onCropChange: (location: Point) => void;
   onZoomChange: (zoom: number) => void;
   onCropComplete: (croppedArea: Area, croppedAreaPixels: Area) => void;
@@ -20,7 +19,6 @@ const CropperComponent = ({
   crop,
   aspect,
   open,
-  handleOpen,
   onCropChange,
   onZoomChange,
   onCropComplete,
@@ -53,7 +51,6 @@ const CropperComponent = ({
             className="border-none bg-[#3AC4A0] rounded-full text-white w-[128px] hover:bg-[#3AC4A0]"
             onClick={() => {
               onCrop();
-              handleOpen()
             }}
           >
             Crop

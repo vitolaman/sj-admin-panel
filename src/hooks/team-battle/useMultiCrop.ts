@@ -14,6 +14,7 @@ interface Props {
       community: { new: string; cropped: string }[];
     }>
   >;
+  handleOpen: (key: "sponsor" | "university" | "community") => void;
 }
 
 interface ReturnProps {
@@ -26,25 +27,35 @@ const useMultiCrop = ({
   setValue,
   watch,
   setTmpImgArray,
+  handleOpen,
 }: Props): [ReturnProps, ReturnProps, ReturnProps] => {
   const image = watch(`sponsors.${tmpNumber!}.logo`);
   const imageUniv = watch(`university.${tmpNumber!}.logo`);
   const imageCom = watch(`community.${tmpNumber!}.logo`);
-  const [imageURLPreview, propsCrop] = useCropper(
-    `sponsors.${tmpNumber}.logo`,
+  const [imageURLPreview, propsCrop] = useCropper({
+    registerName: `sponsors.${tmpNumber}.logo`,
     setValue,
-    typeof image === "string" ? undefined : (image as FileList)
-  );
-  const [imageURLUniv, propsCropUniv] = useCropper(
-    `university.${tmpNumber}.logo`,
+    handleOpen: () => {
+      handleOpen("sponsor");
+    },
+    file: typeof image === "string" ? undefined : (image as FileList),
+  });
+  const [imageURLUniv, propsCropUniv] = useCropper({
+    registerName: `university.${tmpNumber}.logo`,
     setValue,
-    typeof imageUniv === "string" ? undefined : (imageUniv as FileList)
-  );
-  const [imageURLCom, propsCropCom] = useCropper(
-    `community.${tmpNumber}.logo`,
+    handleOpen: () => {
+      handleOpen("university");
+    },
+    file: typeof imageUniv === "string" ? undefined : (imageUniv as FileList),
+  });
+  const [imageURLCom, propsCropCom] = useCropper({
+    registerName: `community.${tmpNumber}.logo`,
     setValue,
-    typeof imageCom === "string" ? undefined : (imageCom as FileList)
-  );
+    handleOpen: () => {
+      handleOpen("community");
+    },
+    file: typeof imageCom === "string" ? undefined : (imageCom as FileList),
+  });
   useEffect(() => {
     if (imageURLPreview) {
       setTmpImgArray((prev) => {

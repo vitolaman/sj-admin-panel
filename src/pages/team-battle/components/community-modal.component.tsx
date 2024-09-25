@@ -233,7 +233,6 @@ const SecondModal = ({
                 value={item.id}
                 registerName="province_ids"
                 register={register}
-                errors={errors}
               />
             ))}
           </div>
