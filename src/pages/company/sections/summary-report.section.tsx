@@ -1,7 +1,7 @@
-import BarLineChart from "components/b2b-company/BarLineChart";
-import PeriodeTime from "components/b2b-company/PeriodTime";
-import PieChartComponent from "components/b2b-company/PieChart";
-import SummaryCard from "components/b2b-company/SummaryCard";
+import BarLineChart from "../components/barline-chart.component";
+import PeriodeTime from "../components/period-time.component";
+import PieChartComponent from "../components/pie-chart.component";
+import SummaryCard from "../components/summary-card.component";
 import CInput from "components/input";
 import { Loader } from "components/spinner/loader";
 import moment from "moment";

@@ -16,11 +16,10 @@ import { Api } from "services/api";
 export const CompanyApi = Api.injectEndpoints({
   endpoints: (build) => ({
     getCompanyList: build.query<GetCompanyRes, GetCompanyParams>({
-      query: (params) => {
-        return {
-          url: `/admin-portal/v1/company/list?page=${params.page}&limit=${params.limit}&search=${params.search}`,
-        };
-      },
+      query: (params) => ({
+        url: `/admin-portal/v1/company/list`,
+        params,
+      }),
       keepUnusedDataFor: 0,
     }),
     getCompanyById: build.query<CompanyI, string>({
@@ -86,11 +85,10 @@ export const CompanyApi = Api.injectEndpoints({
       GetTransactionHistoryRes,
       GetTransactionHistoryParams
     >({
-      query: (params) => {
-        return {
-          url: `/admin-portal/v1/company/${params.id}/transactions?page=${params.page}&limit=${params.limit}`,
-        };
-      },
+      query: (params) => ({
+        url: `/admin-portal/v1/company/${params.id}/transactions`,
+        params,
+      }),
       keepUnusedDataFor: 0,
     }),
   }),

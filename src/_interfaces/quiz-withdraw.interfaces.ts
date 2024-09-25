@@ -3,6 +3,7 @@ export interface QuizWithdrawReqI {
   limit: number;
   search: string;
   status: string;
+  quiz_id?: string;
 }
 
 export interface QuizWithdrawResI {
@@ -15,13 +16,18 @@ export interface QuizWithdrawListI {
   rank: number;
   user_id: string;
   user_name: string;
+  user_seeds_tag: string;
   quiz_id: string;
   quiz_name: string;
+  quiz_score: number;
+  description: string;
   amount: number;
+  fee_amount: number;
   method: string;
   account_name: string;
   account_number: string;
   status: string;
+  created_at: string;
 }
 
 export interface MetaI {
