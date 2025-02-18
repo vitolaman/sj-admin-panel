@@ -13,6 +13,9 @@ import ClientDetail, { cdRouteName } from "pages/client/detail.page";
 import CreateClient, { ccRouteName } from "pages/client/create.page";
 import IncomingStockList, { isiRouteName } from "pages/incoming-stock/index.page";
 import IncomingStockDetail, { isdRouteName } from "pages/incoming-stock/detail.page";
+import StockOrderList, { soiRouteName } from "pages/stock-order/index.page";
+import StockOrderDetail, { sodRouteName } from "pages/stock-order/detail.page";
+import CreateStockOrder from "pages/stock-order/create.page";
 
 const protectedRoutes: RouteObject[] = [
   { path: "", element: <Navigate to="/user/control-panel" /> },
@@ -70,6 +73,42 @@ const protectedRoutes: RouteObject[] = [
             path: pendingRouteName,
             element: <Pending />,
             index: true,
+          },
+        ],
+      },
+      {
+        path: "client",
+        children: [
+          {
+            path: clientRouteName,
+            element: <Client />,
+            index: true,
+          },
+          {
+            path: cdRouteName,
+            element: <ClientDetail />,
+          },
+          {
+            path: ccRouteName,
+            element: <CreateClient />,
+          },
+        ],
+      },
+      {
+        path: "stock-order",
+        children: [
+          {
+            path: soiRouteName,
+            element: <StockOrderList />,
+            index: true,
+          },
+          {
+            path: sodRouteName,
+            element: <StockOrderDetail />,
+          },
+          {
+            path: ccRouteName,
+            element: <CreateStockOrder />,
           },
         ],
       },

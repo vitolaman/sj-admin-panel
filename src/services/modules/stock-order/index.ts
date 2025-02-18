@@ -7,16 +7,17 @@ import {
   PlayRes,
   PromoCodeRes,
 } from "_interfaces/play.interfaces";
+import { StockOrderI, StockOrderRes } from "_interfaces/stock-orders.interfaces";
 import { Api } from "services/api";
 
-export const clientApi = Api.injectEndpoints({
+export const StockOrderApi = Api.injectEndpoints({
   endpoints: (build) => ({
-    clientList: build.query<ItemRes, ItemReq>({
+    stockOrderList: build.query<StockOrderRes, ItemReq>({
       query: (param) =>
-        `clients?search=${param.search}&page=${param.page}&limit=${param.limit}`,
+        `stock-orders?search=${param.search}&page=${param.page}&limit=${param.limit}`,
       keepUnusedDataFor: 0,
     }),
-    clientById: build.query<PlayI, string>({
+    stockOrderById: build.query<StockOrderI, string>({
       query: (id) => `stock-orders/${id}`,
       keepUnusedDataFor: 0,
     }),
@@ -25,6 +26,6 @@ export const clientApi = Api.injectEndpoints({
 });
 
 export const {
-  useClientListQuery,
-  useClientByIdQuery,
-} = clientApi;
+  useStockOrderListQuery,
+  useStockOrderByIdQuery,
+} = StockOrderApi;

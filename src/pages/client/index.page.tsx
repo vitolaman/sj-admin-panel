@@ -42,7 +42,7 @@ export const ItemList = () => {
       fieldId: "sales",
       label: "Sales",
       render: (data) => (
-        <>{`${data?.sales.firstName} ${data?.sales.lastName}`}</>
+        <>{`${data?.sales?.firstName} ${data?.sales?.lastName}`}</>
       ),
     },
   ];

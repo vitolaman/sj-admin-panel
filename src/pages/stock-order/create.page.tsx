@@ -21,7 +21,7 @@ const CreateStockOrder = () => {
         <div className="pb-6 flex items-center justify-between gap-4">
           <div className="flex items-center justify-between gap-4">
             <h3 className="text-2xl text-[#262626] font-semibold">
-              Item Details
+              Stock Order
             </h3>
           </div>
           <div className="flex items-center justify-between gap-4">

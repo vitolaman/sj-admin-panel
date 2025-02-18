@@ -1,5 +1,6 @@
 import { ClientI } from "_interfaces/client.interfaces";
 import { ItemI } from "_interfaces/item.interfaces";
+import { StockOrderI, StockOrderItem } from "_interfaces/stock-orders.interfaces";
 import ContentContainer from "components/container";
 import SearchInput from "components/search-input";
 import Pagination from "components/table/pagination";
@@ -7,9 +8,9 @@ import { Columns, Table } from "components/table/table";
 import { useState } from "react";
 import { Button } from "react-daisyui";
 import { useNavigate } from "react-router-dom";
-import { useClientListQuery } from "services/modules/client";
+import { useStockOrderListQuery } from "services/modules/stock-order";
 
-export const clientRouteName = "";
+export const soiRouteName = "";
 export const StockOrderList = () => {
   const [params, setParams] = useState({
     search: "",
@@ -17,34 +18,30 @@ export const StockOrderList = () => {
     limit: 10,
   });
 
-  const { data, isLoading } = useClientListQuery(params);
+  const { data, isLoading } = useStockOrderListQuery(params);
   const navigate = useNavigate();
 
   // Define the table columns for items
-  const header: Columns<ClientI>[] = [
+  const header: Columns<StockOrderI>[] = [
     {
       fieldId: "index",
       label: "No",
     },
     {
-      fieldId: "name",
-      label: "Nama Client",
+      fieldId: "reffNo",
+      label: "Nomor Referensi",
     },
     {
-      fieldId: "clientCode",
-      label: "Kode",
+      fieldId: "status",
+      label: "Status",
     },
-    {
-      fieldId: "city",
-      label: "Kota",
-    },
-    {
-      fieldId: "sales",
-      label: "Sales",
-      render: (data) => (
-        <>{`${data?.sales.firstName} ${data?.sales.lastName}`}</>
-      ),
-    },
+    // {
+    //   fieldId: "stockOrderItems",
+    //   label: "Barang",
+    //   render: (data) => (
+    //     <>{`${data?.item?.id}`}</>
+    //   ),
+    // },
   ];
 
   const handlePageChange = (page: number): void => {
@@ -54,7 +51,7 @@ export const StockOrderList = () => {
   return (
     <ContentContainer>
       <div className="w-full flex flex-row justify-between items-center">
-        <h1 className="font-semibold text-2xl">Client List</h1>
+        <h1 className="font-semibold text-2xl">Stock Order List</h1>
         <div className="flex flex-row gap-3">
           <SearchInput
             placeholder="Search"
@@ -73,17 +70,17 @@ export const StockOrderList = () => {
         </div>
       </div>
       <div className="mt-4 max-w-full overflow-x-auto overflow-y-hidden border border-[#BDBDBD] rounded-lg">
-        <Table<ClientI>
+        <Table<StockOrderI>
           columns={header}
           data={data?.data} // Assuming the response is itemList
           loading={isLoading}
-          onRowClick={(item) => navigate(`/client/${item.id}/detail`)}
+          onRowClick={(item) => navigate(`/stock-order/${item.id}/detail`)}
         />
       </div>
       <div className="flex flex-col">
         <Pagination
-          currentPage={data?.metadata?.currentPage ?? 1}
-          totalPages={data?.metadata?.totalPage ?? 0}
+          currentPage={data?.meta?.currentPage ?? 1}
+          totalPages={data?.meta?.totalPages ?? 0}
           onPageChange={handlePageChange}
         />
       </div>
