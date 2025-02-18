@@ -1,3 +1,4 @@
+import { ItemReq, ItemRes } from "_interfaces/item.interfaces";
 import {
   CreatePlayPayload,
   EditArenaPayloadI,
@@ -10,6 +11,15 @@ import { Api } from "services/api";
 
 export const playApi = Api.injectEndpoints({
   endpoints: (build) => ({
+    itemList: build.query<ItemRes, ItemReq>({
+      query: (param) =>
+        `items?search=${param.search}&page=${param.page}&limit=${param.limit}`,
+      keepUnusedDataFor: 0,
+    }),
+    itemById: build.query<PlayI, string>({
+      query: (id) => `items/${id}`,
+      keepUnusedDataFor: 0,
+    }),
     playList: build.query<PlayRes, PlayReq>({
       query: (param) =>
         `admin-play/v1/list?search=${param.search}&status=${param.status}&type=${param.type}&page=${param.page}&limit=${param.limit}`,
@@ -60,7 +70,9 @@ export const playApi = Api.injectEndpoints({
 
 export const {
   usePlayListQuery,
+  useItemListQuery,
   usePlayByIdQuery,
+  useItemByIdQuery,
   useLazyPlayByIdQuery,
   usePromoCodeQuery,
   useCancelPlayMutation,

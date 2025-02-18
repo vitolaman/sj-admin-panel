@@ -31,7 +31,7 @@ export const baseQuery = fetchBaseQuery({
   },
 });
 
-const baseQueryWithInterceptor: BaseQueryFn<
+export const baseQueryWithInterceptor: BaseQueryFn<
   string | FetchArgs,
   unknown,
   FetchBaseQueryError

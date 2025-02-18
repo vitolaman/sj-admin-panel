@@ -1,25 +1,25 @@
-# How to build & push image
-# run script `yarn build:dev`
-# run script `docker build -f Dockerfile.dev --platform linux/amd64 -t registry.quadrakaryasantosa.com/seeds-admin-[your-name]:v0.1 .`
-# run script `docker push registry.quadrakaryasantosa.com/seeds-admin-[your-name]:v0.1`
+# Use node for building the React app
+FROM node:20-alpine AS builder
 
-# how to DEPLOY
-# go to https://portainer.quadrakaryasantosa.com/ & login with your account
-## if there's no container running
-### click Add container
-### fill Name with seeds-[your-name]
-### select Registry & change to quadra-registry
-### fill Image with copy docker image name without domain in line 4 ex.(seeds-dion:v0.1)
-### click (+ publish a new network port)
-### fill host with your assigned port
-### fill container with 80
-### then click Deploy the container
-## if you already create container
-### click at the container name
-### click Duplicate/Edit button
-### change Image name with your new image name
+WORKDIR /app
 
-FROM nginx:alpine
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY /build /usr/share/nginx/html
-ENTRYPOINT ["nginx", "-g", "daemon off;"]
+COPY package.json package-lock.json ./
+
+RUN npm install --frozen-lockfile
+
+COPY . .
+
+RUN npm run build
+
+# Use a lightweight Node.js image to serve the app
+FROM node:20-alpine AS runner
+
+WORKDIR /app
+
+RUN npm install -g serve
+
+COPY --from=builder /app/dist .
+
+EXPOSE 3000
+
+CMD ["serve", "-s", ".", "-l", "3000"]

@@ -1,5 +1,5 @@
-import { LoginResI } from '_interfaces/auth-api.interfaces';
-import { createSlice } from '@reduxjs/toolkit';
+import { LoginResI } from "_interfaces/auth-api.interfaces";
+import { createSlice } from "@reduxjs/toolkit";
 
 export interface ProfileI {
   id: string;
@@ -14,6 +14,7 @@ export interface ProfileI {
 export interface AuthStateI {
   loading: boolean;
   accessToken?: string;
+  role?: string;
   expiresAt?: number;
   error?: string;
   success: boolean;
@@ -32,17 +33,18 @@ type LoginInfoPayload = {
 };
 
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
     saveTokenAuth: (state: AuthStateI, { payload }: LoginInfoPayload) => {
-      state.accessToken = payload.accessToken;
-      state.expiresAt = payload.expiresAt;
+      state.accessToken = payload.access_token;
+      state.role = payload.user.role;
     },
     deleteTokenAuth: (state) => {
       state.accessToken = undefined;
       state.expiresAt = undefined;
-    }
+      state.role = undefined;
+    },
   },
 });
 

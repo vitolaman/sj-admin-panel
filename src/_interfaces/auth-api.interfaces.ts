@@ -1,11 +1,18 @@
 export interface LoginReqI {
-  email: string;
+  username: string;
   password: string;
 }
 
+export interface User {
+  firstName: string;
+  lastName: string;
+  username: string;
+  role: string;
+}
+
 export interface LoginResI {
-  accessToken: string;
-  expiresAt: number;
+  access_token: string;
+  user: User;
 }
 
 export interface CreateBranchReqI {

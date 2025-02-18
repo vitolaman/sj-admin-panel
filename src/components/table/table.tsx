@@ -45,7 +45,7 @@ export function Table<T>({
     <table className="min-w-full">
       <thead className="bg-[#DCFCE4]">
         <tr className="divide-x divide-[#BDBDBD]">
-          {columns.map((column, index) => (
+          {columns?.map((column, index) => (
             <th
               key={index}
               scope="col"
@@ -84,7 +84,7 @@ export function Table<T>({
               }}
               role={action ? "button" : undefined}
             >
-              {columns.map((column, row) => (
+              {columns?.map((column, row) => (
                 <td
                   key={row}
                   className={`p-4 text-center whitespace-nowrap leading-7 font-poppins font-normal text-sm text-[#201B1C] ${

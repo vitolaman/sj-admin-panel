@@ -107,16 +107,6 @@ const useUpdatePlayForm = (id: string) => {
       );
       payload.community.image_url = community;
     }
-    // TODO: need upload image service configuration
-    // banner: data.banner,
-    // community: {
-    //   name: data.community.name,
-    //   image_url: data.community.image_url,
-    // },
-    // sponsorship: {
-    //   name: data.sponsorship.name,
-    //   image_url: data.sponsorship.image_url,
-    // },
     try {
       await updatePlay({ id, payload });
       navigate(-1);

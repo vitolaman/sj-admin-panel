@@ -6,7 +6,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 const useLoginForm = () => {
   const schema = yup
     .object({
-      email: yup.string().email().required(),
+      username: yup.string().required(),
       password: yup.string().required(),
     }).required();
 

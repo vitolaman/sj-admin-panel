@@ -19,6 +19,7 @@ const Login = () => {
   const handleLogin = async (data: LoginReqI) => {
     try {
       const res = await login(data).unwrap();
+      console.log(res);
       dispatch(saveTokenAuth(res));
     } catch (error) {
       errorHandler(error);
@@ -29,18 +30,18 @@ const Login = () => {
     <div>
       <div className="bg-[#27A590] flex flex-col w-screen h-screen overflow-hidden">
         <div className="w-[906px] h-[906px] relative mx-auto">
-          <img
+          {/* <img
             src={Logo}
             className="absolute z-50 w-[120px] h-[45px] left-0 right-0 top-[10vh] mx-auto"
             alt=""
-          />
+          /> */}
           <div className="bg-white formLogin w-[450px] h-[424px] absolute mx-auto left-0 right-0 rounded-xl shadow-xl top-[22vh] z-[100]">
             <form
               onSubmit={handleSubmit(handleLogin)}
               className="p-[32px] font-poppins"
             >
               <h1 className="text-xl font-semibold text-shark">
-                Welcome to Seeds Admin
+                Welcome to Suburjaya Inventory Management App
               </h1>
               <small className="text-sm font-light text-[#7C7C7C]">
                 Please login with your account
@@ -48,11 +49,11 @@ const Login = () => {
               <div className="form-login flex flex-col h-[200px] pt-8 justify-around w-full">
                 <div className="w-full">
                   <Input
-                    {...register("email")}
+                    {...register("username")}
                     className="text-base font-semibold text-[#262626] w-full"
-                    placeholder="Input Email"
+                    placeholder="Input Username"
                   />
-                  <ValidationError error={errors.email} />
+                  <ValidationError error={errors.username} />
                 </div>
                 <div className="w-full">
                   <Input
