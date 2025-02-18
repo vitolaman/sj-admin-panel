@@ -8,7 +8,7 @@ const UserControlPanel = () => {
   return (
     <div className="bg-white w-full p-4">
       <div className="flex">
-        <Tabs>
+        {/* <Tabs>
           <Tabs.Tab
             active={1 === activeTab}
             onClick={() => setActiveTab(1)}
@@ -27,7 +27,7 @@ const UserControlPanel = () => {
           >
             Staff Database
           </Tabs.Tab>
-        </Tabs>
+        </Tabs> */}
       </div>
       <div className="mt-3">
         {activeTab === 1 ? <UserDatabase /> : <>Staff Database</>}

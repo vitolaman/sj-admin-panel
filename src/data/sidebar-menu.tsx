@@ -10,13 +10,13 @@ interface MenuItem {
 }
 
 const menuItems: MenuItem[] = [
-  {
-    name: "User",
-    path: "#",
-    child: [
-      { name: "Control Panel", path: "/user/control-panel" },
-    ],
-  },
+  // {
+  //   name: "User",
+  //   path: "#",
+  //   child: [
+  //     { name: "Control Panel", path: "/user/control-panel" },
+  //   ],
+  // },
   {
     name: "Item",
     path: "/item",
