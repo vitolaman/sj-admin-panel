@@ -1,13 +1,12 @@
-import { ClientI } from "_interfaces/client.interfaces";
-import { PendingItemI } from "_interfaces/item.interfaces";
+import { PendingItemI, StockIncomingI } from "_interfaces/item.interfaces";
 import ContentContainer from "components/container";
 import SearchInput from "components/search-input";
 import Pagination from "components/table/pagination";
 import { Columns, Table } from "components/table/table";
+import moment from "moment";
 import { useState } from "react";
-import { Button } from "react-daisyui";
 import { useNavigate } from "react-router-dom";
-import { usePendingListQuery } from "services/modules/pending";
+import { useIncomingListQuery } from "services/modules/stock";
 
 export const isiRouteName = "";
 export const IncomingStockList = () => {
@@ -17,11 +16,11 @@ export const IncomingStockList = () => {
     limit: 10,
   });
 
-  const { data, isLoading } = usePendingListQuery(params);
+  const { data, isLoading } = useIncomingListQuery(params);
   const navigate = useNavigate();
 
   // Define the table columns for items
-  const header: Columns<PendingItemI>[] = [
+  const header: Columns<StockIncomingI>[] = [
     {
       fieldId: "index",
       label: "No",
@@ -29,14 +28,27 @@ export const IncomingStockList = () => {
     {
       fieldId: "itemId",
       label: "Kode Barang",
+      render: (data) => <>{`${data?.item?.id}`}</>,
     },
     {
       fieldId: "itemName",
       label: "Nama Barang",
+      render: (data) => <>{`${data?.item?.name}`}</>,
     },
     {
       fieldId: "totalStock",
       label: "stok",
+      render: (data) => <>{`${data?.amount}`}</>,
+    },
+    {
+      fieldId: "reffNo",
+      label: "Surat Jalan",
+      render: (data) => <>{`${data?.stockOrder?.reffNo}`}</>,
+    },
+    {
+      fieldId: "createdAt",
+      label: "Tanggal",
+      render: (data) => <>{`${moment(data?.createdAt).format('DD MMM YYYY, hh:mm')} WIB`}</>,
     },
   ];
 
@@ -47,7 +59,7 @@ export const IncomingStockList = () => {
   return (
     <ContentContainer>
       <div className="w-full flex flex-row justify-between items-center">
-        <h1 className="font-semibold text-2xl">Pending Item List</h1>
+        <h1 className="font-semibold text-2xl">Transaksi Masuk Gudang</h1>
         <div className="flex flex-row gap-3">
           <SearchInput
             placeholder="Search"
@@ -58,7 +70,7 @@ export const IncomingStockList = () => {
         </div>
       </div>
       <div className="mt-4 max-w-full overflow-x-auto overflow-y-hidden border border-[#BDBDBD] rounded-lg">
-        <Table<PendingItemI>
+        <Table<StockIncomingI>
           columns={header}
           data={data?.data} // Assuming the response is itemList
           loading={isLoading}

@@ -4,20 +4,27 @@ import { Loader } from "components/spinner/loader";
 import { useState } from "react";
 import { Button } from "react-daisyui";
 import { useNavigate, useParams } from "react-router-dom";
+import { useCancelPlayMutation, useItemByIdQuery } from "services/modules/play";
 import { errorHandler } from "services/errorHandler";
 import CInput from "components/input";
+import useUpdateItemData from "hooks/item/useUpdateItem";
 import useUpdateClientData from "hooks/client/useUpdateClient";
-import { useIncomingByIdQuery } from "services/modules/stock";
+import { useBillByIdQuery } from "services/modules/bill";
+import { Columns, Table } from "components/table/table";
+import { BillI, Item } from "_interfaces/bill.interface";
+import Pagination from "components/table/pagination";
+import { ItemI } from "_interfaces/item.interfaces";
 
-export const isdRouteName = ":id/detail";
-const IncomingStockDetail = () => {
+export const bdRouteName = ":id/detail";
+const BillDetail = () => {
   const navigate = useNavigate();
   const params = useParams<{ id: string }>();
 
   const [isOpen, setIsOpen] = useState(false);
   const [enableEdit, setEnableEdit] = useState(true);
 
-  const { data, isLoading } = useIncomingByIdQuery(params.id!);
+  const { data, isLoading } = useBillByIdQuery(params.id!);
+  console.log(data?.items);
   const {
     register,
     handleSubmit,
@@ -42,6 +49,35 @@ const IncomingStockDetail = () => {
     sendItemData(data);
   };
 
+  const header: Columns<Item>[] = [
+    {
+      fieldId: "index",
+      label: "Nomor",
+    },
+    {
+      fieldId: "idBarang",
+      label: "Kode Barang",
+      render: (data) => <>{`${data?.item?.id}`}</>,
+    },
+    {
+      fieldId: "price",
+      label: "Harga",
+      render: (data) => <>{`${data?.item?.price}`}</>,
+    },
+    {
+      fieldId: "quantity",
+      label: "jumlah",
+      render: (data) => <>{`${data?.quantity}`}</>,
+    },
+    {
+      fieldId: "total",
+      label: "Total",
+      render: (data) => (
+        <>{`${(data?.item?.price as number) * (data?.quantity as number)}`}</>
+      ),
+    },
+  ];
+
   return isLoading ? (
     <Loader />
   ) : (
@@ -53,13 +89,15 @@ const IncomingStockDetail = () => {
         }}
         onConfirm={cancel}
         alertType="warning"
-        title="Are you sure want to cancel this play?"
-        subTitle="This game will be cancel"
+        title="Apakah anda yakin tidak jadi mengubah nota?"
+        subTitle="Perubahan tidak akan tersimpan"
       />
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="pb-6 flex items-center justify-between gap-4">
           <div className="flex items-center justify-between gap-4">
-            <h3 className="text-2xl text-[#262626] font-semibold">Pending</h3>
+            <h3 className="text-2xl text-[#262626] font-semibold">
+              Detail Nota
+            </h3>
           </div>
           <div className="flex items-center justify-between gap-4">
             <Button
@@ -112,9 +150,17 @@ const IncomingStockDetail = () => {
             <CInput {...register("clientCode")} disabled={!enableEdit} />
           </div>
         </div>
+        <div className="mt-4 max-w-full overflow-x-auto overflow-y-hidden border border-[#BDBDBD] rounded-lg">
+          <Table<Item>
+            columns={header}
+            data={data?.items} // Assuming the response is BillList
+            loading={isLoading}
+            onRowClick={(item) => navigate(`/nota/${item.id}/detail`)}
+          />
+        </div>
       </form>
     </ContentContainer>
   );
 };
 
-export default IncomingStockDetail;
+export default BillDetail;

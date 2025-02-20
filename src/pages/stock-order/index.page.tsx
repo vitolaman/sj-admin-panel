@@ -65,7 +65,7 @@ export const StockOrderList = () => {
               navigate("/client/create");
             }}
           >
-            Create New Client
+            Buat Stok Order Baru
           </Button>
         </div>
       </div>

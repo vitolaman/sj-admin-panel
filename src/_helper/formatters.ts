@@ -19,5 +19,5 @@ export const rupiahFormatter: (
     out.push(ch);
     i += 1;
   }
-  return `${isNegative ? "-" : ""}${out.reverse().join("")}`;
+  return `Rp. ${isNegative ? "-" : ""}${out.reverse().join("")}`;
 };

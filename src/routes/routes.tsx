@@ -16,9 +16,14 @@ import IncomingStockDetail, { isdRouteName } from "pages/incoming-stock/detail.p
 import StockOrderList, { soiRouteName } from "pages/stock-order/index.page";
 import StockOrderDetail, { sodRouteName } from "pages/stock-order/detail.page";
 import CreateStockOrder from "pages/stock-order/create.page";
+import OutgoingStockList, { osiRouteName } from "pages/outgoing-stock/index.page";
+import OutgoingStockDetail, { osdRouteName } from "pages/outgoing-stock/detail.page";
+import BillList, { billRouteName } from "pages/bill/index.page";
+import BillDetail, { bdRouteName } from "pages/bill/detail.page";
+import CreateBill, { cbRouteName } from "pages/bill/create.page";
 
 const protectedRoutes: RouteObject[] = [
-  { path: "", element: <Navigate to="/user/control-panel" /> },
+  { path: "", element: <Navigate to="/nota" /> },
   {
     path: "",
     element: <DashboardLayout />,
@@ -53,7 +58,7 @@ const protectedRoutes: RouteObject[] = [
         ],
       },
       {
-        path: "Gudang",
+        path: "gudang-masuk",
         children: [
           {
             path: isiRouteName,
@@ -63,6 +68,20 @@ const protectedRoutes: RouteObject[] = [
           {
             path: isdRouteName,
             element: <IncomingStockDetail />,
+          },
+        ],
+      },
+      {
+        path: "gudang-keluar",
+        children: [
+          {
+            path: osiRouteName,
+            element: <OutgoingStockList />,
+            index: true,
+          },
+          {
+            path: osdRouteName,
+            element: <OutgoingStockDetail />,
           },
         ],
       },
@@ -113,7 +132,7 @@ const protectedRoutes: RouteObject[] = [
         ],
       },
       {
-        path: "client",
+        path: "stock",
         children: [
           {
             path: clientRouteName,
@@ -127,6 +146,24 @@ const protectedRoutes: RouteObject[] = [
           {
             path: ccRouteName,
             element: <CreateClient />,
+          },
+        ],
+      },
+      {
+        path: "nota",
+        children: [
+          {
+            path: billRouteName,
+            element: <BillList />,
+            index: true,
+          },
+          {
+            path: bdRouteName,
+            element: <BillDetail />,
+          },
+          {
+            path: cbRouteName,
+            element: <CreateBill />,
           },
         ],
       },

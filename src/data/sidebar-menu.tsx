@@ -25,10 +25,10 @@ const menuItems: MenuItem[] = [
     name: "Gudang",
     path: "#",
     child: [
-      { name: "Barang Masuk", path: "/masuk" },
+      { name: "Barang Masuk", path: "/gudang-masuk" },
       {
         name: "Barang Keluar",
-        path: "/keluar",
+        path: "/gudang-keluar",
       },
     ],
   },
@@ -38,7 +38,7 @@ const menuItems: MenuItem[] = [
   },
   {
     name: "Nota",
-    path: "/bill",
+    path: "/nota",
   },
   {
     name: "Stock Order",

@@ -1,25 +1,19 @@
-# Use node for building the React app
-FROM node:20-alpine AS builder
-
-WORKDIR /app
-
-COPY package.json package-lock.json ./
-
-RUN npm install --frozen-lockfile
-
-COPY . .
-
-RUN npm run build
-
-# Use a lightweight Node.js image to serve the app
+# Use node for running the React app
 FROM node:20-alpine AS runner
 
 WORKDIR /app
 
-RUN npm install -g serve
+# Copy package.json and package-lock.json first
+COPY package.json package-lock.json ./
 
-COPY --from=builder /app/dist .
+# Install dependencies
+RUN npm install --frozen-lockfile
 
-EXPOSE 3000
+# Copy the rest of the app
+COPY . .
 
-CMD ["serve", "-s", ".", "-l", "3000"]
+# Set environment to production
+ENV NODE_ENV=production
+
+# Start the React app using the production environment
+CMD ["npm", "run", "start:production"]

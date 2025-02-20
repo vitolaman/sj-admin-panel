@@ -1,6 +1,7 @@
 import { rupiahFormatter } from "_helper/formatters";
+import { BillI } from "_interfaces/bill.interface";
+import { ClientI } from "_interfaces/client.interfaces";
 import { ItemI } from "_interfaces/item.interfaces";
-import { PlayI } from "_interfaces/play.interfaces";
 import ContentContainer from "components/container";
 import SearchInput from "components/search-input";
 import Pagination from "components/table/pagination";
@@ -8,45 +9,45 @@ import { Columns, Table } from "components/table/table";
 import { useState } from "react";
 import { Button } from "react-daisyui";
 import { useNavigate } from "react-router-dom";
-import { useItemListQuery } from "services/modules/play";
+import { useBillListQuery } from "services/modules/bill";
 
-export const playRouteName = "";
-export const ItemList = () => {
+export const billRouteName = "";
+export const BillList = () => {
   const [params, setParams] = useState({
     search: "",
     page: 1,
     limit: 10,
   });
 
-  const { data, isLoading } = useItemListQuery(params);
+  const { data, isLoading } = useBillListQuery(params);
   const navigate = useNavigate();
 
   // Define the table columns for items
-  const header: Columns<ItemI>[] = [
+  const header: Columns<BillI>[] = [
     {
-      fieldId: "index",
-      label: "No",
+      fieldId: "id",
+      label: "Nomor Nota",
     },
     {
-      fieldId: "name",
-      label: "Item Name",
+      fieldId: "client",
+      label: "Client",
+      render: (data) => (
+        <>{`${data?.client?.clientCode} - ${data?.client?.name}`}</>
+      ),
     },
     {
-      fieldId: "type",
-      label: "Type",
+      fieldId: "createdBy",
+      label: "sales",
+      render: (data) => <>{`${data?.createdBy?.firstName}`}</>,
     },
     {
-      fieldId: "stock",
-      label: "Stock",
+      fieldId: "paymentStatus",
+      label: "Pembayaran",
     },
     {
-      fieldId: "normalStockValue",
-      label: "Normal Stock Value",
-    },
-    {
-      fieldId: "price",
-      label: "Price",
-      render: (data) => <>{rupiahFormatter(data?.price)}</>,
+      fieldId: "total",
+      label: "Total",
+      render: (data) => <>{`${rupiahFormatter(data?.total)}`}</>,
     },
   ];
 
@@ -57,7 +58,7 @@ export const ItemList = () => {
   return (
     <ContentContainer>
       <div className="w-full flex flex-row justify-between items-center">
-        <h1 className="font-semibold text-2xl">Item List</h1>
+        <h1 className="font-semibold text-2xl">Daftar Nota</h1>
         <div className="flex flex-row gap-3">
           <SearchInput
             placeholder="Search"
@@ -68,19 +69,19 @@ export const ItemList = () => {
           <Button
             className="bg-seeds hover:bg-seeds-300 border-seeds hover:border-seeds-300 text-white rounded-full px-10"
             onClick={() => {
-              navigate("/item/create");
+              navigate("/client/create");
             }}
           >
-            Buat Barang Baru
+            Buat Nota Baru
           </Button>
         </div>
       </div>
       <div className="mt-4 max-w-full overflow-x-auto overflow-y-hidden border border-[#BDBDBD] rounded-lg">
-        <Table<ItemI>
+        <Table<BillI>
           columns={header}
-          data={data?.data} // Assuming the response is itemList
+          data={data?.data} // Assuming the response is BillList
           loading={isLoading}
-          onRowClick={(item) => navigate(`/item/${item.id}/detail`)}
+          onRowClick={(item) => navigate(`/nota/${item.id}/detail`)}
         />
       </div>
       <div className="flex flex-col">
@@ -94,4 +95,4 @@ export const ItemList = () => {
   );
 };
 
-export default ItemList;
+export default BillList;

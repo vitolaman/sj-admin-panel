@@ -68,7 +68,7 @@ export const ItemList = () => {
               navigate("/client/create");
             }}
           >
-            Create New Client
+            Buat Klien Baru
           </Button>
         </div>
       </div>
